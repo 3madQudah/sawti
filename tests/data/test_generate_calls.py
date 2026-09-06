@@ -11,7 +11,12 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from sawti.data.generate_calls import generate_batch, generate_call
+from sawti.data.generate_calls import (
+    _find_dialect_violations,
+    _generate_with_retry,
+    generate_batch,
+    generate_call,
+)
 from sawti.schemas import Language
 
 
@@ -95,3 +100,72 @@ def test_generate_call_speaker_turns_survive_mock_roundtrip(monkeypatch, languag
     result = generate_call(language, seed=7)
 
     assert result == transcript
+
+
+def test_find_dialect_violations_clean_arabic_string_has_none() -> None:
+    """_find_dialect_violations() returns [] for a clean, all-Arabic-script transcript."""
+    text = "Agent: أهلاً بك، كيف أقدر أساعدك اليوم؟\nCustomer: عندي مشكلة بالفاتورة الشهرية."
+    assert _find_dialect_violations(text, Language.AR) == []
+
+
+def test_find_dialect_violations_clean_mixed_string_has_none() -> None:
+    """_find_dialect_violations() returns [] for a clean code-switched transcript."""
+    text = (
+        "Agent: Ahlan, welcome to Zain support. كيف أقدر أساعدك اليوم؟\n"
+        "Customer: I have an issue with my bill, بس مش فاهم ليش زادت القيمة."
+    )
+    assert _find_dialect_violations(text, Language.MIXED) == []
+
+
+def test_find_dialect_violations_flags_egyptian_marker() -> None:
+    """_find_dialect_violations() flags banned Egyptian-dialect words like "فندم"."""
+    text = "Agent: تفضل يا فندم، كيف أقدر أساعدك؟"
+    violations = _find_dialect_violations(text, Language.AR)
+    assert any("فندم" in v for v in violations)
+
+
+def test_find_dialect_violations_flags_arabizi() -> None:
+    """_find_dialect_violations() flags Arabizi (Latin-letter transliterated Arabic)."""
+    text = "Agent: Ahlan, kif ba'dar a'awnak today?"
+    violations = _find_dialect_violations(text, Language.MIXED)
+    assert any("ba'dar" in v for v in violations)
+
+
+def test_find_dialect_violations_flags_mixed_script_glitch_word() -> None:
+    """_find_dialect_violations() flags a single token mixing Arabic and Latin script."""
+    text = "Agent: the l'flوس will be refunded within 3 days."
+    violations = _find_dialect_violations(text, Language.MIXED)
+    assert any("l'fl" in v for v in violations)
+
+
+def test_find_dialect_violations_does_not_flag_english_contractions() -> None:
+    """_find_dialect_violations() does not misflag ordinary English contractions as Arabizi."""
+    text = "Agent: I don't think that's right, but I'll check — we're on it."
+    assert _find_dialect_violations(text, Language.MIXED) == []
+
+
+def test_generate_with_retry_retries_on_dialect_violation_then_succeeds(monkeypatch) -> None:
+    """_generate_with_retry() retries when generate_call() returns a violating transcript."""
+    bad = "Agent: تفضل يا فندم، كيف أقدر أساعدك؟"
+    good = "Agent: تفضل يا سيدي، كيف أقدر أساعدك؟"
+    results = iter([bad, good])
+    monkeypatch.setattr(
+        "sawti.data.generate_calls.generate_call",
+        lambda language, *, seed: next(results),
+    )
+
+    result = _generate_with_retry(Language.AR, seed=1, max_retries=3, initial_delay=0.0)
+
+    assert result == good
+
+
+def test_generate_with_retry_raises_when_violations_persist(monkeypatch) -> None:
+    """_generate_with_retry() raises, naming the violations, once retries are exhausted."""
+    bad = "Agent: تفضل يا فندم، كيف أقدر أساعدك؟"
+    monkeypatch.setattr(
+        "sawti.data.generate_calls.generate_call",
+        lambda language, *, seed: bad,
+    )
+
+    with pytest.raises(ValueError, match="dialect violations"):
+        _generate_with_retry(Language.AR, seed=1, max_retries=2, initial_delay=0.0)
