@@ -23,3 +23,4 @@ data/ground_truth/*
 dist/
 build/
 uv.lock.bak
+.claude/

@@ -10,6 +10,8 @@ from typing import Any, TypeVar
 
 from pydantic import BaseModel
 
+from sawti.config import get_settings
+
 ResponseModelT = TypeVar("ResponseModelT", bound=BaseModel)
 
 
@@ -74,8 +76,20 @@ def get_llm_provider() -> LLMProvider:
         A concrete `LLMProvider` instance selected purely by config.
 
     Raises:
-        NotImplementedError: Until provider construction is wired up.
+        NotImplementedError: If `llm_provider` is set to a provider whose
+            concrete class has not been implemented yet.
     """
-    # TODO(phase-1): dispatch on get_settings().llm_provider to construct
-    # AnthropicProvider or VLLMProvider without callers needing to know which.
-    raise NotImplementedError
+    settings = get_settings()
+    if settings.llm_provider == "gemini":
+        from sawti.llm.gemini_provider import GeminiProvider
+
+        return GeminiProvider(api_key=settings.gemini_api_key or "", model=settings.gemini_model)
+    if settings.llm_provider == "anthropic":
+        from sawti.llm.anthropic_provider import AnthropicProvider
+
+        return AnthropicProvider(api_key=settings.anthropic_api_key or "", model=settings.llm_model)
+    if settings.llm_provider == "vllm":
+        from sawti.llm.vllm_provider import VLLMProvider
+
+        return VLLMProvider(base_url=settings.vllm_base_url, model=settings.vllm_model or settings.llm_model)
+    raise NotImplementedError(f"Unknown llm_provider: {settings.llm_provider!r}")

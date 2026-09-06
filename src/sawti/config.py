@@ -33,11 +33,18 @@ class Settings(BaseSettings):
     log_level: str = Field(default="INFO", alias="SAWTI_LOG_LEVEL")
 
     # --- LLM provider ---
-    llm_provider: Literal["anthropic", "vllm"] = Field(default="anthropic", alias="SAWTI_LLM_PROVIDER")
+    llm_provider: Literal["anthropic", "vllm", "gemini"] = Field(
+        default="anthropic", alias="SAWTI_LLM_PROVIDER"
+    )
     llm_model: str = Field(default="claude-sonnet-5", alias="SAWTI_LLM_MODEL")
     anthropic_api_key: str | None = Field(default=None, alias="ANTHROPIC_API_KEY")
     vllm_base_url: str = Field(default="http://localhost:8001/v1", alias="VLLM_BASE_URL")
     vllm_model: str | None = Field(default=None, alias="VLLM_MODEL")
+    gemini_api_key: str | None = Field(default=None, alias="GEMINI_API_KEY")
+    # "gemini-flash-lite-latest" is a stable alias to the current free-tier flash-lite
+    # model — pinned model ids (e.g. "gemini-2.5-flash") get retired for new API keys,
+    # and "gemini-flash-latest" was observed returning persistent 503s under load.
+    gemini_model: str = Field(default="gemini-flash-lite-latest", alias="SAWTI_GEMINI_MODEL")
 
     # --- Confidence / review routing ---
     confidence_threshold: float = Field(default=0.7, ge=0.0, le=1.0, alias="SAWTI_CONFIDENCE_THRESHOLD")
