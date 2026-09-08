@@ -7,13 +7,14 @@ __pycache__/
 # OS
 .DS_Store
 
-# Data (large / generated, not committed)
+# Data — generated/regenerable, not committed
 data/audio/*
 data/synthetic/*
-data/ground_truth/*
 !data/audio/.gitkeep
 !data/synthetic/.gitkeep
-!data/ground_truth/.gitkeep
+
+# data/ground_truth/*.json is hand-labeled human work — irreplaceable,
+# tracked in git (unlike audio/synthetic, it cannot be regenerated).
 
 # Test / build artifacts
 .pytest_cache/
