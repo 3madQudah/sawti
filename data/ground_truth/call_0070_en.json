@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:06:23.512920+00:00",
+    "human_reviewed": false
   },
+  "id": "3be622ca-0122-4914-a6a7-01f39ebf68d6",
   "call_id": "call_0070_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to report that their internet was not working. The agent identified the account, explained that an area-wide fiber outage caused by utility work was the reason, and provided an estimated restoration time of 4:00 PM along with instructions on what to do if it doesn't come back on. The call ended satisfactorily.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "We estimate that service will be fully restored within about two to three hours, so by roughly 4:00 PM today.",
+        "speaker": "Agent",
+        "start_char": 2147,
+        "end_char": 2256
+      },
+      "promised_by": "Agent",
+      "description": "Restore internet service by approximately 4:00 PM today.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "You are very welcome! I am glad I could clear that up for you. Is there anything else I can assist you with today?",
+        "speaker": "Agent",
+        "start_char": 3306,
+        "end_char": 3420
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent was polite, attentive, professional, and helpful throughout the entire interaction."
     },
     {
+      "evidence": {
+        "text": "I am sorry to hear that your internet is down. I can certainly help you look into that.",
+        "speaker": "Agent",
+        "start_char": 235,
+        "end_char": 322
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent expressed appropriate sympathy for the customer's issue and adjusted tone when asked to speak louder."
     },
     {
+      "evidence": {
+        "text": "No, that is everything. Have a good afternoon.",
+        "speaker": "Customer",
+        "start_char": 3431,
+        "end_char": 3477
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent fully explained the cause of the issue, estimated resolution time, troubleshooting steps, and billing credit process."
     },
     {
+      "evidence": {
+        "text": "Of course, I can speak up. I said there is a known service outage in your neighborhood affecting several blocks around Maple Street.",
+        "speaker": "Agent",
+        "start_char": 1347,
+        "end_char": 1479
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent spoke clearly, adapted immediately when the customer requested a louder voice, and avoided jargon."
     },
     {
+      "evidence": {
+        "text": "Thank you for calling MetroConnect, and have a wonderful day.",
+        "speaker": "Agent",
+        "start_char": 3485,
+        "end_char": 3546
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent asked if anything else was needed, thanked the customer, and delivered a warm proper closing."
     },
     {
+      "evidence": {
+        "text": "Yes, exactly like that. Construction crews inadvertently cut the line. Our repair team is already on-site working to splice the fiber back together.",
+        "speaker": "Agent",
+        "start_char": 1906,
+        "end_char": 2054
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "Information regarding the area outage, estimated time of repair, and credit request procedure was provided accurately."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Could I please have your account number or the phone number associated with your service?",
+        "speaker": "Agent",
+        "start_char": 323,
+        "end_char": 412
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed proper security verification protocols by asking for the phone number and confirming the address."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "I am calling because my internet is completely not working and I am very confused about what is happening.",
+          "speaker": "Customer",
+          "start_char": 121,
+          "end_char": 227
+        },
+        "speaker": "Customer",
+        "score": -0.5,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Wait, what did you say? An outage? My hearing isn't great, could you speak a little louder please?",
+          "speaker": "Customer",
+          "start_char": 1241,
+          "end_char": 1339
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "Oh! An outage. So it is not just my equipment then? I spent an hour trying to figure out the blinking lights on the router.",
+          "speaker": "Customer",
+          "start_char": 1490,
+          "end_char": 1613
+        },
+        "speaker": "Customer",
+        "score": 0.1,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "An automatic credit through the app. Okay, I will try to figure out the app later. Is there anything else I need to do right now?",
+          "speaker": "Customer",
+          "start_char": 2941,
+          "end_char": 3070
+        },
+        "speaker": "Customer",
+        "score": 0.4,
+        "timestamp_sec": 112.0
+      },
+      {
+        "quote": {
+          "text": "Alright, well, thank you for explaining it all to me. I was getting quite worried it was broken permanently.",
+          "speaker": "Customer",
+          "start_char": 3190,
+          "end_char": 3298
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 128.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

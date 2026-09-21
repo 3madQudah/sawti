@@ -1,104 +1,177 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:05:44.162683+00:00",
+    "human_reviewed": false
   },
+  "id": "818eb868-32d2-4252-af8f-c796d0274f09",
   "call_id": "call_0065_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to close her account due to moving and inquire about any remaining balance. The agent verified her details, informed her of a $12.50 credit balance to be refunded via check, arranged for a prepaid equipment return box to be mailed to her new address, and successfully closed the account.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "We will be mailing a refund check for $12.50 to your new address.",
+        "speaker": "Agent",
+        "start_char": 1408,
+        "end_char": 1473
+      },
+      "promised_by": "Agent",
+      "description": "Mail a refund check for $12.50 to the customer's new address.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "I will mail the equipment return box out today.",
+        "speaker": "Agent",
+        "start_char": 1981,
+        "end_char": 2028
+      },
+      "promised_by": "Agent",
+      "description": "Mail a prepaid equipment return box to the customer's new address today.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "I can certainly help you with closing your account, ma'am. May I please have your full name and the phone number or account number associated with the service?",
+        "speaker": "Agent",
+        "start_char": 216,
+        "end_char": 375
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent was consistently polite, patient, and professional throughout the call."
     },
     {
+      "evidence": {
+        "text": "I understand. Let me check the final balance for 142 Maple Street.",
+        "speaker": "Agent",
+        "start_char": 1109,
+        "end_char": 1175
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent showed understanding and patience with an elderly customer who was confused about her bills."
     },
     {
+      "evidence": {
+        "text": "I will mail the equipment return box out today. Is there anything else I can help you with today?",
+        "speaker": "Agent",
+        "start_char": 1981,
+        "end_char": 2078
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully resolved the account closure, explained the credit balance, and arranged the equipment return box."
     },
     {
+      "evidence": {
+        "text": "That means we owe you money, Martha. We will be mailing a refund check for $12.50 to your new address.",
+        "speaker": "Agent",
+        "start_char": 1371,
+        "end_char": 1473
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent explained account details and procedures in a clear, easy-to-understand manner for the customer."
     },
     {
+      "evidence": {
+        "text": "You are very welcome, Martha. Have a wonderful day and enjoy your new home. Goodbye!",
+        "speaker": "Agent",
+        "start_char": 2173,
+        "end_char": 2257
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent checked for further assistance, offered a warm closing, and properly said goodbye."
     },
     {
+      "evidence": {
+        "text": "It looks like you have a small credit balance of $12.50 remaining on the account.",
+        "speaker": "Agent",
+        "start_char": 1176,
+        "end_char": 1257
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately retrieved and reported the account balance and correct procedures."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "May I please have your full name and the phone number or account number associated with the service?",
+        "speaker": "Agent",
+        "start_char": 275,
+        "end_char": 375
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent correctly followed verification and account closure procedures."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "someone told me I need to call you guys to, well, stop getting bills from you because I moved?",
+          "speaker": "Customer",
+          "start_char": 114,
+          "end_char": 208
+        },
+        "speaker": "Customer",
+        "score": 0.0,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Can you say that again, dear?",
+          "speaker": "Customer",
+          "start_char": 469,
+          "end_char": 498
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Does that mean you owe me money, or do I owe you? I get so mixed up with these bills.",
+          "speaker": "Customer",
+          "start_char": 1278,
+          "end_char": 1363
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "A check in the mail, how nice.",
+          "speaker": "Customer",
+          "start_char": 1488,
+          "end_char": 1518
+        },
+        "speaker": "Customer",
+        "score": 0.6,
+        "timestamp_sec": 72.0
+      },
+      {
+        "quote": {
+          "text": "You've been very patient with me. Thank you so much!",
+          "speaker": "Customer",
+          "start_char": 2113,
+          "end_char": 2165
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 112.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

@@ -1,104 +1,154 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:21:36.817940+00:00",
+    "human_reviewed": false
   },
+  "id": "f559e297-4e62-4580-b0c1-deb3051bd837",
   "call_id": "call_0133_en",
   "language": "en",
-  "summary": "",
+  "summary": "The customer called technical support because they were struggling to set up a newly received Wi-Fi extender. The agent guided the customer patiently through the initial steps, including plugging it into an outlet near the router and understanding the blinking red indicator light. The call ended while the customer and agent were waiting for the device to finish powering up so they could proceed with connecting via smartphone.",
   "commitments": [],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Thank you for calling SwiftConnect Technical Support, my name is Marcus. How can I help you today?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 105
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent was polite, introduced themselves and the company clearly, and maintained a courteous and helpful tone throughout the call."
     },
     {
+      "evidence": {
+        "text": "No worries at all. Let's take it one step very slowly.",
+        "speaker": "Agent",
+        "start_char": 488,
+        "end_char": 542
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent acknowledged the customer's confusion with reassuring statements and adjusted the pacing to accommodate the customer's needs."
     },
     {
+      "evidence": {
+        "text": "Once you select that network on your phone, a setup page should automatically pop up on your screen.",
+        "speaker": "Agent",
+        "start_char": 1902,
+        "end_char": 2002
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent provided clear troubleshooting steps that were actively moving toward a resolution, though the call ended abruptly while waiting."
     },
     {
+      "evidence": {
+        "text": "For the initial setup, please plug it into an outlet that is in the same room as your main router.",
+        "speaker": "Agent",
+        "start_char": 778,
+        "end_char": 876
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent gave clear, concise instructions and checked for understanding, avoiding confusing technical jargon."
     },
     {
+      "evidence": {
+        "text": "Once you select that network on your phone, a setup page should automatically pop up on your screen.",
+        "speaker": "Agent",
+        "start_char": 1902,
+        "end_char": 2002
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.5,
+      "justification": "The transcript cuts off mid-process, meaning proper closing protocols (summarizing, asking if anything else is needed, professional sign-off) could not be completed."
     },
     {
+      "evidence": {
+        "text": "A blinking red light just means it is powering up and waiting for a connection.",
+        "speaker": "Agent",
+        "start_char": 1158,
+        "end_char": 1237
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The information provided regarding device indicators and setup procedures was accurate and appropriate for a Wi-Fi extender."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "First, can you plug the extender directly into a standard wall outlet near your main router?",
+        "speaker": "Agent",
+        "start_char": 543,
+        "end_char": 635
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed a logical troubleshooting workflow appropriate for initial hardware setup and onboarding."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Hi, yes, I just got this new Wi-Fi extender in the mail and I am completely lost on how to plug it in and make it work.",
+          "speaker": "Customer",
+          "start_char": 116,
+          "end_char": 235
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Wait, did you say near the router or somewhere else? Sorry, I get easily confused with these things.",
+          "speaker": "Customer",
+          "start_char": 646,
+          "end_char": 746
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Okay, I just plugged it into the outlet by the fridge. Is that close enough?",
+          "speaker": "Customer",
+          "start_char": 887,
+          "end_char": 963
+        },
+        "speaker": "Customer",
+        "score": 0.0,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "Um, let me look. There's a little red light blinking slowly. Is that bad?",
+          "speaker": "Customer",
+          "start_char": 1077,
+          "end_char": 1150
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "Hold on, let me write this down. Go into settings, find the name on the back... did I get that right?",
+          "speaker": "Customer",
+          "start_char": 1778,
+          "end_char": 1879
+        },
+        "speaker": "Customer",
+        "score": 0.2,
+        "timestamp_sec": 88.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

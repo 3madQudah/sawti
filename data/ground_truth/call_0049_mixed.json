@@ -1,104 +1,177 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:03:23.168065+00:00",
+    "human_reviewed": false
   },
+  "id": "ab362207-7be1-4d0e-8bc0-0ecaa4973ca0",
   "call_id": "call_0049_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called because their internet had been cut off for about an hour. The agent identified the account using the phone number, checked the system, and informed the customer that there was a general network maintenance outage in their area which would be resolved within an hour. The call ended politely with the customer satisfied.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "وراح يرجع الـ service خلال ساعة تقريباً.",
+        "speaker": "Agent",
+        "start_char": 634,
+        "end_char": 674
+      },
+      "promised_by": "Agent",
+      "description": "The service will be restored within approximately one hour.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "أهلاً معك رامي، كيف بقدر أساعدك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 45
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent was polite, introduced themselves properly, and maintained a professional tone throughout the call."
     },
     {
+      "evidence": {
+        "text": "ولا يهمك سيدي، ممكن تعطيني الـ account number لو سمحت عشان أشيك؟",
+        "speaker": "Agent",
+        "start_char": 136,
+        "end_char": 200
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent used reassuring language ('ولا يهمك') to address the customer's initial confusion."
     },
     {
+      "evidence": {
+        "text": "بالضبط هيك سيدي، بعتذر عن الإزعاج وبنشكر تواصلك معنا.",
+        "speaker": "Agent",
+        "start_char": 882,
+        "end_char": 935
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully diagnosed the issue as a general outage and provided a clear timeframe and instructions."
     },
     {
+      "evidence": {
+        "text": "لا لا، مش من الـ router تبعك، هاد maintenance عام للـ network بالمنطقة وراح يرجع الـ service خلال ساعة تقريباً.",
+        "speaker": "Agent",
+        "start_char": 563,
+        "end_char": 674
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The explanation regarding the network maintenance and router status was clear and easily understandable."
     },
     {
+      "evidence": {
+        "text": "بعتذر عن الإزعاج وبنشكر تواصلك معنا.",
+        "speaker": "Agent",
+        "start_char": 899,
+        "end_char": 935
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent properly apologized for the inconvenience and closed the call courteously."
     },
     {
+      "evidence": {
+        "text": "أستاذ، مبين عندي إنه فيه general outage بمنطقتكم.",
+        "speaker": "Agent",
+        "start_char": 432,
+        "end_char": 481
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately identified the system outage affecting the customer's area."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "ممكن تعطيني الـ account number لو سمحت عشان أشيك؟",
+        "speaker": "Agent",
+        "start_char": 151,
+        "end_char": 200
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed proper procedure by requesting account details to verify the customer's line before checking the status."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أنا مش فاهم شو القصة، الـ internet عنا قاطع من ساعة تقريباً.",
+          "speaker": "Customer",
+          "start_char": 68,
+          "end_char": 128
+        },
+        "speaker": "Customer",
+        "score": -0.5,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "شو قلتي؟ رقم شو؟ ما سمعت صوتك منيح ممكن تعيد؟",
+          "speaker": "Customer",
+          "start_char": 211,
+          "end_char": 256
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "آه تمام، الرقم هو 0795543210.",
+          "speaker": "Customer",
+          "start_char": 356,
+          "end_char": 385
+        },
+        "speaker": "Customer",
+        "score": 0.0,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "شو يعني general outage؟ يعني الـ router فيه مشكلة ولا من عندكم؟",
+          "speaker": "Customer",
+          "start_char": 492,
+          "end_char": 555
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "تمام فهمت عليك، يعني كمان ساعة وبيرجع كل شي طبيعي؟",
+          "speaker": "Customer",
+          "start_char": 824,
+          "end_char": 874
+        },
+        "speaker": "Customer",
+        "score": 0.5,
+        "timestamp_sec": 72.0
+      },
+      {
+        "quote": {
+          "text": "مشكور وما قصرت، يعطيك العافية.",
+          "speaker": "Customer",
+          "start_char": 946,
+          "end_char": 976
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 88.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

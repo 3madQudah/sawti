@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:05:28.209796+00:00",
+    "human_reviewed": false
   },
+  "id": "078af2f4-226e-44c1-8930-7d1560c09006",
   "call_id": "call_0063_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called in frustrated after a long hold time because their new router was showing a blinking red light and failing to connect. The agent tried troubleshooting steps including checking power connections and testing the line, but after the hard reset failed, the customer demanded to cancel their service. The agent offered to escalate to a senior technician and provide a free replacement router.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "let me get a senior technician on the line right now to swap this out for a replacement at zero cost to you.",
+        "speaker": "Agent",
+        "start_char": 2473,
+        "end_char": 2581
+      },
+      "promised_by": "Agent",
+      "description": "Connect the customer with a senior technician to arrange a free replacement router.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "I sincerely apologize for the wait time, and I understand you're frustrated.",
+        "speaker": "Agent",
+        "start_char": 248,
+        "end_char": 324
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent maintained a polite, professional tone throughout the call despite the customer's hostility."
     },
     {
+      "evidence": {
+        "text": "I know how frustrating it is when a new device doesn't work right out of the box.",
+        "speaker": "Agent",
+        "start_char": 537,
+        "end_char": 618
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.85,
+      "justification": "The agent repeatedly acknowledged the customer's frustration and validated their feelings effectively."
     },
     {
+      "evidence": {
+        "text": "let me get a senior technician on the line right now to swap this out for a replacement at zero cost to you.",
+        "speaker": "Agent",
+        "start_char": 2473,
+        "end_char": 2581
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "Troubleshooting failed, but the agent successfully offered a concrete resolution by escalating to a replacement."
     },
     {
+      "evidence": {
+        "text": "Is the main power cord plugged directly into a wall outlet, or a power strip?",
+        "speaker": "Agent",
+        "start_char": 982,
+        "end_char": 1059
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "Instructions and troubleshooting questions were clear and easy to understand."
     },
     {
+      "evidence": {
+        "text": "let me get a senior technician on the line right now to swap this out for a replacement at zero cost to you.",
+        "speaker": "Agent",
+        "start_char": 2473,
+        "end_char": 2581
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.5,
+      "justification": "The call cuts off before proper closure, though an active step was being taken to resolve the issue."
     },
     {
+      "evidence": {
+        "text": "I am showing your line is active on our end, but let's go ahead and bypass the setup app entirely and try a hard factory reset.",
+        "speaker": "Agent",
+        "start_char": 2113,
+        "end_char": 2240
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent provided standard technical troubleshooting steps and checked line status correctly."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Can you confirm the model number on the bottom of the device?",
+        "speaker": "Agent",
+        "start_char": 646,
+        "end_char": 707
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.8,
+      "justification": "The agent followed proper troubleshooting flow, checking device details, power source, and line status."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Finally, someone picked up. I’ve been on hold for twenty minutes, and I am at my wits' end with this stupid new router I bought from you guys.",
+          "speaker": "Customer",
+          "start_char": 98,
+          "end_char": 240
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Well, it’s not working! I followed the quick-start guide step-by-step, and all I get is a blinking red light. Nothing is connecting!",
+          "speaker": "Customer",
+          "start_char": 397,
+          "end_char": 529
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "I am not crawling under my desk again to read tiny serial numbers! Just tell me why your junk equipment won't connect to the internet!",
+          "speaker": "Customer",
+          "start_char": 718,
+          "end_char": 852
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "Fine! Hold on, let me move this heavy cabinet. Watch, this still won't work and I wasted my entire morning on this garbage.",
+          "speaker": "Customer",
+          "start_char": 1670,
+          "end_char": 1793
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 72.0
+      },
+      {
+        "quote": {
+          "text": "A reset? I already did that twice! I am done playing tech support games with you. I want to cancel my service and return this useless brick!",
+          "speaker": "Customer",
+          "start_char": 2251,
+          "end_char": 2391
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 104.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

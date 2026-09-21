@@ -1,104 +1,165 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:11:41.940940+00:00",
+    "human_reviewed": false
   },
+  "id": "d4b46392-05b4-468b-a9f6-898cf541ee9b",
   "call_id": "call_0102_en",
   "language": "en",
-  "summary": "",
+  "summary": "The customer called to complain about a rude representative who hung up on them and failed to explain a billing increase. The agent apologized, investigated the account, explained the one-time municipal tax adjustment, documented the feedback, and successfully resolved the customer's issue.",
   "commitments": [],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Thank you for calling Metro Utilities, my name is Marcus. How can I assist you today?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 92
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained a polite, respectful, and professional demeanor throughout the entire call."
     },
     {
+      "evidence": {
+        "text": "You have every right to be upset, and I completely understand why you are frustrated.",
+        "speaker": "Agent",
+        "start_char": 762,
+        "end_char": 847
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent strongly and sincerely validated the customer's frustration regarding the poor treatment they received."
     },
     {
+      "evidence": {
+        "text": "Ah, I see a one-time municipal tax adjustment was added last month, which explains the slight increase.",
+        "speaker": "Agent",
+        "start_char": 1113,
+        "end_char": 1216
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully identified the reason for the higher bill and clearly explained it to the customer, resolving the root issue."
     },
     {
+      "evidence": {
+        "text": "Ah, I see a one-time municipal tax adjustment was added last month, which explains the slight increase.",
+        "speaker": "Agent",
+        "start_char": 1113,
+        "end_char": 1216
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent communicated clearly, concisely, and effectively without using confusing jargon."
     },
     {
+      "evidence": {
+        "text": "Have a wonderful rest of your day, and thank you for choosing Metro Utilities.",
+        "speaker": "Agent",
+        "start_char": 1922,
+        "end_char": 2000
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent checked for additional needs, thanked the customer, and provided a polite, professional closing."
     },
     {
+      "evidence": {
+        "text": "Ah, I see a one-time municipal tax adjustment was added last month, which explains the slight increase.",
+        "speaker": "Agent",
+        "start_char": 1113,
+        "end_char": 1216
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The information provided regarding the billing increase was accurate and directly addressed the customer's inquiry."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Let me look into your account right now and make sure your original issue gets resolved properly.",
+        "speaker": "Agent",
+        "start_char": 848,
+        "end_char": 945
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed proper procedure by looking into the account, addressing the billing inquiry, and logging feedback."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "I am calling because I am furious about the way I was treated by one of your representatives about twenty minutes ago.",
+          "speaker": "Customer",
+          "start_char": 103,
+          "end_char": 221
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "I've been a loyal customer for over ten years, and I have never been treated with such disrespect.",
+          "speaker": "Customer",
+          "start_char": 655,
+          "end_char": 753
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 32.0
+      },
+      {
+        "quote": {
+          "text": "Well, okay. My account number is 45892103. I just wanted to know why my last bill was higher than usual.",
+          "speaker": "Customer",
+          "start_char": 956,
+          "end_char": 1060
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "Oh! Is that all it was? The other agent didn't even bother explaining that; she just told me to read the terms of service.",
+          "speaker": "Customer",
+          "start_char": 1228,
+          "end_char": 1350
+        },
+        "speaker": "Customer",
+        "score": 0.2,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "I appreciate you actually listening to me and fixing this so quickly, Marcus.",
+          "speaker": "Customer",
+          "start_char": 1561,
+          "end_char": 1638
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 80.0
+      },
+      {
+        "quote": {
+          "text": "No, that covers it. Thank you for your help, you've completely turned my day around.",
+          "speaker": "Customer",
+          "start_char": 1808,
+          "end_char": 1892
+        },
+        "speaker": "Customer",
+        "score": 1.0,
+        "timestamp_sec": 96.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

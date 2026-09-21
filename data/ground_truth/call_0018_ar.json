@@ -1,104 +1,154 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T10:58:00.392834+00:00",
+    "human_reviewed": false
   },
+  "id": "2db9090e-216f-4c2c-bba1-76940caed2da",
   "call_id": "call_0018_ar",
   "language": "ar",
-  "summary": "",
+  "summary": "The customer called to file a complaint against an agent who was rude and hung up on him, and also to inquire about his internet bill. The agent apologized, registered the complaint officially, explained the billing discrepancy caused by a previous adjustment, and confirmed the payment deadline. The call ended cordially.",
   "commitments": [],
   "compliance_flags": [],
   "rubric_scores": [
     {
-      "criterion": "professionalism",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
+        "text": "أهلاً بك يا أخي، وأنا أعتذر منك نيابة عن الفريق كله.",
+        "speaker": "Agent",
+        "start_char": 257,
+        "end_char": 309
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent offered an immediate, sincere apology on behalf of the team and validated the customer's negative experience."
     },
     {
+      "evidence": {
+        "text": "أهلاً بك في شركة الاتصالات، معك أحمد، كيف يمكنني مساعدتك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 70
+      },
+      "criterion": "professionalism",
+      "score": 1.0,
+      "justification": "The agent maintained a polite, courteous, and professional demeanor throughout the entire interaction."
+    },
+    {
+      "evidence": {
+        "text": "وتأكد إن حقك محفوظ والشكوى تسجلت رسمياً برقم مرجعي للموظف المسؤول.",
+        "speaker": "Agent",
+        "start_char": 935,
+        "end_char": 1001
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully registered the complaint, explained the billing issue, and provided the payment deadline."
     },
     {
+      "evidence": {
+        "text": "بالضبط يا أخي، النظام عدل حاله وهاد أثر على إجمالي المبلغ المستحق لهاي الشهر، بس لا تخاف، حسابك هسا سليم مية بالمية.",
+        "speaker": "Agent",
+        "start_char": 1378,
+        "end_char": 1494
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent explained the billing discrepancy clearly and concisely without using confusing jargon."
     },
     {
+      "evidence": {
+        "text": "الله يعافيك يا رب، يسعد لي مساك ومع السلامة.",
+        "speaker": "Agent",
+        "start_char": 1906,
+        "end_char": 1950
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent asked if further assistance was needed and closed the call warmly and properly."
     },
     {
+      "evidence": {
+        "text": "النظام عدل حاله وهاد أثر على إجمالي المبلغ المستحق لهاي الشهر",
+        "speaker": "Agent",
+        "start_char": 1393,
+        "end_char": 1454
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately checked the account details and provided correct information regarding the billing adjustment and deadline."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "ممكن تعطني رقم الحساب أو رقم الهوية لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 1105,
+        "end_char": 1149
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent correctly verified the customer's account using the account number before discussing sensitive billing details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "والله أنا متصل اليوم عشان أسجل شكوى بسيطة على واحد من زملائك اللي حكيت معهم قبل شوي.",
+          "speaker": "Customer",
+          "start_char": 165,
+          "end_char": 249
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 16.0
+      },
+      {
+        "quote": {
+          "text": "بس حبيت الإدارة تكون على علم عشان ما يتكرر هالشي مع غيري.",
+          "speaker": "Customer",
+          "start_char": 749,
+          "end_char": 806
+        },
+        "speaker": "Customer",
+        "score": 0.1,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "ما قصرت، جزاك الله خخير. وهسا بالنسبة للفاتورة، بتقدر تشيكلي عليها؟",
+          "speaker": "Customer",
+          "start_char": 1012,
+          "end_char": 1079
+        },
+        "speaker": "Customer",
+        "score": 0.5,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "الحمد لله، طمنتني والله. طيب هل في داعي أدفع المبلغ الجديد اليوم ولا في مهلة؟",
+          "speaker": "Customer",
+          "start_char": 1505,
+          "end_char": 1582
+        },
+        "speaker": "Customer",
+        "score": 0.6,
+        "timestamp_sec": 96.0
+      },
+      {
+        "quote": {
+          "text": "تمام التمام، شاكر لك جداً حسن تعاونك وأخلاقك العالية يا أحمد.",
+          "speaker": "Customer",
+          "start_char": 1679,
+          "end_char": 1740
+        },
+        "speaker": "Customer",
+        "score": 1.0,
+        "timestamp_sec": 120.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

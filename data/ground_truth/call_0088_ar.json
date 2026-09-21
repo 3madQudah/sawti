@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:09:08.788403+00:00",
+    "human_reviewed": false
   },
+  "id": "f283aa50-9898-4721-b554-c18be7f3e8c3",
   "call_id": "call_0088_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to immediately cancel their internet and phone account due to ongoing service issues and poor network quality. The agent verified the account, informed the customer about an outstanding balance of fifty dinars, and explained that it must be paid to finalize the cancellation. Despite the customer's frustration, the agent processed the final settlement and confirmed the line would be closed within twenty-four hours, concluding the call politely.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "راح يتم تسوية الحساب وإصدار فاتورة التسوية النهائية وخصم المبلغ المتبقي، وراح ينغلق الخط خلال أربع وعشرين ساعة.",
+        "speaker": "Agent",
+        "start_char": 1003,
+        "end_char": 1114
+      },
+      "promised_by": "Agent",
+      "description": "Settle the account, issue the final billing invoice, and close the line within 24 hours.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "معك رامي. كيف بقدر أساعدك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 33,
+        "end_char": 65
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent maintained a polite and professional tone throughout the call despite the customer's agitation."
     },
     {
+      "evidence": {
+        "text": "أنا متفهم انزعاجك وباعتذر جداً عن التجربة السيئة اللي مريت فيها",
+        "speaker": "Agent",
+        "start_char": 334,
+        "end_char": 397
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent acknowledged the customer's frustration and offered a sincere apology for the bad experience."
     },
     {
+      "evidence": {
+        "text": "راح ينغلق الخط خلال أربع وعشرين ساعة.",
+        "speaker": "Agent",
+        "start_char": 1077,
+        "end_char": 1114
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent successfully addressed the cancellation request and provided a clear timeline for the closure."
     },
     {
+      "evidence": {
+        "text": "بس ممكن أعرف سبب إلغاء الخدمة عشان نقدر نحسنه بالمستقبل؟",
+        "speaker": "Agent",
+        "start_char": 174,
+        "end_char": 230
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent communicated clearly, asked relevant questions, and explained the billing situation understandably."
     },
     {
+      "evidence": {
+        "text": "العفو، سلامتك، ونهار سعيد مع السلامة.",
+        "speaker": "Agent",
+        "start_char": 1193,
+        "end_char": 1230
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent closed the call courteously after confirming the resolution steps with the customer."
     },
     {
+      "evidence": {
+        "text": "مبين عندي إنه فيه مبلغ مستحق قيمته خمسين دينار عن الشهر الماضي.",
+        "speaker": "Agent",
+        "start_char": 572,
+        "end_char": 635
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent accurately retrieved and reported the account's outstanding balance from the system."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "خليني أتأكد من رقم الحساب لو سمحت.",
+        "speaker": "Agent",
+        "start_char": 402,
+        "end_char": 436
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.9,
+      "justification": "The agent followed proper procedure by verifying the customer's account number before accessing account details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "بدي أسكر حساب الإنترنت والخط عندي فوراً، زهقت من كثر المشاكل.",
+          "speaker": "Customer",
+          "start_char": 87,
+          "end_char": 148
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "الرقم هو صفر خمسة سبعة ثمانية تسعة ستة أربعة ثلاثة اثنين واحد.",
+          "speaker": "Customer",
+          "start_char": 447,
+          "end_char": 509
+        },
+        "speaker": "Customer",
+        "score": -0.5,
+        "timestamp_sec": 32.0
+      },
+      {
+        "quote": {
+          "text": "كيف خمسين دينار وأنا طول الشهر النت ما اشتغل عندي أصلاً؟ والله ما أنا دافع ولا قرش زيادة!",
+          "speaker": "Customer",
+          "start_char": 646,
+          "end_char": 735
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "خلص خلص، احسبوا علي اللي بدكم ياه بس خلصوني من هالقصة اليوم!",
+          "speaker": "Customer",
+          "start_char": 921,
+          "end_char": 981
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "وأخيراً! المهم خلصونا وما تشوفوا رقعة وجهي مرة ثانية. شكراً.",
+          "speaker": "Customer",
+          "start_char": 1125,
+          "end_char": 1185
+        },
+        "speaker": "Customer",
+        "score": 0.1,
+        "timestamp_sec": 80.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

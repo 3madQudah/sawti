@@ -1,104 +1,154 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:34:18.902062+00:00",
+    "human_reviewed": false
   },
+  "id": "accd7914-eb2a-433c-9fc4-55a9b33ceac2",
   "call_id": "call_0148_mixed",
   "language": "mixed",
-  "summary": "",
+  "summary": "The customer called to close his internet and landline account because he is relocating abroad. The agent verified his identity, confirmed there were no early termination fees, explained the final bill process, and provided options for returning the router. The account closure was successfully scheduled for the end of the day.",
   "commitments": [],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Ahlan wa sahlan, welcome to Apex Telecom, my name is Rami, kif bage’dek yom?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 83
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained a polite, professional, and welcoming tone throughout the call."
     },
     {
+      "evidence": {
+        "text": "Oh, I'm sorry to hear that you want to disconnect,momken a’ref the reason for closing?",
+        "speaker": "Agent",
+        "start_char": 219,
+        "end_char": 305
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent expressed polite regret upon hearing the customer wanted to disconnect and offered well wishes for his relocation."
     },
     {
+      "evidence": {
+        "text": "Once I submit the request now, it will be scheduled for closure effective end of day today, w el-final invoice will be generated in 48 hours.",
+        "speaker": "Agent",
+        "start_char": 2090,
+        "end_char": 2231
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent fully resolved the customer's request by scheduling the account closure and answering all questions regarding bills and equipment."
     },
     {
+      "evidence": {
+        "text": "The router, meshshān el-device, you can drop it off at any of our branches before you travel, aw momken we send a courier to pick it up, bas el-branch is faster.",
+        "speaker": "Agent",
+        "start_char": 1647,
+        "end_char": 1808
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent explained options clearly and concisely, ensuring the customer understood the router return process."
     },
     {
+      "evidence": {
+        "text": "Is there anything else I can assist you with today?",
+        "speaker": "Agent",
+        "start_char": 2405,
+        "end_char": 2456
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent properly checked for additional needs, wished the customer well, and concluded the call professionally."
     },
     {
+      "evidence": {
+        "text": "Yes, exactly as you said, el-commitment khalas ended last month, so there are zero termination fees, bas just the current month usage.",
+        "speaker": "Agent",
+        "start_char": 1406,
+        "end_char": 1540
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately verified the contract status and correctly informed the customer about the absence of termination fees."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Akid, we can process the cancellation for you, bas I just need to verify some details meshshān security.",
+        "speaker": "Agent",
+        "start_char": 585,
+        "end_char": 689
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent correctly followed verification procedures by asking for the customer's full name and account number before discussing account details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Ahlan Rami, wallah I’m doing well thanks. I actually called because I want to close my internet and landline account.",
+          "speaker": "Customer",
+          "start_char": 94,
+          "end_char": 211
+        },
+        "speaker": "Customer",
+        "score": 0.2,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "No, msh meshkleh b el-service at all, wallah your speeds were great. Bas I’m relocating abroad next week, so khalas ma badoor el-line hōn.",
+          "speaker": "Customer",
+          "start_char": 361,
+          "end_char": 499
+        },
+        "speaker": "Customer",
+        "score": 0.5,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "I’m pretty sure el-contract خلص months ago, bas please double check la enno I don't want any delay.",
+          "speaker": "Customer",
+          "start_char": 1299,
+          "end_char": 1398
+        },
+        "speaker": "Customer",
+        "score": 0.1,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "Mumtaz, that’s great news. Shu el-khatwa el-jayeh? What do I need to do with the router?",
+          "speaker": "Customer",
+          "start_char": 1551,
+          "end_char": 1639
+        },
+        "speaker": "Customer",
+        "score": 0.6,
+        "timestamp_sec": 72.0
+      },
+      {
+        "quote": {
+          "text": "Awesome, thank you so much Rami for your help and excellent service.",
+          "speaker": "Customer",
+          "start_char": 2242,
+          "end_char": 2310
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 104.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

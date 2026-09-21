@@ -1,104 +1,155 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:05:20.227667+00:00",
+    "human_reviewed": false
   },
+  "id": "1deab06f-3584-4a1e-9cf4-64db3b8a4993",
   "call_id": "call_0062_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to request a payment extension on their utility bill because of dissatisfaction with automated cutoff threats and upcoming payday. The agent empathized, successfully granted a payment extension to September 22nd with no late fees, confirmed the update, and closed the call politely.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "I can go ahead and extend your due date to next Friday, the 22nd, with no late fees applied.",
+        "speaker": "Agent",
+        "start_char": 534,
+        "end_char": 626
+      },
+      "promised_by": "Agent",
+      "description": "Extend the payment due date to September 22nd with no late fees.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Thank you for calling Metro Utilities, my name is Sarah. How can I help you today?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 89
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained a polite, calm, and professional demeanor throughout the call, especially when the customer was venting frustration."
     },
     {
+      "evidence": {
+        "text": "I completely understand, and I can certainly help you with a payment extension today.",
+        "speaker": "Agent",
+        "start_char": 260,
+        "end_char": 345
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent actively acknowledged the customer's frustration and validated their feelings immediately."
     },
     {
+      "evidence": {
+        "text": "You're all set. Your new due date is September 22nd. Is there anything else I can assist you with today?",
+        "speaker": "Agent",
+        "start_char": 700,
+        "end_char": 804
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent fully resolved the customer's issue by setting the requested payment extension and waiving late fees."
     },
     {
+      "evidence": {
+        "text": "It is updated immediately. Have a good rest of your day.",
+        "speaker": "Agent",
+        "start_char": 928,
+        "end_char": 984
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent communicated clearly, providing exact details on the new due date and system updates without jargon."
     },
     {
+      "evidence": {
+        "text": "Is there anything else I can assist you with today?",
+        "speaker": "Agent",
+        "start_char": 753,
+        "end_char": 804
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent offered further assistance and properly closed the call after addressing the main issue."
     },
     {
+      "evidence": {
+        "text": "I can go ahead and extend your due date to next Friday, the 22nd, with no late fees applied.",
+        "speaker": "Agent",
+        "start_char": 534,
+        "end_char": 626
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The information provided regarding the extension date and lack of late fees was correct and consistent."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "I can go ahead and extend your due date to next Friday, the 22nd, with no late fees applied.",
+        "speaker": "Agent",
+        "start_char": 534,
+        "end_char": 626
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed proper procedure by verifying the request and updating the account correctly."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Yeah, I'm looking at my bill and it's ridiculous. I need an extension on my payment because I get paid next Friday, and I don't have time for a lecture.",
+          "speaker": "Customer",
+          "start_char": 100,
+          "end_char": 252
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Good, because I'm sick of getting threat messages about my power being shut off when I've been with you people for ten years.",
+          "speaker": "Customer",
+          "start_char": 357,
+          "end_char": 482
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Finally, someone who just does their job. Yes, do that.",
+          "speaker": "Customer",
+          "start_char": 637,
+          "end_char": 692
+        },
+        "speaker": "Customer",
+        "score": 0.4,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "No, that's it. Just make sure it actually updates in your system so I don't get any more automated calls.",
+          "speaker": "Customer",
+          "start_char": 815,
+          "end_char": 920
+        },
+        "speaker": "Customer",
+        "score": 0.2,
+        "timestamp_sec": 56.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

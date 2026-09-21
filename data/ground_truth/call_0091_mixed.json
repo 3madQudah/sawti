@@ -1,104 +1,200 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:09:42.090448+00:00",
+    "human_reviewed": false
   },
+  "id": "d475bec0-feed-4557-a597-503da1e067ad",
   "call_id": "call_0091_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
-  "compliance_flags": [],
+  "summary": "The customer called to complain about a complete internet disconnection affecting their important work. The agent checked the system, identified an unplanned neighborhood maintenance update, assured the customer service would return within 10 minutes, and offered 5 GB of free data as compensation. The call ended satisfactorily.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "bas it should be back online fi khesal 10 minutes max.",
+        "speaker": "Agent",
+        "start_char": 582,
+        "end_char": 636
+      },
+      "promised_by": "Agent",
+      "description": "Internet service will be back online within 10 minutes.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "I will add 5 GB free to your line right now.",
+        "speaker": "Agent",
+        "start_char": 769,
+        "end_char": 813
+      },
+      "promised_by": "Agent",
+      "description": "Add 5 GB free data to the customer's line immediately.",
+      "deadline": null
+    }
+  ],
+  "compliance_flags": [
+    {
+      "evidence": {
+        "text": "how can I help you today ya habibi?",
+        "speaker": "Agent",
+        "start_char": 55,
+        "end_char": 90
+      },
+      "rule_id": "unprofessional_language",
+      "severity": "low",
+      "description": "The agent used overly familiar and unprofessional colloquial phrasing (\"ya habibi\") with the customer."
+    },
+    {
+      "evidence": {
+        "text": "let me check the system meshank nshof shoo el moshkela fee area tabaatak.",
+        "speaker": "Agent",
+        "start_char": 296,
+        "end_char": 369
+      },
+      "rule_id": "identity_verification_failure",
+      "severity": "medium",
+      "description": "The agent discussed account/service details without first verifying the customer's identity."
+    }
+  ],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "how can I help you today ya habibi?",
+        "speaker": "Agent",
+        "start_char": 55,
+        "end_char": 90
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.5,
+      "justification": "The agent was friendly and empathetic but used unprofessional, overly casual terms like 'ya habibi'."
     },
     {
+      "evidence": {
+        "text": "Wallah I completely understand your frustration",
+        "speaker": "Agent",
+        "start_char": 247,
+        "end_char": 294
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent immediately acknowledged and validated the customer's frustration with their internet outage."
     },
     {
+      "evidence": {
+        "text": "shukran jazeelan for the quick help, I appreciate it.",
+        "speaker": "Customer",
+        "start_char": 856,
+        "end_char": 909
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully diagnosed the cause, provided a clear timeframe, and compensated the customer effectively."
     },
     {
+      "evidence": {
+        "text": "yes wallah there is an unplanned maintenance update in your neighborhood, bas it should be back online fi khesal 10 minutes max.",
+        "speaker": "Agent",
+        "start_char": 508,
+        "end_char": 636
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The explanation regarding the maintenance update and resolution time was clear, despite mixing English and Arabic."
     },
     {
+      "evidence": {
+        "text": "Min aywa khdma, is there anything else I can help you with today?",
+        "speaker": "Agent",
+        "start_char": 917,
+        "end_char": 982
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent asked if further assistance was needed and closed politely after confirmation."
     },
     {
+      "evidence": {
+        "text": "yes wallah there is an unplanned maintenance update in your neighborhood",
+        "speaker": "Agent",
+        "start_char": 508,
+        "end_char": 580
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately identified the network status from the system."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "let me check the system meshank nshof shoo el moshkela fee area tabaatak.",
+        "speaker": "Agent",
+        "start_char": 296,
+        "end_char": 369
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.4,
+      "justification": "The agent failed to perform customer identity verification before accessing and discussing account/service issues."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Ya ukhti my internet is completely disconnected since an hour ago, wallah this is unacceptable ana 3andi important work lazem akhlaso now!",
+          "speaker": "Customer",
+          "start_char": 101,
+          "end_char": 239
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Inshallah ykon feeh a quick fix because mesh ma3cool every week nfs el issue with the 5G data.",
+          "speaker": "Customer",
+          "start_char": 380,
+          "end_char": 474
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Ah okay, fa keda ya3ni mesh a permanent cut? Yaret tkoun right.",
+          "speaker": "Customer",
+          "start_char": 647,
+          "end_char": 710
+        },
+        "speaker": "Customer",
+        "score": 0.1,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "Wallah that's very nice of you, shukran jazeelan for the quick help, I appreciate it.",
+          "speaker": "Customer",
+          "start_char": 824,
+          "end_char": 909
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "No, that's everything, thank you so much, bye bye.",
+          "speaker": "Customer",
+          "start_char": 993,
+          "end_char": 1043
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 72.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

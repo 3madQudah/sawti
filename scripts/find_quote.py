@@ -13,85 +13,22 @@ If the substring appears more than once, every match is printed with its
 line number so a human can pick the right one — this never guesses which
 one was meant. If it appears zero times, that is reported clearly: evidence
 must be verbatim, so a zero-match result is likely a typo or paraphrase.
+
+The matching itself lives in `sawti.quotes` so that the programmatic callers
+(reference-label generation, grounding-precision scoring) locate quotes with
+exactly the same logic this CLI shows a human. `QuoteMatch` and
+`find_quote_matches` are re-exported here for convenience.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
-import re
-from dataclasses import dataclass
 from pathlib import Path
 
-_SPEAKER_RE = re.compile(r"^(Agent|Customer):\s*")
+from sawti.quotes import QuoteMatch, find_quote_matches
 
-
-@dataclass(frozen=True)
-class QuoteMatch:
-    """One occurrence of a searched-for substring within a transcript.
-
-    Attributes:
-        line_number: 1-indexed line number of the line containing the match.
-        speaker: Speaker parsed from the containing line's "Agent:"/"Customer:"
-            prefix, or None if the line doesn't start with one.
-        start_char: Inclusive start offset into the full transcript text.
-        end_char: Exclusive end offset into the full transcript text.
-        line_text: Full text of the line containing the match, for context.
-    """
-
-    line_number: int
-    speaker: str | None
-    start_char: int
-    end_char: int
-    line_text: str
-
-
-def _parse_speaker(line_text: str) -> str | None:
-    """Parse the speaker label from a line's "Agent:"/"Customer:" prefix, if present."""
-    match = _SPEAKER_RE.match(line_text)
-    return match.group(1) if match else None
-
-
-def find_quote_matches(text: str, substring: str) -> list[QuoteMatch]:
-    """Find every non-overlapping occurrence of `substring` in `text`.
-
-    Args:
-        text: Full transcript text to search (e.g. a synthetic call file's contents).
-        substring: Exact, verbatim text to find. Must be non-empty.
-
-    Returns:
-        One `QuoteMatch` per occurrence, in order of appearance. Empty if
-        `substring` does not appear at all.
-
-    Raises:
-        ValueError: If `substring` is empty.
-    """
-    if not substring:
-        raise ValueError("substring must be non-empty")
-
-    matches: list[QuoteMatch] = []
-    start = 0
-    while True:
-        start_char = text.find(substring, start)
-        if start_char == -1:
-            break
-        end_char = start_char + len(substring)
-        line_start = text.rfind("\n", 0, start_char) + 1
-        newline_idx = text.find("\n", start_char)
-        line_end = newline_idx if newline_idx != -1 else len(text)
-        line_text = text[line_start:line_end]
-        line_number = text.count("\n", 0, start_char) + 1
-        matches.append(
-            QuoteMatch(
-                line_number=line_number,
-                speaker=_parse_speaker(line_text),
-                start_char=start_char,
-                end_char=end_char,
-                line_text=line_text,
-            )
-        )
-        start = end_char  # non-overlapping: resume search after this match
-    return matches
+__all__ = ["QuoteMatch", "find_quote_matches", "main"]
 
 
 def _print_match(substring: str, match: QuoteMatch) -> None:

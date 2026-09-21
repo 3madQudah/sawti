@@ -1,104 +1,177 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:06:32.114699+00:00",
+    "human_reviewed": false
   },
+  "id": "079e8780-5289-4152-9bfa-0ca2a0f353cf",
   "call_id": "call_0071_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to complain about a delayed order that was supposed to arrive before last Thursday, expressing frustration because he needs the items for a trip tomorrow. The agent apologized, identified a courier delay due to road maintenance, and assured the customer that the order is out for delivery today and will arrive before 3 PM. The call ended with the customer feeling reassured and thanking the agent.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "رح أعمل urgent note وأتصل شخصياً بالـ supervisor تاع الـ dispatch عشان أضمن إنه المندوب يمر عليك أول واحد، قبل الـ 3 PM بيكون عندك.",
+        "speaker": "Agent",
+        "start_char": 909,
+        "end_char": 1040
+      },
+      "promised_by": "Agent",
+      "description": "The agent promised to make an urgent note, contact the dispatch supervisor personally, and ensure the courier delivers the package to the customer before 3 PM today.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "راح أتابع الشحنة خطوة بخطوة بنفسي ورح أبعث لك SMS أول ما تتحرك من الـ hub.",
+        "speaker": "Agent",
+        "start_char": 1157,
+        "end_char": 1231
+      },
+      "promised_by": "Agent",
+      "description": "The agent promised to track the shipment step-by-step and send an SMS notification as soon as it leaves the hub.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "ولا يهمك سيدي، بعتذر منك كتير على التأخير، ممكن تعطيني الـ tracking number لو سمحت عشان أشيك بالموضوع؟",
+        "speaker": "Agent",
+        "start_char": 170,
+        "end_char": 272
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained a polite, calm, and professional demeanor throughout the call, addressing the customer with respect."
     },
     {
+      "evidence": {
+        "text": "حقك علي، بجد بتفهم قديش الموضوع مزعج، وبقدر أقول لك إنه السيستم بيعطيني إنه الطلب صار مع الـ driver اليوم وراح يطلع معك اليوم أكيد.",
+        "speaker": "Agent",
+        "start_char": 688,
+        "end_char": 819
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent actively acknowledged the customer's frustration, validated his feelings, and apologized sincerely for the delay."
     },
     {
+      "evidence": {
+        "text": "رح أعمل urgent note وأتصل شخصياً بالـ supervisor تاع الـ dispatch عشان أضمن إنه المندوب يمر عليك أول واحد، قبل الـ 3 PM بيكون عندك.",
+        "speaker": "Agent",
+        "start_char": 909,
+        "end_char": 1040
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully resolved the customer's immediate concern by providing status details and arranging an expedited priority delivery before his trip."
     },
     {
+      "evidence": {
+        "text": "أه، شايف الـ package واصلة على الـ delivery hub من يومين بس للأسف صار فيه delay بالـ courier بسبب أعمال صيانة بالمنطقة.",
+        "speaker": "Agent",
+        "start_char": 387,
+        "end_char": 506
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent explained the reason for the delay clearly and concisely without using confusing jargon."
     },
     {
+      "evidence": {
+        "text": "العفو سيدي، هذا واجبنا، في أي شي ثاني بقدر أساعدك فيه اليوم؟",
+        "speaker": "Agent",
+        "start_char": 1300,
+        "end_char": 1360
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent closed the call professionally by offering further assistance, wishing the customer a safe trip, and bidding farewell properly."
     },
     {
+      "evidence": {
+        "text": "أه، شايف الـ package واصلة على الـ delivery hub من يومين بس للأسف صار فيه delay بالـ courier",
+        "speaker": "Agent",
+        "start_char": 387,
+        "end_char": 479
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately checked the system using the provided tracking number and retrieved correct information regarding the package status."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "ممكن تعطيني الـ tracking number لو سمحت عشان أشيك بالموضوع؟",
+        "speaker": "Agent",
+        "start_char": 213,
+        "end_char": 272
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed proper procedure by requesting the tracking number to look up the shipment details in the system."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "يا أخي أنا صراحة جداً زعلان، الـ order تبعي صار له أسبوعين متأخر وما وصلني شو هالشركة!",
+          "speaker": "Customer",
+          "start_char": 76,
+          "end_char": 162
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "يعني شو دخلني بأعمال الصيانة؟ أنا دافع extra عشان Express shipping، مش معقول هيك التأخير!",
+          "speaker": "Customer",
+          "start_char": 517,
+          "end_char": 606
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 32.0
+      },
+      {
+        "quote": {
+          "text": "أنا عندي موعد سفر بكره وكنت محتاج الـ items ضروري جداً بالسفرة.",
+          "speaker": "Customer",
+          "start_char": 617,
+          "end_char": 680
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "والله يا رامي لو وصل مثل ما عم بتقول بكون كتير ممنونك، لأن جد توترت من القصة.",
+          "speaker": "Customer",
+          "start_char": 1051,
+          "end_char": 1128
+        },
+        "speaker": "Customer",
+        "score": 0.2,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "ممتاز، هيك شغل مرتب، شكراً لك ولتجاوبك السريع معي.",
+          "speaker": "Customer",
+          "start_char": 1242,
+          "end_char": 1292
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 80.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

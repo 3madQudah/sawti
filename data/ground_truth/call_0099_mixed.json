@@ -1,104 +1,167 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:10:48.627965+00:00",
+    "human_reviewed": false
   },
+  "id": "dab0f89c-e679-4ef7-92b0-30360949beb6",
   "call_id": "call_0099_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
-  "compliance_flags": [],
+  "summary": "The customer called in extreme frustration, demanding an immediate account closure due to unresolved internet complaints lasting two months. The agent attempted to calm the customer and investigate, but ultimately agreed to proceed with the account cancellation procedures after the customer refused troubleshooting.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "رح أبلش بـ procedures إلغاء الحساب.",
+        "speaker": "Agent",
+        "start_char": 475,
+        "end_char": 510
+      },
+      "promised_by": "Agent",
+      "description": "Start the account cancellation procedures.",
+      "deadline": null
+    }
+  ],
+  "compliance_flags": [
+    {
+      "evidence": {
+        "text": "مرحبًا معك الشركة، كيف بقدر أساعدك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 48
+      },
+      "rule_id": "missing_agent_and_company_name",
+      "severity": "medium",
+      "description": "The agent failed to state their own name and the specific name of the company at the beginning of the call."
+    },
+    {
+      "evidence": {
+        "text": "ولا يهمك سيدي، خليني أعمل check للـ system وأشوف وين الـ problem بالضبط.",
+        "speaker": "Agent",
+        "start_char": 273,
+        "end_char": 345
+      },
+      "rule_id": "missing_customer_verification",
+      "severity": "high",
+      "description": "The agent proceeded to discuss account system checks without verifying the customer's identity first."
+    }
+  ],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "سيدي أرجوك تهدا، ليش بدك تعمل الـ closure؟ شو المشكلة صارت؟",
+        "speaker": "Agent",
+        "start_char": 119,
+        "end_char": 178
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.5,
+      "justification": "The agent told the customer to calm down rather than using professional de-escalation techniques, though they remained relatively composed."
     },
     {
+      "evidence": {
+        "text": "ولا يهمك سيدي، خليني أعمل check للـ system وأشوف وين الـ problem بالضبط.",
+        "speaker": "Agent",
+        "start_char": 273,
+        "end_char": 345
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The agent acknowledged the customer's frustration with a supportive phrase ('ولا يهمك'), but failed to deeply address the two-month grievance."
     },
     {
+      "evidence": {
+        "text": "رح أبلش بـ procedures إلغاء الحساب.",
+        "speaker": "Agent",
+        "start_char": 475,
+        "end_char": 510
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.4,
+      "justification": "The resolution was simply giving in to account closure rather than salvaging the customer relationship or resolving the underlying technical issue."
     },
     {
+      "evidence": {
+        "text": "عم بحاول أساعدك عشان ما تخسر الـ offers، بس تمام، رح أبلش بـ procedures إلغاء الحساب.",
+        "speaker": "Agent",
+        "start_char": 425,
+        "end_char": 510
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent's communication was clear and straightforward, though heavily mixed with Arabic and English code-switching."
     },
     {
+      "evidence": {
+        "text": "يلا بسرعة خلصنا، ومش رح أدف ولا قرش زيادة على الـ bill الأخيرة، سامع؟",
+        "speaker": "Customer",
+        "start_char": 521,
+        "end_char": 590
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.2,
+      "justification": "The call ended abruptly with the customer shouting demands and threats about the bill without a proper professional closing from the agent."
     },
     {
+      "evidence": {
+        "text": "ولا يهمك سيدي، خليني أعمل check للـ system وأشوف وين الـ problem بالضبط.",
+        "speaker": "Agent",
+        "start_char": 273,
+        "end_char": 345
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.5,
+      "justification": "The agent offered to check the system, but the information provided was generic and did not resolve the technical complaint."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "مرحبًا معك الشركة، كيف بقدر أساعدك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 48
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.3,
+      "justification": "The agent violated multiple basic procedures including failing to identify themselves, name the company, and verify customer identity."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أنا طالع روحي منكم، بدي أسكر الـ account تاعي فورًا!",
+          "speaker": "Customer",
+          "start_char": 59,
+          "end_char": 111
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "ما بدي check ولا بدي شي منك! Just close my account خلاص زهقت!",
+          "speaker": "Customer",
+          "start_char": 356,
+          "end_char": 417
+        },
+        "speaker": "Customer",
+        "score": -1.0,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "يلا بسرعة خلصنا، ومش رح أدف ولا قرش زيادة على الـ bill الأخيرة، سامع؟",
+          "speaker": "Customer",
+          "start_char": 521,
+          "end_char": 590
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 40.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

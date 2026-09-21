@@ -1,104 +1,177 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T10:58:33.027411+00:00",
+    "human_reviewed": false
   },
+  "id": "f93d2a3f-95ef-47e0-933d-4a077d196105",
   "call_id": "call_0021_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called back extremely upset regarding poor service and rude behavior from a previous agent who interrupted them and raised her voice while discussing a bill. The customer demanded to speak to a manager and wanted disciplinary action taken against the previous agent. The agent attempted to apologize, register a complaint, and verify account details, but the customer refused to let the agent check the system or transfer properly at first, though the call eventually ends with the agent transferring the call to a supervisor as requested.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "خلينا نسجل complaint رسمية بحقها",
+        "speaker": "Agent",
+        "start_char": 632,
+        "end_char": 664
+      },
+      "promised_by": "Agent",
+      "description": "Register an official complaint against the previous agent.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "أنا هسا بحولك على الـ supervisor",
+        "speaker": "Agent",
+        "start_char": 873,
+        "end_char": 905
+      },
+      "promised_by": "Agent",
+      "description": "Transfer the customer to a supervisor.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "أنا كثير متأسف، هذا الشي أبداً مش مقبول وباعتذر منك نيابة عن الشركة.",
+        "speaker": "Agent",
+        "start_char": 403,
+        "end_char": 471
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent maintained a calm, polite, and apologetic demeanor despite the customer's extreme anger and aggressive language."
     },
     {
+      "evidence": {
+        "text": "أنا كثير متأسف، هذا الشي أبداً مش مقبول وباعتذر منك نيابة عن الشركة.",
+        "speaker": "Agent",
+        "start_char": 403,
+        "end_char": 471
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent actively validated the customer's frustration and apologized sincerely on behalf of the company."
     },
     {
+      "evidence": {
+        "text": "حاضر يا سيدي، ثواني وكون معنا الـ supervisor، بتمنى منك تضل على الخط.",
+        "speaker": "Agent",
+        "start_char": 1533,
+        "end_char": 1602
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent successfully escalated the customer to a supervisor as demanded, fulfilling the core request despite the customer's resistance."
     },
     {
+      "evidence": {
+        "text": "أنا بس بدي أتأكد من الـ details عشان لما أحولك للـ supervisor يعرف شو المشكلة بالكامل.",
+        "speaker": "Agent",
+        "start_char": 1123,
+        "end_char": 1209
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent communicated clearly, explaining next steps and reasons for needing details before transfer."
     },
     {
+      "evidence": {
+        "text": "إن شاء الله، ولا يهمك، جاري التحويل حالاً.",
+        "speaker": "Agent",
+        "start_char": 1694,
+        "end_char": 1736
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The call closed with a clear statement that the transfer was happening, though it ended with a warm transfer to a supervisor rather than full standalone resolution."
     },
     {
+      "evidence": {
+        "text": "بس ممكن تعطيني الـ account number لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 666,
+        "end_char": 708
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent correctly attempted to collect the account number to process the complaint and supervisor transfer."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "خلينا نسجل complaint رسمية بحقها، بس ممكن تعطيني الـ account number لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 632,
+        "end_char": 708
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.8,
+      "justification": "The agent followed proper procedure by attempting to verify account details and logging a complaint before transferring to a supervisor."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أنا كتير معصب والسبب الـ service تاعكم والـ attitude تاع الـ agent اللي حكيت معها قبل شوي!",
+          "speaker": "Customer",
+          "start_char": 77,
+          "end_char": 167
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "الـ apology تبعتك ما بتكفي! The way she spoke to me was unacceptable بكل معنى الكلمة",
+          "speaker": "Customer",
+          "start_char": 482,
+          "end_char": 566
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "I want to speak with a manager right now!",
+          "speaker": "Customer",
+          "start_char": 800,
+          "end_char": 841
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "لا تحولني ولا تشيك على إشي! You people always waste my time!",
+          "speaker": "Customer",
+          "start_char": 979,
+          "end_char": 1039
+        },
+        "speaker": "Customer",
+        "score": -1.0,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "أنا هادئ بس الـ customer service تاعكم زفت! والـ agent هاي لازم يتم فصلها من شغلها اليوم قبل بكره!",
+          "speaker": "Customer",
+          "start_char": 1220,
+          "end_char": 1318
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 72.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:07:55.364392+00:00",
+    "human_reviewed": false
   },
+  "id": "aee3e50e-9788-4a68-8b31-d1b80415b8c2",
   "call_id": "call_0081_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called in extreme anger because his monthly rate increased by thirty dollars due to an automatic contract renewal, which he claims he never agreed to. The agent attempted to investigate, explained the expiration of the promotional discount, and tried to calm the customer down, but the conversation escalated when the agent asked the customer to lower his voice. The call ended with the agent transferring the customer to a supervisor at the customer's request.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "I can certainly transfer you to a supervisor if you prefer, Mr. Vance. Please hold for just a moment while I connect you.",
+        "speaker": "Agent",
+        "start_char": 2055,
+        "end_char": 2176
+      },
+      "promised_by": "Agent",
+      "description": "Transfer the customer to a supervisor.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Mr. Vance, I understand you're upset, but I assure you—",
+        "speaker": "Agent",
+        "start_char": 1446,
+        "end_char": 1501
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent maintained composure despite the customer's hostility, though asking the customer to lower his voice exacerbated the tension."
     },
     {
+      "evidence": {
+        "text": "I certainly understand your frustration regarding an unexpected charge on your bill.",
+        "speaker": "Agent",
+        "start_char": 276,
+        "end_char": 360
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The agent acknowledged the customer's frustration initially, though it came across as slightly scripted to the customer."
     },
     {
+      "evidence": {
+        "text": "I can certainly transfer you to a supervisor if you prefer, Mr. Vance. Please hold for just a moment while I connect you.",
+        "speaker": "Agent",
+        "start_char": 2055,
+        "end_char": 2176
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.5,
+      "justification": "The agent could not resolve the contract dispute directly and had to escalate to a supervisor."
     },
     {
+      "evidence": {
+        "text": "It looks like your promotional discount expired because your two-year contract recently renewed automatically.",
+        "speaker": "Agent",
+        "start_char": 789,
+        "end_char": 899
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent explained the cause of the charge clearly and directly to the customer."
     },
     {
+      "evidence": {
+        "text": "Please hold for just a moment while I connect you.",
+        "speaker": "Agent",
+        "start_char": 2126,
+        "end_char": 2176
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The call was not fully resolved but was appropriately handed off via a warm transfer after the customer demanded a supervisor."
     },
     {
+      "evidence": {
+        "text": "I do see a rate change that took effect at the start of this billing cycle. It looks like your promotional discount expired because your two-year contract recently renewed automatically.",
+        "speaker": "Agent",
+        "start_char": 713,
+        "end_char": 899
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent correctly identified the account details and the reason for the rate change using the system notes."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "May I have your name and account number, please?",
+        "speaker": "Agent",
+        "start_char": 448,
+        "end_char": 496
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.9,
+      "justification": "The agent followed proper procedure by pulling up the account and checking previous notes before discussing details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "I am absolutely furious, that's how I am. I just opened my latest bill and you people have hiked my monthly rate by thirty dollars without my permission!",
+          "speaker": "Customer",
+          "start_char": 115,
+          "end_char": 268
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "My name is Robert Vance and the account number is on the screen in front of you. And don't give me that scripted sympathy routine. Fix this right now!",
+          "speaker": "Customer",
+          "start_char": 507,
+          "end_char": 657
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Automatically renewed? Are you out of your mind? I never agreed to any renewal! I told the last agent I spoke with that I wanted to cancel my service when my term was up!",
+          "speaker": "Customer",
+          "start_char": 910,
+          "end_char": 1080
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "That is a complete lie! Nobody sent me anything, and I certainly never agreed to lock myself into another two years of your overpriced garbage service!",
+          "speaker": "Customer",
+          "start_char": 1287,
+          "end_char": 1438
+        },
+        "speaker": "Customer",
+        "score": -1.0,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "Do not tell me to lower my voice! You are stealing my money with these scammy renewal practices! Get me your supervisor right now!",
+          "speaker": "Customer",
+          "start_char": 1917,
+          "end_char": 2047
+        },
+        "speaker": "Customer",
+        "score": -1.0,
+        "timestamp_sec": 72.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

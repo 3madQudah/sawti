@@ -1,104 +1,155 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:22:51.131965+00:00",
+    "human_reviewed": false
   },
+  "id": "a001c92f-60fd-4977-aa35-ecbffbf99ce5",
   "call_id": "call_0140_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to report a complete internet outage since the morning. The agent checked the system, identified an unplanned area outage with technicians currently working on it, and informed the customer that service would be restored within two hours. The call ended politely and satisfactorily.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "المفروض الـ service ترجع خلال ساعتين زمان maximum.",
+        "speaker": "Agent",
+        "start_char": 490,
+        "end_char": 540
+      },
+      "promised_by": "Agent",
+      "description": "Restore internet service within a maximum of two hours",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "أهلاً معك رامي، كيف بقدر أساعدك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 45
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained a polite, respectful, and professional tone throughout the interaction."
     },
     {
+      "evidence": {
+        "text": "ولا يهمك يا أستاذ، خليني أشيك على السيستم فوراً.",
+        "speaker": "Agent",
+        "start_char": 141,
+        "end_char": 189
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent reassured the customer right away and showed understanding regarding the inconvenience."
     },
     {
+      "evidence": {
+        "text": "حسب الـ update اللي وصلني، المفروض الـ service ترجع خلال ساعتين زمان maximum.",
+        "speaker": "Agent",
+        "start_char": 463,
+        "end_char": 540
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately identified the root cause and provided a clear resolution timeframe."
     },
     {
+      "evidence": {
+        "text": "لا أبداً، الـ issue مش من عندك، هي عامة بالمنطقة. بس تخلص الصيانة بترجع لحالها automatically.",
+        "speaker": "Agent",
+        "start_char": 611,
+        "end_char": 704
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent explained clearly and simply that the issue was an area outage and no action was needed from the customer."
     },
     {
+      "evidence": {
+        "text": "الله يعافيك، سداقة بخدمتك، نهارك سعيد!",
+        "speaker": "Agent",
+        "start_char": 865,
+        "end_char": 903
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent asked if further help was needed and closed the call with appropriate pleasantries."
     },
     {
+      "evidence": {
+        "text": "عم بشوف إنه فيه unplanned outage بمنطقتكم، والـ technicians عم بشتغلوا عليها حالياً.",
+        "speaker": "Agent",
+        "start_char": 310,
+        "end_char": 394
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The information provided about the unplanned outage and technician status matched the system check."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "ممكن تعطيني الـ account number لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 190,
+        "end_char": 229
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed proper procedure by asking for the account number to verify the customer before looking up details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "عندي مشكلة بالـ internet connection، من صبح اليوم وهو مقطوع نهائياً.",
+          "speaker": "Customer",
+          "start_char": 65,
+          "end_char": 133
+        },
+        "speaker": "Customer",
+        "score": -0.5,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "آه فهمت، طيب بتعرف تقريباً قديش رح يطول لحتى يرجع؟",
+          "speaker": "Customer",
+          "start_char": 405,
+          "end_char": 455
+        },
+        "speaker": "Customer",
+        "score": 0.0,
+        "timestamp_sec": 32.0
+      },
+      {
+        "quote": {
+          "text": "تمام ممتاز، ما في داعي أعمل restart للـ router يعني؟",
+          "speaker": "Customer",
+          "start_char": 551,
+          "end_char": 603
+        },
+        "speaker": "Customer",
+        "score": 0.5,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "طيب عظيم، شكراً كتير لك ولحسن تعاونك.",
+          "speaker": "Customer",
+          "start_char": 715,
+          "end_char": 752
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 56.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

@@ -5,7 +5,9 @@ Phase 0: foundational abstraction; concrete providers are phase 1.
 
 from __future__ import annotations
 
+import asyncio
 from abc import ABC, abstractmethod
+from collections.abc import Coroutine
 from typing import Any, TypeVar
 
 from pydantic import BaseModel
@@ -13,6 +15,13 @@ from pydantic import BaseModel
 from sawti.config import get_settings
 
 ResponseModelT = TypeVar("ResponseModelT", bound=BaseModel)
+_ResultT = TypeVar("_ResultT")
+
+# A provider call that never returns will stall an entire batch run: a 150-call
+# generation job was observed hanging for minutes inside a single request with
+# no client-side deadline. Callers that loop over many calls must bound each one
+# so a hang degrades into an ordinary retryable error.
+DEFAULT_REQUEST_TIMEOUT_SECONDS = 120.0
 
 
 class LLMProvider(ABC):
@@ -67,6 +76,31 @@ class LLMProvider(ABC):
         """
         # TODO(phase-1): implement structured/tool-call based extraction into response_model.
         raise NotImplementedError
+
+
+def run_with_timeout(
+    coro: Coroutine[Any, Any, _ResultT],
+    *,
+    timeout: float = DEFAULT_REQUEST_TIMEOUT_SECONDS,
+) -> _ResultT:
+    """Run a provider coroutine to completion under a wall-clock deadline.
+
+    Args:
+        coro: The provider call to await.
+        timeout: Seconds to allow before giving up.
+
+    Returns:
+        Whatever `coro` returned.
+
+    Raises:
+        TimeoutError: If `coro` did not finish within `timeout`. Callers with a
+            retry loop should treat this like any other provider error.
+    """
+
+    async def _await() -> _ResultT:
+        return await asyncio.wait_for(coro, timeout=timeout)
+
+    return asyncio.run(_await())
 
 
 def get_llm_provider() -> LLMProvider:

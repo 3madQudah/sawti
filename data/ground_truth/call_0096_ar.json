@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:10:24.327968+00:00",
+    "human_reviewed": false
   },
+  "id": "138e5426-cd68-40ea-866a-5656e4995c7d",
   "call_id": "call_0096_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to inquire about a delayed order that was supposed to arrive three days ago. The agent investigated, explained that the shipping company was experiencing delays, and apologized for the inconvenience. When the customer expressed urgent need for the device and asked for alternatives, the agent escalated the issue by submitting an urgent delivery request with the shipping company and informed the customer that a tracking update would be sent via SMS. The call ended politely and resolved to the customer's satisfaction.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "هس سجلت الطلب المستعجل، ورقم المتابعة راح يوصلك برسالة نصية على تلفونك.",
+        "speaker": "Agent",
+        "start_char": 1613,
+        "end_char": 1684
+      },
+      "promised_by": "Agent",
+      "description": "Submit an urgent request to the shipping company and send tracking details via SMS.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
-      "criterion": "professionalism",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
+        "text": "أنا مقدر موقفك تماماً يا سيدي، وبعتذر عن الإزعاج اللي صار معك.",
+        "speaker": "Agent",
+        "start_char": 1189,
+        "end_char": 1251
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent showed strong empathy by acknowledging the customer's frustration and apologizing for the delay."
     },
     {
+      "evidence": {
+        "text": "أهلاً يا سيدي، أنا والله اتصلت عشان عندي مشكلة ومش فاهم شو القصة.",
+        "speaker": "Customer",
+        "start_char": 73,
+        "end_char": 138
+      },
+      "criterion": "professionalism",
+      "score": 0.9,
+      "justification": "The agent maintained a polite, respectful, and helpful tone throughout the call."
+    },
+    {
+      "evidence": {
+        "text": "بئدر أرفع لك طلب عاجل لشركة الشحن عشان يحاولوا يوصلوه بأسرع وقت ممكن.",
+        "speaker": "Agent",
+        "start_char": 1458,
+        "end_char": 1527
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.85,
+      "justification": "The agent successfully addressed the customer's concern by filing an urgent delivery request when the customer could not pick it up directly."
     },
     {
+      "evidence": {
+        "text": "هو عادةً بيقترب من عشرة أرقام، بتبدأ الحروف تبعه بـ آي بي.",
+        "speaker": "Agent",
+        "start_char": 454,
+        "end_char": 512
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent communicated clearly, guiding the customer on how to find the order number, though there was a minor misunderstanding with order number prefix digits."
     },
     {
+      "evidence": {
+        "text": "العفو يا سيدي، هل في أي خدمة تاني بقدر أساعدك فيها اليوم؟",
+        "speaker": "Agent",
+        "start_char": 1853,
+        "end_char": 1910
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent followed proper closure steps by asking if further assistance was needed and saying a polite goodbye."
     },
     {
+      "evidence": {
+        "text": "مبين عندي إنه الطلب طلع من المستودع بس صار في تأخير بشركة الشحن.",
+        "speaker": "Agent",
+        "start_char": 710,
+        "end_char": 774
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.85,
+      "justification": "The agent accurately checked the system and provided correct information regarding the shipment's status and shipping company delay."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "عذراً منك يا سيدي، ممكن تعطيني رقم الطلب لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 319,
+        "end_char": 368
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.9,
+      "justification": "The agent adhered to standard procedure by asking for the order number to look up the account details before answering."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أنا والله اتصلت عشان عندي مشكلة ومش فاهم شو القصة.",
+          "speaker": "Customer",
+          "start_char": 88,
+          "end_char": 138
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "عذراً مش سامع منيح، بتقصد إنه خلص راح علي ولا شو؟",
+          "speaker": "Customer",
+          "start_char": 785,
+          "end_char": 834
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "كيف يعني بعد بكره؟ أنا محتاج الجهاز ضروري اليوم!",
+          "speaker": "Customer",
+          "start_char": 1133,
+          "end_char": 1181
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 88.0
+      },
+      {
+        "quote": {
+          "text": "يا ريت والله، بتعمل معروف كبير لو بتقدر تسويها.",
+          "speaker": "Customer",
+          "start_char": 1538,
+          "end_char": 1585
+        },
+        "speaker": "Customer",
+        "score": 0.4,
+        "timestamp_sec": 112.0
+      },
+      {
+        "quote": {
+          "text": "لا سلامتك، كفيت ووفيت، يعطيك العافية.",
+          "speaker": "Customer",
+          "start_char": 1921,
+          "end_char": 1958
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 136.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

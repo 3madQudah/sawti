@@ -1,104 +1,199 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:09:51.461490+00:00",
+    "human_reviewed": false
   },
+  "id": "f634f4d6-618a-4e01-a541-07af8ff4bfa3",
   "call_id": "call_0092_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called in an angry state demanding the immediate cancellation of his internet and landline subscription due to persistent slow speeds and unaddressed technical support tickets. The agent apologized, validated his frustration, successfully de-escalated the situation by offering a 50% discount and a free speed upgrade with no cancellation penalty if performance does not improve, and ultimately convinced the customer to give the company a second chance. The call ended cordially with the customer satisfied.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "وإذا وافقت، أنا راح أتابع موضوعك مع فريق الصيانة بنفسي اليوم قبل نهاية الدوام لضمان تحسين البود والخط عندك.",
+        "speaker": "Agent",
+        "start_char": 1694,
+        "end_char": 1801
+      },
+      "promised_by": "Agent",
+      "description": "The agent promised to personally follow up with the maintenance team by the end of the day to ensure line improvement.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "وراح أبعث لك رسالة نصية برقم مرئي خاص بمتابعتي المباشرة عشان تتواصل معي شخصياً لو احتجت أي شي.",
+        "speaker": "Agent",
+        "start_char": 1895,
+        "end_char": 1989
+      },
+      "promised_by": "Agent",
+      "description": "The agent promised to send an SMS with a direct reference number for personal follow-up.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "تم تطبيق الخصم على حسابك وترقية السرعة، وراح تتفعل خلال ساعة بالكثير.",
+        "speaker": "Agent",
+        "start_char": 2163,
+        "end_char": 2232
+      },
+      "promised_by": "Agent",
+      "description": "The agent promised the discount and speed upgrade would take effect within an hour at most.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "أهلاً بك يا أستاذ طارق، وشكراً لتزويدي بالمعلومات. أنا متفهم غضبك وحقك تماماً",
+        "speaker": "Agent",
+        "start_char": 482,
+        "end_char": 559
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained exceptional composure, courtesy, and a polite demeanor throughout the call, even when dealing with a very frustrated customer."
     },
     {
+      "evidence": {
+        "text": "معك حق تماماً يا أستاذ طارق، وضعف الخدمة غير مقبول أبداً، وأنا مطلع الآن على سجلك وفعلاً ملاحظ وجود بلاغات سابقة لم تُعالج بالشكل المطلوب من قبل قسم الصيانة.",
+        "speaker": "Agent",
+        "start_char": 834,
+        "end_char": 991
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent fully acknowledged the customer's pain points, validated his anger, and showed genuine understanding of the poor past experience."
     },
     {
+      "evidence": {
+        "text": "صراحة كلامك ريحني شوي، وأنا ما بيهمني أغير الشركة لو الخدمة تحسنت، خلص خلينا نجرب العرض ونشوف.",
+        "speaker": "Customer",
+        "start_char": 2000,
+        "end_char": 2094
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully turned a churn risk into a retained customer by offering a compelling recovery package and reassuring terms."
     },
     {
+      "evidence": {
+        "text": "أنا مقدر موقفك تماماً، والعرض مش مجرد بيع، هذا تعويض عن سوء الخدمة اللي تعرضت لها، يعني أنت رح توفر نص المبلغ والإنترنت رح يصير سريع وثابت",
+        "speaker": "Agent",
+        "start_char": 1382,
+        "end_char": 1520
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent clearly and transparently explained the retention offer, discounts, and conditions without confusing jargon."
     },
     {
+      "evidence": {
+        "text": "هل فيه أي خدمة أُخرى أقدر أساعدك فيها اليوم؟",
+        "speaker": "Agent",
+        "start_char": 2363,
+        "end_char": 2407
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent properly checked for additional needs, summarized actions, and concluded the call with a professional closing."
     },
     {
+      "evidence": {
+        "text": "تم تطبيق الخصم على حسابك وترقية السرعة، وراح تتفعل خلال ساعة بالكثير.",
+        "speaker": "Agent",
+        "start_char": 2163,
+        "end_char": 2232
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent provided accurate procedural information regarding loyalty discounts and the activation timeframe."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "هل لي باسمك الكريم ورقم الحساب لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 321,
+        "end_char": 360
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed proper security and account verification procedures by asking for the customer's name and account number before accessing the record."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "بصراحة أنا طالع عن طوري وبدي ألغي اشتراك الإنترنت والخط الأرضي فوراً، زهقت من كثر المشاكل.",
+          "speaker": "Customer",
+          "start_char": 96,
+          "end_char": 186
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "السبب إنه السرعة بطيئة جداً طول الفترة الماضية، والدعم الفني حكولي رح يصلحوها وما صار شي",
+          "speaker": "Customer",
+          "start_char": 659,
+          "end_char": 747
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "عظيم، يعني أنت شايف بعيونك! يلا إذن ألغِ الاشتراك وخلصنا من هالقرف.",
+          "speaker": "Customer",
+          "start_char": 1002,
+          "end_char": 1069
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "ممم... يعني بدون رسوم إلغاء إذا ضلت المشكلة؟",
+          "speaker": "Customer",
+          "start_char": 1615,
+          "end_char": 1659
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "صراحة كلامك ريحني شوي، وأنا ما بيهمني أغير الشركة لو الخدمة تحسنت، خلص خلينا نجرب العرض ونشوف.",
+          "speaker": "Customer",
+          "start_char": 2000,
+          "end_char": 2094
+        },
+        "speaker": "Customer",
+        "score": 0.6,
+        "timestamp_sec": 80.0
+      },
+      {
+        "quote": {
+          "text": "الله يعطيك العافية يا أحمد، ما قصرت، وتصرفك السريع غير نظرتي للشركة اليوم.",
+          "speaker": "Customer",
+          "start_char": 2243,
+          "end_char": 2317
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 96.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

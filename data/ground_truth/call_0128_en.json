@@ -1,104 +1,177 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:19:17.348075+00:00",
+    "human_reviewed": false
   },
+  "id": "e7cf5a87-52c9-4d89-ad64-7513e7b608be",
   "call_id": "call_0128_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to demand an immediate refund of $250 after being incorrectly charged for a cancelled installation order. The agent acknowledged the billing error, processed the refund request, and explained the standard 3 to 5 business day processing time. Dissatisfied with the timeframe, the customer demanded an instant transfer and requested a supervisor escalation, which the agent facilitated.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "The refund has been initiated, but please allow three to five business days for it to appear on your statement.",
+        "speaker": "Agent",
+        "start_char": 1804,
+        "end_char": 1915
+      },
+      "promised_by": "Agent",
+      "description": "Process a refund of $250 to the customer's credit card within three to five business days.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "Your feedback has been noted in the system, and the supervisor will have all the details. Connecting you now.",
+        "speaker": "Agent",
+        "start_char": 2966,
+        "end_char": 3075
+      },
+      "promised_by": "Agent",
+      "description": "Transfer the customer to a supervisor and document the feedback in the system.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "I am very sorry about the long wait time, and I understand you are upset. I would be happy to help you with a refund.",
+        "speaker": "Agent",
+        "start_char": 226,
+        "end_char": 343
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent remained calm, polite, and professional throughout the call despite the customer's hostility and profanity."
     },
     {
+      "evidence": {
+        "text": "I completely understand your frustration regarding an unexpected charge. I am looking at your account history right now...",
+        "speaker": "Agent",
+        "start_char": 929,
+        "end_char": 1051
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent repeatedly validated the customer's feelings and took responsibility for the company's oversight."
     },
     {
+      "evidence": {
+        "text": "I can certainly transfer you to a supervisor, but please be aware that the queue for a supervisor callback is currently about fifteen minutes due to high volume.",
+        "speaker": "Agent",
+        "start_char": 2391,
+        "end_char": 2552
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent successfully identified the error and initiated the refund, though the customer ultimately required a supervisor escalation due to the processing timeline."
     },
     {
+      "evidence": {
+        "text": "I wish I could force an instant transfer, Mr. Davis, but our banking merchant processor requires three to five business days for electronic refunds to clear back to a credit card.",
+        "speaker": "Agent",
+        "start_char": 2087,
+        "end_char": 2266
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent explained processes, policies, and timelines clearly and directly."
     },
     {
+      "evidence": {
+        "text": "I am transferring you to a supervisor now, Mr. Davis. Please stay on the line and the next available manager will assist you.",
+        "speaker": "Agent",
+        "start_char": 2713,
+        "end_char": 2838
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The call ended with a clear handoff to a supervisor as requested by the customer."
     },
     {
+      "evidence": {
+        "text": "It looks like the cancellation ticket was processed, but the billing hold wasn't released before the automated billing cycle ran.",
+        "speaker": "Agent",
+        "start_char": 1291,
+        "end_char": 1420
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately identified the root cause of the billing error from the account history."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Can I please have your account number and the phone number associated with it?",
+        "speaker": "Agent",
+        "start_char": 344,
+        "end_char": 422
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed proper verification procedures and executed the correct steps for investigating a billing error and processing a refund."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Finally, someone picked up. I have been on hold for twenty minutes, and I am furious. I want my money back right now.",
+          "speaker": "Customer",
+          "start_char": 101,
+          "end_char": 218
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "My account number is 449281039 and you already have my phone number. More importantly, you charged my credit card for a service installation order that I cancelled two weeks ago!",
+          "speaker": "Customer",
+          "start_char": 433,
+          "end_char": 611
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "You better look into it quickly. I cancelled that order within the allowed window, yet you still billed me two hundred and fifty dollars. This is outright theft.",
+          "speaker": "Customer",
+          "start_char": 760,
+          "end_char": 921
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "Three to five business days? No, unacceptable! You took my money instantly, so you need to put it back instantly. I want an expedited transfer right now.",
+          "speaker": "Customer",
+          "start_char": 1926,
+          "end_char": 2079
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 72.0
+      },
+      {
+        "quote": {
+          "text": "That is a cop-out! I want to speak to your supervisor immediately. I am not accepting this garbage excuse.",
+          "speaker": "Customer",
+          "start_char": 2277,
+          "end_char": 2383
+        },
+        "speaker": "Customer",
+        "score": -1.0,
+        "timestamp_sec": 88.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

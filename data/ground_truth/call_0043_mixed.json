@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:02:33.700929+00:00",
+    "human_reviewed": false
   },
+  "id": "876b8242-816a-4a57-bcdf-d317c7e20f47",
   "call_id": "call_0043_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called because of an unexpected fifty dirham charge on their bill for international roaming, which they disputed since they had not traveled. The agent checked the system, explained that the charge was for data usage on Tuesday, and after the customer protested, raised a technical ticket for investigation with a 48-hour timeframe and a potential refund if confirmed as a system error.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "راح يأخذ 48 hours to investigate.",
+        "speaker": "Agent",
+        "start_char": 1634,
+        "end_char": 1667
+      },
+      "promised_by": "Agent",
+      "description": "Raise a technical ticket that will take 48 hours to investigate.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "راح نعملها waiver ونسوي لها refund.",
+        "speaker": "Agent",
+        "start_char": 1806,
+        "end_char": 1841
+      },
+      "promised_by": "Agent",
+      "description": "Waive and refund the charge if it is found to be a system error.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "ولا يهمك سيدي، don't worry, خليني أشيك على حسابك، what is your account number لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 235,
+        "end_char": 321
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent maintains a polite and helpful bilingual tone throughout the call, addressing the customer respectfully."
     },
     {
+      "evidence": {
+        "text": "فهمت عليك سيدي، I completely understand your confusion.",
+        "speaker": "Agent",
+        "start_char": 1395,
+        "end_char": 1450
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent acknowledges the customer's confusion and frustration regarding the unexpected bill."
     },
     {
+      "evidence": {
+        "text": "Let me raise a ticket للدعم الفني عشان يتأكدوا.",
+        "speaker": "Agent",
+        "start_char": 1451,
+        "end_char": 1498
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent successfully identifies the cause of the dispute and provides a clear next step by opening a technical ticket."
     },
     {
+      "evidence": {
+        "text": "يعني طلب تحقيق technical ticket، راح يأخذ 48 hours to investigate.",
+        "speaker": "Agent",
+        "start_char": 1601,
+        "end_char": 1667
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent explains terms and timeframes clearly, repeating details when the customer asks for clarification."
     },
     {
+      "evidence": {
+        "text": "is there anything else I can help you with?",
+        "speaker": "Agent",
+        "start_char": 2108,
+        "end_char": 2151
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent properly offers further assistance and closes the call politely after confirming all concerns were addressed."
     },
     {
+      "evidence": {
+        "text": "the extra charge is for international roaming service that was used on the twelfth of the month.",
+        "speaker": "Agent",
+        "start_char": 803,
+        "end_char": 899
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent accurately retrieves and communicates the billing details and system data usage records to the customer."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "what is your account number لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 285,
+        "end_char": 321
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.9,
+      "justification": "The agent correctly verifies the customer's account number before discussing billing details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "shuft bill تبعي اليوم and there is an unexpected charge, msh fahim wallah min wayn ejat.",
+          "speaker": "Customer",
+          "start_char": 139,
+          "end_char": 227
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "International roaming? بس أنا ما سافرت!",
+          "speaker": "Customer",
+          "start_char": 910,
+          "end_char": 949
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "Wallah ما فتحت النت برا البيت، and I am very confused, يعني كيف؟ شو الحل هسا?",
+          "speaker": "Customer",
+          "start_char": 1310,
+          "end_char": 1387
+        },
+        "speaker": "Customer",
+        "score": -0.5,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "Perfect, مشكور يا محمد تعبتك معي. Thank you so much.",
+          "speaker": "Customer",
+          "start_char": 2026,
+          "end_char": 2078
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 96.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

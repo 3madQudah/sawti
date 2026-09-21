@@ -1,104 +1,177 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T10:58:16.384602+00:00",
+    "human_reviewed": false
   },
+  "id": "bee66b93-4f68-46f6-af0c-0c3db3dc6f78",
   "call_id": "call_0020_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called back to complain about a previous agent who was rude and unhelpful when asked about a high bill. The current agent, Rami, apologized, investigated the account, identified that the phone accidentally connected to a border tower for international roaming, and successfully applied a credit to the customer's account to resolve the issue.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "We will file a complaint against her.",
+        "speaker": "Agent",
+        "start_char": 1873,
+        "end_char": 1910
+      },
+      "promised_by": "Agent",
+      "description": "File a complaint against the previous rude agent.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "I can apply a credit to your account right now لتصحيح الخطأ.",
+        "speaker": "Agent",
+        "start_char": 2115,
+        "end_char": 2175
+      },
+      "promised_by": "Agent",
+      "description": "Apply a credit to the customer's account to waive the roaming charges.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "ولا يهمك سيدي، أنا معك وحاضر أسمعك.",
+        "speaker": "Agent",
+        "start_char": 202,
+        "end_char": 237
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent remained calm, polite, and professional throughout the call, even when dealing with the customer's frustration about the previous interaction."
     },
     {
+      "evidence": {
+        "text": "حقك علي يا سيدي، I completely understand.",
+        "speaker": "Agent",
+        "start_char": 839,
+        "end_char": 880
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.85,
+      "justification": "The agent repeatedly apologized for the previous agent's behavior and acknowledged the customer's feelings."
     },
     {
+      "evidence": {
+        "text": "I have applied the credit, and it will show on your next bill.",
+        "speaker": "Agent",
+        "start_char": 2322,
+        "end_char": 2384
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.95,
+      "justification": "The agent successfully diagnosed the roaming issue caused by a border tower and applied a credit to fully resolve the customer's billing concern."
     },
     {
+      "evidence": {
+        "text": "عذراً سيدي، قصدي إنو تلفونك شابك بالغلط على شبكة دولة مجاورة وأنت قاعد ببيتك",
+        "speaker": "Agent",
+        "start_char": 1550,
+        "end_char": 1626
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent explained the technical concept of the border tower clearly after initial jargon, though there was some code-switching."
     },
     {
+      "evidence": {
+        "text": "Is there anything else I can help you with today?",
+        "speaker": "Agent",
+        "start_char": 2385,
+        "end_char": 2434
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent properly asked if further assistance was needed and closed the call politely."
     },
     {
+      "evidence": {
+        "text": "سيدي، the system shows إنو صار في usage برات البلد الشهر الماضي. Let me look closer... Ah, wait. It was connected to a border tower.",
+        "speaker": "Agent",
+        "start_char": 1297,
+        "end_char": 1429
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent accurately investigated the account and correctly identified the roaming issue and its cause."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "بس ممكن تعطيني رقم الحساب لو سمحت عشان I check the bill right now?",
+        "speaker": "Agent",
+        "start_char": 881,
+        "end_char": 947
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.9,
+      "justification": "The agent followed proper procedure by asking for and verifying the account number before looking up the bill details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "والله أنا كتير متضايق من المكالمة اللي قبل شوي.",
+          "speaker": "Customer",
+          "start_char": 94,
+          "end_char": 141
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "When I asked her to explain again، صارت تحكي بصوت عالي وتتذمر",
+          "speaker": "Customer",
+          "start_char": 714,
+          "end_char": 775
+        },
+        "speaker": "Customer",
+        "score": -0.5,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "I live in Amman، ما رحت على أي حدود!",
+          "speaker": "Customer",
+          "start_char": 1468,
+          "end_char": 1504
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "والله يا ريت عملتولنا waive، لأنو مو ذنبي إنو التلفون شابك على برج تاني!",
+          "speaker": "Customer",
+          "start_char": 2000,
+          "end_char": 2072
+        },
+        "speaker": "Customer",
+        "score": 0.0,
+        "timestamp_sec": 72.0
+      },
+      {
+        "quote": {
+          "text": "Thank you so much، أنت كتير لطيف أحسن من اللي قبلها.",
+          "speaker": "Customer",
+          "start_char": 2211,
+          "end_char": 2263
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 88.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

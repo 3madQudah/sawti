@@ -1,104 +1,154 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:03:31.092378+00:00",
+    "human_reviewed": false
   },
+  "id": "14c665d2-e4e2-48b8-b754-12250e869c41",
   "call_id": "call_0050_ar",
   "language": "ar",
-  "summary": "",
+  "summary": "The customer called because they were struggling to set up and connect a new router. The agent patiently guided the customer step-by-step through connecting the power cable and the internet cable, repeating instructions when asked, until the setup was complete and understood. The call ended cordially.",
   "commitments": [],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "ولا يهمك أبدًا، ولا تشيل هم. خطوة بخطوة بنمشي مع بعض وبتزبط الأمور.",
+        "speaker": "Agent",
+        "start_char": 165,
+        "end_char": 232
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained a very professional, polite, and reassuring tone throughout the entire conversation."
     },
     {
+      "evidence": {
+        "text": "ولا أي إزعاج، خذ راحتك. الفتحة الزرقاء هي للكيبل الأصفر اللي جاي من الحائط.",
+        "speaker": "Agent",
+        "start_char": 1285,
+        "end_char": 1360
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent showed high empathy and patience when the customer mentioned being confused, reassuring them without showing any frustration."
     },
     {
+      "evidence": {
+        "text": "تقريبًا، ضل آخر خطوة صغيرة. استنى شوي لحد ما الضوء اللي عليه رسمة الكرة الأرضية يصير لونه أخضر وثابت، هيك بيكون اشتغل تمام.",
+        "speaker": "Agent",
+        "start_char": 1509,
+        "end_char": 1632
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully guided the customer through the entire router setup process to a complete resolution."
     },
     {
+      "evidence": {
+        "text": "الطرف الثاني من سلك الكهرباء حطه بالفتحة اللي ورا الراوتر اللي مكتوب جنبها \"باور\". واضحة هيك؟",
+        "speaker": "Agent",
+        "start_char": 761,
+        "end_char": 854
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The instructions were broken down into simple, clear, sequential steps that were easy for the customer to follow."
     },
     {
+      "evidence": {
+        "text": "العفو، مع السلامة ونهارك سعيد.",
+        "speaker": "Agent",
+        "start_char": 1840,
+        "end_char": 1870
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent properly asked if further assistance was needed and provided a polite, professional closing."
     },
     {
+      "evidence": {
+        "text": "الفتحة الزرقاء هي للكيبل الأصفر اللي جاي من الحائط. والفتحات الثانية اللي جنبها لشيء تاني، إنت ركز بس على الفتحة الزرقاء.",
+        "speaker": "Agent",
+        "start_char": 1309,
+        "end_char": 1430
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The technical guidance provided regarding ports and cable colors for standard router setup was completely accurate."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "أهلاً بك في خدمة العملاء، معك أحمد. كيف أقدر أساعدك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 65
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed standard greeting, troubleshooting, and closing procedures properly."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "والله أنا متخربط شوي. اشتريت جهاز الراوتر الجديد ومش عارف كيف أشبكه.",
+          "speaker": "Customer",
+          "start_char": 89,
+          "end_char": 157
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "تسلم والله، بس أرجوك عيد لي شو أسوي بالأول لأني أنسى بسرعة.",
+          "speaker": "Customer",
+          "start_char": 243,
+          "end_char": 302
+        },
+        "speaker": "Customer",
+        "score": -0.1,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "آآه، تمام تمام، هيك فهمت. طيب والخطوة اللي بعدها شو هي؟",
+          "speaker": "Customer",
+          "start_char": 865,
+          "end_char": 920
+        },
+        "speaker": "Customer",
+        "score": 0.4,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "تمام الله يعطيك العافية، يعني بستنى الضوء الأخضر. ما قصرت والله.",
+          "speaker": "Customer",
+          "start_char": 1643,
+          "end_char": 1707
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 112.0
+      },
+      {
+        "quote": {
+          "text": "لا تسلم، كفيت ووفيت. شكرا لك، مع السلامة.",
+          "speaker": "Customer",
+          "start_char": 1791,
+          "end_char": 1832
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 128.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

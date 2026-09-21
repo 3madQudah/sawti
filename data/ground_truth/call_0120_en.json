@@ -1,104 +1,155 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:15:05.197641+00:00",
+    "human_reviewed": false
   },
+  "id": "529512e8-0b63-4892-b2b8-4a207ced0455",
   "call_id": "call_0120_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to complain about an unexpected thirty-dollar increase in their bill, claiming their promotional rate was guaranteed for two years and they never agreed to a renewal. The agent verified the account, noted a confirmation recording exists from November 12th, and escalated the dispute to a supervisor as requested by the customer.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "I can escalate this to my supervisor right away.",
+        "speaker": "Agent",
+        "start_char": 872,
+        "end_char": 920
+      },
+      "promised_by": "Agent",
+      "description": "Escalate the unauthorized renewal dispute to a supervisor.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
-      "criterion": "professionalism",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
+        "text": "I certainly understand your frustration regarding an unexpected price increase.",
+        "speaker": "Agent",
+        "start_char": 248,
+        "end_char": 327
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent acknowledged the customer's frustration clearly and empathetically at the beginning of the call."
     },
     {
+      "evidence": {
+        "text": "Thank you for calling Metro Telecom, my name is Sarah. How can I help you today?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 87
+      },
+      "criterion": "professionalism",
+      "score": 0.8,
+      "justification": "The agent maintained a professional and calm demeanor throughout despite the customer's aggressive tone."
+    },
+    {
+      "evidence": {
+        "text": "I see the confirmation recording on file from November 12th. However, if you'd like to dispute the authorization, I can escalate this to my supervisor right away.",
+        "speaker": "Agent",
+        "start_char": 758,
+        "end_char": 920
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent could not instantly reverse the charge due to policy, but offered an appropriate escalation path to resolve the dispute."
     },
     {
+      "evidence": {
+        "text": "Let me pull up your account to review the contract details.",
+        "speaker": "Agent",
+        "start_char": 328,
+        "end_char": 387
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent clearly explained every step they were taking, such as pulling up the account and checking the file."
     },
     {
+      "evidence": {
+        "text": "Yes, do it now, and I expect this fixed before the end of the day or I am switching providers.",
+        "speaker": "Customer",
+        "start_char": 931,
+        "end_char": 1025
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.5,
+      "justification": "The call ended abruptly on the customer's ultimatum without a proper formal closing from the agent."
     },
     {
+      "evidence": {
+        "text": "I see a contract renewal was processed last month.",
+        "speaker": "Agent",
+        "start_char": 570,
+        "end_char": 620
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent accurately retrieved account contract details and confirmation recording dates from the system."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "I can escalate this to my supervisor right away.",
+        "speaker": "Agent",
+        "start_char": 872,
+        "end_char": 920
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.9,
+      "justification": "The agent followed proper protocol by offering an escalation when a customer disputed an authorized renewal."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "I am calling because my bill just went up by thirty dollars, and I am furious.",
+          "speaker": "Customer",
+          "start_char": 98,
+          "end_char": 176
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "You better figure it out fast, because I don't have all day to sit on hold while you look at my file.",
+          "speaker": "Customer",
+          "start_char": 398,
+          "end_char": 499
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "I never agreed to any renewal! Someone signed me up without my permission, and I want this charge reversed immediately.",
+          "speaker": "Customer",
+          "start_char": 631,
+          "end_char": 750
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "Yes, do it now, and I expect this fixed before the end of the day or I am switching providers.",
+          "speaker": "Customer",
+          "start_char": 931,
+          "end_char": 1025
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 56.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

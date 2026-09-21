@@ -1,104 +1,199 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:04:39.446741+00:00",
+    "human_reviewed": false
   },
+  "id": "eeafc97e-e493-45d3-93ab-7f5b9f501292",
   "call_id": "call_0057_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called because their internet and TV bill was unexpectedly high, showing an extra charge for an added TV channel subscription they claimed they never requested. The agent identified the account, explained that the service was activated via the receiver remote, and offered to cancel the subscription immediately and provide a 10-dinar discount on the current bill. The customer was dissatisfied because they still had to pay an extra 10 dinars for a service they did not want, and ultimately requested to speak with a supervisor, to whom the agent agreed to transfer the call.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "أكيد يا أخي، بقدر ألغلك الخدمة فوراً من عندي عشان ما تنزل بالفواتير الجاية.",
+        "speaker": "Agent",
+        "start_char": 1447,
+        "end_char": 1522
+      },
+      "promised_by": "Agent",
+      "description": "Cancel the extra TV channel subscription immediately so it does not appear on future bills.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "بس بقدر أعمل لك خصم عشر دنانير كحسن تعامل.",
+        "speaker": "Agent",
+        "start_char": 1666,
+        "end_char": 1708
+      },
+      "promised_by": "Agent",
+      "description": "Apply a 10-dinar goodwill discount to the current bill.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "ولا يهمك يا أستاذ، ثواني معي راح أحولك على مشرف القسم يتابع معك.",
+        "speaker": "Agent",
+        "start_char": 2340,
+        "end_char": 2404
+      },
+      "promised_by": "Agent",
+      "description": "Transfer the call to a department supervisor.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "أهلاً بك في خدمة العملاء، معك رامي، كيف أقدر أساعدك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 65
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent maintained a polite, calm, and professional tone throughout the call, even when the customer became frustrated."
     },
     {
+      "evidence": {
+        "text": "أنا متفهم زعلِك يا أستاذ، بس هاي سياسة الشركة للخدمات اللي تم تفعيلها عبر الجهاز.",
+        "speaker": "Agent",
+        "start_char": 1965,
+        "end_char": 2046
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The agent acknowledged the customer's frustration verbally, but relied heavily on rigid company policy rather than finding a satisfying solution for the customer."
     },
     {
+      "evidence": {
+        "text": "أنا لغيت لك الاشتراك للأسف بس الجزء المالي ما بقدر ألغيه بالكامل، زي ما وضحت لك.",
+        "speaker": "Agent",
+        "start_char": 2177,
+        "end_char": 2257
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.5,
+      "justification": "The agent successfully cancelled the subscription for the future, but failed to resolve the billing dispute to the customer's satisfaction, resulting in an escalation to a supervisor."
     },
     {
+      "evidence": {
+        "text": "هو بيطلع تنبيه على الشاشة وبطلب إدخال الرقم السري أو تأكيد الاشتراك.",
+        "speaker": "Agent",
+        "start_char": 1266,
+        "end_char": 1334
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent explained clearly how the service was activated and what the system shows, though the customer initially struggled to understand."
     },
     {
+      "evidence": {
+        "text": "ولا يهمك يا أستاذ، ثواني معي راح أحولك على مشرف القسم يتابع معك.",
+        "speaker": "Agent",
+        "start_char": 2340,
+        "end_char": 2404
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The call was not concluded with a standard sign-off because the customer requested a supervisor, to whom the agent transferred the call appropriately."
     },
     {
+      "evidence": {
+        "text": "عم بشوف حسابك الآن، الفاتورة لشهر أربعة قيمتها خمسين دينار.",
+        "speaker": "Agent",
+        "start_char": 440,
+        "end_char": 499
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent accurately retrieved and explained the account details, invoice amount, and subscription activation info from the system."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "ممكن تعطيني رقم الحساب أو رقم الهوية لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 311,
+        "end_char": 356
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent properly verified the customer's account by asking for the account number before accessing and discussing account details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أهلاً يا اخوي، والله أنا عندي مشكلة ومش فاهم شو القصة بالضبط بصراحة.",
+          "speaker": "Customer",
+          "start_char": 76,
+          "end_char": 144
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "خمسين دينار؟! ليش يا زلمة؟ أنا كل شهر بدفع ثلاثين دينار بس! شو اللي زادهم؟",
+          "speaker": "Customer",
+          "start_char": 510,
+          "end_char": 584
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 32.0
+      },
+      {
+        "quote": {
+          "text": "قنوات إضافية؟ أنا ما طلبت إشي! متى طلبتها هاي؟ أنا زلمة ما بفتح التلفزيون أصلاً!",
+          "speaker": "Customer",
+          "start_char": 680,
+          "end_char": 760
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "والله ما انتبهت لإشي ولا طلعلي إشي! طيب أنا ما بدي هاي الخدمة، بتتقدر تشيلوها وترجعوا المصاري؟",
+          "speaker": "Customer",
+          "start_char": 1345,
+          "end_char": 1439
+        },
+        "speaker": "Customer",
+        "score": -0.5,
+        "timestamp_sec": 80.0
+      },
+      {
+        "quote": {
+          "text": "شو عشر دنانير؟ الفاتورة زادت عشرين دينار مش عشرة! عيد كمان مرة قديش خصمتم؟",
+          "speaker": "Customer",
+          "start_char": 1719,
+          "end_char": 1793
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 96.0
+      },
+      {
+        "quote": {
+          "text": "طيب، ما دام هيك، بدي أحكي مع المسؤول عنك، ما بيصير هالحكي والله.",
+          "speaker": "Customer",
+          "start_char": 2268,
+          "end_char": 2332
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 120.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

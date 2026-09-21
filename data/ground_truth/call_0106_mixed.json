@@ -1,104 +1,154 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:12:23.456374+00:00",
+    "human_reviewed": false
   },
+  "id": "992ac531-ee41-482d-bedb-277d0bc37425",
   "call_id": "call_0106_mixed",
   "language": "mixed",
-  "summary": "",
+  "summary": "The customer called because they were having trouble setting up a newly purchased Fiber Home router, specifically with the internet light showing red. The agent guided the customer step-by-step to fix the cable connection and configure the PPPoE settings. The issue was successfully resolved, and the internet light turned solid green.",
   "commitments": [],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "خليني أساعدك فيه خطوة بخطوة.",
+        "speaker": "Agent",
+        "start_char": 181,
+        "end_char": 209
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent was polite, encouraging, and maintained a helpful demeanor throughout the call."
     },
     {
+      "evidence": {
+        "text": "ولا مهندس، ولا يهمك، خليني أساعدك فيه خطوة بخطوة.",
+        "speaker": "Agent",
+        "start_char": 160,
+        "end_char": 209
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent immediately reassured the customer and validated their frustration with a friendly and supportive tone."
     },
     {
+      "evidence": {
+        "text": "يا سلام، ضوت أخضر ثابت! يعني خلص زبطت الأمور؟",
+        "speaker": "Customer",
+        "start_char": 2096,
+        "end_char": 2141
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully guided the customer through all the necessary troubleshooting steps until the router was fully functional."
     },
     {
+      "evidence": {
+        "text": "لازم تشبكه بالـ WAN port اللي بيكون لونه أزرق عادةً، مش الـ LAN.",
+        "speaker": "Agent",
+        "start_char": 556,
+        "end_char": 620
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "Instructions regarding ports, IP addresses, and menu navigation were clear and easy to follow."
     },
     {
+      "evidence": {
+        "text": "الله يعافيك، يوم سعيد و مع السلامة!",
+        "speaker": "Agent",
+        "start_char": 2374,
+        "end_char": 2409
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent offered further assistance, checked if the customer needed anything else, and closed the call politely."
     },
     {
+      "evidence": {
+        "text": "روح على الـ Quick Setup أو Network Settings، ودور على خانة الـ WAN connection.",
+        "speaker": "Agent",
+        "start_char": 1581,
+        "end_char": 1659
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "All technical guidance provided, including default credentials and setup paths, was accurate."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "أكبس على Save بعدين Apply، وخلينا نستنى ثواني لحد ما يعمل reboot لحاله.",
+        "speaker": "Agent",
+        "start_char": 1872,
+        "end_char": 1943
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed the proper logical sequence of troubleshooting and configuration procedures."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "بس عم بحاول أعمله setup ومش عم بشتغل معي مزبوط.",
+          "speaker": "Customer",
+          "start_char": 105,
+          "end_char": 152
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "آه، فهمت عليك. طيب خليني أغيره ثواني... تمام، نقلته وصار بالـ WAN port.",
+          "speaker": "Customer",
+          "start_char": 631,
+          "end_char": 702
+        },
+        "speaker": "Customer",
+        "score": 0.0,
+        "timestamp_sec": 32.0
+      },
+      {
+        "quote": {
+          "text": "ضبطت معي! هسا طلعت لي القائمة الرئيسية، وين أروح من هون؟",
+          "speaker": "Customer",
+          "start_char": 1517,
+          "end_char": 1573
+        },
+        "speaker": "Customer",
+        "score": 0.5,
+        "timestamp_sec": 72.0
+      },
+      {
+        "quote": {
+          "text": "يا سلام، ضوت أخضر ثابت! يعني خلص زبطت الأمور؟",
+          "speaker": "Customer",
+          "start_char": 2096,
+          "end_char": 2141
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 112.0
+      },
+      {
+        "quote": {
+          "text": "سلامتك، ما قصرت، يعطيك العافية.",
+          "speaker": "Customer",
+          "start_char": 2335,
+          "end_char": 2366
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 136.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

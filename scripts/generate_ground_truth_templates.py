@@ -27,22 +27,22 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import re
 from pathlib import Path
 from typing import Any
 
-from sawti.data.ground_truth import RUBRIC_CRITERIA
+from sawti.data.ground_truth import RUBRIC_CRITERIA, infer_call_id_and_language
 from sawti.schemas import Language
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger("generate_ground_truth_templates")
 
+# Re-exported from `sawti.data.ground_truth`, which owns the call_<idx>_<lang>.txt
+# naming convention, so this script and the reference-label generator can never
+# drift apart on what a transcript filename means.
+__all__ = ["build_template", "generate_templates", "infer_call_id_and_language", "main"]
+
 DEFAULT_SYNTHETIC_DIR = Path("data/synthetic")
 DEFAULT_OUTPUT_DIR = Path("data/ground_truth")
-
-# Matches how `sawti.data.generate_calls.generate_batch` names synthetic
-# transcripts: call_<idx>_<lang>.txt. The call_id is the filename stem.
-_FILENAME_RE = re.compile(r"^(?P<call_id>call_\d+_(?P<lang>ar|en|mixed))\.txt$")
 
 _INSTRUCTIONS: dict[str, str] = {
     "_meaning": (
@@ -83,27 +83,6 @@ _INSTRUCTIONS: dict[str, str] = {
         "threshold (sawti.config.Settings.confidence_threshold)."
     ),
 }
-
-
-def infer_call_id_and_language(transcript_path: Path) -> tuple[str, Language]:
-    """Infer (call_id, language) from a synthetic transcript's filename.
-
-    Args:
-        transcript_path: Path to a `call_<idx>_<ar|en|mixed>.txt` transcript.
-
-    Returns:
-        The filename stem as `call_id`, and the `Language` encoded in its
-        `_ar`/`_en`/`_mixed` suffix.
-
-    Raises:
-        ValueError: If the filename doesn't match the expected pattern.
-    """
-    match = _FILENAME_RE.match(transcript_path.name)
-    if not match:
-        raise ValueError(
-            f"{transcript_path.name!r} does not match expected pattern 'call_<idx>_<ar|en|mixed>.txt'"
-        )
-    return match.group("call_id"), Language(match.group("lang"))
 
 
 def _empty_evidence() -> dict[str, Any]:

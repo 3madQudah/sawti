@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:18:52.775837+00:00",
+    "human_reviewed": false
   },
+  "id": "7012efc5-f4dd-4fe1-a61f-06fa304b1aa3",
   "call_id": "call_0126_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called Metro Utilities requesting a short payment extension on their current bill due to a change in their company's payroll schedule. The agent verified the account, checked eligibility, and granted a 10-day extension moving the due date to the 25th along with a hold on late fees. The call ended successfully.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "I will place a temporary hold on any late fee assessments during that grace period.",
+        "speaker": "Agent",
+        "start_char": 2172,
+        "end_char": 2255
+      },
+      "promised_by": "Agent",
+      "description": "Place a temporary hold on any late fee assessments during the grace period.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "You will receive a quick confirmation email shortly with the updated payment date details for your records.",
+        "speaker": "Agent",
+        "start_char": 2665,
+        "end_char": 2772
+      },
+      "promised_by": "Agent",
+      "description": "Send a confirmation email with updated payment date details.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Thank you for calling Metro Utilities, my name is Sarah.",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 63
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent was extremely polite, professional, and courteous throughout the call."
     },
     {
+      "evidence": {
+        "text": "I completely understand, and I appreciate you calling us ahead of time to let us know.",
+        "speaker": "Agent",
+        "start_char": 1164,
+        "end_char": 1250
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent showed genuine understanding and validated the customer's situation."
     },
     {
+      "evidence": {
+        "text": "I am able to grant you a standard 10-day extension without any issues at all.",
+        "speaker": "Agent",
+        "start_char": 1931,
+        "end_char": 2008
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent fully resolved the customer's request by granting the payment extension."
     },
     {
+      "evidence": {
+        "text": "The new due date will be set for November 25th, and I will place a temporary hold on any late fee assessments during that grace period.",
+        "speaker": "Agent",
+        "start_char": 2120,
+        "end_char": 2255
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent explained the new due date and late fee hold with complete clarity."
     },
     {
+      "evidence": {
+        "text": "Is there anything else I can assist you with today regarding your account or services?",
+        "speaker": "Agent",
+        "start_char": 2469,
+        "end_char": 2555
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent properly checked for additional questions and closed the call warmly."
     },
     {
+      "evidence": {
+        "text": "I see your current balance is $142.50, and it is scheduled for auto-pay or manual due on the 15th of this month.",
+        "speaker": "Agent",
+        "start_char": 903,
+        "end_char": 1015
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "Account balance and details retrieved and communicated were accurate."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "And for security purposes, could you please confirm the billing address on the account?",
+        "speaker": "Agent",
+        "start_char": 650,
+        "end_char": 737
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent correctly followed verification and security protocols before discussing account details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "I am calling just to see if I might be able to request a short payment extension on my current bill.",
+          "speaker": "Customer",
+          "start_char": 126,
+          "end_char": 226
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Unfortunately, my company changed our payroll schedule this month, so my direct deposit won't hit until the 25th.",
+          "speaker": "Customer",
+          "start_char": 1043,
+          "end_char": 1156
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "It has been working wonderfully, actually.",
+          "speaker": "Customer",
+          "start_char": 1685,
+          "end_char": 1727
+        },
+        "speaker": "Customer",
+        "score": 0.6,
+        "timestamp_sec": 80.0
+      },
+      {
+        "quote": {
+          "text": "That is such a relief.",
+          "speaker": "Customer",
+          "start_char": 2266,
+          "end_char": 2288
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 112.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

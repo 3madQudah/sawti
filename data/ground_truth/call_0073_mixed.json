@@ -1,104 +1,177 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:06:48.702952+00:00",
+    "human_reviewed": false
   },
+  "id": "87a41445-6a6b-465d-bf70-b4b0ae55f088",
   "call_id": "call_0073_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to upgrade their home internet plan from fifty Mbps to one hundred Mbps. The agent verified the account details, confirmed coverage, scheduled a technician visit for the following day, and explained that the speed upgrade would take effect on the system immediately while the new router provides better Wi-Fi coverage. The call ended cordially with no unresolved issues.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "بنقدر نبعثه بكره بعد الساعة أربعة العصر، بيناسبك هالوقت ولا بتحب يوم تاني؟",
+        "speaker": "Agent",
+        "start_char": 1163,
+        "end_char": 1237
+      },
+      "promised_by": "Agent",
+      "description": "Send a technician tomorrow after 4 PM.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "وخلال ساعة تقريباً بتبلش الـ speed الجديدة تشتغل عندك على الـ system.",
+        "speaker": "Agent",
+        "start_char": 1344,
+        "end_char": 1413
+      },
+      "promised_by": "Agent",
+      "description": "Activate the new speed on the system within approximately one hour.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "أهلاً وسهلاً معك رامي، كيف بقدر أساعدك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 52
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent was polite, welcoming, and maintained a professional and helpful tone throughout the entire call."
     },
     {
+      "evidence": {
+        "text": "فهمت عليك تماماً، اليوم الـ streaming والـ online gaming بياخدوا bandwidth عالية، شو رأيك نطلع للـ hundred Mbps?",
+        "speaker": "Agent",
+        "start_char": 338,
+        "end_char": 450
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent acknowledged the customer's frustration with the current slow internet speed and validated their experience."
     },
     {
+      "evidence": {
+        "text": "هيك صار عندنا موعد مؤكد لبكرة، وخلال ساعة تقريباً بتبلش الـ speed الجديدة تشتغل عندك على الـ system.",
+        "speaker": "Agent",
+        "start_char": 1313,
+        "end_char": 1413
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully processed the upgrade request, answered all pricing and installation questions, and scheduled the technician."
     },
     {
+      "evidence": {
+        "text": "الفرق بسيط كثير، بس عشرة دنانير زيادة عن الفاتورة الحالية تبعتك، وبيجيك معها router جديد support للـ Wi-Fi six.",
+        "speaker": "Agent",
+        "start_char": 514,
+        "end_char": 625
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent explained pricing, equipment details, and installation fees clearly and concisely."
     },
     {
+      "evidence": {
+        "text": "هل في أي خدمة تانية بقدر أساعدك فيها اليوم؟",
+        "speaker": "Agent",
+        "start_char": 1656,
+        "end_char": 1699
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent checked for additional needs, thanked the customer, and provided a polite closing."
     },
     {
+      "evidence": {
+        "text": "بالضبط، بنعمل الـ activation من عنا دايركت، بس الـ router الجديد بيزيد الـ coverage داخل البيت.",
+        "speaker": "Agent",
+        "start_char": 1485,
+        "end_char": 1580
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent provided accurate information regarding the remote system activation and the physical technician visit."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "بس لحظة شوي خليني أشيك الـ coverage على العنوان تبعك، شو رقم الـ account لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 811,
+        "end_char": 892
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent correctly verified the customer's account and checked coverage before proceeding with the upgrade."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أهلين أخ رامي، أنا بدي أعمل upgrade للـ internet plan تبعت البيت لو سمحت.",
+          "speaker": "Customer",
+          "start_char": 63,
+          "end_char": 136
+        },
+        "speaker": "Customer",
+        "score": 0.2,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "حالياً عندي الـ fifty Mbps بس بحسها صارت slow شوي، خصوصاً لما كل العيلة تكون online بنفس الوقت.",
+          "speaker": "Customer",
+          "start_char": 235,
+          "end_char": 330
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "حلو كثير، قديش بيكون الـ price الجديد بالشهر؟",
+          "speaker": "Customer",
+          "start_char": 461,
+          "end_char": 506
+        },
+        "speaker": "Customer",
+        "score": 0.4,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "ممتاز كثير، والـ installation fee هل فيه رسوم إضافية ولا مجاني؟",
+          "speaker": "Customer",
+          "start_char": 636,
+          "end_char": 699
+        },
+        "speaker": "Customer",
+        "score": 0.5,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "هيك كتير ممتاز، شكراً إلك كلك ذوق.",
+          "speaker": "Customer",
+          "start_char": 1591,
+          "end_char": 1625
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 112.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

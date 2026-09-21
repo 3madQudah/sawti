@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T10:55:23.098363+00:00",
+    "human_reviewed": false
   },
+  "id": "ffe00a8b-00be-41b5-a994-b04334d74d5b",
   "call_id": "call_0008_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called because she received an email stating her order was cancelled and wanted to know about her refund status. The agent located the order, explained that the item was out of stock which caused an automatic cancellation, and confirmed a full refund would take 3 to 5 business days to appear on her credit card. The customer expressed satisfaction and ended the call.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "بس رح ياخذ 3 لـ 5 أيام عمل لحتى يظهر بالحساب.",
+        "speaker": "Agent",
+        "start_char": 444,
+        "end_char": 489
+      },
+      "promised_by": "Agent",
+      "description": "Refund will appear in the account within 3 to 5 business days.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "أهلاً معك رامي، كيف بقدر أساعدك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 45
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent was polite, welcoming, and maintained a helpful and courteous tone throughout the entire call."
     },
     {
+      "evidence": {
+        "text": "ولا يهمك سيدي، خليني أشيك لك على السيستم.",
+        "speaker": "Agent",
+        "start_char": 177,
+        "end_char": 218
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent reassured the customer right away ('ولا يهمك') and apologized for the inconvenience when explaining the automatic cancellation."
     },
     {
+      "evidence": {
+        "text": "أكيد، full refund راح يرجع لك كامل المبلغ بدون أي خصومات نهائياً.",
+        "speaker": "Agent",
+        "start_char": 968,
+        "end_char": 1033
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully answered all the customer's questions regarding the refund timeframe, the reason for cancellation, and whether any deductions would apply."
     },
     {
+      "evidence": {
+        "text": "بياخد من ثلاثة لخمسة business days، يعني خلال هالأسفل بيكون نازل عندك بالـ account.",
+        "speaker": "Agent",
+        "start_char": 570,
+        "end_char": 653
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent communicated clearly, repeating and clarifying the refund timeline when asked by the customer, although slightly mixing Arabic and English slang terms."
     },
     {
+      "evidence": {
+        "text": "في شي تاني بقدر أساعدك فيه؟",
+        "speaker": "Agent",
+        "start_char": 1129,
+        "end_char": 1156
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent checked if there was anything else needed, waited for the customer's closure, and closed with appropriate pleasantries."
     },
     {
+      "evidence": {
+        "text": "بالنسبة للفلوس، it was processed for a full refund اليوم، بس رح ياخذ 3 لـ 5 أيام عمل لحتى يظهر بالحساب.",
+        "speaker": "Agent",
+        "start_char": 386,
+        "end_char": 489
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent provided accurate information about the refund being processed today and the exact standard timeline of 3 to 5 business days."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "شو رقم الأوردر لو سمحتي؟",
+        "speaker": "Agent",
+        "start_char": 219,
+        "end_char": 243
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed proper procedure by asking for and verifying the order number before looking up account details in the system."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أنا شوي مخربطة باللي صار، I got an email إنو my order cancelled، بس بدي أعرف شو صار بالفلوس تبعتي؟",
+          "speaker": "Customer",
+          "start_char": 71,
+          "end_char": 169
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "عذراً، ما فهمت منيح، قديش بدو وقت لحتى ينزل بالحساب؟",
+          "speaker": "Customer",
+          "start_char": 500,
+          "end_char": 552
+        },
+        "speaker": "Customer",
+        "score": -0.1,
+        "timestamp_sec": 32.0
+      },
+      {
+        "quote": {
+          "text": "آه، okay فهمت. طيب ليش الـ order صار إلـه cancellation من أساسه؟ I didn't cancel it!",
+          "speaker": "Customer",
+          "start_char": 664,
+          "end_char": 748
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "طيب يعني أنا ما عملت شي غلط؟ And I will get all my money back بدون أي deductions؟",
+          "speaker": "Customer",
+          "start_char": 879,
+          "end_char": 960
+        },
+        "speaker": "Customer",
+        "score": 0.0,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "ممتاز، شكراً كثير إلك، تعبتك معي لأني شوي ضايعة اليوم.",
+          "speaker": "Customer",
+          "start_char": 1044,
+          "end_char": 1098
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 80.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.98,
+  "requires_human_review": false
 }

@@ -1,104 +1,155 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T10:54:27.974125+00:00",
+    "human_reviewed": false
   },
+  "id": "32d331f8-c068-4956-b542-fbfb969d2742",
   "call_id": "call_0002_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to inquire about an unexpectedly high recent bill. The agent verified the account, identified an accidental automatic activation of a trial internet package, and resolved the issue by canceling the extra subscription and applying a credit to the next bill. The call ended politely.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "أنا راح ألغي الاشتراك الإضافي وأخصم المبلغ من فاتورتك القادمة فوراً.",
+        "speaker": "Agent",
+        "start_char": 576,
+        "end_char": 644
+      },
+      "promised_by": "Agent",
+      "description": "Cancel the extra subscription and deduct the amount from the next bill.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "مرحلاً معك سارة من خدمة العملاء، كيف أقدر أساعدك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 62
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent was extremely polite, professional, and maintained a helpful tone throughout the call."
     },
     {
+      "evidence": {
+        "text": "عذراً على الإزعاج، يبدو إنه صار تفعيل تلقائي بالعرض التجريبي.",
+        "speaker": "Agent",
+        "start_char": 514,
+        "end_char": 575
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent apologized for the inconvenience and acknowledged the customer's frustration appropriately."
     },
     {
+      "evidence": {
+        "text": "أنا راح ألغي الاشتراك الإضافي وأخصم المبلغ من فاتورتك القادمة فوراً.",
+        "speaker": "Agent",
+        "start_char": 576,
+        "end_char": 644
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent completely resolved the billing error by removing the unwanted charge and promising a credit."
     },
     {
+      "evidence": {
+        "text": "ولا يهمك، ممكن تعطينّي رقم الحساب أو رقم الهوية لو سمحتِ؟",
+        "speaker": "Agent",
+        "start_char": 162,
+        "end_char": 219
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent communicated clearly, giving easy-to-follow instructions and explanations."
     },
     {
+      "evidence": {
+        "text": "هل فيه أي خدمة أخرى أقدر أساعدك فيها اليوم؟",
+        "speaker": "Agent",
+        "start_char": 733,
+        "end_char": 776
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent offered further assistance and closed the call properly and warmly."
     },
     {
+      "evidence": {
+        "text": "الظاهر فيه رسم اشتراك إضافي لباقة الإنترنت الشهرية.",
+        "speaker": "Agent",
+        "start_char": 370,
+        "end_char": 421
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent correctly identified the cause of the high bill from the system."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "ممكن تعطينّي رقم الحساب أو رقم الهوية لو سمحتِ؟",
+        "speaker": "Agent",
+        "start_char": 172,
+        "end_char": 219
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed the correct verification procedure before looking up the account details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "لو سمحتي عندي استفسار بخصوص الفاتورة الأخيرة طلعت عليّ مرتفعة شوي.",
+          "speaker": "Customer",
+          "start_char": 88,
+          "end_char": 154
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "غريبة، أنا ما طلبت أي ترقية للباقة، كنت على نفس الباقة القديمة وما غيرتها.",
+          "speaker": "Customer",
+          "start_char": 432,
+          "end_char": 506
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "ممتاز، الله يعطيكِ العافية ويجزيكِ الخير على حسن تعاونك.",
+          "speaker": "Customer",
+          "start_char": 655,
+          "end_char": 711
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "لا شكراً، ما قصرتِ، مع السلامة.",
+          "speaker": "Customer",
+          "start_char": 787,
+          "end_char": 818
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 56.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

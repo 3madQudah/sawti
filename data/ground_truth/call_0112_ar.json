@@ -1,104 +1,165 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:13:32.095475+00:00",
+    "human_reviewed": false
   },
+  "id": "fd13fe7a-e6c0-4501-bd5d-8b76cf6c9844",
   "call_id": "call_0112_ar",
   "language": "ar",
-  "summary": "",
+  "summary": "The customer called because she was frustrated that her new router was not working and showed a red light. The agent guided her step-by-step to check the connections, leading her to plug it directly into the wall outlet rather than a power strip, and corrected a password capitalization typo. The issue was successfully resolved, and the customer ended the call satisfied.",
   "commitments": [],
   "compliance_flags": [],
   "rubric_scores": [
     {
-      "criterion": "professionalism",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
+        "text": "بتفهم شعورك تماماً وعذراً على الإزعاج اللي صار معكِ، ولا تقلقي أبداً رح نحلها هسا سوا خطوة بخطوة.",
+        "speaker": "Agent",
+        "start_char": 314,
+        "end_char": 411
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent showed strong empathy right away, acknowledging the customer's frustration, apologizing for the inconvenience, and reassuring her."
     },
     {
+      "evidence": {
+        "text": "أبشري، بكل سرور. بالأول ممكن تتأكدي لي إنو سلك التليفون أو الفايبر موصول بالمنفذ الصحيح بالخلف؟",
+        "speaker": "Agent",
+        "start_char": 508,
+        "end_char": 603
+      },
+      "criterion": "professionalism",
+      "score": 1.0,
+      "justification": "The agent maintained a polite, calm, and respectful tone throughout the call despite the customer's initial anger."
+    },
+    {
+      "evidence": {
+        "text": "يا سلام! شبك التليفون والإنترنت اشتغل صاروخ!",
+        "speaker": "Customer",
+        "start_char": 1781,
+        "end_char": 1825
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully diagnosed and resolved the customer's router connection and password issues completely during the call."
     },
     {
+      "evidence": {
+        "text": "هسا ضايل بس ربط الإعدادات. افتحي الواي فاي بالموبايل وشوفي الشبكة الجديدة اللي اسمها موجود بلزقة الراوتر.",
+        "speaker": "Agent",
+        "start_char": 1192,
+        "end_char": 1297
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "Instructions were clear, simple, structured, and easy for the customer to follow step-by-step."
     },
     {
+      "evidence": {
+        "text": "الله يعافيكِ، شكراً لاتصالك بشركة الاتصالات، ونهار سعيد يا رب.",
+        "speaker": "Agent",
+        "start_char": 2259,
+        "end_char": 2321
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent properly checked for additional needs, thanked the customer, and provided a polite closing."
     },
     {
+      "evidence": {
+        "text": "انتبهي حرف الـ A بالكلمة هو سمول مش كابيتال، جربي اكتبيها كمان مرة.",
+        "speaker": "Agent",
+        "start_char": 1643,
+        "end_char": 1710
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The technical guidance provided regarding power connection and password capitalization accurately resolved the exact failure points."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "أبشري، بكل سرور. بالأول ممكن تتأكدي لي إنو سلك التليفون أو الفايبر موصول بالمنفذ الصحيح بالخلف؟",
+        "speaker": "Agent",
+        "start_char": 508,
+        "end_char": 603
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.8,
+      "justification": "The agent followed troubleshooting procedures effectively, though verification of customer account details was omitted (which is acceptable for general technical troubleshooting in this context)."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أهلاً يا اختي. أنا بصراحة كتير معصبة ومليش خلق، صار لي ساعتين بحاول أشغل الراوتر الجديد ومش عم يزبط معي بالمرة!",
+          "speaker": "Customer",
+          "start_char": 90,
+          "end_char": 201
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "يا ريت والله، لأنو الشغل معطل عندي والولاد مزعوجين بدهم نت، فبتمنى نخلص بسرعة.",
+          "speaker": "Customer",
+          "start_char": 422,
+          "end_char": 500
+        },
+        "speaker": "Customer",
+        "score": -0.5,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "تمام، هسا حطيته بالحي مباشرة.. استنى شوي.. واو، الضوء الأحمر صار أبيض ثابت!",
+          "speaker": "Customer",
+          "start_char": 954,
+          "end_char": 1029
+        },
+        "speaker": "Customer",
+        "score": 0.4,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "دخلت الباسورد.. عم بعمل جاري الاتصال.. أوبس، كتب لي \"خطأ في مصادقة كلمة المرور\".",
+          "speaker": "Customer",
+          "start_char": 1481,
+          "end_char": 1561
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 72.0
+      },
+      {
+        "quote": {
+          "text": "يا سلام! شبك التليفون والإنترنت اشتغل صاروخ!",
+          "speaker": "Customer",
+          "start_char": 1781,
+          "end_char": 1825
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 96.0
+      },
+      {
+        "quote": {
+          "text": "تسلمي يا ذوق، ما قصرتي والله، كل شي تمام التمام ويعطيكم ألف عافية.",
+          "speaker": "Customer",
+          "start_char": 2185,
+          "end_char": 2251
+        },
+        "speaker": "Customer",
+        "score": 1.0,
+        "timestamp_sec": 120.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

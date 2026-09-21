@@ -1,104 +1,188 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:01:04.944564+00:00",
+    "human_reviewed": false
   },
+  "id": "1a1a7c1d-e77c-462b-ba67-7f627093cb25",
   "call_id": "call_0038_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to immediately cancel his account due to an unexpected overcharge and extreme frustration with long hold times. The agent attempted to investigate and resolve the billing error and explain closure policies, but the customer refused credits and demanded immediate cancellation. Ultimately, the agent applied a loyalty credit to zero out the balance, processed the cancellation, disabled auto-pay, and sent a confirmation email as requested.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "I am generating the cancellation confirmation right now.",
+        "speaker": "Agent",
+        "start_char": 2876,
+        "end_char": 2932
+      },
+      "promised_by": "Agent",
+      "description": "Generate and send cancellation confirmation.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "Your auto-pay has been disabled, and the confirmation email has just been sent.",
+        "speaker": "Agent",
+        "start_char": 3188,
+        "end_char": 3267
+      },
+      "promised_by": "Agent",
+      "description": "Disable auto-pay and send confirmation email.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "I'm sorry to hear that you're feeling frustrated today. I can certainly help you look into closing your account, but before we do that, may I please have your name and account number?",
+        "speaker": "Agent",
+        "start_char": 187,
+        "end_char": 370
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent remained calm, polite, and professional throughout the call despite severe hostility and verbal abuse from the customer."
     },
     {
+      "evidence": {
+        "text": "I hear how angry you are, Mr. Pendelton, and I am processing the cancellation right now to respect your wishes.",
+        "speaker": "Agent",
+        "start_char": 2652,
+        "end_char": 2763
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent consistently acknowledged the customer's frustration and validated his feelings, though focused heavily on procedural requirements initially."
     },
     {
+      "evidence": {
+        "text": "Your auto-pay has been disabled, and the confirmation email has just been sent. Is there anything else I can assist you with today?",
+        "speaker": "Agent",
+        "start_char": 3188,
+        "end_char": 3319
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully processed the account cancellation, waived the disputed charge via credit, disabled auto-pay, and sent confirmation."
     },
     {
+      "evidence": {
+        "text": "I am authorized to process cancellations, but per our company policy, I am required to review any pending credits or final prorated charges before the account closure is finalized.",
+        "speaker": "Agent",
+        "start_char": 1606,
+        "end_char": 1786
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent explained policies and the billing resolution clearly and concisely despite interruptions."
     },
     {
+      "evidence": {
+        "text": "Your auto-pay has been disabled, and the confirmation email has just been sent. Is there anything else I can assist you with today?",
+        "speaker": "Agent",
+        "start_char": 3188,
+        "end_char": 3319
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent verified that all requested actions were completed, asked if anything else was needed, and closed politely."
     },
     {
+      "evidence": {
+        "text": "According to your account, the extra charge was due to a temporary promotional rate expiring, but I can apply a loyalty credit right now to waive that entire amount.",
+        "speaker": "Agent",
+        "start_char": 2279,
+        "end_char": 2444
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately identified the reason for the charge and correctly applied a credit to clear the balance."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "I am authorized to process cancellations, but per our company policy, I am required to review any pending credits or final prorated charges before the account closure is finalized.",
+        "speaker": "Agent",
+        "start_char": 1606,
+        "end_char": 1786
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent strictly followed company guidelines regarding cancellation reviews and balance checks prior to finalization."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "I want to close my account right now, and I am sick of dealing with your company.",
+          "speaker": "Customer",
+          "start_char": 98,
+          "end_char": 179
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "My name is Arthur Pendelton, and you don't need my account number, it's on your screen if you have half a brain.",
+          "speaker": "Customer",
+          "start_char": 381,
+          "end_char": 493
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "The reason is your outrageous billing practices! You people charged me one hundred and fifty dollars over my agreed rate this month",
+          "speaker": "Customer",
+          "start_char": 756,
+          "end_char": 887
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "I don't care about the billing error anymore! I want out! Cancel my account immediately or I'm reporting you to the Better Business Bureau!",
+          "speaker": "Customer",
+          "start_char": 1459,
+          "end_char": 1598
+        },
+        "speaker": "Customer",
+        "score": -1.0,
+        "timestamp_sec": 72.0
+      },
+      {
+        "quote": {
+          "text": "It's about time. Give me a confirmation number and email me the proof of closure immediately.",
+          "speaker": "Customer",
+          "start_char": 2775,
+          "end_char": 2868
+        },
+        "speaker": "Customer",
+        "score": -0.5,
+        "timestamp_sec": 120.0
+      },
+      {
+        "quote": {
+          "text": "No, and good riddance. Never call me again.",
+          "speaker": "Customer",
+          "start_char": 3330,
+          "end_char": 3373
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 144.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

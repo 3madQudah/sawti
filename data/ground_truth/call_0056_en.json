@@ -1,104 +1,177 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:04:30.336677+00:00",
+    "human_reviewed": false
   },
+  "id": "f610855f-257a-48a2-ac0a-6d8afe48bd12",
   "call_id": "call_0056_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to question an unexpected increase in their monthly utility bill. The agent investigated, explained that the previous promotional rate had expired, and successfully resolved the issue by enrolling the customer in a new twelve-month loyalty plan with additional discounts.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "Your next bill will reflect this lower rate.",
+        "speaker": "Agent",
+        "start_char": 2091,
+        "end_char": 2135
+      },
+      "promised_by": "Agent",
+      "description": "Apply the new loyalty plan rate to the customer's next bill.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Thank you for calling Metro Utilities, my name is Sarah. How can I assist you today?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 91
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained an extremely professional, polite, and helpful demeanor throughout the entire call."
     },
     {
+      "evidence": {
+        "text": "I apologize for any confusion regarding the terms of that initial agreement.",
+        "speaker": "Agent",
+        "start_char": 878,
+        "end_char": 954
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent acknowledged the customer's frustration, validated their experience, and offered a sincere apology for any confusion."
     },
     {
+      "evidence": {
+        "text": "I have successfully enrolled you in the new loyalty plan and applied the discounts, effective immediately.",
+        "speaker": "Agent",
+        "start_char": 1984,
+        "end_char": 2090
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent completely resolved the customer's billing concern by finding and applying a new qualifying promotion."
     },
     {
+      "evidence": {
+        "text": "I see that your promotional rate expired last month, and your account automatically transitioned to our standard monthly plan.",
+        "speaker": "Agent",
+        "start_char": 562,
+        "end_char": 688
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent explained billing terms and the new loyalty plan options with absolute clarity and precision."
     },
     {
+      "evidence": {
+        "text": "Thank you for choosing Metro Utilities, and have a wonderful day as well.",
+        "speaker": "Agent",
+        "start_char": 2269,
+        "end_char": 2342
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent closed the call warmly, using proper branding and wishing the customer a good day after confirming resolution."
     },
     {
+      "evidence": {
+        "text": "It looks like it was indeed a one-time twelve-month promotional period, but I certainly understand how that might not have been clear at the time.",
+        "speaker": "Agent",
+        "start_char": 1158,
+        "end_char": 1304
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately reviewed past account notes and correctly identified the nature of the previous promotion."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "May I please have your account number and the phone number associated with it?",
+        "speaker": "Agent",
+        "start_char": 287,
+        "end_char": 365
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent adhered to proper security procedures by verifying account details before discussing or modifying account information."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Hi Sarah, I am calling because I just received my latest bill and noticed a significant increase in the monthly rate.",
+          "speaker": "Customer",
+          "start_char": 102,
+          "end_char": 219
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "That would be very much appreciated, thank you.",
+          "speaker": "Customer",
+          "start_char": 1047,
+          "end_char": 1094
+        },
+        "speaker": "Customer",
+        "score": 0.2,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "Yes, it was a bit unexpected, but I appreciate you taking the time to look into it.",
+          "speaker": "Customer",
+          "start_char": 1315,
+          "end_char": 1398
+        },
+        "speaker": "Customer",
+        "score": 0.1,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "That sounds wonderful. Would I be locked into that rate for the full year?",
+          "speaker": "Customer",
+          "start_char": 1660,
+          "end_char": 1734
+        },
+        "speaker": "Customer",
+        "score": 0.6,
+        "timestamp_sec": 88.0
+      },
+      {
+        "quote": {
+          "text": "That sounds fantastic, please go ahead and apply that to my account.",
+          "speaker": "Customer",
+          "start_char": 1897,
+          "end_char": 1965
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 104.0
+      },
+      {
+        "quote": {
+          "text": "Thank you so much for your help and patience today, Sarah. Have a wonderful rest of your day.",
+          "speaker": "Customer",
+          "start_char": 2146,
+          "end_char": 2239
+        },
+        "speaker": "Customer",
+        "score": 1.0,
+        "timestamp_sec": 120.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

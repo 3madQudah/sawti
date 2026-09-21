@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:00:32.491159+00:00",
+    "human_reviewed": false
   },
+  "id": "f785ff4c-4aa5-4968-9aa7-ad0a909bce28",
   "call_id": "call_0035_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to complain about an unexpectedly high bill and confusion regarding a contract renewal. The agent explained that the contract renewed automatically. After the customer expressed dissatisfaction, the agent agreed to log a complaint and cancel the renewal.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "أنا راح أسجلك complaint وألغي التجديد",
+        "speaker": "Agent",
+        "start_char": 734,
+        "end_char": 771
+      },
+      "promised_by": "Agent",
+      "description": "Log a complaint and cancel the contract renewal.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "مرحبا معك شركة الاتصالات، كيف بقدر أساعدك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 55
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent maintained a polite and professional tone throughout the interaction."
     },
     {
+      "evidence": {
+        "text": "ولا يهمك سيدي، أنا راح أسجلك complaint وألغي التجديد",
+        "speaker": "Agent",
+        "start_char": 719,
+        "end_char": 771
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent acknowledged the customer's frustration and offered to resolve the issue directly."
     },
     {
+      "evidence": {
+        "text": "أنا راح أسجلك complaint وألغي التجديد",
+        "speaker": "Agent",
+        "start_char": 734,
+        "end_char": 771
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent effectively offered a clear path to resolution by logging a complaint and cancelling the renewal."
     },
     {
+      "evidence": {
+        "text": "حضرتك عملت contract renewal الشهر الماضي، فالـ promotion القديمة خلصت وصار ينحسب عليك السعر الجديد.",
+        "speaker": "Agent",
+        "start_char": 346,
+        "end_char": 445
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The explanation of the automatic renewal was provided, though it initially confused the customer."
     },
     {
+      "evidence": {
+        "text": "تمام، يا ريت والله، شكراً كتير لك ومتاعبك.",
+        "speaker": "Customer",
+        "start_char": 827,
+        "end_char": 869
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The call ended amicably and acknowledged the customer's appreciation, though a formal closing statement was missing."
     },
     {
+      "evidence": {
+        "text": "النظام عندنا بيعمل automatic renewal إذا ما صار cancellation قبل شهر من النهاية.",
+        "speaker": "Agent",
+        "start_char": 542,
+        "end_char": 622
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent provided accurate information regarding the system's automatic renewal policy."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "بس ممكن تعطيني رقم الموبايل لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 214,
+        "end_char": 250
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.9,
+      "justification": "The agent properly asked for the customer's mobile number to verify the account details before proceeding."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "عندي مشكلة بالفاتورة الأخيرة، I got a bill that is much higher than usual وما عم بفهم ليش?",
+          "speaker": "Customer",
+          "start_char": 80,
+          "end_char": 170
+        },
+        "speaker": "Customer",
+        "score": -0.5,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "بس شو قصدك بالفاتورة؟ Didn't I renew on the old price?",
+          "speaker": "Customer",
+          "start_char": 284,
+          "end_char": 338
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Wait, sorry, شو يعني renewal? أنا ما طلبت أجدد العقد أصلاً!",
+          "speaker": "Customer",
+          "start_char": 456,
+          "end_char": 515
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "Sorry, can you say that again? يعني غصب عني تجدد العقد؟ أنا مش فاهمة شي صراحة.",
+          "speaker": "Customer",
+          "start_char": 633,
+          "end_char": 711
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "تمام، يا ريت والله، شكراً كتير لك ومتاعبك.",
+          "speaker": "Customer",
+          "start_char": 827,
+          "end_char": 869
+        },
+        "speaker": "Customer",
+        "score": 0.6,
+        "timestamp_sec": 72.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

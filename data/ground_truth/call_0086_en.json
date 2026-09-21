@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:08:43.841514+00:00",
+    "human_reviewed": false
   },
+  "id": "bc01f282-c153-4815-b376-cde1631bb870",
   "call_id": "call_0086_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to dispute a forty-dollar activation fee that should have been waived under an online upgrade promotion. The agent verified the account, identified a system error that failed to apply the waiver, issued an immediate forty-dollar credit to resolve the issue, and successfully closed the call.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "I am going to issue a credit of forty dollars to your account right now.",
+        "speaker": "Agent",
+        "start_char": 1336,
+        "end_char": 1408
+      },
+      "promised_by": "Agent",
+      "description": "Issue a 40 dollar credit to the customer's account immediately.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
-      "criterion": "professionalism",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
+        "text": "I completely understand your frustration with unexpected charges.",
+        "speaker": "Agent",
+        "start_char": 273,
+        "end_char": 338
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent immediately acknowledged the customer's frustration with empathy and validated their concern."
     },
     {
+      "evidence": {
+        "text": "Thank you for calling Metro Telecom customer service, my name is Alex. How can I help you today?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 103
+      },
+      "criterion": "professionalism",
+      "score": 1.0,
+      "justification": "The agent maintained a polite, professional, and courteous demeanor throughout the entire interaction."
+    },
+    {
+      "evidence": {
+        "text": "I am going to issue a credit of forty dollars to your account right now. It will reflect on your balance immediately and cover this billing cycle.",
+        "speaker": "Agent",
+        "start_char": 1336,
+        "end_char": 1482
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully diagnosed the problem and resolved it completely by issuing an immediate credit."
     },
     {
-      "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
-      "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
-      "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
+        "text": "May I have your phone number and account PIN, please?",
+        "speaker": "Agent",
+        "start_char": 407,
+        "end_char": 460
+      },
       "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
+      "score": 1.0,
+      "justification": "The agent correctly followed verification procedures by asking for the phone number and account PIN."
+    },
+    {
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "It looks like the system failed to automatically apply the waiver at checkout. That was definitely an error on our end.",
+        "speaker": "Agent",
+        "start_char": 1155,
+        "end_char": 1274
+      },
+      "criterion": "accuracy_of_information",
+      "score": 1.0,
+      "justification": "The agent accurately identified the root cause of the billing discrepancy by checking the promotion code and system notes."
+    },
+    {
+      "evidence": {
+        "text": "Is there anything else I can assist you with today?",
+        "speaker": "Agent",
+        "start_char": 1652,
+        "end_char": 1703
+      },
+      "criterion": "communication_clarity",
+      "score": 1.0,
+      "justification": "The agent spoke clearly, asked precise questions, and explained the resolution in an easy-to-understand manner."
+    },
+    {
+      "evidence": {
+        "text": "Thank you for choosing Metro Telecom and have a wonderful rest of your day!",
+        "speaker": "Agent",
+        "start_char": 1832,
+        "end_char": 1907
+      },
+      "criterion": "call_closure",
+      "score": 1.0,
+      "justification": "The agent properly checked for additional needs, thanked the customer, and provided a professional closing."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "I'm calling because I just looked at my latest bill and there is a forty-dollar activation fee on here that I definitely should not be paying.",
+          "speaker": "Customer",
+          "start_char": 123,
+          "end_char": 265
+        },
+        "speaker": "Customer",
+        "score": -0.5,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Sure, the number is 555-0198 and my PIN is 4321.",
+          "speaker": "Customer",
+          "start_char": 471,
+          "end_char": 519
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Please do, because I wouldn't have done it if I had to pay an extra forty bucks. It completely defeats the purpose of the promo.",
+          "speaker": "Customer",
+          "start_char": 939,
+          "end_char": 1067
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "Oh, wow. That was a lot faster and easier than I expected. Thank you.",
+          "speaker": "Customer",
+          "start_char": 1493,
+          "end_char": 1562
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 72.0
+      },
+      {
+        "quote": {
+          "text": "No, that takes care of everything. I really appreciate your help, Alex. Have a great day.",
+          "speaker": "Customer",
+          "start_char": 1714,
+          "end_char": 1803
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 88.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

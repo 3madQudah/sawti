@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T10:58:55.655531+00:00",
+    "human_reviewed": false
   },
+  "id": "8e3450d8-c8ac-4604-b776-fe1f9ddad574",
   "call_id": "call_0024_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called wanting to immediately close their account due to a sudden and unexpected price increase. The agent acknowledged the customer's anger, identified an erroneous charge on the account, applied a special discount and a new offer cutting the bill in half, and confirmed the price would remain stable. The customer was satisfied with the resolution and decided to stay.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "وحالياً عملتلك خصم خاص وعرض يناسب استهلاكك يوفر عليك نص المبلغ.",
+        "speaker": "Agent",
+        "start_char": 400,
+        "end_char": 463
+      },
+      "promised_by": "Agent",
+      "description": "Apply a special discount and a new offer saving half the bill amount.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "العرض راح ينزل على فاتورتك القادمة مباشرة.",
+        "speaker": "Agent",
+        "start_char": 559,
+        "end_char": 601
+      },
+      "promised_by": "Agent",
+      "description": "Apply the new offer and discount starting on the upcoming bill.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "أهلاً بك, معك سارة من شركة الاتصالات, كيف يمكنني مساعدتك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 70
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained a polite, respectful, and professional demeanor throughout the call."
     },
     {
+      "evidence": {
+        "text": "بتفهم غضبك يا سيدي, وباعتذار عن أي إزعاج سببناه لك, ممكن أعرف سبب إلغاء الحساب لكي أساعدك بأفضل طريقة؟",
+        "speaker": "Agent",
+        "start_char": 153,
+        "end_char": 255
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent immediately validated the customer's frustration and offered a sincere apology."
     },
     {
+      "evidence": {
+        "text": "ممتاز جداً, هيك الواحد بقدر يكمل معكم. شكراً لتجاوبك السريع.",
+        "speaker": "Customer",
+        "start_char": 612,
+        "end_char": 672
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully resolved the issue, retaining the customer who initially wanted to close their account."
     },
     {
+      "evidence": {
+        "text": "أكيد يا سيدي, السعر ثابت والعرض راح ينزل على فاتورتك القادمة مباشرة.",
+        "speaker": "Agent",
+        "start_char": 533,
+        "end_char": 601
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent clearly explained the solution and answered the customer's questions directly."
     },
     {
+      "evidence": {
+        "text": "العفو يا سيدي, وشكراً لثقتك بشركتنا, يسعدني خدمتك دائماً.",
+        "speaker": "Agent",
+        "start_char": 680,
+        "end_char": 737
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent closed the call warmly and professionally after confirming satisfaction."
     },
     {
+      "evidence": {
+        "text": "وأنا شفت بالحساب إنه نزل عليك رسم بالغلط, وحالياً عملتلك خصم خاص وعرض يناسب استهلاكك يوفر عليك نص المبلغ.",
+        "speaker": "Agent",
+        "start_char": 358,
+        "end_char": 463
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately identified the incorrect charge and provided correct discount details."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "ممكن أعرف سبب إلغاء الحساب لكي أساعدك بأفضل طريقة؟",
+        "speaker": "Agent",
+        "start_char": 205,
+        "end_char": 255
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed proper retention and inquiry procedures for cancellation requests."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أهلاً. أنا معصب جداً من الفواتير العالية وبدي أسكر الحساب فوراً.",
+          "speaker": "Customer",
+          "start_char": 81,
+          "end_char": 145
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "لإنكم رفعتوا الأسعار فجأة بدون ما تحكولي, وأنا خلص بدي أنقل شركة تانية.",
+          "speaker": "Customer",
+          "start_char": 266,
+          "end_char": 337
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "يعني هذا السعر الجديد راح يثبت؟ وما في رسوم إضافية؟",
+          "speaker": "Customer",
+          "start_char": 474,
+          "end_char": 525
+        },
+        "speaker": "Customer",
+        "score": 0.0,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "ممتاز جداً, هيك الواحد بقدر يكمل معكم. شكراً لتجاوبك السريع.",
+          "speaker": "Customer",
+          "start_char": 612,
+          "end_char": 672
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 56.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

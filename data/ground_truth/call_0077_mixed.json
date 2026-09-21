@@ -1,104 +1,167 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:07:21.963600+00:00",
+    "human_reviewed": false
   },
+  "id": "feadf1ba-aa6c-4aef-b197-8024bc4d1862",
   "call_id": "call_0077_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
-  "compliance_flags": [],
+  "summary": "The customer called Zain customer service to inquire about why their internet package was running out quickly. The agent identified the current plan, offered a 200 Mbps upgrade for five dinars extra per month, processed the upgrade upon the customer's request, and ended the call.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "your new speed will be active خلال عشر دقائق",
+        "speaker": "Agent",
+        "start_char": 700,
+        "end_char": 744
+      },
+      "promised_by": "Agent",
+      "description": "Activate the new speed within ten minutes.",
+      "deadline": null
+    }
+  ],
+  "compliance_flags": [
+    {
+      "evidence": {
+        "text": "ثواني بس, you are currently on the basic 50 Mbps bundle, صح؟",
+        "speaker": "Agent",
+        "start_char": 233,
+        "end_char": 293
+      },
+      "rule_id": "missing_customer_verification",
+      "severity": "high",
+      "description": "The agent discussed the customer's account details and current bundle without performing any identity verification (such as asking for name, ID, or phone number)."
+    }
+  ],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "ولا مهندس, الزيادة بس five dinars per month, وبتصير السرعة أربع أضعاف.",
+        "speaker": "Agent",
+        "start_char": 531,
+        "end_char": 601
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.5,
+      "justification": "The agent used informal and slightly colloquial phrasing ('ولا مهندس') which detracts from standard professional phone etiquette."
     },
     {
+      "evidence": {
+        "text": "Sure, let me look into your account. ثواني بس, you are currently on the basic 50 Mbps bundle, صح؟",
+        "speaker": "Agent",
+        "start_char": 196,
+        "end_char": 293
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The agent was polite and willing to assist, but did not explicitly acknowledge the customer's frustration about the package running out quickly."
     },
     {
+      "evidence": {
+        "text": "Great! Done, your new speed will be active خلال عشر دقائق, thank you for calling Zain.",
+        "speaker": "Agent",
+        "start_char": 687,
+        "end_char": 773
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent successfully addressed the customer's request and processed the upgrade immediately."
     },
     {
+      "evidence": {
+        "text": "Sorry, mafehhemteh, قديش قلت الزيادة؟ Can you repeat that please?",
+        "speaker": "Customer",
+        "start_char": 458,
+        "end_char": 523
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The mixing of languages and unclear pricing explanation initially caused confusion for the customer, requiring a repeat."
     },
     {
+      "evidence": {
+        "text": "Great! Done, your new speed will be active خلال عشر دقائق, thank you for calling Zain.",
+        "speaker": "Agent",
+        "start_char": 687,
+        "end_char": 773
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent closed the call with a thank you and set expectations, though did not ask if the customer needed any further assistance."
     },
     {
+      "evidence": {
+        "text": "We have a very good offer, الـ 200 Mbps unlimited بس بخمسة دينار زيادة.",
+        "speaker": "Agent",
+        "start_char": 376,
+        "end_char": 447
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent provided clear pricing for the upgrade offer, though account details weren't strictly verified first."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "ثواني بس, you are currently on the basic 50 Mbps bundle, صح؟",
+        "speaker": "Agent",
+        "start_char": 233,
+        "end_char": 293
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.3,
+      "justification": "The agent severely failed procedure by discussing and modifying the account without verifying the customer's identity."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "والله أنا عندي الـ internet package ومش فاهم ليش عم تخلص بسرعة, can you check my plan please?",
+          "speaker": "Customer",
+          "start_char": 95,
+          "end_char": 188
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "مش متأكد صراحة, do I need to upgrade? شو الـ options اللي عندكم؟",
+          "speaker": "Customer",
+          "start_char": 304,
+          "end_char": 368
+        },
+        "speaker": "Customer",
+        "score": 0.0,
+        "timestamp_sec": 16.0
+      },
+      {
+        "quote": {
+          "text": "Sorry, mafehhemteh, قديش قلت الزيادة؟ Can you repeat that please?",
+          "speaker": "Customer",
+          "start_char": 458,
+          "end_char": 523
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Ah okay, خمسة دنار يعني؟ Yalla تمام, let's do this upgrade لو سمحت.",
+          "speaker": "Customer",
+          "start_char": 612,
+          "end_char": 679
+        },
+        "speaker": "Customer",
+        "score": 0.6,
+        "timestamp_sec": 32.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

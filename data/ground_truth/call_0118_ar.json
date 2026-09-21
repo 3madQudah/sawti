@@ -1,104 +1,178 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:14:37.798527+00:00",
+    "human_reviewed": false
   },
+  "id": "988d53d7-778b-4a16-8457-001e331a9ac8",
   "call_id": "call_0118_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
-  "compliance_flags": [],
+  "summary": "The customer called back very upset after a previous agent allegedly shouted at him, explaining that he is hard of hearing and confused. The agent apologized, spoke clearly and calmly, and addressed the customer's issue regarding his internet being cut off despite paying yesterday. The agent asked for the phone number, repeated it back correctly, and stated he would check the payment status.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "رح أتأكد من الدفعة حالاً وأرجع لك الخبر.",
+        "speaker": "Agent",
+        "start_char": 1018,
+        "end_char": 1058
+      },
+      "promised_by": "Agent",
+      "description": "The agent promised to check the payment status immediately and report back.",
+      "deadline": null
+    }
+  ],
+  "compliance_flags": [
+    {
+      "evidence": {
+        "text": "تمام، فهمت عليك، رح أشيك على نظام الدفعات الآن وأرجع أرد عليك بالتفصيل، ممكن تعطيني رقم الخط لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 739,
+        "end_char": 840
+      },
+      "rule_id": "missing_id_verification",
+      "severity": "medium",
+      "description": "The agent asked for account details and proceeded without performing full customer identity verification."
+    }
+  ],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "أنا كثير آسف يا أخي لسماع هالكلام، وباعتذار نيابة عن الشركة، ممكن توضح لي شو المشكلة اللي اتصلت عشانها؟",
+        "speaker": "Agent",
+        "start_char": 246,
+        "end_char": 349
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent maintained professional composure and apologized sincerely for the customer's prior negative experience."
     },
     {
+      "evidence": {
+        "text": "ولا يهمك أبداً يا غالي، حقك علي، رح أحكي بصوت واضح وبكل هدوء، خبرني شو مشكلتك بالفاتورة عشان أساعدك تحلها فوراً.",
+        "speaker": "Agent",
+        "start_char": 515,
+        "end_char": 627
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent showed great empathy by validating the customer's feelings and adapting to his hearing difficulties."
     },
     {
+      "evidence": {
+        "text": "رح أتأكد من الدفعة حالاً وأرجع لك الخبر.",
+        "speaker": "Agent",
+        "start_char": 1018,
+        "end_char": 1058
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The agent took steps to resolve the issue and promised a follow-up, but the call ended before resolution was achieved."
     },
     {
+      "evidence": {
+        "text": "رح أحكي بصوت واضح وبكل هدوء، خبرني شو مشكلتك بالفاتورة عشان أساعدك تحلها فوراً.",
+        "speaker": "Agent",
+        "start_char": 548,
+        "end_char": 627
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent clearly explained how he would adjust his communication to accommodate the customer."
     },
     {
+      "evidence": {
+        "text": "عيونِي لك، الرقم هو 5049321، صح هيك؟ رح أتأكد من الدفعة حالاً وأرجع لك الخبر.",
+        "speaker": "Agent",
+        "start_char": 981,
+        "end_char": 1058
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.5,
+      "justification": "The call ended abruptly right after taking the number and promising to check, without a proper polite closing."
     },
     {
+      "evidence": {
+        "text": "تمام، فهمت عليك، رح أشيك على نظام الدفعات الآن وأرجع أرد عليك بالتفصيل، ممكن تعطيني رقم الخط لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 739,
+        "end_char": 840
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "Information gathered was appropriate, though payment verification has not yet been completed."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "تمام، فهمت عليك، رح أشيك على نظام الدفعات الآن وأرجع أرد عليك بالتفصيل، ممكن تعطيني رقم الخط لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 739,
+        "end_char": 840
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.5,
+      "justification": "The agent failed to verify the customer's identity before proceeding with account-related steps."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "السلام عليكم يا اخوي، أنا بصراحة مصدوم ومدايق من اللي صار معاي قبل شوي",
+          "speaker": "Customer",
+          "start_char": 81,
+          "end_char": 151
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "ولا يهمك أبداً يا غالي، حقك علي",
+          "speaker": "Agent",
+          "start_char": 515,
+          "end_char": 546
+        },
+        "speaker": "Agent",
+        "score": 0.5,
+        "timestamp_sec": 16.0
+      },
+      {
+        "quote": {
+          "text": "والله يا اخوي أنا أصلاً مريض وأذني ثقيلة شوي، ومش سامعك منيح",
+          "speaker": "Customer",
+          "start_char": 360,
+          "end_char": 420
+        },
+        "speaker": "Customer",
+        "score": -0.5,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "تسلم يا رب، مشكلتي إنهم فجأة قطعوا عني النت مع إني دافع الفاتورة امبارح",
+          "speaker": "Customer",
+          "start_char": 638,
+          "end_char": 709
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 32.0
+      },
+      {
+        "quote": {
+          "text": "وبدي اياك تعيد لي الرقم اللي حكيته عشان أتأكد إنك كتبته صح لأني ما ركزت.",
+          "speaker": "Customer",
+          "start_char": 901,
+          "end_char": 973
+        },
+        "speaker": "Customer",
+        "score": -0.1,
+        "timestamp_sec": 40.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

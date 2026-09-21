@@ -1,104 +1,177 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:20:03.430311+00:00",
+    "human_reviewed": false
   },
+  "id": "be5d9fd4-3527-4c70-80a6-a3c127c6fa4f",
   "call_id": "call_0131_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to inquire about a delayed package, initially confusing the router shipment with a phone that had already arrived. The agent located the tracking number, explained that a weather incident caused a delay, and confirmed that the router is rescheduled for delivery by 4:00 PM tomorrow without requiring a signature.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "It should be delivered by 4:00 PM tomorrow.",
+        "speaker": "Agent",
+        "start_char": 2266,
+        "end_char": 2309
+      },
+      "promised_by": "Agent",
+      "description": "Deliver the router package by tomorrow at 4:00 PM.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "No problem at all. Either one works. If you have the tracking number handy, that would be great.",
+        "speaker": "Agent",
+        "start_char": 439,
+        "end_char": 535
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained a polite, helpful, and professional tone throughout the interaction, handling the customer's hearing and confusion difficulties with patience."
     },
     {
+      "evidence": {
+        "text": "No problem at all. Either one works.",
+        "speaker": "Agent",
+        "start_char": 439,
+        "end_char": 475
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent showed strong patience and understanding regarding the customer's hearing issues and initial confusion over the shipments."
     },
     {
+      "evidence": {
+        "text": "Just wait for it to arrive tomorrow. Is there anything else I can assist you with today?",
+        "speaker": "Agent",
+        "start_char": 2637,
+        "end_char": 2725
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully identified the package, explained the delay cause, and provided the exact rescheduled delivery date and time."
     },
     {
+      "evidence": {
+        "text": "No, 4:00 PM in the afternoon.",
+        "speaker": "Agent",
+        "start_char": 2363,
+        "end_char": 2392
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent communicated clearly, repeating details when necessary to overcome the customer's hearing difficulties and phone connection issues."
     },
     {
+      "evidence": {
+        "text": "You're very welcome. Have a wonderful rest of your day and stay safe!",
+        "speaker": "Agent",
+        "start_char": 2811,
+        "end_char": 2880
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent properly asked if further assistance was needed, summarized next steps, and closed with a polite sign-off."
     },
     {
+      "evidence": {
+        "text": "According to the system, it was actually out for delivery three days ago, but the status shows a delay due to a weather incident in your area.",
+        "speaker": "Agent",
+        "start_char": 1589,
+        "end_char": 1731
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately retrieved tracking details and system status regarding the weather delay and rescheduled delivery time."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "May I have your account number or the tracking number, please?",
+        "speaker": "Agent",
+        "start_char": 255,
+        "end_char": 317
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent properly requested identification information (account or tracking number) before looking into the shipment."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Hi, yes, I'm calling about a package I was supposed to get, but it's not here.",
+          "speaker": "Customer",
+          "start_char": 111,
+          "end_char": 189
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Oh! I thought this was about my new phone. Wait, is the phone coming in a different box?",
+          "speaker": "Customer",
+          "start_char": 1090,
+          "end_char": 1178
+        },
+        "speaker": "Customer",
+        "score": -0.1,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "Oh, the phone? Yes, that came on Tuesday. But this router thing, what day is it supposed to get here?",
+          "speaker": "Customer",
+          "start_char": 1480,
+          "end_char": 1581
+        },
+        "speaker": "Customer",
+        "score": 0.1,
+        "timestamp_sec": 80.0
+      },
+      {
+        "quote": {
+          "text": "Wait, what? Is it lost? Who had an incident?",
+          "speaker": "Customer",
+          "start_char": 1742,
+          "end_char": 1786
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 88.0
+      },
+      {
+        "quote": {
+          "text": "Okay, 4:00 AM? Did you say 4:00 AM?",
+          "speaker": "Customer",
+          "start_char": 2320,
+          "end_char": 2355
+        },
+        "speaker": "Customer",
+        "score": 0.0,
+        "timestamp_sec": 128.0
+      },
+      {
+        "quote": {
+          "text": "No, I think that covers it. Thank you for clearing that up, Marcus.",
+          "speaker": "Customer",
+          "start_char": 2736,
+          "end_char": 2803
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 160.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

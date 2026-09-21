@@ -1,104 +1,154 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:10:40.639250+00:00",
+    "human_reviewed": false
   },
+  "id": "ae08173d-e7fa-4a2e-a096-32e26c480140",
   "call_id": "call_0098_en",
   "language": "en",
-  "summary": "",
+  "summary": "The customer called to complain about a delayed mobile phone order that was supposed to arrive three days ago. The agent investigated, identified a courier sorting facility delay, and informed the customer that the package is out for delivery today and will arrive by 4:00 PM. The customer was satisfied and the issue was resolved.",
   "commitments": [],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Thank you for calling Swift Communications, my name is Marcus. How can I help you today?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 95
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained a polite, professional, and courteous tone throughout the entire call."
     },
     {
+      "evidence": {
+        "text": "I completely understand your frustration, and I apologize for the delay with your shipment.",
+        "speaker": "Agent",
+        "start_char": 314,
+        "end_char": 405
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent acknowledged the customer's frustration and offered a sincere apology for the delay right away."
     },
     {
+      "evidence": {
+        "text": "Yes, the courier's real-time status confirms it will be delivered by 4:00 PM this afternoon.",
+        "speaker": "Agent",
+        "start_char": 886,
+        "end_char": 978
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully tracked the order, explained the cause of the delay, and provided a definitive delivery time."
     },
     {
+      "evidence": {
+        "text": "Ah, I see the courier experienced a sorting facility delay in your area, which held it up over the weekend.",
+        "speaker": "Agent",
+        "start_char": 602,
+        "end_char": 709
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent explained the tracking details clearly and concisely without confusing jargon."
     },
     {
+      "evidence": {
+        "text": "Is there anything else I can assist you with today?",
+        "speaker": "Agent",
+        "start_char": 1170,
+        "end_char": 1221
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent offered further assistance, thanked the customer, and delivered a warm, complete closing."
     },
     {
+      "evidence": {
+        "text": "it looks like it was just loaded onto the local delivery truck this morning and is out for delivery today.",
+        "speaker": "Agent",
+        "start_char": 719,
+        "end_char": 825
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The information provided matched the system tracking details and was accurate."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "May I have your account number or order reference, please?",
+        "speaker": "Agent",
+        "start_char": 448,
+        "end_char": 506
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent properly verified the customer by asking for the order reference before looking up account details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "It's still not here, and I need it for work!",
+          "speaker": "Customer",
+          "start_char": 262,
+          "end_char": 306
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Sure, it's order number SC-884920.",
+          "speaker": "Customer",
+          "start_char": 517,
+          "end_char": 551
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Oh, really? So it's actually coming today?",
+          "speaker": "Customer",
+          "start_char": 836,
+          "end_char": 878
+        },
+        "speaker": "Customer",
+        "score": 0.2,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "Well, that's a relief. I was worried it got lost in transit. Thanks for checking that so quickly, Marcus.",
+          "speaker": "Customer",
+          "start_char": 990,
+          "end_char": 1095
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "No, that covers it. Have a good day.",
+          "speaker": "Customer",
+          "start_char": 1232,
+          "end_char": 1268
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 72.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

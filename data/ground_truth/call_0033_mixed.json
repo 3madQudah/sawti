@@ -1,104 +1,177 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:00:16.862996+00:00",
+    "human_reviewed": false
   },
+  "id": "02a0b5dd-177e-4216-b1ce-ba50fd693191",
   "call_id": "call_0033_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called feeling angry and upset about a high bill and the sudden threat of service disconnection, requesting a two-week payment extension until their payday. The agent initially offered only five days due to company policy, but after the customer expressed frustration, the agent successfully performed an override to grant a ten-week extension until the 15th of the month. The call ended cordially with the customer satisfied.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "تم تمديد الموعد لتاريخ خمسطعش الشهر.",
+        "speaker": "Agent",
+        "start_char": 1310,
+        "end_char": 1346
+      },
+      "promised_by": "Agent",
+      "description": "Extended the payment deadline to the 15th of the month.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "أكيد يا سيدي، ما رح يكون في أي إشي",
+        "speaker": "Agent",
+        "start_char": 1433,
+        "end_char": 1467
+      },
+      "promised_by": "Agent",
+      "description": "Assured the customer that no further service cuts or secondary penalties will be applied.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "ولا يهمك يا سيدي، أعطيني رقم الحساب أو رقم التلفون لو سمحت عشان أشيك لك شو القصة.",
+        "speaker": "Agent",
+        "start_char": 173,
+        "end_char": 254
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent remained calm, polite, and respectful throughout the call despite the customer's initial anger."
     },
     {
+      "evidence": {
+        "text": "بعتذر منك يا سيدي، النظام عندنا بيسمح بمتدات قصيرة، بس خليني أشوف شو بقدر أعمل لك.",
+        "speaker": "Agent",
+        "start_char": 639,
+        "end_char": 721
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent apologized and acknowledged the customer's situation, ultimately going above standard policy limits to help."
     },
     {
+      "evidence": {
+        "text": "طيب يا سيدي، خليني أعمل override وأمددها لعشر أيام، بس هاي آخر فرصة للنظام، اتفقنا؟",
+        "speaker": "Agent",
+        "start_char": 1062,
+        "end_char": 1145
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully resolved the issue by using an override to grant the requested ten-day extension."
     },
     {
+      "evidence": {
+        "text": "أبداً مو قصدي يا سيدي، بس هاي سياسة الشركة، وللأسف ما بقدر أعطيك أسبوعين، أقصى شي خمس أيام.",
+        "speaker": "Agent",
+        "start_char": 855,
+        "end_char": 946
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent clearly explained company policy and the system limitations, although initially strict."
     },
     {
+      "evidence": {
+        "text": "هل في شي تاني بقدر أساعدك فيه اليوم؟",
+        "speaker": "Agent",
+        "start_char": 1469,
+        "end_char": 1505
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent verified if there was any other assistance needed and closed the call politely."
     },
     {
+      "evidence": {
+        "text": "أه أستاذ، مبين عندي إنه موعد الدفع كان مبارح، وصار في late fee.",
+        "speaker": "Agent",
+        "start_char": 444,
+        "end_char": 507
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately retrieved and reported the billing and payment due status from the system."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "طيب يا سيدي، خليني أعمل override وأمددها لعشر أيام، بس هاي آخر فرصة للنظام، اتفقنا؟",
+        "speaker": "Agent",
+        "start_char": 1062,
+        "end_char": 1145
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.9,
+      "justification": "The agent correctly followed standard exception procedures (override) to accommodate the customer's request."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "يا أخي أنا كتير معصب من هاد الموضوع، I got my bill اليوم and it is way too high، ومش فاهم ليش هيك الرقم عالي!",
+          "speaker": "Customer",
+          "start_char": 56,
+          "end_char": 165
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "الرقم هو خمسة صفر تسعة اثنين ثلاثة، بس اسمعني كويس، I am calling عشان بدي payment extension ضروري، مو معقول تنقطع الخدمة فجأة!",
+          "speaker": "Customer",
+          "start_char": 265,
+          "end_char": 391
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "شو يعني بتردوا علي هيك؟ I’ve been a customer with you for five years، ولما بطلب طلباً بسيطاً بتقعدوا تلفوا وتدوروا!",
+          "speaker": "Customer",
+          "start_char": 732,
+          "end_char": 847
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "الحمد لله إنك فهمت علي! It shouldn't have been this hard، ليش دايماً بتتعبونا بالخدمة تبعتكم؟",
+          "speaker": "Customer",
+          "start_char": 1156,
+          "end_char": 1249
+        },
+        "speaker": "Customer",
+        "score": 0.2,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "لا سلامتك، شكرا وباي.",
+          "speaker": "Customer",
+          "start_char": 1516,
+          "end_char": 1537
+        },
+        "speaker": "Customer",
+        "score": 0.7,
+        "timestamp_sec": 88.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

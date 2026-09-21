@@ -1,104 +1,177 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:34:02.295611+00:00",
+    "human_reviewed": false
   },
+  "id": "5999160f-b289-4e94-9917-5fd7e6162c62",
   "call_id": "call_0146_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to complain about a rude representative who hung up on them earlier, and also to dispute a $40 data overage charge. The agent apologized, logged a formal complaint against the previous employee, reassured the customer, and then proceeded to investigate and help resolve the billing dispute.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "It will be reviewed by the customer relations manager today.",
+        "speaker": "Agent",
+        "start_char": 2230,
+        "end_char": 2290
+      },
+      "promised_by": "Agent",
+      "description": "Have the formal complaint reviewed by the customer relations manager today.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "Let's see what we can do about waiving that charge for you today.",
+        "speaker": "Agent",
+        "start_char": 2879,
+        "end_char": 2944
+      },
+      "promised_by": "Agent",
+      "description": "Investigate and potentially waive the $40 data overage charge.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "I sincerely apologize for that behavior. That is definitely not the standard of service we expect our team to provide.",
+        "speaker": "Agent",
+        "start_char": 535,
+        "end_char": 653
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained a calm, polite, and professional demeanor throughout the call, successfully de-escalating an angry customer."
     },
     {
+      "evidence": {
+        "text": "I am so sorry, that is completely unacceptable customer service, and I completely understand why you are upset.",
+        "speaker": "Agent",
+        "start_char": 1136,
+        "end_char": 1247
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent repeatedly validated the customer's feelings and showed genuine understanding and empathy regarding the poor treatment."
     },
     {
+      "evidence": {
+        "text": "Let me pull up your usage logs for last month.",
+        "speaker": "Agent",
+        "start_char": 2589,
+        "end_char": 2635
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent successfully de-escalated the complaint issue and immediately moved to address the billing dispute efficiently."
     },
     {
+      "evidence": {
+        "text": "I completely understand your frustration, and I can certainly get a supervisor on the line for you if you'd like. However, before I do that, I would love the opportunity to look at your bill myself and resolve the actual issue you called about.",
+        "speaker": "Agent",
+        "start_char": 1428,
+        "end_char": 1672
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent communicated clearly, structured options well, and explained the next steps without confusion."
     },
     {
+      "evidence": {
+        "text": "Let's see what we can do about waiving that charge for you today.",
+        "speaker": "Agent",
+        "start_char": 2879,
+        "end_char": 2944
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The transcript cuts off right as they are beginning to solve the billing issue, leaving the call incomplete at the very end."
     },
     {
+      "evidence": {
+        "text": "It is noted, and I have flagged your account with a formal complaint regarding that call.",
+        "speaker": "Agent",
+        "start_char": 2140,
+        "end_char": 2229
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent accurately understood the customer's requests and correctly informed them of the complaint logging process."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Do you happen to remember the name of the representative you spoke with?",
+        "speaker": "Agent",
+        "start_char": 654,
+        "end_char": 726
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.9,
+      "justification": "The agent followed proper procedure by gathering details about the previous incident, though account verification wasn't explicitly shown in the provided snippet."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Look, I am calling because I am absolutely furious about the way I was treated by one of your representatives about twenty minutes ago.",
+          "speaker": "Customer",
+          "start_char": 126,
+          "end_char": 261
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "He said his name was Kevin, or at least that's what he mumbled before he basically yelled over me and then hung up the phone in my ear!",
+          "speaker": "Customer",
+          "start_char": 737,
+          "end_char": 872
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Look, at this point, I don't even care about the bill as much as I care about that employee's attitude.",
+          "speaker": "Customer",
+          "start_char": 1684,
+          "end_char": 1787
+        },
+        "speaker": "Customer",
+        "score": -0.5,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "Fine. I appreciate you actually listening to me, unlike the last guy.",
+          "speaker": "Customer",
+          "start_char": 2301,
+          "end_char": 2370
+        },
+        "speaker": "Customer",
+        "score": 0.2,
+        "timestamp_sec": 72.0
+      },
+      {
+        "quote": {
+          "text": "Thank you. It's just frustrating that I had to go through all of this anger just to get basic help.",
+          "speaker": "Customer",
+          "start_char": 2647,
+          "end_char": 2746
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 88.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

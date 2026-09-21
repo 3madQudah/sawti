@@ -1,104 +1,177 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:14:20.761566+00:00",
+    "human_reviewed": false
   },
+  "id": "0e2a01fd-1af5-4139-9ce1-4431aca3ec58",
   "call_id": "call_0117_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to complain about a delayed refund for a cancelled internet installation kit order. The agent identified the issue as a failure in the automated system, manually processed the refund of one hundred and fifty dollars, and informed the customer of the processing timeframe.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "The refund of one hundred and fifty dollars has been initiated to your original payment method.",
+        "speaker": "Agent",
+        "start_char": 862,
+        "end_char": 957
+      },
+      "promised_by": "Agent",
+      "description": "Initiate a manual refund of 150 dollars to the customer's original payment method.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "You will also receive a confirmation email shortly.",
+        "speaker": "Agent",
+        "start_char": 1114,
+        "end_char": 1165
+      },
+      "promised_by": "Agent",
+      "description": "Send a confirmation email regarding the refund.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "I certainly understand your frustration regarding the delayed refund. Let me pull up your account to check the status.",
+        "speaker": "Agent",
+        "start_char": 245,
+        "end_char": 363
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent remained polite, calm, and professional throughout the call despite the customer's frustration."
     },
     {
+      "evidence": {
+        "text": "I certainly understand your frustration regarding the delayed refund.",
+        "speaker": "Agent",
+        "start_char": 245,
+        "end_char": 314
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent acknowledged the customer's frustration promptly and sincerely."
     },
     {
+      "evidence": {
+        "text": "I am processing it manually for you right now, sir.",
+        "speaker": "Agent",
+        "start_char": 810,
+        "end_char": 861
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully resolved the issue by manually processing the refund that failed in the automated system."
     },
     {
+      "evidence": {
+        "text": "It typically takes three to five business days to reflect in your account.",
+        "speaker": "Agent",
+        "start_char": 1039,
+        "end_char": 1113
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent communicated the timeline and resolution clearly without using confusing jargon."
     },
     {
+      "evidence": {
+        "text": "Thank you for your patience, have a good day.",
+        "speaker": "Agent",
+        "start_char": 1232,
+        "end_char": 1277
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The call ended politely with a closing statement, though the customer hung up abruptly."
     },
     {
+      "evidence": {
+        "text": "It looks like the system didn't automatically trigger the refund when the cancellation went through.",
+        "speaker": "Agent",
+        "start_char": 613,
+        "end_char": 713
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately identified the root cause of the missing refund by checking the account."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "May I have your account number or phone number, please?",
+        "speaker": "Agent",
+        "start_char": 364,
+        "end_char": 419
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed proper procedure by verifying the account using the phone number before discussing account details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Look, I cancelled my internet installation kit order two weeks ago and I still haven't seen my refund.",
+          "speaker": "Customer",
+          "start_char": 109,
+          "end_char": 211
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "It's 555-0198. And I don't want excuses, I want to know where my one hundred and fifty dollars is.",
+          "speaker": "Customer",
+          "start_char": 430,
+          "end_char": 528
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "That is ridiculous! Why is that my problem? Just process it right this second.",
+          "speaker": "Customer",
+          "start_char": 724,
+          "end_char": 802
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "How long is this actually going to take to hit my bank account?",
+          "speaker": "Customer",
+          "start_char": 968,
+          "end_char": 1031
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "Fine. It better be there in three days. Goodbye.",
+          "speaker": "Customer",
+          "start_char": 1176,
+          "end_char": 1224
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 72.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

@@ -1,104 +1,165 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:10:15.930460+00:00",
+    "human_reviewed": false
   },
+  "id": "7a0c0fd4-62a1-4db8-a83f-7cd91e44cb58",
   "call_id": "call_0095_mixed",
   "language": "mixed",
-  "summary": "",
+  "summary": "The customer called to complain about their contract being auto-renewed for a full year at a higher rate without their consent, threatening to switch operators. The agent empathized, consulted a supervisor, successfully reverted the plan to the old rate, waived cancellation penalties, and applied a 30 dirham credit to the customer's bill.",
   "commitments": [],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Welcome to Zain customer service, my name is Mohammad, how can I help you today ya akhi?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 95
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent maintained a polite, respectful, and helpful tone throughout the call, even when the customer was frustrated."
     },
     {
+      "evidence": {
+        "text": "I am so sorry to hear that you're upset, momken tontny your phone number and account details please so I can check what happened?",
+        "speaker": "Agent",
+        "start_char": 294,
+        "end_char": 423
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.85,
+      "justification": "The agent acknowledged the customer's frustration promptly and offered a sincere apology before proceeding to investigate."
     },
     {
+      "evidence": {
+        "text": "I have cancelled the renewal penalty, reverted your plan to the old rate, and I applied a 30 dirham credit to your current bill for the inconvenience.",
+        "speaker": "Agent",
+        "start_char": 1757,
+        "end_char": 1907
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent fully resolved the customer's issue by reverting the plan, waiving penalties, and providing a credit, leaving the customer completely satisfied."
     },
     {
+      "evidence": {
+        "text": "Let me check the system real quick... ah, I see here that the contract was renewed last month under the promotion plan, bas don't worry, let me see what options we have to fix this for you.",
+        "speaker": "Agent",
+        "start_char": 570,
+        "end_char": 759
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent explained the findings clearly and kept the customer informed of the steps being taken."
     },
     {
+      "evidence": {
+        "text": "is there anything else I can help you with today?",
+        "speaker": "Agent",
+        "start_char": 2125,
+        "end_char": 2174
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent verified if further assistance was needed and closed the call with appropriate polite pleasantries."
     },
     {
+      "evidence": {
+        "text": "ah, I see here that the contract was renewed last month under the promotion plan, bas don't worry, let me see what options we have to fix this for you.",
+        "speaker": "Agent",
+        "start_char": 608,
+        "end_char": 759
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent accurately identified the renewal details in the system and provided correct options for resolving it."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "momken tontny your phone number and account details please so I can check what happened?",
+        "speaker": "Agent",
+        "start_char": 335,
+        "end_char": 423
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.9,
+      "justification": "The agent correctly requested and verified account details before checking the system and handling the dispute."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Ahlan Mohammad, wallah I am very annoyed right now because I just checked my bill and found out my contract was auto-renewed for a full year at a higher rate without my permission!",
+          "speaker": "Customer",
+          "start_char": 106,
+          "end_char": 286
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Sure, the number is 0501234567, but wallah this is unacceptable, I never agreed to this renewal and nobody called me to confirm.",
+          "speaker": "Customer",
+          "start_char": 434,
+          "end_char": 562
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Fix it kif ya akhi? I am paying 50 dirhams extra every month now, and I want to cancel this new contract immediately without paying any termination fees!",
+          "speaker": "Customer",
+          "start_char": 770,
+          "end_char": 923
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "Wallah if you can revert it back to my old plan, I will be very happy, because otherwise I am planning to port my number to another operator today.",
+          "speaker": "Customer",
+          "start_char": 1186,
+          "end_char": 1333
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "Really? Wallah that's amazing service Mohammad, I didn't expect you to resolve it this fast and give me a credit too!",
+          "speaker": "Customer",
+          "start_char": 1918,
+          "end_char": 2035
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 88.0
+      },
+      {
+        "quote": {
+          "text": "No, that's everything, thank you so much for your help and have a great day.",
+          "speaker": "Customer",
+          "start_char": 2185,
+          "end_char": 2261
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 104.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:10:32.941020+00:00",
+    "human_reviewed": false
   },
+  "id": "8b02a7c7-8ab2-403e-91ec-df51081e2ebf",
   "call_id": "call_0097_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called in extremely upset because their order was canceled without warning and the money was not refunded. The agent checked the system, explained that the order was canceled due to out-of-stock items, and stated that refunds take three to five business days. The customer demanded an immediate refund and accused the company of theft, then requested to speak with a supervisor after arguing about the refund timeframe. The agent agreed to transfer the call to a supervisor.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "أنا حاضر لتحويلك للمسؤول يا أستاذ، بس بحب أأكد لك إن المسؤول رح يعطيك نفس المعلومة لأنها سياسة شركة وبنك.",
+        "speaker": "Agent",
+        "start_char": 951,
+        "end_char": 1056
+      },
+      "promised_by": "Agent",
+      "description": "Transfer the customer to a supervisor.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "عذراً منك يا أستاذ على هالشيء. ممكن تعطني رقم الطلب لو سمحت عشان أتأكد من النظام؟",
+        "speaker": "Agent",
+        "start_char": 326,
+        "end_char": 407
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent maintained composure despite the customer's aggressive and abusive language, apologizing and keeping a polite tone throughout."
     },
     {
+      "evidence": {
+        "text": "أنا مقدر غضبك والله يا أستاذ، بس هاي إجراءات بنكية رسمية ومش بإيدينا نسرعها أكثر من هيك.",
+        "speaker": "Agent",
+        "start_char": 756,
+        "end_char": 844
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent acknowledged the customer's frustration and validated his anger, though the empathy was slightly tempered by defending the company's policy."
     },
     {
+      "evidence": {
+        "text": "جارٍ تحويل مكالمتك للمسؤول المباشر، أرجو البقاء على الخط.",
+        "speaker": "Agent",
+        "start_char": 1144,
+        "end_char": 1201
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.5,
+      "justification": "The agent could not resolve the refund timeframe issue directly because of company/bank policy, but properly escalated the call to a supervisor as requested."
     },
     {
+      "evidence": {
+        "text": "نعم، الطلب ملغي بسبب عدم توفر المنتج بالمستودع. وبالنسبة للمبلغ، المفروض يرجع تلقائياً خلال ثلاث إلى خمس أيام عمل.",
+        "speaker": "Agent",
+        "start_char": 522,
+        "end_char": 636
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent clearly and directly explained why the order was canceled and the exact timeline for the refund."
     },
     {
+      "evidence": {
+        "text": "حاضر يا أستاذ، جارٍ تحويل مكالمتك للمسؤول المباشر، أرجو البقاء على الخط.",
+        "speaker": "Agent",
+        "start_char": 1129,
+        "end_char": 1201
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The call closure was handled appropriately by executing a warm transfer to a supervisor, though the conversation ended in an escalation rather than full resolution."
     },
     {
+      "evidence": {
+        "text": "نعم، الطلب ملغي بسبب عدم توفر المنتج بالمستودع. وبالنسبة للمبلغ، المفروض يرجع تلقائياً خلال ثلاث إلى خمس أيام عمل.",
+        "speaker": "Agent",
+        "start_char": 522,
+        "end_char": 636
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent correctly identified the cancellation reason from the system and provided standard and accurate banking/company return timeframes."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "ممكن تعطني رقم الطلب لو سمحت عشان أتأكد من النظام؟",
+        "speaker": "Agent",
+        "start_char": 357,
+        "end_char": 407
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed the correct procedure by asking for the order number, checking the system, explaining the policy, and honoring the customer's request for escalation."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أنا طهّرت اليوم وميت من القهر! شو هالمسخرة هاي؟",
+          "speaker": "Customer",
+          "start_char": 90,
+          "end_char": 137
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "رقم الطلب 88392. وبدي مصاريس ترجع اليوم قبل بكره، فاهم؟!",
+          "speaker": "Customer",
+          "start_char": 418,
+          "end_char": 474
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "شو ثلاث لخمس أيام؟! انتم سحبتوهم بثانية وحدة! ليش لأستنى خمس أيام عشان آخذ مصاري؟ هذا سرقة عيني عينك!",
+          "speaker": "Customer",
+          "start_char": 647,
+          "end_char": 748
+        },
+        "speaker": "Customer",
+        "score": -1.0,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "لا تكذب علي وتجيب لي حكي فاضي! أنا بدي أشوف المسؤول تبعك حالاً، ما رح أسكت على هالموضوع.",
+          "speaker": "Customer",
+          "start_char": 855,
+          "end_char": 943
+        },
+        "speaker": "Customer",
+        "score": -1.0,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "حولني للمسؤول فوراً وبلا كثرة حكي، بلا سياسة بلا بطيخ!",
+          "speaker": "Customer",
+          "start_char": 1067,
+          "end_char": 1121
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 72.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

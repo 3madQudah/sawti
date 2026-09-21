@@ -1,104 +1,188 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:15:15.278071+00:00",
+    "human_reviewed": false
   },
+  "id": "444f47f8-fd6b-48e3-88dd-93db38693944",
   "call_id": "call_0121_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called MetroNet support to report a total internet outage affecting their work from home. The agent identified an active fiber cut in the area with an estimated restoration time of 5:00 PM. The agent applied a prorated bill credit, explained that mobile data passes are only for MetroNet subscribers, and set up an automated SMS alert for service restoration.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "Once the outage is fully resolved and your service is restored, you can contact us back or I can apply a prorated credit for today's downtime right now.",
+        "speaker": "Agent",
+        "start_char": 2578,
+        "end_char": 2730
+      },
+      "promised_by": "Agent",
+      "description": "Apply a prorated bill credit for the downtime.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "text me the moment the service comes back up so I can get back to work.",
+        "speaker": "Customer",
+        "start_char": 3702,
+        "end_char": 3773
+      },
+      "promised_by": "Customer",
+      "description": "Customer requested an SMS notification when service is restored.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "I have just added the outage credit request to your account, and I have set up an automated SMS alert to your phone number to notify you the second the network is restored.",
+        "speaker": "Agent",
+        "start_char": 3781,
+        "end_char": 3953
+      },
+      "promised_by": "Agent",
+      "description": "Set up automated SMS alert for service restoration and add the credit request.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
-      "criterion": "professionalism",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
+        "text": "I am very sorry to hear that your service is down, Mr. Carson. I understand how frustrating that is, especially when you need to get things done.",
+        "speaker": "Agent",
+        "start_char": 228,
+        "end_char": 373
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent consistently acknowledged the customer's frustration, used their name, and expressed genuine understanding regarding the impact on their work."
     },
     {
-      "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Thank you for calling MetroNet Support, my name is Marcus. How can I help you today?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 91
+      },
+      "criterion": "professionalism",
+      "score": 0.95,
+      "justification": "The agent remained calm, polite, and professional throughout the call despite the customer's irritation."
     },
     {
-      "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
-      "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
+        "text": "The current estimated time of restoration is about four hours from now, so roughly 5:00 PM.",
+        "speaker": "Agent",
+        "start_char": 1770,
+        "end_char": 1861
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent accurately checked the network status map, identified the fiber cut, and provided correct information about the outage and company policies."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "I can definitely help you with a temporary data pass for your mobile phone if you are also a MetroNet mobile customer.",
+        "speaker": "Agent",
+        "start_char": 2897,
+        "end_char": 3015
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.85,
+      "justification": "The agent followed the correct procedures for checking the network, issuing a credit, and explaining mobile data pass restrictions."
+    },
+    {
+      "evidence": {
+        "text": "Let me check our network status map for your specific zip code... Ah, yes. It looks like we do have an active fiber cut reported about two miles from your location.",
+        "speaker": "Agent",
+        "start_char": 1299,
+        "end_char": 1463
+      },
+      "criterion": "communication_clarity",
+      "score": 0.9,
+      "justification": "Explanations regarding the fiber cut and lack of alternative routing were clear and easy to understand."
+    },
+    {
+      "evidence": {
+        "text": "I have just added the outage credit request to your account, and I have set up an automated SMS alert to your phone number to notify you the second the network is restored.",
+        "speaker": "Agent",
+        "start_char": 3781,
+        "end_char": 3953
+      },
+      "criterion": "resolution_effectiveness",
+      "score": 0.85,
+      "justification": "While the physical outage could not be fixed immediately, the agent effectively resolved the customer's secondary requests by applying the bill credit and setting up an SMS alert."
+    },
+    {
+      "evidence": {
+        "text": "Thank you for your patience, Mr. Carson. Have a good rest of your day.",
+        "speaker": "Agent",
+        "start_char": 4038,
+        "end_char": 4108
+      },
+      "criterion": "call_closure",
+      "score": 0.9,
+      "justification": "The agent wrapped up the call professionally, confirming all actions taken and offering a polite closing."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Finally. Look, my internet has been completely dead for the last three hours, and I need it to work. What is going on?",
+          "speaker": "Customer",
+          "start_char": 102,
+          "end_char": 220
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "It's more than just frustrating, I'm losing money here because I work from home! Every time I try to load a page, nothing happens.",
+          "speaker": "Customer",
+          "start_char": 426,
+          "end_char": 556
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "A fiber cut? Are you serious? How long is that going to take to fix?",
+          "speaker": "Customer",
+          "start_char": 1474,
+          "end_char": 1542
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "Five PM?! Are you out of your mind? That ruins my entire workday! Can't you reroute my traffic or something?",
+          "speaker": "Customer",
+          "start_char": 1872,
+          "end_char": 1980
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 80.0
+      },
+      {
+        "quote": {
+          "text": "Alright. Thanks for the info, even though the news sucks. Goodbye.",
+          "speaker": "Customer",
+          "start_char": 3964,
+          "end_char": 4030
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 152.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.98,
+  "requires_human_review": false
 }

@@ -1,104 +1,165 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:05:36.169163+00:00",
+    "human_reviewed": false
   },
+  "id": "6ba68a6e-d319-4072-8cae-a4a4f4b48b09",
   "call_id": "call_0064_en",
   "language": "en",
-  "summary": "",
+  "summary": "The customer called for assistance setting up a newly purchased Apex Home Mesh Wi-Fi system, specifically encountering a blinking orange light on the main router. The agent guided the customer through power-cycling the modem and router, checking connection statuses, and using the mobile app to complete the setup. The router successfully achieved a solid white light, and the customer was able to finish configuring the network.",
   "commitments": [],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Thank you for calling Apex Telecom, my name is Sarah. How can I help you today?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 86
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained an extremely professional, polite, and helpful tone throughout the entire call."
     },
     {
+      "evidence": {
+        "text": "I am so glad to hear that. Now, regarding the two satellite nodes, the app should guide you on where to place them next to expand your coverage.",
+        "speaker": "Agent",
+        "start_char": 3863,
+        "end_char": 4007
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent was encouraging, validating the customer's progress and showing genuine enthusiasm for resolving the issue."
     },
     {
+      "evidence": {
+        "text": "It just turned solid white! That was much easier once we power-cycled the modem.",
+        "speaker": "Customer",
+        "start_char": 3775,
+        "end_char": 3855
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The customer's problem was completely resolved by following the agent's clear troubleshooting steps."
     },
     {
+      "evidence": {
+        "text": "Yes, please unplug the power cable from both your modem and the new Apex router. Wait about thirty seconds, and then plug just the modem back in first.",
+        "speaker": "Agent",
+        "start_char": 742,
+        "end_char": 893
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent's instructions were exceptionally clear, paced well, and easy for the customer to follow."
     },
     {
+      "evidence": {
+        "text": "You are very welcome! Enjoy your new Wi-Fi system, and have a wonderful rest of your day.",
+        "speaker": "Agent",
+        "start_char": 4382,
+        "end_char": 4471
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent properly confirmed that no further help was needed and closed the call with a warm, professional sign-off."
     },
     {
+      "evidence": {
+        "text": "Blinking white is actually a great sign! That means it is booting up and searching for firmware updates.",
+        "speaker": "Agent",
+        "start_char": 2285,
+        "end_char": 2389
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "All technical troubleshooting steps and explanations regarding router and modem indicator lights were accurate."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Is there anything else I can help you with today regarding your new system or your Apex account?",
+        "speaker": "Agent",
+        "start_char": 4165,
+        "end_char": 4261
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed proper support procedures, guiding the user step-by-step and offering additional assistance before closing."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Hi Sarah, I recently purchased the new Apex Home Mesh Wi-Fi system, and I am having a little bit of trouble getting it set up properly.",
+          "speaker": "Customer",
+          "start_char": 97,
+          "end_char": 232
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Well, I plugged the main router into the modem, but the light on top is blinking orange instead of turning solid white.",
+          "speaker": "Customer",
+          "start_char": 359,
+          "end_char": 478
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "That explains it. Look at the modem now—all the status lights are solid green.",
+          "speaker": "Customer",
+          "start_char": 2020,
+          "end_char": 2098
+        },
+        "speaker": "Customer",
+        "score": 0.3,
+        "timestamp_sec": 80.0
+      },
+      {
+        "quote": {
+          "text": "Oh, it found it instantly! It says \"Apex Router detected.\" Should I tap connect?",
+          "speaker": "Customer",
+          "start_char": 3123,
+          "end_char": 3203
+        },
+        "speaker": "Customer",
+        "score": 0.7,
+        "timestamp_sec": 152.0
+      },
+      {
+        "quote": {
+          "text": "It just turned solid white! That was much easier once we power-cycled the modem.",
+          "speaker": "Customer",
+          "start_char": 3775,
+          "end_char": 3855
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 192.0
+      },
+      {
+        "quote": {
+          "text": "No, that covers everything I needed. Thank you so much for your patience and clear instructions today.",
+          "speaker": "Customer",
+          "start_char": 4272,
+          "end_char": 4374
+        },
+        "speaker": "Customer",
+        "score": 1.0,
+        "timestamp_sec": 216.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

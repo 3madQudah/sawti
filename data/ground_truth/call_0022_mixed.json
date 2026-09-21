@@ -1,104 +1,155 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T10:58:40.388040+00:00",
+    "human_reviewed": false
   },
+  "id": "2e7cd2f6-4a7f-4f0a-aaf9-bd7189160844",
   "call_id": "call_0022_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to complain about a rude agent who hung up on them five minutes prior and also requested a fix for their internet issue. The agent apologized, verified the account number, reset the internet connection, and promised it would not happen again, successfully closing the call.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "w i promise this won't happen again",
+        "speaker": "Agent",
+        "start_char": 720,
+        "end_char": 755
+      },
+      "promised_by": "Agent",
+      "description": "The agent promised that the poor behavior and experience would not happen again.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "I am so sorry to hear that, min fadlak give me your account number so I can check what happened.",
+        "speaker": "Agent",
+        "start_char": 207,
+        "end_char": 303
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent maintained a professional and calm demeanor despite the customer's frustration."
     },
     {
+      "evidence": {
+        "text": "Walla I completely apologize for this bad experience, it is against our policy tamam, let me check your file right now.",
+        "speaker": "Agent",
+        "start_char": 444,
+        "end_char": 563
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent offered a clear, empathetic apology acknowledging the customer's bad experience."
     },
     {
+      "evidence": {
+        "text": "Done, your connection is reset now, w i promise this won't happen again, shokran for your patience.",
+        "speaker": "Agent",
+        "start_char": 684,
+        "end_char": 783
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent promptly reset the connection and addressed the primary technical complaint."
     },
     {
+      "evidence": {
+        "text": "I am so sorry to hear that, min fadlak give me your account number so I can check what happened.",
+        "speaker": "Agent",
+        "start_char": 207,
+        "end_char": 303
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent's instructions for the account number were clear and straightforward."
     },
     {
+      "evidence": {
+        "text": "Done, your connection is reset now, w i promise this won't happen again, shokran for your patience.",
+        "speaker": "Agent",
+        "start_char": 684,
+        "end_char": 783
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The call concluded promptly, though formal closing pleasantries were brief."
     },
     {
+      "evidence": {
+        "text": "Done, your connection is reset now",
+        "speaker": "Agent",
+        "start_char": 684,
+        "end_char": 718
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent correctly accessed the file via account number and performed the technical reset."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "min fadlak give me your account number so I can check what happened.",
+        "speaker": "Agent",
+        "start_char": 235,
+        "end_char": 303
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.9,
+      "justification": "The agent properly requested the account number for verification before proceeding."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Wallah I am calling to complain about the rude agent who helped me five minutes ago, el zol da was so disrespectful!",
+          "speaker": "Customer",
+          "start_char": 83,
+          "end_char": 199
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Ehda ya akhi, el account number is 458923, bas ana mesh mabsout abadan with his attitude, he literally hung up on my face!",
+          "speaker": "Customer",
+          "start_char": 314,
+          "end_char": 436
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Please do, w kaman fix my internet issue wakhallasni, I don't have time to waste with unhelpful staff.",
+          "speaker": "Customer",
+          "start_char": 574,
+          "end_char": 676
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "Inshallah, goodbye.",
+          "speaker": "Customer",
+          "start_char": 794,
+          "end_char": 813
+        },
+        "speaker": "Customer",
+        "score": 0.1,
+        "timestamp_sec": 56.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

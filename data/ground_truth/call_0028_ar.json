@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T10:59:36.268264+00:00",
+    "human_reviewed": false
   },
+  "id": "aa0e66de-c30b-4583-b6fb-512cae7953ce",
   "call_id": "call_0028_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called complaining about a total internet outage that disrupted their work and meeting schedule. The agent apologized, verified the account, and explained that an emergency maintenance on the main cable caused the area-wide outage. After the customer pressed for a specific timeline and compensation, the agent provided an estimated restoration time of one to one-and-a-half hours and offered 5 GB of free mobile data as compensation.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "رح أضيفلك ٥ جيجابايت مجانية تضل صالحة لأسبوع كامل",
+        "speaker": "Agent",
+        "start_char": 1958,
+        "end_char": 2007
+      },
+      "promised_by": "Agent",
+      "description": "Add 5 GB of free mobile data valid for a week as compensation.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "أعتذر منك جداً على التأخير وضغط الاتصالات يا أخي",
+        "speaker": "Agent",
+        "start_char": 192,
+        "end_char": 240
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent maintained a polite, calm, and professional demeanor throughout the call despite the customer's frustration."
     },
     {
+      "evidence": {
+        "text": "أنا متفهم غضبك تماماً، وعارف إنه الوضع مزعج جداً",
+        "speaker": "Agent",
+        "start_char": 905,
+        "end_char": 953
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.85,
+      "justification": "The agent actively acknowledged the customer's frustration and validated their difficult situation."
     },
     {
+      "evidence": {
+        "text": "رح أضيفلك ٥ جيجابايت مجانية تضل صالحة لأسبوع كامل، كتعويض عن العطل اللي صار معك اليوم.",
+        "speaker": "Agent",
+        "start_char": 1958,
+        "end_char": 2044
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent provided a realistic ETA for the outage and offered tangible compensation (5 GB data) to help resolve the customer's immediate issue."
     },
     {
+      "evidence": {
+        "text": "حسب التقرير اللي وصلني من الفريق الميداني، متوقع ترجع الخدمة خلال ساعة من هسا، بالكثير ساعة ونص.",
+        "speaker": "Agent",
+        "start_char": 1129,
+        "end_char": 1225
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent communicated the outage cause, expected timeline, and compensation details very clearly."
     },
     {
+      "evidence": {
+        "text": "الله يعافيك، وشكراً لصبرك معنا، مع السلامة.",
+        "speaker": "Agent",
+        "start_char": 2512,
+        "end_char": 2555
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent closed the call politely with appropriate parting greetings."
     },
     {
+      "evidence": {
+        "text": "أه، شايف إنه فيه انقطاع عام للخدمة في منطقتكم.",
+        "speaker": "Agent",
+        "start_char": 497,
+        "end_char": 543
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent accurately identified the issue as a general area outage caused by emergency maintenance."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "ممكن تعطني رقم الحساب أو رقم الموبايل؟",
+        "speaker": "Agent",
+        "start_char": 282,
+        "end_char": 320
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.9,
+      "justification": "The agent followed proper procedure by requesting account information to look up the customer's details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "الإنترنت عندي فاصل تماماً من الصبح ومش عارف أشتغل!",
+          "speaker": "Customer",
+          "start_char": 134,
+          "end_char": 184
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "كيف يعني انقطاع عام؟! أنا دفعت الفاتورة قبل يومين، ليش ما بتخبرونا؟",
+          "speaker": "Customer",
+          "start_char": 554,
+          "end_char": 621
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "متى بترجع يعني؟ \"أسرع وقت\" هاي جملة دايمًا بتحكوها وما بتفيدني بشيء!",
+          "speaker": "Customer",
+          "start_char": 1036,
+          "end_char": 1104
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "ممتازة الـ ٥ جيجابايت، بس بدي أتأكد إنه فعلاً رح ترجع الخدمة خلال ساعة زي ما قلت.",
+          "speaker": "Customer",
+          "start_char": 2055,
+          "end_char": 2136
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 72.0
+      },
+      {
+        "quote": {
+          "text": "لا سلامتك، يعطيك العافية.",
+          "speaker": "Customer",
+          "start_char": 2479,
+          "end_char": 2504
+        },
+        "speaker": "Customer",
+        "score": 0.2,
+        "timestamp_sec": 96.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

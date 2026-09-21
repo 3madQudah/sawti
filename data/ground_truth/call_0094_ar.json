@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:10:07.730290+00:00",
+    "human_reviewed": false
   },
+  "id": "79889697-4777-4333-b512-cd884b0a2d91",
   "call_id": "call_0094_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to complain about a high bill and an unexpected automatic renewal of their contract, demanding an immediate cancellation without extra fees. The agent explained the renewal policy and initially mentioned early termination fees, but after the customer threatened to switch providers and file a complaint, the agent transferred the call to the complaints department to cancel the contract without fees.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "خليني أحولك على قسم الشكاوي والمختصين عشان نلغي لك العقد بدون رسوم، ثواني معي لو سمحت.",
+        "speaker": "Agent",
+        "start_char": 924,
+        "end_char": 1010
+      },
+      "promised_by": "Agent",
+      "description": "Transfer the customer to the complaints department to process the contract cancellation without fees.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "يا سيدي أعتذر منك على الإزعاج، بس للتوضيح، العقد بينجدد تلقائياً حسب الشروط والأحكام إلا إذا تم إبلاغنا قبلها بشهر.",
+        "speaker": "Agent",
+        "start_char": 400,
+        "end_char": 515
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent maintained a calm and professional demeanor throughout the call, even when the customer became frustrated and accusatory."
     },
     {
+      "evidence": {
+        "text": "ولا تحاتي يا أخي، خليني أشيك لك على تفاصيل الفاتورة، بس بخصوص العقد هل قصدك عقد الالتزام اللي تم تجديده مؤخراً؟",
+        "speaker": "Agent",
+        "start_char": 173,
+        "end_char": 284
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent attempted to reassure the customer right away using friendly local phrasing, though it leaned slightly into policy defense before fully acknowledging the frustration."
     },
     {
+      "evidence": {
+        "text": "أبشر طالما هيك، خليني أحولك على قسم الشكاوي والمختصين عشان نلغي لك العقد بدون رسوم، ثواني معي لو سمحت.",
+        "speaker": "Agent",
+        "start_char": 908,
+        "end_char": 1010
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent took effective action by escalating the customer to the correct department (complaints) to resolve the issue as requested."
     },
     {
+      "evidence": {
+        "text": "يا سيدي أعتذر منك على الإزعاج، بس للتوضيح، العقد بينجدد تلقائياً حسب الشروط والأحكام إلا إذا تم إبلاغنا قبلها بشهر.",
+        "speaker": "Agent",
+        "start_char": 400,
+        "end_char": 515
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent explained the automatic renewal policy clearly and directly to the customer."
     },
     {
+      "evidence": {
+        "text": "خليني أحولك على قسم الشكاوي والمختصين عشان نلغي لك العقد بدون رسوم، ثواني معي لو سمحت.",
+        "speaker": "Agent",
+        "start_char": 924,
+        "end_char": 1010
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The agent handled the transfer appropriately but did not technically close the call personally, leaving it to the complaints department."
     },
     {
+      "evidence": {
+        "text": "العقد بينجدد تلقائياً حسب الشروط والأحكام إلا إذا تم إبلاغنا قبلها بشهر.",
+        "speaker": "Agent",
+        "start_char": 443,
+        "end_char": 515
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent accurately communicated the standard terms and conditions regarding contract renewal."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "خليني أحولك على قسم الشكاوي والمختصين عشان نلغي لك العقد بدون رسوم",
+        "speaker": "Agent",
+        "start_char": 924,
+        "end_char": 990
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.7,
+      "justification": "The agent followed the escalation path when the customer threatened regulatory action and demanded cancellation."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أهلاً يا اخوي، أنا فاتورتي اجت عالية هاي الشهر ومش فاهم ليش، وأصلاً بدي ألغي العقد!",
+          "speaker": "Customer",
+          "start_char": 82,
+          "end_char": 165
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "أيوا! هاد اللي قاهرني، أنا ما طلبت أجدد العقد أصلاً، كيف تجددوه من لحالكم وتفرضوا علي شروط جديدة؟",
+          "speaker": "Customer",
+          "start_char": 295,
+          "end_char": 392
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "ما حدا حكى لي عن هالشروط أبداً، هاي حركة نصب عشان تخلونا غصب عننا نكمل معاكم!",
+          "speaker": "Customer",
+          "start_char": 526,
+          "end_char": 603
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "أنا ما بدي لا تجديد ولا هم يحزنون، بدي ألغي العقد حالاً وما رح أدفع هاي الزيادة.",
+          "speaker": "Customer",
+          "start_char": 614,
+          "end_char": 694
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "بقول لك ما بدي إياه أصلاً! شوف لي حل سريع ولا بحول خطي لشركة ثانية وبشتكي عليكم لهيئة التنظيم.",
+          "speaker": "Customer",
+          "start_char": 806,
+          "end_char": 900
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 64.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

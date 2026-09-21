@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T10:59:52.441437+00:00",
+    "human_reviewed": false
   },
+  "id": "48aa1352-0863-41f3-b083-590623dd46d4",
   "call_id": "call_0030_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to dispute a higher bill caused by an automatic contract renewal after her promotional rate expired. The agent explained the terms of the agreement and the early termination fee, and offered a loyalty discount. After discussing options, the customer remained unhappy about the two-year contract and asked to speak with a manager, whom the agent transferred her to.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "I will transfer you to a supervisor right away.",
+        "speaker": "Agent",
+        "start_char": 3510,
+        "end_char": 3557
+      },
+      "promised_by": "Agent",
+      "description": "Transfer the customer to a supervisor.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "I can certainly understand your concern about a higher bill. Let's take a look at your account.",
+        "speaker": "Agent",
+        "start_char": 236,
+        "end_char": 331
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent maintained a polite, professional, and composed tone throughout the call, even when the customer became frustrated."
     },
     {
+      "evidence": {
+        "text": "I apologize for the confusion, Ms. Davis.",
+        "speaker": "Agent",
+        "start_char": 1157,
+        "end_char": 1198
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent acknowledged the customer's frustration and offered appropriate apologies, though he could have been warmer."
     },
     {
+      "evidence": {
+        "text": "I will transfer you to a supervisor right away.",
+        "speaker": "Agent",
+        "start_char": 3510,
+        "end_char": 3557
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The agent was unable to resolve the core issue of removing the contract without a fee, but successfully addressed the billing concern and facilitated an escalation."
     },
     {
+      "evidence": {
+        "text": "The early termination fee would be one hundred and fifty dollars, Ms. Davis.",
+        "speaker": "Agent",
+        "start_char": 2111,
+        "end_char": 2187
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent explained policies clearly, though at one point spoke a bit fast which required the customer to ask for repetition."
     },
     {
+      "evidence": {
+        "text": "I will transfer you to a supervisor right away. Please hold for just a moment while I get them on the line.",
+        "speaker": "Agent",
+        "start_char": 3510,
+        "end_char": 3617
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent properly set expectations for the transfer and verified the next steps before putting the customer on hold."
     },
     {
+      "evidence": {
+        "text": "I see here that your monthly charge increased because your promotional rate expired and your contract was recently renewed for a standard two-year term.",
+        "speaker": "Agent",
+        "start_char": 532,
+        "end_char": 684
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent accurately retrieved account details and explained the reason for the bill increase and terms."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Could I please have your name and account number?",
+        "speaker": "Agent",
+        "start_char": 332,
+        "end_char": 381
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.9,
+      "justification": "The agent correctly verified the customer's identity before discussing account details and followed appropriate escalation paths."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "I'm calling because I just got my latest bill and it's way higher than it usually is, and I'm really confused about why.",
+          "speaker": "Customer",
+          "start_char": 108,
+          "end_char": 228
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "How is that even legal? I certainly didn't agree to sign up for two more years.",
+          "speaker": "Customer",
+          "start_char": 1070,
+          "end_char": 1149
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 32.0
+      },
+      {
+        "quote": {
+          "text": "A one hundred and fifty dollar fee?! For a contract I didn't even know I was in?",
+          "speaker": "Customer",
+          "start_char": 1980,
+          "end_char": 2060
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "Oh, okay. If you can lower the bill, that might help, but I still don't want to be locked into a two-year contract.",
+          "speaker": "Customer",
+          "start_char": 2695,
+          "end_char": 2810
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 80.0
+      },
+      {
+        "quote": {
+          "text": "I really don't like being locked in like this. Let me just speak to that manager you mentioned. Can you transfer me now?",
+          "speaker": "Customer",
+          "start_char": 3346,
+          "end_char": 3466
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 104.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

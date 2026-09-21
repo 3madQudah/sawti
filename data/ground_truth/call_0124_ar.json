@@ -1,104 +1,154 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:18:15.612822+00:00",
+    "human_reviewed": false
   },
+  "id": "0d0d92a9-9826-4def-85f6-7d1be86ee9f6",
   "call_id": "call_0124_ar",
   "language": "ar",
-  "summary": "",
+  "summary": "The customer called expressing frustration over unexpected monthly charges and slow internet speeds. The agent apologized, understood the customer's issue, and offered an upgrade to the new fiber-optic package with a limited-time promotional price. The customer agreed, the agent successfully processed the upgrade, and the customer ended the call satisfied.",
   "commitments": [],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "وعليكم السلام ورحمة الله، بعتذر منك يا أستاذ على الإزعاج، وبكل سرعة رح نضبطلك الموضوع ونشوف الباقة المناسبة إلك.",
+        "speaker": "Agent",
+        "start_char": 203,
+        "end_char": 315
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent maintained a polite, professional, and courteous tone throughout the entire interaction."
     },
     {
+      "evidence": {
+        "text": "متفهمك تماماً. بقدر أرقّي لك اشتراكك لباقة الألياف الضوئية الجديدة، أسرع بثلاث مرات وبنفس السعر تقريباً مع عرض لفترة محدودة.",
+        "speaker": "Agent",
+        "start_char": 383,
+        "end_char": 507
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.85,
+      "justification": "The agent acknowledged the customer's frustration and validated their feelings before offering a solution."
     },
     {
+      "evidence": {
+        "text": "تم الإجراء بنجاح يا أستاذ، وهسا الباقة الجديدة صارت مفعلة عندك.",
+        "speaker": "Agent",
+        "start_char": 704,
+        "end_char": 767
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully resolved the customer's problem by upgrading their internet package on the spot."
     },
     {
+      "evidence": {
+        "text": "بقدر أرقّي لك اشتراكك لباقة الألياف الضوئية الجديدة، أسرع بثلاث مرات وبنفس السعر تقريباً مع عرض لفترة محدودة.",
+        "speaker": "Agent",
+        "start_char": 398,
+        "end_char": 507
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent explained the new fiber package offer clearly and concisely."
     },
     {
+      "evidence": {
+        "text": "في أي خدمة تانية بقدر أساعدك فيها؟",
+        "speaker": "Agent",
+        "start_char": 768,
+        "end_char": 802
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent properly checked for additional assistance before professionally closing the call."
     },
     {
+      "evidence": {
+        "text": "بقدر أرقّي لك اشتراكك لباقة الألياف الضوئية الجديدة، أسرع بثلاث مرات وبنفس السعر تقريباً مع عرض لفترة محدودة.",
+        "speaker": "Agent",
+        "start_char": 398,
+        "end_char": 507
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "Provided accurate promotional and product details matching the customer's need for a better speed at a minimal price increase."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "متفهمك تماماً. بقدر أرقّي لك اشتراكك لباقة الألياف الضوئية الجديدة، أسرع بثلاث مرات وبنفس السعر تقريباً مع عرض لفترة محدودة.",
+        "speaker": "Agent",
+        "start_char": 383,
+        "end_char": 507
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.8,
+      "justification": "The agent successfully processed the upgrade, though identity verification was not explicitly captured in the transcript text."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "السلام عليكم. بصراحة أنا كتير معصب، الفاتورة عندي عم تنخصم كل شهر ومميزات السرعة بالإنترنت سيئة جداً وما بتكفي البيت!",
+          "speaker": "Customer",
+          "start_char": 78,
+          "end_char": 195
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "يا ريت، أنا بدي أخلص من القصة هاي اليوم، شو الحل؟",
+          "speaker": "Customer",
+          "start_char": 326,
+          "end_char": 375
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "بجد؟ يعني ما راح أدفع زيادة كثيرة؟",
+          "speaker": "Customer",
+          "start_char": 518,
+          "end_char": 552
+        },
+        "speaker": "Customer",
+        "score": 0.0,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "ممتاز والله، خلص وافق على الترقيّة وخليني أرتاح.",
+          "speaker": "Customer",
+          "start_char": 648,
+          "end_char": 696
+        },
+        "speaker": "Customer",
+        "score": 0.7,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "لا تسلم تعبتك، ما قصرت أبداً وشكراً لحسن تعاونك وسرعة استجابتك.",
+          "speaker": "Customer",
+          "start_char": 813,
+          "end_char": 876
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 72.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

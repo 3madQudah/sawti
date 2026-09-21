@@ -1,104 +1,155 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:04:55.652425+00:00",
+    "human_reviewed": false
   },
+  "id": "e4edf759-1360-428b-8e35-27202ccea1d9",
   "call_id": "call_0059_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to inquire about a refund for an internet device order that was cancelled prior to delivery, but for which the amount was still deducted from their credit card. The agent, Tariq, verified the cancellation record, explained that a technical issue prevented the automatic refund, and successfully processed the refund manually while providing a transaction reference ID.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "Bas la tgaTla9, I will process el-refund right now 3ala el-same card.",
+        "speaker": "Agent",
+        "start_char": 886,
+        "end_char": 955
+      },
+      "promised_by": "Agent",
+      "description": "Process the refund immediately to the customer's credit card.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Wallah I am so sorry about that hassle, bas momken ta3teeni el-order reference number please?",
+        "speaker": "Agent",
+        "start_char": 386,
+        "end_char": 479
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained a polite, professional, and helpful Arabizi conversational tone throughout the call."
     },
     {
+      "evidence": {
+        "text": "Wallah I am so sorry about that hassle, bas momken ta3teeni el-order reference number please?",
+        "speaker": "Agent",
+        "start_char": 386,
+        "end_char": 479
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent acknowledged the customer's frustration promptly and offered a sincere apology for the hassle."
     },
     {
+      "evidence": {
+        "text": "Mumtaz, w el-system gaddamee bi2ool enno el-automatic refund ma tfa33al properly sabab technical issue. Bas la tgaTla9, I will process el-refund right now 3ala el-same card.",
+        "speaker": "Agent",
+        "start_char": 782,
+        "end_char": 955
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully identified the system issue and processed the manual refund on the spot, completely resolving the customer's issue."
     },
     {
+      "evidence": {
+        "text": "Usually bteokhod from 3 to 5 business days, hasab el-bank tabi3atak, bas usually btkon asra3.",
+        "speaker": "Agent",
+        "start_char": 1069,
+        "end_char": 1162
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent explained the timelines and process clearly in an understandable bilingual mix."
     },
     {
+      "evidence": {
+        "text": "Ma3 el-salameh sidi, have a wonderful day!",
+        "speaker": "Agent",
+        "start_char": 1892,
+        "end_char": 1934
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent properly checked if there were any additional services needed and provided a courteous closing."
     },
     {
+      "evidence": {
+        "text": "Aked sidi, let me generate el-transaction ID el-Hassa... wHaDdak... el-ID huwe RF-99214.",
+        "speaker": "Agent",
+        "start_char": 1275,
+        "end_char": 1363
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent provided accurate tracking details and correct timeframes for the refund."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Ah, yes, I can see el-order cancellation record here hona. It was cancelled on Tuesday, saHeeH?",
+        "speaker": "Agent",
+        "start_char": 585,
+        "end_char": 680
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed the correct procedures by verifying order cancellation details and processing the manual refund correctly."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Fa I just want to check, wein raHat el-floos w kif b2dar ajeeb el-refund?",
+          "speaker": "Customer",
+          "start_char": 305,
+          "end_char": 378
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Alhamdulillah, kteer mneeH. Tayeb, how long btegol bteokhod 7atta tenzel el-amount 3al-account?",
+          "speaker": "Customer",
+          "start_char": 966,
+          "end_char": 1061
+        },
+        "speaker": "Customer",
+        "score": 0.5,
+        "timestamp_sec": 32.0
+      },
+      {
+        "quote": {
+          "text": "RF-99214, maSaLLaH, got it. Shukran kteer ya Tariq 3ala husn el-ta3amol.",
+          "speaker": "Customer",
+          "start_char": 1374,
+          "end_char": 1446
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "Wayn ma kan, Allah ya3teek el-3afyeh ma gaSSart.",
+          "speaker": "Customer",
+          "start_char": 1709,
+          "end_char": 1757
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 64.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.98,
+  "requires_human_review": false
 }

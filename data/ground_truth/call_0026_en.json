@@ -1,104 +1,177 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T10:59:11.355981+00:00",
+    "human_reviewed": false
   },
+  "id": "c0bd3d8c-1330-48e6-999c-3ef83504e503",
   "call_id": "call_0026_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to complain about a delayed refund for a cancelled internet installation order that had been pending for three weeks. The agent located the order, identified that it was stuck in a manual review queue, processed an override to push the refund through, and explained that it would take two to three business days to appear on the customer's credit card. The call ended with the customer expressing ongoing frustration but acknowledging the escalation.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "Once I process this override, it typically takes two to three business days to reflect on your statement.",
+        "speaker": "Agent",
+        "start_char": 1373,
+        "end_char": 1478
+      },
+      "promised_by": "Agent",
+      "description": "The refund will reflect on the customer's statement within two to three business days.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Thank you for calling Metro Telecom, my name is Marcus. How can I help you today?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 88
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent maintained a polite, calm, and professional demeanor throughout the call, even when the customer was frustrated."
     },
     {
+      "evidence": {
+        "text": "I certainly understand your frustration, and I apologize for the delay. Let me look into that for you right away.",
+        "speaker": "Agent",
+        "start_char": 242,
+        "end_char": 355
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent repeatedly acknowledged the customer's frustration and offered genuine-sounding apologies without becoming defensive."
     },
     {
+      "evidence": {
+        "text": "I am overriding the hold on my end right now to push that refund through immediately.",
+        "speaker": "Agent",
+        "start_char": 1181,
+        "end_char": 1266
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.85,
+      "justification": "The agent successfully identified why the refund was stuck and took direct action by overriding the hold to expedite the process."
     },
     {
+      "evidence": {
+        "text": "Once I process this override, it typically takes two to three business days to reflect on your statement.",
+        "speaker": "Agent",
+        "start_char": 1373,
+        "end_char": 1478
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The explanation of the delay and the timeframe for the processed refund was clear and straightforward."
     },
     {
+      "evidence": {
+        "text": "Is there anything else I can assist you with today?",
+        "speaker": "Agent",
+        "start_char": 1950,
+        "end_char": 2001
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent offered further assistance and provided a polite closing, though the customer abruptly hung up."
     },
     {
+      "evidence": {
+        "text": "It looks like the refund request was submitted, but it got stuck in our manual review queue for some reason.",
+        "speaker": "Agent",
+        "start_char": 919,
+        "end_char": 1027
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent correctly accessed the account history, found the cancellation date, and accurately pinpointed the status of the refund."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "May I have your account number or the phone number associated with the order?",
+        "speaker": "Agent",
+        "start_char": 356,
+        "end_char": 433
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.9,
+      "justification": "The agent properly requested verification details before accessing the account."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Finally. Look, I am calling because I cancelled my internet installation order three weeks ago, and I still haven't received my refund.",
+          "speaker": "Customer",
+          "start_char": 99,
+          "end_char": 234
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "The phone number is 555-019-8472. And I want this sorted out now, I've already called twice about this.",
+          "speaker": "Customer",
+          "start_char": 444,
+          "end_char": 547
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "It better be there. Your automated system said it takes five to seven business days, and it has been nearly a month. Where is my money?",
+          "speaker": "Customer",
+          "start_char": 734,
+          "end_char": 869
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "A manual review queue? For a standard refund? That is ridiculous! Nobody told me it was stuck.",
+          "speaker": "Customer",
+          "start_char": 1039,
+          "end_char": 1133
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "Two to three days? You guys are quick to take the money out, but taking it back takes an act of Congress.",
+          "speaker": "Customer",
+          "start_char": 1489,
+          "end_char": 1594
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 72.0
+      },
+      {
+        "quote": {
+          "text": "Fine. I'll watch my statement. If it's not there in three days, I'm calling back and talking to a supervisor.",
+          "speaker": "Customer",
+          "start_char": 1736,
+          "end_char": 1845
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 88.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

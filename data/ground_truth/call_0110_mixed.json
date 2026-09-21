@@ -1,104 +1,144 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:13:15.572493+00:00",
+    "human_reviewed": false
   },
+  "id": "496bbe8e-62eb-4688-8d3e-948873cd3693",
   "call_id": "call_0110_mixed",
   "language": "mixed",
-  "summary": "",
+  "summary": "The customer called to close their account due to poor service and monthly delays. The agent expressed sympathy, asked for the account number, checked the account, and successfully processed the closure request quickly, leaving the customer very satisfied.",
   "commitments": [],
-  "compliance_flags": [],
+  "compliance_flags": [
+    {
+      "evidence": {
+        "text": "Sure, the account number is 458921.",
+        "speaker": "Customer",
+        "start_char": 252,
+        "end_char": 287
+      },
+      "rule_id": "missing_id_verification",
+      "severity": "high",
+      "description": "The agent proceeded to discuss account details and process an account closure without performing any identity verification steps."
+    }
+  ],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "ولا مهندس، بحزنني كتير أسمع هالحكي وأكيد رح نشوف شو السبب، ممكن بس تعطيني رقم الحساب؟",
+        "speaker": "Agent",
+        "start_char": 156,
+        "end_char": 241
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.5,
+      "justification": "While polite and helpful, the agent used unprofessional slang ('ولا مهندس') in a customer service context."
     },
     {
+      "evidence": {
+        "text": "ولا مهندس، بحزنني كتير أسمع هالحكي وأكيد رح نشوف شو السبب",
+        "speaker": "Agent",
+        "start_char": 156,
+        "end_char": 213
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent acknowledged the customer's frustration and expressed regret about the poor experience."
     },
     {
+      "evidence": {
+        "text": "وأنا صرت عامل check عالحساب والطلب صار processed.",
+        "speaker": "Agent",
+        "start_char": 363,
+        "end_char": 412
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent resolved the customer's request completely and immediately during the call."
     },
     {
+      "evidence": {
+        "text": "وأنا صرت عامل check عالحساب والطلب صار processed.",
+        "speaker": "Agent",
+        "start_char": 363,
+        "end_char": 412
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent communicated clearly, although mixed with some English corporate jargon."
     },
     {
+      "evidence": {
+        "text": "العفو سيدي، شكرا لتعاونك معنا ونهار سعيد.",
+        "speaker": "Agent",
+        "start_char": 513,
+        "end_char": 554
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent ended the call politely with a closing greeting and thanks."
     },
     {
+      "evidence": {
+        "text": "وأنا صرت عامل check عالحساب والطلب صار processed.",
+        "speaker": "Agent",
+        "start_char": 363,
+        "end_char": 412
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent correctly processed the account closure request as asked."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Sure, the account number is 458921.",
+        "speaker": "Customer",
+        "start_char": 252,
+        "end_char": 287
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.3,
+      "justification": "The agent failed to verify the customer's identity before accessing the account and processing a sensitive request like account closure."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أهلاً، بدي أعمل closing للحساب تبعي لو سمحت لأن الخدمة صايرة سيئة كتير.",
+          "speaker": "Customer",
+          "start_char": 77,
+          "end_char": 148
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Sure, the account number is 458921. وبصراحة زهقت من الـ delays كل شهر.",
+          "speaker": "Customer",
+          "start_char": 252,
+          "end_char": 322
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Oh, really? هاي كانت أسرع customer service experience مرت علي! ثانكس كتير يا محمد.",
+          "speaker": "Customer",
+          "start_char": 423,
+          "end_char": 505
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 40.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

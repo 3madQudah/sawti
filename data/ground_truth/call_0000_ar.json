@@ -1,104 +1,155 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T10:54:12.883925+00:00",
+    "human_reviewed": false
   },
+  "id": "72742963-ab32-4005-9093-ff31f8a5b782",
   "call_id": "call_0000_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called in extreme anger demanding to close their account immediately due to being charged for an unused internet line for three months. The agent attempted to check the bill but was cut off by the customer refusing further checks and insisting on immediate cancellation. The agent agreed to process the cancellation immediately and send a confirmation message, after which the customer ended the call.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "رح ألغي الحساب حالا وأبعثلك رسالة تأكيد",
+        "speaker": "Agent",
+        "start_char": 562,
+        "end_char": 601
+      },
+      "promised_by": "Agent",
+      "description": "Cancel the account immediately and send a confirmation message to the customer.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "انا اسف على سماع ذلك يا أستاذ، ممكن أعرف السبب لو سمحت عشان أقدر أساعدك بالشكل المناسب؟",
+        "speaker": "Agent",
+        "start_char": 148,
+        "end_char": 235
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent remained calm and professional despite the customer's aggressive and abusive language."
     },
     {
+      "evidence": {
+        "text": "أنا فاهم غضبك يا استاذ، اعطيني شوي أشيك على الفاتورة، بس أرجو منك...",
+        "speaker": "Agent",
+        "start_char": 349,
+        "end_char": 417
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent acknowledged the customer's anger and apologized for their experience, though was cut off before fully developing empathy."
     },
     {
+      "evidence": {
+        "text": "حاضر يا أستاذ، طلبك قيد التنفيذ، رح ألغي الحساب حالا وأبعثلك رسالة تأكيد",
+        "speaker": "Agent",
+        "start_char": 529,
+        "end_char": 601
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent promptly accepted the customer's cancellation request and promised to execute it."
     },
     {
+      "evidence": {
+        "text": "أهلاً بك في خدمة العملاء، معك رامي، كيف أستطيع مساعدتك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 68
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent's opening and communication throughout were clear and articulate."
     },
     {
+      "evidence": {
+        "text": "في شي ثاني أقدر أخدمك فيه؟",
+        "speaker": "Agent",
+        "start_char": 603,
+        "end_char": 629
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The agent attempted a standard closure question, but the call ended abruptly by the customer before a proper final sign-off."
     },
     {
+      "evidence": {
+        "text": "اعطيني شوي أشيك على الفاتورة",
+        "speaker": "Agent",
+        "start_char": 373,
+        "end_char": 401
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The agent intended to check the bill for accuracy, but was prevented by the customer from investigating further."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "رح ألغي الحساب حالا وأبعثلك رسالة تأكيد",
+        "speaker": "Agent",
+        "start_char": 562,
+        "end_char": 601
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.7,
+      "justification": "The agent followed the customer's direct instruction to cancel, though standard retention/investigation procedures were bypassed due to customer hostility."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "مساعدة شو ووخز شو! أنا طالع روحي منكم، بدي أسكر الحساب فوراً!",
+          "speaker": "Customer",
+          "start_char": 79,
+          "end_char": 140
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "السبب إنكم نصابين! فاتحين علي خط انترنت ما بستخدمه وبتاخدوا مني مصاريف على الفاضي من ثلاث شهور!",
+          "speaker": "Customer",
+          "start_char": 246,
+          "end_char": 341
+        },
+        "speaker": "Customer",
+        "score": -1.0,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "لا تفهمني ولا أشيك! أنا لا بدي أشيك ولا بدي نت تبعكم، بدي تلغي هذا الخط حالاً اليوم قبل بكره!",
+          "speaker": "Customer",
+          "start_char": 428,
+          "end_char": 521
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "بس تخلصني منكم بكون أكبر خدمة! مع السلامة!",
+          "speaker": "Customer",
+          "start_char": 640,
+          "end_char": 682
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 56.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

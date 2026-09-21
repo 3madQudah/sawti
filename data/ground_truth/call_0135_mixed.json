@@ -1,104 +1,177 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:21:54.099207+00:00",
+    "human_reviewed": false
   },
+  "id": "116452d7-e27b-45df-8b37-8a0fd194c127",
   "call_id": "call_0135_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to complain about a three-week delay on an iPhone bundle delivery despite paying for express shipping. The agent apologized, explained there was a customs delay, and offered a shipping refund plus a free three-month data upgrade as compensation. The agent also confirmed the package left the warehouse and would arrive the next morning, leaving the customer fully satisfied.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "I can refund your shipping fees right now and upgrade your data package for free for three months.",
+        "speaker": "Agent",
+        "start_char": 764,
+        "end_char": 862
+      },
+      "promised_by": "Agent",
+      "description": "Refund the customer's shipping fees and provide a free data package upgrade for three months.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "inshallah it will reach your doorstep bukra b’el-sabah.",
+        "speaker": "Agent",
+        "start_char": 1039,
+        "end_char": 1094
+      },
+      "promised_by": "Agent",
+      "description": "Deliver the package to the customer's doorstep the next morning.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Wallah I am so sorry about this delay habibi, let me check the system right away.",
+        "speaker": "Agent",
+        "start_char": 231,
+        "end_char": 312
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent was polite and helpful, though used a mix of casual/colloquial terms. Overall maintained a respectful tone."
     },
     {
+      "evidence": {
+        "text": "I completely understand your frustration sidi, w 7aqqak ‘alayya. To make it up to you, I can refund your shipping fees right now and upgrade your data package for free for three months.",
+        "speaker": "Agent",
+        "start_char": 677,
+        "end_char": 862
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent strongly acknowledged the customer's frustration, validated their feelings ('7aqqak ‘alayya'), and offered immediate, tangible compensation."
     },
     {
+      "evidence": {
+        "text": "Yanni bukra for sure? Perfect, yislamo idak ya Mahmoud, you fixed this nicely.",
+        "speaker": "Customer",
+        "start_char": 1105,
+        "end_char": 1183
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.95,
+      "justification": "The agent successfully resolved the issue by offering a refund, a data upgrade, and a clear delivery timeline, resulting in a happy customer."
     },
     {
+      "evidence": {
+        "text": "It left the main warehouse this morning, w inshallah it will reach your doorstep bukra b’el-sabah.",
+        "speaker": "Agent",
+        "start_char": 996,
+        "end_char": 1094
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The explanation regarding the customs delay and the updated shipping status was conveyed clearly."
     },
     {
+      "evidence": {
+        "text": "Thank you for calling Zain, have a wonderful day ya akhi, ma' salameh.",
+        "speaker": "Agent",
+        "start_char": 1322,
+        "end_char": 1392
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent properly checked for additional needs, thanked the customer, and provided a polite closing."
     },
     {
+      "evidence": {
+        "text": "Ah, bas shuf, there was a customs delay at the port, mesh min ‘indenna wallah.",
+        "speaker": "Unknown",
+        "start_char": 499,
+        "end_char": 577
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent checked the system and correctly identified the customs delay and that the package left the warehouse."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Can you give me your tracking number please?",
+        "speaker": "Agent",
+        "start_char": 313,
+        "end_char": 357
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.7,
+      "justification": "The agent asked for the tracking number to look up the order, but missed explicitly verifying the account identity using security questions."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Ya akhi I am really frustrated honestly, I ordered the new iPhone bundle three weeks ago and it's delayed delivery bil marra!",
+          "speaker": "Customer",
+          "start_char": 98,
+          "end_char": 223
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Every time I check the tracking, it says processing mesh عم بيتحرك at all!",
+          "speaker": "Customer",
+          "start_char": 390,
+          "end_char": 464
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Bas I paid extra for express shipping! Mesh ma‘qoul three weeks w lassa ma wosol!",
+          "speaker": "Customer",
+          "start_char": 588,
+          "end_char": 669
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "Wallah? That’s actually a very good gesture, thank you.",
+          "speaker": "Customer",
+          "start_char": 873,
+          "end_char": 928
+        },
+        "speaker": "Customer",
+        "score": 0.6,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "Yanni bukra for sure? Perfect, yislamo idak ya Mahmoud, you fixed this nicely.",
+          "speaker": "Customer",
+          "start_char": 1105,
+          "end_char": 1183
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 72.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:00:24.703649+00:00",
+    "human_reviewed": false
   },
+  "id": "ba36759f-9cb1-4c43-84c8-cace14fea81e",
   "call_id": "call_0034_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called because their monthly bill increased unexpectedly from sixty to ninety-five dollars due to an expired promotional rate and an automatic contract renewal. The agent explained the renewal terms, apologized for the communication gap, and offered a loyalty credit to reduce the new bill to eighty dollars per month. The customer accepted the loyalty credit and the call concluded.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "I'll apply the loyalty credit right now, and it will reflect on your next billing cycle.",
+        "speaker": "Agent",
+        "start_char": 4555,
+        "end_char": 4643
+      },
+      "promised_by": "Agent",
+      "description": "Apply a fifteen dollar monthly loyalty credit to the customer's account effective on the next billing cycle.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "I can certainly look into that bill for you and see why the charges have increased.",
+        "speaker": "Agent",
+        "start_char": 266,
+        "end_char": 349
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained a polite, respectful, and helpful tone throughout the entire call."
     },
     {
+      "evidence": {
+        "text": "I completely understand your frustration, and I want to help you find the best solution possible without adding extra charges.",
+        "speaker": "Agent",
+        "start_char": 2932,
+        "end_char": 3058
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent actively acknowledged the customer's frustration regarding the bill increase and offered a constructive solution."
     },
     {
+      "evidence": {
+        "text": "Alright, I suppose I don't have much of a choice then. Let's go ahead with that eighty-dollar option, please.",
+        "speaker": "Customer",
+        "start_char": 4405,
+        "end_char": 4514
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.85,
+      "justification": "The agent successfully addressed the customer's billing concern and provided an acceptable compromise via a loyalty credit."
     },
     {
+      "evidence": {
+        "text": "What I mean is that the discount you had for the first year has ended, so the price went up to our regular monthly rate.",
+        "speaker": "Agent",
+        "start_char": 1372,
+        "end_char": 1492
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent explained technical terms clearly when asked to repeat and simplify the explanation."
     },
     {
+      "evidence": {
+        "text": "Is there anything else I can clarify for you today?",
+        "speaker": "Agent",
+        "start_char": 4644,
+        "end_char": 4695
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent properly checked for additional questions, summarized the resolution, and closed the call politely."
     },
     {
+      "evidence": {
+        "text": "When you originally signed up for the service twelve months ago, the agreement included an auto-renewal clause at the standard monthly rate",
+        "speaker": "Agent",
+        "start_char": 1944,
+        "end_char": 2083
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately explained account terms, expiration of promotions, and the loyalty credit options."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Let me just verify your billing address for security purposes.",
+        "speaker": "Agent",
+        "start_char": 633,
+        "end_char": 695
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent correctly followed verification steps before discussing account details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "I'm really confused about why that's happening.",
+          "speaker": "Customer",
+          "start_char": 211,
+          "end_char": 258
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "I honestly have no idea what changed.",
+          "speaker": "Customer",
+          "start_char": 1004,
+          "end_char": 1041
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "This is getting ridiculous.",
+          "speaker": "Customer",
+          "start_char": 2897,
+          "end_char": 2924
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 88.0
+      },
+      {
+        "quote": {
+          "text": "Well, eighty dollars is better than ninety-five, but I really wish someone had called me on the phone",
+          "speaker": "Customer",
+          "start_char": 3713,
+          "end_char": 3814
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 120.0
+      },
+      {
+        "quote": {
+          "text": "Let's go ahead with that eighty-dollar option, please.",
+          "speaker": "Customer",
+          "start_char": 4460,
+          "end_char": 4514
+        },
+        "speaker": "Customer",
+        "score": 0.2,
+        "timestamp_sec": 144.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

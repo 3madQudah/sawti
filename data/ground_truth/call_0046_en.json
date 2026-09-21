@@ -1,104 +1,167 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:02:59.219208+00:00",
+    "human_reviewed": false
   },
+  "id": "4ce65cce-11fa-4144-85e5-3c9a1ee82368",
   "call_id": "call_0046_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
-  "compliance_flags": [],
+  "summary": "The customer called because their internet was down and they were frustrated about missing work. The agent identified an unexpected fiber outage in the area, apologized, and offered a service credit along with 50 gigabytes of mobile data for hotspotting. The customer accepted the temporary fix while expressing ongoing dissatisfaction.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "However, I can credit your account for today's downtime and push 50 gigabytes of mobile data to your phone right now so you can hotspot your computer.",
+        "speaker": "Agent",
+        "start_char": 1317,
+        "end_char": 1467
+      },
+      "promised_by": "Agent",
+      "description": "Credit the customer's account for downtime and add 50GB of mobile data.",
+      "deadline": null
+    }
+  ],
+  "compliance_flags": [
+    {
+      "evidence": {
+        "text": "I understand you are angry, but a manager will tell you the exact same thing regarding the physical repair.",
+        "speaker": "Agent",
+        "start_char": 1209,
+        "end_char": 1316
+      },
+      "rule_id": "refusing_manager_escalation",
+      "severity": "medium",
+      "description": "The agent initially resisted or argued against transferring the customer to a manager, which violates standard escalation procedures."
+    }
+  ],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "I am very sorry for the frustration, I can certainly check the status of the network in your area for you.",
+        "speaker": "Agent",
+        "start_char": 241,
+        "end_char": 347
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent maintained composure throughout the call despite the customer's anger, though slightly stumbled by pushing back on the manager request."
     },
     {
+      "evidence": {
+        "text": "I completely understand your frustration, Mr. Davis.",
+        "speaker": "Agent",
+        "start_char": 559,
+        "end_char": 611
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent acknowledged the customer's frustration and personalized the response by using their name."
     },
     {
+      "evidence": {
+        "text": "However, I can credit your account for today's downtime and push 50 gigabytes of mobile data to your phone right now so you can hotspot your computer.",
+        "speaker": "Agent",
+        "start_char": 1317,
+        "end_char": 1467
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent provided a practical immediate workaround (mobile data) and compensation (account credit) to solve the customer's immediate problem."
     },
     {
+      "evidence": {
+        "text": "Our technicians are already on-site working to repair a damaged cable, and the estimated restoration time is currently set for another two hours.",
+        "speaker": "Agent",
+        "start_char": 906,
+        "end_char": 1051
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The explanation of the cause of the outage and the estimated time to repair was clear and direct."
     },
     {
+      "evidence": {
+        "text": "Fine, just do that immediately so I can get back online, but I expect a much larger credit on my next bill for this disaster.",
+        "speaker": "Customer",
+        "start_char": 1478,
+        "end_char": 1603
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.5,
+      "justification": "The call ended abruptly with the customer demanding action, and the agent failed to properly close or confirm satisfaction."
     },
     {
+      "evidence": {
+        "text": "I am looking at your address now, and I do see there is an unexpected fiber outage reported in your neighborhood as of 1:00 PM.",
+        "speaker": "Agent",
+        "start_char": 612,
+        "end_char": 739
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately pulled up account and neighborhood network status information."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "May I have your account number or phone number, please?",
+        "speaker": "Agent",
+        "start_char": 348,
+        "end_char": 403
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.7,
+      "justification": "The agent verified the customer's account, but mishandled the escalation policy by refusing the manager request."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "My internet has been completely dead for the last three hours, and I work from home! This is completely unacceptable!",
+          "speaker": "Customer",
+          "start_char": 116,
+          "end_char": 233
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "And I don't want excuses, I want to know why I'm paying full price for a service that never works when I actually need it!",
+          "speaker": "Customer",
+          "start_char": 429,
+          "end_char": 551
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Two hours?! That is ridiculous! I am losing money by the minute because of your faulty equipment! I demand to speak to a manager right now!",
+          "speaker": "Customer",
+          "start_char": 1062,
+          "end_char": 1201
+        },
+        "speaker": "Customer",
+        "score": -1.0,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "Fine, just do that immediately so I can get back online, but I expect a much larger credit on my next bill for this disaster.",
+          "speaker": "Customer",
+          "start_char": 1478,
+          "end_char": 1603
+        },
+        "speaker": "Customer",
+        "score": -0.5,
+        "timestamp_sec": 64.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

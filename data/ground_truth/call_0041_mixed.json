@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:02:09.331312+00:00",
+    "human_reviewed": false
   },
+  "id": "cedb7c91-feea-4882-8431-750a428fe5b1",
   "call_id": "call_0041_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to ask about the steps required to close their account. The agent explained that the pending balance must be paid first before the account closure can proceed, and offered to guide the customer through the portal and send an SMS with the link and detailed steps.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "أنا ببعث لك الـ confirmation على الإيميل.",
+        "speaker": "Agent",
+        "start_char": 408,
+        "end_char": 449
+      },
+      "promised_by": "Agent",
+      "description": "Send confirmation email after the balance is paid.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "هسا ببعث لك SMS فيها اللينك والخطوات بالتفصيل يا سيدي.",
+        "speaker": "Agent",
+        "start_char": 662,
+        "end_char": 716
+      },
+      "promised_by": "Agent",
+      "description": "Send an SMS containing the link and detailed steps.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "ولا مهلك يا أستاذ، بكل سرور بعيد لك.",
+        "speaker": "Agent",
+        "start_char": 159,
+        "end_char": 195
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent maintained a polite, professional, and courteous tone throughout the call."
     },
     {
+      "evidence": {
+        "text": "أكيد، ولا يهمك. الخطوة الأولى هي تسديد المبلغ المتبقي، وبعدين أنا ببعث لك الـ confirmation على الإيميل.",
+        "speaker": "Agent",
+        "start_char": 346,
+        "end_char": 449
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent acknowledged the customer's difficulty in hearing and patiently repeated the steps."
     },
     {
+      "evidence": {
+        "text": "هسا ببعث لك SMS فيها اللينك والخطوات بالتفصيل يا سيدي.",
+        "speaker": "Agent",
+        "start_char": 662,
+        "end_char": 716
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.85,
+      "justification": "The agent successfully addressed the customer's request by outlining the steps and offering an SMS with the link."
     },
     {
+      "evidence": {
+        "text": "أول شي لازم تدفع الـ pending balance وبعدين نعمل account closure.",
+        "speaker": "Agent",
+        "start_char": 196,
+        "end_char": 261
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent explained the process clearly, adapting when the customer asked for repetition."
     },
     {
+      "evidence": {
+        "text": "ولا يهمك، هسا ببعث لك SMS فيها اللينك والخطوات بالتفصيل يا سيدي.",
+        "speaker": "Agent",
+        "start_char": 652,
+        "end_char": 716
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.75,
+      "justification": "The call ended with a clear next step (sending the SMS), though a formal closing greeting was omitted."
     },
     {
+      "evidence": {
+        "text": "أول شي لازم تدفع الـ pending balance وبعدين نعمل account closure.",
+        "speaker": "Agent",
+        "start_char": 196,
+        "end_char": 261
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "Provided accurate procedural information regarding account closure and pending balances."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "الخطوة الأولى هي تسديد المبلغ المتبقي، وبعدين أنا ببعث لك الـ confirmation على الإيميل.",
+        "speaker": "Agent",
+        "start_char": 362,
+        "end_char": 449
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.85,
+      "justification": "Followed the correct standard procedure of requiring balance clearance before account closure."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أهلاً، بدي أسكر الـ account تاعي بس مش فاهم شو الـ steps، ممكن تعيد لي بالله؟",
+          "speaker": "Customer",
+          "start_char": 74,
+          "end_char": 151
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "عذراً، مش سامع منيح، بتقدر تحكي شوي شوي وتكرر شو لازم أعمل بالضبط؟",
+          "speaker": "Customer",
+          "start_char": 272,
+          "end_char": 338
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "آه، فهمت عليك، يعني لازم أدفع الأول صح؟",
+          "speaker": "Customer",
+          "start_char": 460,
+          "end_char": 499
+        },
+        "speaker": "Customer",
+        "score": 0.0,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "يا ريت والله، ياريت تعطيني التفاصيل مرة ثانية عشان أكتبهم عندي.",
+          "speaker": "Customer",
+          "start_char": 581,
+          "end_char": 644
+        },
+        "speaker": "Customer",
+        "score": 0.3,
+        "timestamp_sec": 56.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

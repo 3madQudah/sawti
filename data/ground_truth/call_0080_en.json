@@ -1,104 +1,199 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:07:47.128166+00:00",
+    "human_reviewed": false
   },
+  "id": "eefbd0b6-bab8-40d2-b326-b51a22fb81d0",
   "call_id": "call_0080_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer was furious that his bill increased by fifty dollars instead of decreasing after a previous plan change, and that he was charged extra for international roaming despite being told it was free. The agent investigated, offered various solutions including a credit and supervisor override, and ultimately secured a permanent promotional discount matching the original quote along with a refund of the disputed charge, resolving the issue to the customer's satisfaction.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "Let me consult with my supervisor to see if we can override the system requirements for this promotion.",
+        "speaker": "Agent",
+        "start_char": 3654,
+        "end_char": 3757
+      },
+      "promised_by": "Agent",
+      "description": "Consult with supervisor regarding a system override for the promotion.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "I will be right back.",
+        "speaker": "Agent",
+        "start_char": 4033,
+        "end_char": 4054
+      },
+      "promised_by": "Agent",
+      "description": "Return shortly after consulting the supervisor.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "The corrected rate will reflect on your next billing cycle, and I have successfully credited the disputed forty-five dollars back to your card today.",
+        "speaker": "Agent",
+        "start_char": 4531,
+        "end_char": 4680
+      },
+      "promised_by": "Agent",
+      "description": "Apply corrected rate to the next billing cycle and credit forty-five dollars back to the card today.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "I sincerely apologize for the long wait time and any frustration it has caused.",
+        "speaker": "Agent",
+        "start_char": 278,
+        "end_char": 357
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained a calm, polite, and professional demeanor throughout the call, even when confronted with an angry customer."
     },
     {
+      "evidence": {
+        "text": "I completely recognize how misleading that must have felt, and I apologize that the terms of the promotion weren't communicated clearly to you.",
+        "speaker": "Agent",
+        "start_char": 2134,
+        "end_char": 2277
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent repeatedly validated the customer's feelings and showed genuine understanding of the frustration caused."
     },
     {
+      "evidence": {
+        "text": "I spoke with my supervisor, and because of your long-standing history with us, we have authorized a permanent promotional discount matching the price you were quoted.",
+        "speaker": "Agent",
+        "start_char": 4199,
+        "end_char": 4365
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully resolved the issue by getting supervisor approval for the permanent discount and refunding the disputed charge."
     },
     {
+      "evidence": {
+        "text": "Yes, exactly. The corrected rate will reflect on your next billing cycle, and I have successfully credited the disputed forty-five dollars back to your card today.",
+        "speaker": "Agent",
+        "start_char": 4517,
+        "end_char": 4680
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent clearly explained the plan options, the source of the confusion, and the final resolution steps."
     },
     {
+      "evidence": {
+        "text": "Is there anything else I can assist you with today?",
+        "speaker": "Agent",
+        "start_char": 4892,
+        "end_char": 4943
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent properly checked for additional assistance, asked if anything else was needed, and closed with a courteous sign-off."
     },
     {
+      "evidence": {
+        "text": "Ah, I see the confusion. The promotion was only applicable if you also bundled our home internet service, which wasn't added.",
+        "speaker": "Agent",
+        "start_char": 1798,
+        "end_char": 1923
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent correctly identified the terms of the promotion and accurately navigated the system to apply the correct fix."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "May I please have your account number and the phone number associated with the account?",
+        "speaker": "Agent",
+        "start_char": 423,
+        "end_char": 510
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed proper security verification procedures by asking for account and phone details before pulling up the profile."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "I am absolutely furious about my current bill and I want this fixed right now.",
+          "speaker": "Customer",
+          "start_char": 192,
+          "end_char": 270
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Look, I’m looking at my statement right now and you people have completely ripped me off.",
+          "speaker": "Customer",
+          "start_char": 603,
+          "end_char": 692
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Either way, I am not paying this ridiculous amount.",
+          "speaker": "Customer",
+          "start_char": 1324,
+          "end_char": 1375
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "If you can't honor the deal your agent made, I am canceling my service with Apex today and taking my business to your competitor.",
+          "speaker": "Customer",
+          "start_char": 3088,
+          "end_char": 3217
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 88.0
+      },
+      {
+        "quote": {
+          "text": "Oh. Well... okay. It took long enough, but I'm glad you finally did the right thing.",
+          "speaker": "Customer",
+          "start_char": 4376,
+          "end_char": 4460
+        },
+        "speaker": "Customer",
+        "score": 0.4,
+        "timestamp_sec": 136.0
+      },
+      {
+        "quote": {
+          "text": "Thank you for fixing it, Marcus, even if it took some teeth pulling.",
+          "speaker": "Customer",
+          "start_char": 4729,
+          "end_char": 4797
+        },
+        "speaker": "Customer",
+        "score": 0.6,
+        "timestamp_sec": 152.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

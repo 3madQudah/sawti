@@ -1,104 +1,165 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:11:50.678489+00:00",
+    "human_reviewed": false
   },
+  "id": "82ca9ff3-34f5-4a41-87bc-55dbbc97b68b",
   "call_id": "call_0103_mixed",
   "language": "mixed",
-  "summary": "",
+  "summary": "The customer called technical support frustrated because his new router was not connecting to his mobile devices via Wi-Fi. The agent verified the connection, guided him through a router restart and factory reset, and then performed a backend profile configuration. The issue was resolved, and the customer was able to access the internet.",
   "commitments": [],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "ولا يهمك سيدي، بعتذر منك عن الإزعاج.",
+        "speaker": "Agent",
+        "start_char": 223,
+        "end_char": 259
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent maintained a polite and calm demeanor throughout the call, even when the customer was frustrated and agitated."
     },
     {
+      "evidence": {
+        "text": "بعتذر منك مرة تانية سيدي، أنا عارف إنها تجربة مزعجة.",
+        "speaker": "Agent",
+        "start_char": 1170,
+        "end_char": 1222
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent acknowledged the customer's frustration and validated his poor experience appropriately."
     },
     {
+      "evidence": {
+        "text": "أوه، الفيديو فتح وصار يشتغل!",
+        "speaker": "Customer",
+        "start_char": 2466,
+        "end_char": 2494
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent successfully diagnosed the profile issue and resolved the internet access problem by the end of the call."
     },
     {
+      "evidence": {
+        "text": "هسا افتح الـ Wi-Fi settings عـ موبايلك، دور عـ شبكتنا، ودخل الـ password الجديدة الموجودة عـ الاستيكر",
+        "speaker": "Agent",
+        "start_char": 1626,
+        "end_char": 1727
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The instructions provided by the agent were clear and easy for the customer to follow step-by-step."
     },
     {
+      "evidence": {
+        "text": "في أي شي تاني بقدر أساعدك فيه اليوم؟",
+        "speaker": "Agent",
+        "start_char": 2792,
+        "end_char": 2828
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent properly checked for additional assistance and closed the call politely, though he referred to himself as a woman in the very last Arabic sentence ('ومشكورة اتصالتك' which is a minor slip)."
     },
     {
+      "evidence": {
+        "text": "تمام سيدي، هيك الـ Wi-Fi اشتغل تمام والمشكلة صارت عنا بالـ profile تبع الـ line. دقيقة وحدة بس خليني أعملك configuration من عندي عـ system.",
+        "speaker": "Agent",
+        "start_char": 2081,
+        "end_char": 2220
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The technical diagnosis was accurate, identifying the line profile issue correctly after troubleshooting the local Wi-Fi."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "بس ممكن تعطيني الـ account number لو سمحت عشان أشيك عـ system؟",
+        "speaker": "Agent",
+        "start_char": 260,
+        "end_char": 322
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.9,
+      "justification": "The agent followed proper procedure by asking for the account number before looking up the system details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "يا أخي أنا طهقت! صار لي ساعة عم بحاول أعمل setup للـ router الجديد وموبايلاتي مش عم بتلقط الـ Wi-Fi بالمرة!",
+          "speaker": "Customer",
+          "start_char": 92,
+          "end_char": 199
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "يا أخي خذ الرقم، بس بسرعة بالله عليك لأني معصب ومش فاضي أضيع وقت.",
+          "speaker": "Customer",
+          "start_char": 333,
+          "end_char": 398
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "عملت restart للـ router أربع مرات! فصلت الكهرباء ورجعت شبكتها وبرضه نفس المشكلة! هيك خدماتكم دايماً تعبانة!",
+          "speaker": "Customer",
+          "start_char": 1055,
+          "end_char": 1162
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "طيب، هي جبت دبوس وعم بضغط عـ زر الـ reset... ضاغط عليه لمدة عشر ثواني زي ما حكيت لي.",
+          "speaker": "Customer",
+          "start_char": 1484,
+          "end_char": 1568
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 80.0
+      },
+      {
+        "quote": {
+          "text": "أوه! هسا كتب لي Connected, no internet! يعني شبك بس نت ما في!",
+          "speaker": "Customer",
+          "start_char": 2012,
+          "end_char": 2073
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 104.0
+      },
+      {
+        "quote": {
+          "text": "طيب، خليني أفتح اليوتيوب... أوه، الفيديو فتح وصار يشتغل! ليش ما حكيت لي من الأول إنه القصة من عندكم؟",
+          "speaker": "Customer",
+          "start_char": 2438,
+          "end_char": 2538
+        },
+        "speaker": "Customer",
+        "score": 0.6,
+        "timestamp_sec": 128.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

@@ -1,104 +1,154 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T10:55:31.053916+00:00",
+    "human_reviewed": false
   },
+  "id": "39074db7-41b3-4a40-a9ce-25701ca5385e",
   "call_id": "call_0009_ar",
   "language": "ar",
-  "summary": "",
+  "summary": "The customer called in frustrated because their newly purchased router was showing a red light and not connecting to the internet. The agent calmly guided the customer through troubleshooting steps, including verifying cable connections and performing a hard reset on the router. The router successfully connected, resolving the customer's issue.",
   "commitments": [],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "ولا يهمك يا سيدي، بعتذر منك على الإزعاج، ولا تتضايق هسه بنحلها خطوة بخطوة مع بعض.",
+        "speaker": "Agent",
+        "start_char": 264,
+        "end_char": 345
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained a calm, polite, and professional tone throughout the call, successfully de-escalating the frustrated customer."
     },
     {
+      "evidence": {
+        "text": "متفهم غضبك تماماً، بالبداية ممكن تتأكد لو سمحت إنك شابك الكابل الأزرق بالفتحة المكتوب عليها وانت (WAN)؟",
+        "speaker": "Agent",
+        "start_char": 423,
+        "end_char": 526
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent explicitly acknowledged the customer's frustration and validated their feelings before proceeding with troubleshooting."
     },
     {
+      "evidence": {
+        "text": "ثواني أشيك... يا زلمة شبك! والله صفحة جوجل فتحت خلال ثانية!",
+        "speaker": "Customer",
+        "start_char": 1055,
+        "end_char": 1114
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent provided clear instructions that directly and fully resolved the customer's internet connection issue during the call."
     },
     {
+      "evidence": {
+        "text": "ممتاز جداً، طيب جرب اكبس على زر إعادة التشغيل اللي ورا الراوتر لمدة عشر ثواني لحد ما تطفي كل الأضوية وترجع تضوّي.",
+        "speaker": "Agent",
+        "start_char": 619,
+        "end_char": 732
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent gave clear, step-by-step instructions that were easy for the customer to follow without confusion."
     },
     {
+      "evidence": {
+        "text": "هل في أي إشي تاني بقدر أساعدك فيه اليوم؟",
+        "speaker": "Agent",
+        "start_char": 1268,
+        "end_char": 1308
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent asked if further assistance was needed, waited for confirmation, and closed the call politely with appropriate farewells."
     },
     {
+      "evidence": {
+        "text": "متفهم غضبك تماماً، بالبداية ممكن تتأكد لو سمحت إنك شابك الكابل الأزرق بالفتحة المكتوب عليها وانت (WAN)؟",
+        "speaker": "Agent",
+        "start_char": 423,
+        "end_char": 526
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The technical guidance provided regarding the WAN port and resetting the router was accurate and effective."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "عظيم، هسه استنى دقيقة وحدة بس لحتى يستقر الضوء ويصير أبيض ثابث مش عم بيطمش.",
+        "speaker": "Agent",
+        "start_char": 824,
+        "end_char": 899
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed proper troubleshooting procedures by checking physical connections and performing a router power cycle."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "يا أخي أنا طالع روحي، شريت راوتر جديد من عندكم ومش عم بقدر أشبكه بالإنترنت بالمرة، صار لي ساعة بحاول!",
+          "speaker": "Customer",
+          "start_char": 76,
+          "end_char": 177
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "ياريت والله، لأني عنجد تعبت وفقدت الأعصاب، كل مرة شغلة شكل.",
+          "speaker": "Customer",
+          "start_char": 356,
+          "end_char": 415
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "طيب، ها قاعد بكبس عليه... آه أها، الأضوية طفت وهسا رجعت ضوت من أول وجديد.",
+          "speaker": "Customer",
+          "start_char": 743,
+          "end_char": 816
+        },
+        "speaker": "Customer",
+        "score": -0.1,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "حاضر... اه صحيح، هسا ضو الإنترنت صار أبيض وثابت عندي!",
+          "speaker": "Customer",
+          "start_char": 910,
+          "end_char": 963
+        },
+        "speaker": "Customer",
+        "score": 0.5,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "تسلم إيدك يا أخي، جد ما قصرت وعتبي كان محله بس الحمد لله انحلت المشكلة بسرعة.",
+          "speaker": "Customer",
+          "start_char": 1125,
+          "end_char": 1202
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 72.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

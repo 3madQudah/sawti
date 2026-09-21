@@ -1,104 +1,188 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:12:07.772361+00:00",
+    "human_reviewed": false
   },
+  "id": "fa910ce8-0f60-4f74-a0ab-b02d98b21b85",
   "call_id": "call_0105_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called because they received a bill payment notice due today and could not afford it, asking what to do. The agent verified the customer's identity, checked the account, explained the bill details, and successfully processed a two-week extension for the payment deadline without any extra fees. The call ended politely after confirming the customer's satisfaction.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "ولا تشيل هم يا أخي، أقدر أشيك على حسابك وأشوف إذا فيه إمكانية نعمل لك تمديد لفترة الدفع.",
+        "speaker": "Agent",
+        "start_char": 233,
+        "end_char": 321
+      },
+      "promised_by": "Agent",
+      "description": "Check the account and see if a payment extension can be arranged.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "بالضبط، ما راح نفصل الخدمة عنك، ورح نعطيك مهلة لحد تاريخ عشرين الشهر.",
+        "speaker": "Agent",
+        "start_char": 1215,
+        "end_char": 1284
+      },
+      "promised_by": "Agent",
+      "description": "Prevent service disconnection and provide an extension deadline until the 20th of the month.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "تم يا أخي، لقد تم تمديد موعد الاستحقاق بنجاح إلى تاريخ عشرين الشهر الجاري.",
+        "speaker": "Agent",
+        "start_char": 1689,
+        "end_char": 1763
+      },
+      "promised_by": "Agent",
+      "description": "Extend the due date successfully to the 20th of the current month.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
-      "criterion": "professionalism",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
+        "text": "ولا تشيل هم يا أخي، أقدر أشيك على حسابك وأشوف إذا فيه إمكانية نعمل لك تمديد لفترة الدفع.",
+        "speaker": "Agent",
+        "start_char": 233,
+        "end_char": 321
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent was very reassuring, patient, and polite when the customer expressed worry about not being able to pay."
     },
     {
+      "evidence": {
+        "text": "تم يا أخي، لقد تم تمديد موعد الاستحقاق بنجاح إلى تاريخ عشرين الشهر الجاري.",
+        "speaker": "Agent",
+        "start_char": 1689,
+        "end_char": 1763
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent fully resolved the customer's problem by processing the extension directly over the phone."
     },
     {
+      "evidence": {
+        "text": "اللي أقصده يا طال عمرك، إنه تقدر تطلب تمديد لموعد الدفع لمدة أسبوعين إضافيين بدون أي رسوم تأخير.",
+        "speaker": "Agent",
+        "start_char": 1060,
+        "end_char": 1156
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent explained the options clearly and repeated the information when the customer mentioned network issues."
     },
     {
+      "evidence": {
+        "text": "العفو، حياك الله، مع السلامة.",
+        "speaker": "Agent",
+        "start_char": 1958,
+        "end_char": 1987
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent offered further assistance, waited for the customer to close, and said an appropriate goodbye."
     },
     {
+      "evidence": {
+        "text": "نعم يا أخي، هذا حسابك ورقم هاتفك المسجل عندنا، والفاتورة تشمل اشتراك الإنترنت والمكالمات للشهر الحالي.",
+        "speaker": "Agent",
+        "start_char": 854,
+        "end_char": 956
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent provided accurate billing and account details matching the customer's registered information."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "ممكن تعطني رقم الحساب أو رقم الهوية لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 322,
+        "end_char": 366
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent correctly verified the customer's identity using their national ID before discussing account details."
+    },
+    {
+      "evidence": {
+        "text": "أهلاً بك في خدمة العملاء، معك رامي. كيف أقدر أساعدك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 65
+      },
+      "criterion": "professionalism",
+      "score": 1.0,
+      "justification": "The agent maintained a professional, respectful tone throughout the call."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "والله انا مادري ايش صاير بالضبط، وصلني رسالة ان الفاتورة نزلت ولازم ادفع اليوم، بس انا ما عندي مبلغ الحين",
+          "speaker": "Customer",
+          "start_char": 91,
+          "end_char": 196
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "آآه، طيب، خمسة أربعة ثلاثة اثنين واحد سبعة ثمانية تسعة صفر. وصلك؟",
+          "speaker": "Customer",
+          "start_char": 559,
+          "end_char": 624
+        },
+        "speaker": "Customer",
+        "score": 0.0,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "خمسين دينار مرة وحدة؟ غريبة والله، أنا متأكد إن الشهر الماضي كانت أقل، متأكد إن هذا حسابي؟",
+          "speaker": "Customer",
+          "start_char": 756,
+          "end_char": 846
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 32.0
+      },
+      {
+        "quote": {
+          "text": "ممتاز والله، طيب كيف أسوي هذا التمديد؟ لازم أروح على المركز ولا أقدر أساويه من هنا؟",
+          "speaker": "Customer",
+          "start_char": 1295,
+          "end_char": 1378
+        },
+        "speaker": "Customer",
+        "score": 0.5,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "الله يعطيك العافية يا اخوي، تعبتك معي لأني ما فهمت من أول مرة.",
+          "speaker": "Customer",
+          "start_char": 1774,
+          "end_char": 1836
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 88.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

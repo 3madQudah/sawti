@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T10:59:03.282064+00:00",
+    "human_reviewed": false
   },
+  "id": "073de5cd-9f44-4ad9-9b67-3653eaa12538",
   "call_id": "call_0025_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to request the cancellation of their account due to a long-term travel abroad. The agent verified the account number, inquired about the reason, offered an account freeze as an alternative, and upon the customer's refusal, successfully processed the account closure request with a 24-hour timeframe.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "تم تقديم طلب إغلاق الحساب وراح يتم فصل الخدمة خلال أربع وعشرين ساعة.",
+        "speaker": "Agent",
+        "start_char": 585,
+        "end_char": 653
+      },
+      "promised_by": "Agent",
+      "description": "Process the account closure and disconnect the service within 24 hours.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "أهلاً بك في شركة الاتصالات، معك أحمد، كيف بقدر أساعدك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 67
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained a polite, professional, and welcoming tone throughout the call."
     },
     {
+      "evidence": {
+        "text": "فاهم عليك، تروح وترجع بالسلامة إن شاء الله.",
+        "speaker": "Agent",
+        "start_char": 422,
+        "end_char": 465
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent showed genuine empathy and wished the customer a safe trip upon learning about their travel."
     },
     {
+      "evidence": {
+        "text": "تمام ولا يهمك، تم تقديم طلب إغلاق الحساب وراح يتم فصل الخدمة خلال أربع وعشرين ساعة.",
+        "speaker": "Agent",
+        "start_char": 570,
+        "end_char": 653
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent fully resolved the customer's issue by submitting the account closure request."
     },
     {
+      "evidence": {
+        "text": "هل حابب نجمد الحساب بدل ما نلغيه نهائياً؟",
+        "speaker": "Agent",
+        "start_char": 466,
+        "end_char": 507
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent communicated clearly, asked pertinent questions, and offered a logical alternative."
     },
     {
+      "evidence": {
+        "text": "العفو، أهلاً بك ومع السلامة.",
+        "speaker": "Agent",
+        "start_char": 742,
+        "end_char": 770
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent properly checked for additional needs and closed the call politely."
     },
     {
+      "evidence": {
+        "text": "تم تقديم طلب إغلاق الحساب وراح يتم فصل الخدمة خلال أربع وعشرين ساعة.",
+        "speaker": "Agent",
+        "start_char": 585,
+        "end_char": 653
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "Provided accurate procedural information regarding the account closure timeline."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "ممكن تعطيني رقم الحساب أو رقم الهوية؟",
+        "speaker": "Agent",
+        "start_char": 188,
+        "end_char": 225
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent correctly followed verification procedures by asking for the account or ID number."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أهلاً بك أستاذ أحمد، أنا بدي ألغي حسابي عناكم لو سمحت.",
+          "speaker": "Customer",
+          "start_char": 78,
+          "end_char": 132
+        },
+        "speaker": "Customer",
+        "score": 0.0,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "تفضل، رقم الحساب هو خمسة سبعة ثمانية تسعة.",
+          "speaker": "Customer",
+          "start_char": 236,
+          "end_char": 278
+        },
+        "speaker": "Customer",
+        "score": 0.1,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "والله أنا مسافر برا البلد لفترة طويلة وما راح أستعمل الخدمة.",
+          "speaker": "Customer",
+          "start_char": 354,
+          "end_char": 414
+        },
+        "speaker": "Customer",
+        "score": 0.0,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "لا أهون علي، الأفضل ألغيه تماماً وشكراً إلك.",
+          "speaker": "Customer",
+          "start_char": 518,
+          "end_char": 562
+        },
+        "speaker": "Customer",
+        "score": 0.3,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "سلامتك، ما قصرت، شكراً لتعاونك.",
+          "speaker": "Customer",
+          "start_char": 703,
+          "end_char": 734
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 72.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

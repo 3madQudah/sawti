@@ -1,104 +1,177 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:34:27.073459+00:00",
+    "human_reviewed": false
   },
+  "id": "5d8bfa9b-58b8-4257-8366-24e8da7b49a6",
   "call_id": "call_0149_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to report that their home internet was down and asked if it was a general outage or an issue with their router. The agent verified the account number and informed the customer that there was a major fiber cut outage in the Jubeiha area being handled by technicians. Upon the customer's request, the agent added a free 5GB mobile data bundle as compensation, confirming it would be active within five minutes.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "I can add 5GB free data bundle to your mobile number as compensation for the inconvenience.",
+        "speaker": "Agent",
+        "start_char": 1048,
+        "end_char": 1139
+      },
+      "promised_by": "Agent",
+      "description": "Add a 5GB free mobile data bundle to the customer's number as compensation.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "Yes, it will be active within five minutes, wel-resala hateesalak 3al phone.",
+        "speaker": "Agent",
+        "start_char": 1234,
+        "end_char": 1310
+      },
+      "promised_by": "Agent",
+      "description": "Activate the data bundle within five minutes and send a confirmation SMS.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Hello, welcome to Zain customer care, معاك محمد. How can I help you today, akhi?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 87
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent maintained a polite, professional, and friendly tone throughout the call while incorporating natural bilingual elements."
     },
     {
+      "evidence": {
+        "text": "I can add 5GB free data bundle to your mobile number as compensation for the inconvenience.",
+        "speaker": "Agent",
+        "start_char": 1048,
+        "end_char": 1139
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent acknowledged the customer's inconvenience and proactively offered compensation without hesitation."
     },
     {
+      "evidence": {
+        "text": "Yes, it will be active within five minutes, wel-resala hateesalak 3al phone.",
+        "speaker": "Agent",
+        "start_char": 1234,
+        "end_char": 1310
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent correctly diagnosed the outage, explained the timeline, and resolved the customer's secondary need by providing temporary data."
     },
     {
+      "evidence": {
+        "text": "The estimated time of repair, bas according to the field team, it will take around two to three hours maximum.",
+        "speaker": "Agent",
+        "start_char": 808,
+        "end_char": 918
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent explained the technical issue and repair estimate clearly, despite mixing Arabic and English."
     },
     {
+      "evidence": {
+        "text": "My pleasure, ya hala feek, and sorry for the delay. Have a great day!",
+        "speaker": "Agent",
+        "start_char": 1387,
+        "end_char": 1456
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The call ended on a polite note with well wishes and a clear wrap-up after all points were addressed."
     },
     {
+      "evidence": {
+        "text": "Ah, yes, actually we have a major outage fi mantiqet el-Jubeiha right now.",
+        "speaker": "Agent",
+        "start_char": 425,
+        "end_char": 499
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent correctly identified the active regional outage from the system based on the customer's details."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "What is your account number or phone number, please?",
+        "speaker": "Agent",
+        "start_char": 305,
+        "end_char": 357
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent correctly asked for and verified the customer's phone number before looking up account details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Ya akhi, I just want to check, min sabaah el-yom my home internet is completely down.",
+          "speaker": "Customer",
+          "start_char": 115,
+          "end_char": 200
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Aah, mantiqet el-Jubeiha kolha? Bas kaman my neighbors are complaining.",
+          "speaker": "Customer",
+          "start_char": 510,
+          "end_char": 581
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 32.0
+      },
+      {
+        "quote": {
+          "text": "Okay, no worries. Bas iza bitrdf, can you add temporary data 3al mobile tabaei till it's fixed?",
+          "speaker": "Customer",
+          "start_char": 929,
+          "end_char": 1024
+        },
+        "speaker": "Customer",
+        "score": 0.1,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "That's very kind of you, shukran jazeelan. Will it be activated immediately?",
+          "speaker": "Customer",
+          "start_char": 1150,
+          "end_char": 1226
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "Perfect, I appreciate your help Mohammed. Have a good day.",
+          "speaker": "Customer",
+          "start_char": 1321,
+          "end_char": 1379
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 80.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

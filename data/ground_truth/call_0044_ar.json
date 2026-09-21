@@ -1,104 +1,188 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:02:42.635503+00:00",
+    "human_reviewed": false
   },
+  "id": "c54eb789-4c05-4c0d-a9e6-9078139d599e",
   "call_id": "call_0044_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called intending to immediately cancel their internet and home phone subscription due to slow speeds and high bills. The agent apologized, empathized, offered a special discount and speed upgrade, and promised to personally monitor the line. The customer accepted the offer and agreed to keep the subscription.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "أعدك بذلك، وسأقوم بنفسي بمتابعة حالة خطك خلال الأسبوع القادم لضمان حصولك على أفضل سرعة وثبات بالاتصال.",
+        "speaker": "Agent",
+        "start_char": 1033,
+        "end_char": 1135
+      },
+      "promised_by": "Agent",
+      "description": "The agent promised to personally monitor the customer's line status over the coming week to ensure best speed and stability.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "بالتأكيد، يحق لك إلغاء الاشتراك في أي وقت بدون أي رسوم إضافية إذا لم تكن راضياً عن الخدمة بعد هذا التحديث.",
+        "speaker": "Agent",
+        "start_char": 1229,
+        "end_char": 1335
+      },
+      "promised_by": "Agent",
+      "description": "The agent promised the customer can cancel the subscription at any time without extra fees if not satisfied after the update.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "ممتاز جداً يا أستاذ، لقد قمت بتطبيق الخصم وترقية السرعة على حسابك الآن، وستلاحظ الفرق خلال ساعة من الآن.",
+        "speaker": "Agent",
+        "start_char": 1428,
+        "end_char": 1532
+      },
+      "promised_by": "Agent",
+      "description": "The agent promised the customer will notice the speed difference within an hour.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "أهلاً بك في خدمات الاتصالات، معك أحمد، كيف يمكنني مساعدتك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 71
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained a polite, respectful, and professional tone throughout the call."
     },
     {
+      "evidence": {
+        "text": "أقدر تماماً غضبك واحباطك، وأعتذر مرة أخرى عن التجربة التي مررت بها، هل تود مني التحقق من تفاصيل الفاتورة وسرعة الخط لنرى إن كان بإمكاننا حل هذه المشكلة قبل اتخاذ قرار الإلغاء؟",
+        "speaker": "Agent",
+        "start_char": 473,
+        "end_char": 648
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent explicitly acknowledged and validated the customer's frustration and apologized sincerely."
     },
     {
+      "evidence": {
+        "text": "ممتاز جداً يا أستاذ، لقد قمت بتطبيق الخصم وترقية السرعة على حسابك الآن، وستلاحظ الفرق خلال ساعة من الآن.",
+        "speaker": "Agent",
+        "start_char": 1428,
+        "end_char": 1532
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully retained the customer by offering a valid resolution (discount and speed upgrade) that satisfied the customer."
     },
     {
+      "evidence": {
+        "text": "لقد قمنا مؤخراً بترقية البنى التحتية في منطقتك، ويمكننا منحك خصم خمسين بالمائة على فاتورتك للثلاثة أشهر القادمة مع مضاعفة سرعة الإنترنت مجاناً.",
+        "speaker": "Agent",
+        "start_char": 788,
+        "end_char": 931
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent explained the promotional offer and the terms clearly without ambiguity."
     },
     {
+      "evidence": {
+        "text": "هل تحتاج إلى أي مساعدة أخرى اليوم؟",
+        "speaker": "Agent",
+        "start_char": 1657,
+        "end_char": 1691
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent handled the closure well, asked if anything else was needed, and exchanged polite farewells."
     },
     {
+      "evidence": {
+        "text": "لقد قمت بتطبيق الخصم وترقية السرعة على حسابك الآن، وستلاحظ الفرق خلال ساعة من الآن.",
+        "speaker": "Agent",
+        "start_char": 1449,
+        "end_char": 1532
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The information provided regarding the discount and system update actions was accurate and effective."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "بالتأكيد، يحق لك إلغاء الاشتراك في أي وقت بدون أي رسوم إضافية إذا لم تكن راضياً عن الخدمة بعد هذا التحديث.",
+        "speaker": "Agent",
+        "start_char": 1229,
+        "end_char": 1335
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed proper retention guidelines and outlined the proper terms for cancellation and offers."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أهلاً، بصراحة أنا متضايق جداً وبدي ألغي اشتراك الإنترنت والخط المنزلي فوراً، طفح الكيل من خدمتكم السيئة.",
+          "speaker": "Customer",
+          "start_char": 82,
+          "end_char": 186
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "لا، أنا خلص قررت، بدي ألغيه وخلص، ما بدي وجع راس أكثر من هيك.",
+          "speaker": "Customer",
+          "start_char": 659,
+          "end_char": 720
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "يعني متأكد إنه السرعة راح تتحسن؟ لأني زهقت من الحكي الفاضي والوعود اللي بدون مفعول.",
+          "speaker": "Customer",
+          "start_char": 942,
+          "end_char": 1025
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "صراحة هذا عرض ممتاز وبيستاهل فرصة ثانية، خلص وافقوا على العرض وخلينا نكمل.",
+          "speaker": "Customer",
+          "start_char": 1346,
+          "end_char": 1420
+        },
+        "speaker": "Customer",
+        "score": 0.6,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "ممتاز، شكراً لتعاونك وسرعة استجابتك، بصراحة غيرت نظرتي للخدمة اليوم.",
+          "speaker": "Customer",
+          "start_char": 1543,
+          "end_char": 1611
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 72.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

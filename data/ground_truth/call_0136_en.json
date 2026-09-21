@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:22:14.025173+00:00",
+    "human_reviewed": false
   },
+  "id": "94a6fe54-9eaf-44f7-b8ec-434225696f61",
   "call_id": "call_0136_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called angrily because her power was scheduled for shut off due to a past-due bill, and she was denied an automated payment extension. The agent explained the company policy limiting extensions to one per year and offered alternative plans requiring a partial payment, which the customer rejected because she had no money. After refusing the agent's proposed solutions and insulting the agent, the customer demanded a supervisor transfer, and the agent initiated the transfer.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "I am initiating the transfer to my supervisor, Ms. Davis. Please stay on the line and the next available manager will be with you shortly.",
+        "speaker": "Agent",
+        "start_char": 3634,
+        "end_char": 3772
+      },
+      "promised_by": "Agent",
+      "description": "Transfer the customer to a supervisor.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "I understand you are frustrated, and I apologize for the stress this has caused. Let me look into your account right away. May I please have your account number or the phone number associated with the account?",
+        "speaker": "Agent",
+        "start_char": 286,
+        "end_char": 495
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent maintained a calm, polite, and professional demeanor throughout the call despite the customer being hostile and insulting."
     },
     {
+      "evidence": {
+        "text": "I completely sympathize with your situation, and unexpected medical expenses are certainly difficult.",
+        "speaker": "Agent",
+        "start_char": 1394,
+        "end_char": 1495
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent actively acknowledged and validated the customer's difficult personal and medical situation multiple times."
     },
     {
+      "evidence": {
+        "text": "I am initiating the transfer to my supervisor, Ms. Davis. Please stay on the line and the next available manager will be with you shortly.",
+        "speaker": "Agent",
+        "start_char": 3634,
+        "end_char": 3772
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.4,
+      "justification": "The issue was not resolved on the line due to system constraints, but the agent successfully handled the escalation request by initiating a supervisor transfer."
     },
     {
+      "evidence": {
+        "text": "The challenge is that our disconnection schedule is set by regional operations, and once a notice reaches this final stage, the system automatically locks out further extensions without a partial payment.",
+        "speaker": "Agent",
+        "start_char": 2544,
+        "end_char": 2748
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent explained policies, system limitations, and requirements clearly and understandably."
     },
     {
+      "evidence": {
+        "text": "I am initiating the transfer to my supervisor, Ms. Davis. Please stay on the line and the next available manager will be with you shortly.",
+        "speaker": "Agent",
+        "start_char": 3634,
+        "end_char": 3772
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent properly set expectations for the transfer and closed the interaction professionally, though it was an escalation rather than a final resolution."
     },
     {
+      "evidence": {
+        "text": "Our system policy allows for one payment extension per calendar year, Ms. Davis, which is why the automated system blocked your request.",
+        "speaker": "Agent",
+        "start_char": 1056,
+        "end_char": 1192
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent provided accurate information regarding company policy and system limitations regarding payment extensions."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "If you can make even a small good-faith payment today—say, twenty-five percent of the balance—I can manually extend the remaining balance for those two weeks.",
+        "speaker": "Agent",
+        "start_char": 3008,
+        "end_char": 3166
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent strictly adhered to company policies regarding payment extensions and escalation procedures."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "I am absolutely furious, that's how I am. I just got a notification that my power is scheduled to be shut off tomorrow morning, and I want to know why nobody warned me properly!",
+          "speaker": "Customer",
+          "start_char": 101,
+          "end_char": 278
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "My power cannot be shut off. I’ve been a customer for ten years and this is how you treat people?",
+          "speaker": "Customer",
+          "start_char": 575,
+          "end_char": 672
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Policy? I don't care about your ridiculous policies! People have emergencies! I had unexpected medical bills, and I simply don't have the full amount right now to pay this bill today!",
+          "speaker": "Customer",
+          "start_char": 1203,
+          "end_char": 1386
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "Then transfer me! Maybe your manager actually has some common sense and empathy instead of just reading off a computer screen like a robot!",
+          "speaker": "Customer",
+          "start_char": 1999,
+          "end_char": 2138
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "I don't have twenty-five percent! I have zero dollars until the fifteenth! How many times do I have to spell that out for you? Do you speak English?",
+          "speaker": "Customer",
+          "start_char": 3177,
+          "end_char": 3325
+        },
+        "speaker": "Customer",
+        "score": -1.0,
+        "timestamp_sec": 80.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

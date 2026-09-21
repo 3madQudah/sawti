@@ -1,104 +1,154 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T10:54:35.735962+00:00",
+    "human_reviewed": false
   },
+  "id": "a6634e5a-b7ea-4230-97c2-2da600e36445",
   "call_id": "call_0003_mixed",
   "language": "mixed",
-  "summary": "",
+  "summary": "The customer called to inquire about a delayed refund of $120 for a cancelled fiber internet installation order. The agent identified the order, discovered the refund was stuck in the payment gateway queue, manually overrode the queue, and successfully processed the transaction, resulting in a confirmation SMS received by the customer during the call.",
   "commitments": [],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Welcome to customer service, how can I help you today?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 61
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent maintained a polite, calm, and professional demeanor throughout the interaction, apologizing for the delay and empathizing with the customer's frustration."
     },
     {
+      "evidence": {
+        "text": "I am so sorry about the wait time, يا سيدي, how can I help you today?",
+        "speaker": "Agent",
+        "start_char": 210,
+        "end_char": 279
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent actively acknowledged the customer's frustration, apologized sincerely for the long wait and the lack of communication, and used appropriate bilingual empathy markers."
     },
     {
+      "evidence": {
+        "text": "Yes, I just pushed the transaction through from my end, المفروض يوصلك confirmation SMS خلال دقيقة.",
+        "speaker": "Agent",
+        "start_char": 1329,
+        "end_char": 1427
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully diagnosed the stuck refund in the payment gateway, manually pushed the transaction through, and verified that the customer received the confirmation text."
     },
     {
+      "evidence": {
+        "text": "Great! The refund of $120 has been processed to your card, it might take 24 to 48 hours to show up depending on your bank.",
+        "speaker": "Agent",
+        "start_char": 1519,
+        "end_char": 1641
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent explained the steps clearly in a mix of English and Arabic, ensuring the customer understood both the cause of the delay and the expected timeline for funds to appear."
     },
     {
+      "evidence": {
+        "text": "Any time! Is there anything else I can help you with today?",
+        "speaker": "Agent",
+        "start_char": 1921,
+        "end_char": 1980
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent properly asked if there was anything else needed, waited for confirmation, and closed the call with a polite farewell."
     },
     {
+      "evidence": {
+        "text": "I see the refund was actually approved, but it got stuck in our payment gateway queue.",
+        "speaker": "Agent",
+        "start_char": 983,
+        "end_char": 1069
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately accessed the system, identified the status of the cancellation request, and correctly explained why the refund had not yet reached the customer's credit card."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Let me check the system real quick, ممكن تدطيني رقم الطلب لو سمحت؟",
+        "speaker": "Unknown",
+        "start_char": 413,
+        "end_char": 479
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.8,
+      "justification": "The agent requested the order number correctly to look up the account, though identity verification could have been slightly more thorough."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "I've been waiting on hold for like ten minutes, and honestly I'm pretty annoyed about this whole situation.",
+          "speaker": "Customer",
+          "start_char": 95,
+          "end_char": 202
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Look, I cancelled my fiber internet installation order last week, and I'm still waiting to see the refund credit في حسابي.",
+          "speaker": "Customer",
+          "start_char": 290,
+          "end_char": 412
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Take your time, but please fix it because $120 isn't a small amount to just disappear.",
+          "speaker": "Customer",
+          "start_char": 852,
+          "end_char": 938
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "Oh, wait, wait, yeah, just got the text message!",
+          "speaker": "Customer",
+          "start_char": 1463,
+          "end_char": 1511
+        },
+        "speaker": "Customer",
+        "score": 0.6,
+        "timestamp_sec": 72.0
+      },
+      {
+        "quote": {
+          "text": "It's alright, mistakes happen as long as it's sorted out. Thanks for your help.",
+          "speaker": "Customer",
+          "start_char": 1834,
+          "end_char": 1913
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 96.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:07:30.174455+00:00",
+    "human_reviewed": false
   },
+  "id": "39495a28-84ea-445e-a0f5-16cfb106f514",
   "call_id": "call_0078_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to inquire about the refund status for an order they cancelled two weeks prior because the product was unavailable. The agent checked the system, confirmed the cancellation and credit card payment method, and acknowledged that the standard refund window had passed. The agent apologized for the delay, created an urgent follow-up request with the finance department, and assured the customer the funds would arrive within two days. The call ended cordially.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "أنا هسا رفعت طلب استعجال لقسم المحاسبة، والمبلغ لازم ينزل بحسابك خلال يومين بالكثير.",
+        "speaker": "Agent",
+        "start_char": 957,
+        "end_char": 1041
+      },
+      "promised_by": "Agent",
+      "description": "Escalate the refund request to the accounting department and ensure the funds appear in the customer's bank account within two days.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "ولا يهمك سيدي، بتسمح لي بس أزود رقم الطلب لو سمحت عشان أتأكد من التفاصيل؟",
+        "speaker": "Agent",
+        "start_char": 186,
+        "end_char": 259
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained a polite, professional, and respectful tone throughout the call."
     },
     {
+      "evidence": {
+        "text": "فهمت عليك سيدي، بتعتذر منك عالتاخير، خليني أعمل متابعة مع قسم المالية فوراً لأشوف وين صار التحويل.",
+        "speaker": "Agent",
+        "start_char": 780,
+        "end_char": 878
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent acknowledged the customer's frustration regarding the two-week delay and offered a sincere apology."
     },
     {
+      "evidence": {
+        "text": "أنا هسا رفعت طلب استعجال لقسم المحاسبة، والمبلغ لازم ينزل بحسابك خلال يومين بالكثير.",
+        "speaker": "Agent",
+        "start_char": 957,
+        "end_char": 1041
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully identified the issue, explained the cause of the delay, and took proactive action by escalating the refund to accounting."
     },
     {
+      "evidence": {
+        "text": "بالنسبة للمبلغ، نظامنا بيوخذ من خمس لسبع أيام عمل حتى يرجع بحسابك البنكي.",
+        "speaker": "Agent",
+        "start_char": 618,
+        "end_char": 691
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent communicated clearly, explaining the standard refund timeframe and the next steps without confusing jargon."
     },
     {
+      "evidence": {
+        "text": "هل في إشي تاني بقدر أخدمك فيه اليوم؟",
+        "speaker": "Agent",
+        "start_char": 1124,
+        "end_char": 1160
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent properly checked for additional needs, thanked the customer, and closed the conversation politely."
     },
     {
+      "evidence": {
+        "text": "تمام سيدي، شايف قدامي إنه الطلب انألغى بناءً على رغبتك بتاريخ عشر الشهر.",
+        "speaker": "Agent",
+        "start_char": 370,
+        "end_char": 442
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately retrieved and verified order details, cancellation date, and payment method from the system."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "ولا يهمك سيدي، بتسمح لي بس أزود رقم الطلب لو سمحت عشان أتأكد من التفاصيل؟",
+        "speaker": "Agent",
+        "start_char": 186,
+        "end_char": 259
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent correctly asked for the order number to verify account details before proceeding with the request."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أنا بدي استفسر عن طلبية ألغيتها قبل أسبوعين وبدي أعرف وين صار موضوع استرداد المصاري.",
+          "speaker": "Customer",
+          "start_char": 94,
+          "end_char": 178
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "أنا مر أكتر من أسبوعين ولسا ما وصلني إشي عالحساب، عشان هيك حبيت أتأكد.",
+          "speaker": "Customer",
+          "start_char": 702,
+          "end_char": 772
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "يا ريت والله، لأني حابب أنتهي من الموضوع.",
+          "speaker": "Customer",
+          "start_char": 889,
+          "end_char": 930
+        },
+        "speaker": "Customer",
+        "score": -0.1,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "ممتاز جداً، مشكور كتير على تعاونك وذوقك.",
+          "speaker": "Customer",
+          "start_char": 1052,
+          "end_char": 1092
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 80.0
+      },
+      {
+        "quote": {
+          "text": "سلامتك، ما قصرت، يعطيك العافية.",
+          "speaker": "Customer",
+          "start_char": 1171,
+          "end_char": 1202
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 96.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

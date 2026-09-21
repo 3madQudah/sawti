@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:13:56.649170+00:00",
+    "human_reviewed": false
   },
+  "id": "379f34f8-4764-4a89-b0c5-f6ec52327bcd",
   "call_id": "call_0115_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to complain about a week-long delay in changing their internet package. The agent apologized, verified the customer's identity using their ID number, identified that the request was pending due to a data update, and immediately processed the activation. The agent instructed the customer to restart the modem, successfully resolving the issue.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "بس أنا هسا رح أفعله لك فوراً.",
+        "speaker": "Agent",
+        "start_char": 401,
+        "end_char": 430
+      },
+      "promised_by": "Agent",
+      "description": "The agent promised to activate the internet package immediately.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "رح يفعل خلال دقيقة وحدة بس،",
+        "speaker": "Agent",
+        "start_char": 486,
+        "end_char": 513
+      },
+      "promised_by": "Agent",
+      "description": "The agent promised that the package will be activated within one minute.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "أعتذر منك جداً على التأخير أخي، ممكن أعطيني رقم الباقة أو رقم الهوية أتأكد من الطلب؟",
+        "speaker": "Agent",
+        "start_char": 172,
+        "end_char": 256
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent remained polite, professional, and composed despite the customer's initial frustration."
     },
     {
+      "evidence": {
+        "text": "أعتذر منك جداً على التأخير أخي،",
+        "speaker": "Agent",
+        "start_char": 172,
+        "end_char": 203
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent offered a clear and sincere apology for the delay experienced by the customer."
     },
     {
+      "evidence": {
+        "text": "رح يفعل خلال دقيقة وحدة بس، تقدر تفصل المودم وترجع تشغله وبتكون البقة الجديدة اشتغلت.",
+        "speaker": "Agent",
+        "start_char": 486,
+        "end_char": 571
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully identified the pending issue, activated the package, and provided clear troubleshooting steps that resolved the customer's problem."
     },
     {
+      "evidence": {
+        "text": "رح يفعل خلال دقيقة وحدة بس، تقدر تفصل المودم وترجع تشغله وبتكون البقة الجديدة اشتغلت.",
+        "speaker": "Agent",
+        "start_char": 486,
+        "end_char": 571
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "Instructions were concise, straightforward, and easily understood by the customer."
     },
     {
+      "evidence": {
+        "text": "الله يعافيك، وشكراً لصبرك معنا، مع السلامة.",
+        "speaker": "Agent",
+        "start_char": 621,
+        "end_char": 664
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent closed the call politely, thanked the customer for their patience, and said goodbye."
     },
     {
+      "evidence": {
+        "text": "صحيح هو معلق بسبب تحديث البيانات، بس أنا هسا رح أفعله لك فوراً.",
+        "speaker": "Agent",
+        "start_char": 367,
+        "end_char": 430
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately identified the reason for the delay from the system and gave correct activation instructions."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "ممكن أعطيني رقم الباقة أو رقم الهوية أتأكد من الطلب؟",
+        "speaker": "Agent",
+        "start_char": 204,
+        "end_char": 256
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent correctly asked for customer identification (ID number) before discussing or modifying account details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "يا اختي زهقتوني، أنا طلبت أغير باقة الإنترنت عندي من أسبوع ولسا ما تغيرت، شو هالتعطيل!",
+          "speaker": "Customer",
+          "start_char": 78,
+          "end_char": 164
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "رقم الهوية 1234567890، خلصوني بسرعة عندي شغل ومش فاضي.",
+          "speaker": "Customer",
+          "start_char": 267,
+          "end_char": 321
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "طيب وأخيراً، قديش بده وقت ليصير جاهز؟",
+          "speaker": "Customer",
+          "start_char": 441,
+          "end_char": 478
+        },
+        "speaker": "Customer",
+        "score": 0.0,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "ماشي، هيني جربت، يعطيك العافية.",
+          "speaker": "Customer",
+          "start_char": 582,
+          "end_char": 613
+        },
+        "speaker": "Customer",
+        "score": 0.7,
+        "timestamp_sec": 56.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

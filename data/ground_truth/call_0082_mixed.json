@@ -1,104 +1,189 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:08:12.260123+00:00",
+    "human_reviewed": false
   },
+  "id": "babf68cb-7391-4968-825a-bdc9abcf284e",
   "call_id": "call_0082_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
-  "compliance_flags": [],
+  "summary": "The customer called to complain about a rude previous agent who yelled and hung up on them, and also to resolve an unexpected double billing issue on their account. The agent apologized, registered a formal complaint against the previous agent, verified the billing error, and processed a credit adjustment. The call ended with the customer satisfied with the current agent's help while still expecting a supervisor callback.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "رح أسجل طلب call back من الـ supervisor بأقرب وقت ممكن اليوم.",
+        "speaker": "Agent",
+        "start_char": 1127,
+        "end_char": 1188
+      },
+      "promised_by": "Agent",
+      "description": "Arrange a callback from a supervisor today.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "راح تنزل المبلغ بحسابك خلال ساعتين.",
+        "speaker": "Agent",
+        "start_char": 1938,
+        "end_char": 1973
+      },
+      "promised_by": "Agent",
+      "description": "Credit adjustment amount will appear in the account within two hours.",
+      "deadline": null
+    }
+  ],
+  "compliance_flags": [
+    {
+      "evidence": {
+        "text": "لا أبداً عيب عليك،",
+        "speaker": "Agent",
+        "start_char": 1302,
+        "end_char": 1320
+      },
+      "rule_id": "unprofessional_language",
+      "severity": "medium",
+      "description": "The agent used slightly informal and scolding language ('عيب عليك') towards the customer."
+    }
+  ],
   "rubric_scores": [
     {
-      "criterion": "professionalism",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
+        "text": "يا أستاذ بعتذر منك كتير، شو اللي صار معك بالظبط؟",
+        "speaker": "Agent",
+        "start_char": 195,
+        "end_char": 243
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent repeatedly apologized and validated the customer's frustration regarding the previous agent's behavior."
     },
     {
+      "evidence": {
+        "text": "لا أبداً عيب عليك، أنا حاضر أساعدك بكل إشي بدك إياه بخصوص الفاتورة،",
+        "speaker": "Agent",
+        "start_char": 1302,
+        "end_char": 1369
+      },
+      "criterion": "professionalism",
+      "score": 0.6,
+      "justification": "Mostly professional and polite, though lowered slightly due to using colloquial pushback ('عيب عليك')."
+    },
+    {
+      "evidence": {
+        "text": "وأنا هلأ عملت credit adjustment وراح تنزل المبلغ بحسابك خلال ساعتين.",
+        "speaker": "Agent",
+        "start_char": 1905,
+        "end_char": 1973
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent successfully identified the double billing and processed a credit adjustment to resolve the core issue."
     },
     {
+      "evidence": {
+        "text": "بس ضروري أعرف الحساب عشان أقدر أعمل formal complaint وأرفعها للإدارة.",
+        "speaker": "Agent",
+        "start_char": 688,
+        "end_char": 757
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "Clear explanations of what steps were being taken for both the complaint and the billing issue."
     },
     {
+      "evidence": {
+        "text": "الله يسلمك أستاذ، نهارك سعيد ومعتذر مرة ثانية، أهلاً بك.",
+        "speaker": "Agent",
+        "start_char": 2237,
+        "end_char": 2293
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "Closed the call politely with another apology, confirming no further assistance was needed."
     },
     {
+      "evidence": {
+        "text": "وفعلاً في غلطة بالفاتورة وصار في double billing بالخطأ.",
+        "speaker": "Agent",
+        "start_char": 1730,
+        "end_char": 1785
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "Accurately identified the double billing error on the system."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "ممكن تعطيني رقم الخط أو الـ account number عشان أقدر أشوف السجل؟",
+        "speaker": "Agent",
+        "start_char": 426,
+        "end_char": 490
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.9,
+      "justification": "Followed proper procedure by requesting the account number to access records and file the complaint."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أنا مش مبسوط بالمرة من الخدمة اللي تلقيتها قبل شوي",
+          "speaker": "Customer",
+          "start_char": 77,
+          "end_char": 127
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "this is unacceptable customer service!",
+          "speaker": "Customer",
+          "start_char": 586,
+          "end_char": 624
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "I want a callback from a supervisor today to confirm what action you took!",
+          "speaker": "Customer",
+          "start_char": 1025,
+          "end_char": 1099
+        },
+        "speaker": "Customer",
+        "score": -0.5,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "قرفتونا والله.",
+          "speaker": "Customer",
+          "start_char": 1855,
+          "end_char": 1869
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "طيب، وشكراً لإلك أنت بالذات لأنك متعاون،",
+          "speaker": "Customer",
+          "start_char": 1984,
+          "end_char": 2024
+        },
+        "speaker": "Customer",
+        "score": 0.4,
+        "timestamp_sec": 80.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

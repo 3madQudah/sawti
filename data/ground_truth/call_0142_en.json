@@ -1,104 +1,155 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:23:09.611417+00:00",
+    "human_reviewed": false
   },
+  "id": "f1fca1e8-e8af-4c9c-ac5e-2812c44d9acd",
   "call_id": "call_0142_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called Metro Utilities threatening a shut-off because his power was due to be disconnected today, demanding a payment extension. The agent verified his account, found an existing extension from last quarter which blocked a new automated extension, and offered to transfer him to a supervisor upon request.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "I can certainly transfer you to a supervisor to discuss further options, Mr. Davis. Please hold while I connect you.",
+        "speaker": "Agent",
+        "start_char": 1214,
+        "end_char": 1330
+      },
+      "promised_by": "Agent",
+      "description": "Transfer the customer to a supervisor to discuss further payment options.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "I understand you are concerned about your service, and I'd be happy to check your account for extension options.",
+        "speaker": "Agent",
+        "start_char": 234,
+        "end_char": 346
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent maintained a calm, polite, and professional demeanor throughout the call despite the customer's frustration."
     },
     {
+      "evidence": {
+        "text": "I understand you are concerned about your service, and I'd be happy to check your account for extension options.",
+        "speaker": "Agent",
+        "start_char": 234,
+        "end_char": 346
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent acknowledged the customer's concern and offered reassurance right at the start."
     },
     {
+      "evidence": {
+        "text": "I can certainly transfer you to a supervisor to discuss further options, Mr. Davis. Please hold while I connect you.",
+        "speaker": "Agent",
+        "start_char": 1214,
+        "end_char": 1330
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The agent could not grant the extension due to system limits, but effectively handled the escalation request by offering a supervisor transfer."
     },
     {
+      "evidence": {
+        "text": "I do show that an extension was already granted on this account last quarter, which unfortunately prevents the system from automatically applying another one.",
+        "speaker": "Agent",
+        "start_char": 880,
+        "end_char": 1038
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent explained clearly and concisely why the system could not grant another extension."
     },
     {
+      "evidence": {
+        "text": "Please hold while I connect you.",
+        "speaker": "Agent",
+        "start_char": 1298,
+        "end_char": 1330
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.5,
+      "justification": "The call ended abruptly with a warm transfer instead of a standard wrap-up, though appropriate for the escalation."
     },
     {
+      "evidence": {
+        "text": "Thank you, Mr. Davis. I see your current balance of two hundred and forty dollars was due last week.",
+        "speaker": "Agent",
+        "start_char": 562,
+        "end_char": 662
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately retrieved and reported the account balance, due date, and previous extension history."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "May I have your account number and name, please?",
+        "speaker": "Agent",
+        "start_char": 347,
+        "end_char": 395
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent properly verified the customer's identity and account information before discussing account details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "I am calling because my power is about to be shut off today, and this is completely ridiculous! I need an extension right now!",
+          "speaker": "Customer",
+          "start_char": 100,
+          "end_char": 226
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "And don't just tell me no, because I've been a customer for ten years and I've never missed a payment until this month!",
+          "speaker": "Customer",
+          "start_char": 435,
+          "end_char": 554
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "I don't need you to look, I need you to grant it! I get paid next Friday, and I am not sitting in the dark with my kids because of a few days!",
+          "speaker": "Customer",
+          "start_char": 730,
+          "end_char": 872
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "Are you kidding me? You're going to shut off my electricity over a policy when I'm telling you I can pay next week? Let me talk to your manager immediately!",
+          "speaker": "Customer",
+          "start_char": 1050,
+          "end_char": 1206
+        },
+        "speaker": "Customer",
+        "score": -1.0,
+        "timestamp_sec": 56.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

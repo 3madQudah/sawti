@@ -1,104 +1,188 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:33:38.448257+00:00",
+    "human_reviewed": false
   },
+  "id": "7f63a4e6-5091-4625-8cc4-57ad05d73977",
   "call_id": "call_0017_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called in extreme anger regarding an unwanted two-year contract renewal and a doubled bill. The agent tried to calm the customer, checked the account, and explained that a recorded consent call was found. When the customer accused the company of fraud and demanded immediate cancellation, the agent submitted an official dispute request to review the voice recording within 48 hours. The call ended with the customer threatening to complain to the Telecommunications Regulatory Commission.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "وراح ندقق بالموضوع خلال ثمانية وأربعين ساعة.",
+        "speaker": "Agent",
+        "start_char": 1041,
+        "end_char": 1085
+      },
+      "promised_by": "Agent",
+      "description": "Review the dispute and investigate the issue within 48 hours.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "وراح أتابع الطلب بنفسي عشان أضمن حقك.",
+        "speaker": "Agent",
+        "start_char": 1211,
+        "end_char": 1248
+      },
+      "promised_by": "Agent",
+      "description": "Personally follow up on the dispute request.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "ولا يهمك يا أستاذ، اهدي شوي وخلينا نشوف شو المشكلة بالضبط.",
+        "speaker": "Agent",
+        "start_char": 159,
+        "end_char": 217
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The agent attempted to remain calm and helpful under pressure, though telling the customer 'اهدي شوي' (calm down a bit) is slightly informal."
     },
     {
+      "evidence": {
+        "text": "بفهم غضبك يا سيدي، بس خليني أتأكد من التفاصيل وأراجع النظام عندي عشان أتحقق من موضوع تجديد العقد.",
+        "speaker": "Agent",
+        "start_char": 353,
+        "end_char": 450
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent acknowledged the customer's anger and validated their frustration multiple times throughout the call."
     },
     {
+      "evidence": {
+        "text": "أنا مقدر الوضع تماماً، وفعلاً رفعت لك طلب اعتراض برقم مرجعي، وراح ندقق بالموضوع خلال ثمانية وأربعين ساعة.",
+        "speaker": "Agent",
+        "start_char": 980,
+        "end_char": 1085
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent successfully filed a dispute request for investigation, which is the correct procedural path, though the immediate contract cancellation could not be granted on the spot."
     },
     {
+      "evidence": {
+        "text": "لا أبداً يا أستاذ ما في إشي زي هيك، بس بتقدر تقدم اعتراض رسمي ومنراجع التسجيل الصوتي للتأكد.",
+        "speaker": "Agent",
+        "start_char": 762,
+        "end_char": 854
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent clearly explained the steps needed to resolve the issue through an official objection and audio review."
     },
     {
+      "evidence": {
+        "text": "في شي تاني بقدر أخدمك فيه اليوم؟",
+        "speaker": "Agent",
+        "start_char": 1249,
+        "end_char": 1281
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The agent attempted a standard closing by asking if there was anything else, but the customer abruptly hung up due to lingering frustration."
     },
     {
+      "evidence": {
+        "text": "اها، مبين عندي إنه صار مكالمة تسجيل موافقة بالشهر الماضي.",
+        "speaker": "Agent",
+        "start_char": 596,
+        "end_char": 653
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent accurately accessed the system and informed the customer about the recorded consent call from the previous month."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "بتقدر تقدم اعتراض رسمي ومنراجع التسجيل الصوتي للتأكد.",
+        "speaker": "Agent",
+        "start_char": 801,
+        "end_char": 854
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.9,
+      "justification": "The agent correctly followed procedure by raising an official dispute for the customer's complaint regarding the renewal."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "بتساعدني بأنكم تفسدوا هالعقد النصاب اللي جددتوه غصب عني! شو هالمسخرة هاي؟",
+          "speaker": "Customer",
+          "start_char": 78,
+          "end_char": 151
+        },
+        "speaker": "Customer",
+        "score": -1.0,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "مش راضي أهدي! فاتورتي طالعة دبل، وبتفاجأ إني مجدد سنتين التزام بدون ما أطلب ولا حدا استأذن مني!",
+          "speaker": "Customer",
+          "start_char": 250,
+          "end_char": 345
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "ما تتأكد ولا تحكي لي تفاصيل! أنا ما وقعت شي ولا وافقت على أي تجديد، وبدي الملغي فوراً!",
+          "speaker": "Customer",
+          "start_char": 461,
+          "end_char": 547
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "مكالمة شو؟ أنتوا بتسجلوا على كيفكم وبتفبركوا حكي عشان تربطونا بعقودكم الطويلة؟ هاد احتيال!",
+          "speaker": "Customer",
+          "start_char": 664,
+          "end_char": 754
+        },
+        "speaker": "Customer",
+        "score": -1.0,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "وبضل أدفع هالفاتورة العالية لحد ما تحنوا علي وتسمعوا التسجيل؟ مستحيل! بدي إغاظة العقد يرجع زي ما كان اليوم!",
+          "speaker": "Customer",
+          "start_char": 865,
+          "end_char": 972
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 72.0
+      },
+      {
+        "quote": {
+          "text": "سلام، وبدي حل سريع للمهزلة هاي!",
+          "speaker": "Customer",
+          "start_char": 1292,
+          "end_char": 1323
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 96.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

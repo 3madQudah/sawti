@@ -1,104 +1,188 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:22:42.496336+00:00",
+    "human_reviewed": false
   },
+  "id": "6fd7cb19-f1b5-4a28-baa4-614cf49d8d8b",
   "call_id": "call_0139_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to dispute an unexpected fifty Jordanian Dinar increase on their monthly bill. The agent investigated, identified an accidental subscription to an entertainment service, canceled it, and successfully processed a credit request to remove the extra charge, leaving the customer satisfied.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "أنا بقدر أقدم طلب استرجاع وإلغاء فوري للخدمة مع شطب المبلغ من فاتورتك.",
+        "speaker": "Agent",
+        "start_char": 1430,
+        "end_char": 1500
+      },
+      "promised_by": "Agent",
+      "description": "Submit an immediate refund request, cancel the service, and remove the extra charge from the bill.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "راح يوصلك مسج تأكيد بعد شوي بتعديل قيمة الفاتورة لتصير ثلاثين دينار زي دايم.",
+        "speaker": "Agent",
+        "start_char": 1667,
+        "end_char": 1743
+      },
+      "promised_by": "Agent",
+      "description": "Send a confirmation text message shortly regarding the bill adjustment.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "ولا يهمك يا أستاذ، فهمني شو اللي صار بالضبط وشو تفاصيل المبلغ الزيادة عشان أشيكلك عليه فوراً.",
+        "speaker": "Agent",
+        "start_char": 228,
+        "end_char": 321
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained a calm, polite, and professional demeanor throughout the call, even when the customer used frustrated language."
     },
     {
+      "evidence": {
+        "text": "معك حق تزعل إذا المبلغ طلع عليك فجأة هيك بدون ما تحس.",
+        "speaker": "Agent",
+        "start_char": 479,
+        "end_char": 532
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent acknowledged the customer's frustration and validated their feelings immediately."
     },
     {
+      "evidence": {
+        "text": "أنا هلا سجلت طلب الاعتراض وعملت إلغاء للاشتراك الترفيهي من السيستم، وراح يوصلك مسج تأكيد بعد شوي",
+        "speaker": "Agent",
+        "start_char": 1598,
+        "end_char": 1694
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully resolved the issue by canceling the unwanted subscription and reversing the charges."
     },
     {
+      "evidence": {
+        "text": "طبعاً حقك ومية بالمية أنا معك. بما إن الخدمة ما تم استخدامها أبداً وما صار عليها أي استهلاك من طرفك، أنا بقدر أقدم طلب استرجاع وإلغاء فوري",
+        "speaker": "Agent",
+        "start_char": 1329,
+        "end_char": 1467
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent explained the steps clearly and transparently without using confusing jargon."
     },
     {
+      "evidence": {
+        "text": "بتآمرني بشيء تاني أساعدك فيه اليوم؟",
+        "speaker": "Agent",
+        "start_char": 1918,
+        "end_char": 1953
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent asked if further help was needed, thanked the customer, and wished them a nice day before closing."
     },
     {
+      "evidence": {
+        "text": "شايف قدامي إنه تم تفعيل خدمة اشتراك ببتث بث تلفزيوني وترفيهي قبل تقريبا تلات أسبوع، وهي بقيمة خمسين دينار بالشهر.",
+        "speaker": "Agent",
+        "start_char": 786,
+        "end_char": 899
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent correctly accessed the account details and accurately identified the source and amount of the unexpected charge."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "خليني بس أطول بالك وأشيك على رقم حسابك ونظام الفوترة عندي لنشوف وين راحت الخمسين دينار هاد. شو رقم الموبايل لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 533,
+        "end_char": 649
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed proper procedure by asking for the mobile number to verify the account before looking up details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أنا صراحة مكبر راسي من الفاتورة اللي طلعتلي الشهر هاد. فيها مبلغ غريب زيادة خمسين دينار وأنا ما طلبت أي خدمات إضافية!",
+          "speaker": "Customer",
+          "start_char": 103,
+          "end_char": 220
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "الفاتورة عادة بتيجي بحدود الثلاثين دينار، بس اليوم شفتها طالعة ثمانين دينار! شو هالنصب هاد؟",
+          "speaker": "Customer",
+          "start_char": 332,
+          "end_char": 423
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "الرقم هو صفر سبعمية وتسعة وخمسين ستين خمسين. بالله شوفلي شو هالمسخرة.",
+          "speaker": "Customer",
+          "start_char": 660,
+          "end_char": 729
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "أنا ما ضغطت على إشي، ولا فتحت رسائل غريبة! بعدين إذا صار هيك خطأ ليش أنا اللي بدفع حقه؟",
+          "speaker": "Customer",
+          "start_char": 1190,
+          "end_char": 1277
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "جد؟ يعني راح ينشال المبلغ وما راح أضطر أدفعه؟",
+          "speaker": "Customer",
+          "start_char": 1511,
+          "end_char": 1556
+        },
+        "speaker": "Customer",
+        "score": 0.2,
+        "timestamp_sec": 80.0
+      },
+      {
+        "quote": {
+          "text": "والله ريحتني يا رامي، كنت خايف أدخل بمتاهات مع الشركة. تعبت وأنا أراجع فواتير كل شهر.",
+          "speaker": "Customer",
+          "start_char": 1754,
+          "end_char": 1839
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 96.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

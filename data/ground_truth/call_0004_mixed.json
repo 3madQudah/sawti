@@ -1,104 +1,155 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T10:54:43.566059+00:00",
+    "human_reviewed": false
   },
+  "id": "bb93e6de-f747-4872-9c9e-a83e9c5eb6e1",
   "call_id": "call_0004_mixed",
   "language": "mixed",
-  "summary": "",
+  "summary": "The customer called to inquire about a refund for an order they cancelled a week ago. The agent used ambiguous internal jargon initially ('بايوي'), then asked for the order number and subsequently the phone number when the order number was unavailable. The agent checked the system, identified that refunds take 3 to 5 business days, and successfully addressed the customer's query before the call concluded.",
   "commitments": [],
-  "compliance_flags": [],
+  "compliance_flags": [
+    {
+      "evidence": {
+        "text": "أهلاً سيدي، كيف بقدر أساعدك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 41
+      },
+      "rule_id": "missing_agent_identification",
+      "severity": "low",
+      "description": "The agent failed to state their own name or the company name at the beginning of the call."
+    }
+  ],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "ولا يهمك سيدي، خليني أشيك عالبايوي تبع الطلب. ممكن تعطيني الـ order number لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 155,
+        "end_char": 238
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent maintained a polite tone overall, though the use of internal jargon ('بايوي') detracts slightly from formal professionalism."
     },
     {
+      "evidence": {
+        "text": "ولا يهمك سيدي، خليني أشيك عالبايوي تبع الطلب.",
+        "speaker": "Agent",
+        "start_char": 155,
+        "end_char": 200
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent used reassuring language ('ولا يهمك سيدي') right at the start to comfort the customer regarding the missing refund."
     },
     {
+      "evidence": {
+        "text": "مش مشكلة سيدي، عم بحكي لك من 3 لـ 5 أيام عمل وبيكون المبلغ بحسابك إن شاء الله.",
+        "speaker": "Agent",
+        "start_char": 693,
+        "end_char": 771
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent successfully answered the customer's core question about the refund timeline."
     },
     {
+      "evidence": {
+        "text": "قصدي يا سيدي الـ system عندي، بس مشكلة إذا مش معطيني رقم الطلب.",
+        "speaker": "Agent",
+        "start_char": 319,
+        "end_char": 382
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The agent initially used confusing internal terminology ('بايوي') which required clarification, and expressed minor frustration when the customer didn't know the order number."
     },
     {
+      "evidence": {
+        "text": "مش مشكلة سيدي، عم بحكي لك من 3 لـ 5 أيام عمل وبيكون المبلغ بحسابك إن شاء الله.",
+        "speaker": "Agent",
+        "start_char": 693,
+        "end_char": 771
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.5,
+      "justification": "The agent answered the repeated question but ended the call abruptly without asking if the customer needed further assistance or providing a standard closing statement."
     },
     {
+      "evidence": {
+        "text": "الـ refund بياخد عادة من 3 لـ 5 business days لحتى ينزل بالبنوك.",
+        "speaker": "Agent",
+        "start_char": 546,
+        "end_char": 610
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The information provided regarding standard bank refund processing times (3-5 business days) is accurate for typical transactions."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "طيب ممكن تعطيني رقم التلفون المسجل بالحساب؟",
+        "speaker": "Agent",
+        "start_char": 383,
+        "end_char": 426
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.7,
+      "justification": "The agent adapted when the order number was missing by asking for the registered phone number, though proper full verification protocol was minimal."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أنا قبل أسبوع cancelled an order عندي، بس لسه الـ refund ما وصل على الـ account تبعي.",
+          "speaker": "Customer",
+          "start_char": 62,
+          "end_char": 147
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "مش متذكر والله الـ number بالضبط، شو قصدك بايوي؟ ما فهمت عليك.",
+          "speaker": "Customer",
+          "start_char": 249,
+          "end_char": 311
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "أه تمام، الرقم هو 0795551234. بس بالله عليك عيد لي، يعني قديش بده وقت لحتى يرجع المبلغ؟",
+          "speaker": "Customer",
+          "start_char": 437,
+          "end_char": 524
+        },
+        "speaker": "Customer",
+        "score": 0.0,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "يعني مش اليوم رح يبينوا؟ Sorry ما سمعت منيح، الصوت عندك شوي قطع.",
+          "speaker": "Customer",
+          "start_char": 621,
+          "end_char": 685
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 56.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

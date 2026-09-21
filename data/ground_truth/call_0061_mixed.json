@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:05:12.542704+00:00",
+    "human_reviewed": false
   },
+  "id": "baf8f386-0f3c-4873-bf6f-53d5c1410a9d",
   "call_id": "call_0061_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called in frustrated because their new 5G router was not connecting to the internet despite following the instructions. The agent guided the customer through troubleshooting steps including a power cycle and a factory reset, and eventually discovered that the line activation was missing on the system. The agent manually activated the line, successfully resolving the issue.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "بس أنا هسا راح أعمل لك manual activation، استنى دقيقة بس.",
+        "speaker": "Agent",
+        "start_char": 1958,
+        "end_char": 2015
+      },
+      "promised_by": "Agent",
+      "description": "Perform a manual activation of the line.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "ولا يهمك يا أستاذ، حقك علي، خلينا نشوف شو المشكلة بالضبط",
+        "speaker": "Agent",
+        "start_char": 158,
+        "end_char": 214
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent remained polite, calm, and professional throughout the call despite the customer's frustration."
     },
     {
+      "evidence": {
+        "text": "أنا متفهم إحباطك يا أستاذ، وعم بنحاول نحلها بأسرع وقت ممكن",
+        "speaker": "Agent",
+        "start_char": 889,
+        "end_char": 947
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent acknowledged the customer's frustration and validated their feelings appropriately."
     },
     {
+      "evidence": {
+        "text": "أوه، هسا فتحت الصفحة وصار يفتح يوتيوب! finally اشتغل!",
+        "speaker": "Customer",
+        "start_char": 2190,
+        "end_char": 2243
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.85,
+      "justification": "The agent successfully resolved the issue by identifying the missing activation and performing a manual override."
     },
     {
+      "evidence": {
+        "text": "تمام، خلينا نعمل simple troubleshooting، لو سمحت افصل الـ power cable من ورا الراوتر.",
+        "speaker": "Agent",
+        "start_char": 383,
+        "end_char": 468
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "Instructions given by the agent were clear, step-by-step, and easy to follow."
     },
     {
+      "evidence": {
+        "text": "في أي شي ثاني بقدر أساعدك فيه اليوم؟",
+        "speaker": "Agent",
+        "start_char": 2302,
+        "end_char": 2338
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent closed the call properly by asking if further assistance was needed and offering a polite sign-off."
     },
     {
+      "evidence": {
+        "text": "اه مزبوط، الـ activation لسه مش نازل على السيرفر عندي!",
+        "speaker": "Agent",
+        "start_char": 1758,
+        "end_char": 1812
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent eventually found the root cause on the system, though it was only checked near the end of the call."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "ثواني خليني أعمل check من عندي على الـ system، رقم الخط لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 1581,
+        "end_char": 1645
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.65,
+      "justification": "The agent checked the system and performed troubleshooting, though account verification could have been handled earlier."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "يا أخي أنا كتير معصب، صار لي ساعة عم بحاول أعمل setup للـ new 5G router ومش راضي يشتغل بالمرة!",
+          "speaker": "Customer",
+          "start_char": 56,
+          "end_char": 150
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "خلص فصلته، بعدين شو نعمل؟ شو هالقصة، المفروض Plug and play يكون!",
+          "speaker": "Customer",
+          "start_char": 479,
+          "end_char": 543
+        },
+        "speaker": "Customer",
+        "score": -0.5,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "طيب ها احنا عم نستنى، بس بصراحة الـ service تاعكم لحد الآن سيئة كتير وما بتتحمل هالتأخير.",
+          "speaker": "Customer",
+          "start_char": 792,
+          "end_char": 881
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "يا الله، كمان reset! طيب استنى أشوف الدبوس... هينا كبست عليه.",
+          "speaker": "Customer",
+          "start_char": 1189,
+          "end_char": 1250
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "أوه، هسا فتحت الصفحة وصار يفتح يوتيوب! finally اشتغل!",
+          "speaker": "Customer",
+          "start_char": 2190,
+          "end_char": 2243
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 104.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

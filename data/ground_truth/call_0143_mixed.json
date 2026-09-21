@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:23:17.705517+00:00",
+    "human_reviewed": false
   },
+  "id": "980a6bc1-949a-410b-81be-ed9196eb7ab5",
   "call_id": "call_0143_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to file a formal complaint against an agent who was rude and hung up on them earlier. The agent apologized, took the customer's account number, promised to log the complaint for management, and offered to help fix the customer's original issue.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "let me take your account number please so I can log this feedback and take care of your issue right now.",
+        "speaker": "Agent",
+        "start_char": 679,
+        "end_char": 783
+      },
+      "promised_by": "Agent",
+      "description": "Log the complaint feedback and address the customer's original issue.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "w wallah I will make sure el manager yšof el complaint, and let's fix your original issue right away.",
+        "speaker": "Agent",
+        "start_char": 895,
+        "end_char": 996
+      },
+      "promised_by": "Agent",
+      "description": "Ensure the manager sees the complaint and fix the original issue right away.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
-      "criterion": "professionalism",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
+        "text": "Oh, I am so sorry to hear that, inshallah khair, what happened exactly?",
+        "speaker": "Agent",
+        "start_char": 225,
+        "end_char": 296
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent showed strong empathy and validated the customer's frustration right away."
     },
     {
+      "evidence": {
+        "text": "Ahlan sidi, welcome to FiberNet support, my name is Fadi, kif b2dar aosadak?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 83
+      },
+      "criterion": "professionalism",
+      "score": 0.8,
+      "justification": "The agent maintained a polite and professional tone throughout the interaction."
+    },
+    {
+      "evidence": {
+        "text": "let me take your account number please so I can log this feedback and take care of your issue right now.",
+        "speaker": "Agent",
+        "start_char": 679,
+        "end_char": 783
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent actively took steps to handle the complaint and resolve the underlying issue."
     },
     {
+      "evidence": {
+        "text": "That is completely unacceptable, wallah, let me take your account number please so I can log this feedback and take care of your issue right now.",
+        "speaker": "Agent",
+        "start_char": 638,
+        "end_char": 783
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent's communication was clear, bilingual, and easy for the customer to understand."
     },
     {
+      "evidence": {
+        "text": "Afwan sidi, w wallah I will make sure el manager yšof el complaint, and let's fix your original issue right away.",
+        "speaker": "Agent",
+        "start_char": 883,
+        "end_char": 996
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The call ended on a supportive note with clear next steps, though final pleasantries were slightly abrupt."
     },
     {
+      "evidence": {
+        "text": "let me take your account number please so I can log this feedback",
+        "speaker": "Agent",
+        "start_char": 679,
+        "end_char": 744
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent correctly requested the account number needed to process the complaint."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "let me take your account number please so I can log this feedback and take care of your issue right now.",
+        "speaker": "Agent",
+        "start_char": 679,
+        "end_char": 783
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.8,
+      "justification": "The agent followed proper procedure by taking down the account number to document a formal complaint."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Wallah I am calling today bas to file a formal complaint about an agent I spoke with earlier today.",
+          "speaker": "Customer",
+          "start_char": 118,
+          "end_char": 217
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Ya akhi, the agent was extremely rude and unhelpful, w ma samahni ašraħlo el mushkile at all.",
+          "speaker": "Customer",
+          "start_char": 307,
+          "end_char": 400
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Shukran for understanding, wallah I was very polite, bas he just raised his voice w hang up on me.",
+          "speaker": "Customer",
+          "start_char": 532,
+          "end_char": 630
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "Sure, el raqm howa 0795543210, shukran jazeelan for your professional help, Fadi.",
+          "speaker": "Customer",
+          "start_char": 794,
+          "end_char": 875
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 56.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

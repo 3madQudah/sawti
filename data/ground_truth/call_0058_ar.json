@@ -1,104 +1,155 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:04:47.359956+00:00",
+    "human_reviewed": false
   },
+  "id": "148b7065-7000-4769-819f-4f3465ca76dd",
   "call_id": "call_0058_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to request an immediate payment extension on a high bill to prevent line disconnection. The agent verified the customer's ID, successfully granted a one-week payment extension, and closed the call politely after confirming no further assistance was needed.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "أبشر، تم تمديد موعد الدفع بنجاح ولغاية الأسبوع القادم",
+        "speaker": "Agent",
+        "start_char": 558,
+        "end_char": 611
+      },
+      "promised_by": "Agent",
+      "description": "Extend the bill payment deadline by one week.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "أهلاً بك في خدمة العملاء، معك محمد، كيف أقدر أساعدك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 65
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent maintained a polite and professional tone throughout the call, using reassuring local phrasing."
     },
     {
+      "evidence": {
+        "text": "ولا مهندس، أبشر، ممكن تعطيني رقم الحساب أو رقم الهوية لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 180,
+        "end_char": 242
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent acknowledged the customer's request warmly and tried to reassure him immediately."
     },
     {
+      "evidence": {
+        "text": "أبشر، تم تمديد موعد الدفع بنجاح ولغاية الأسبوع القادم",
+        "speaker": "Agent",
+        "start_char": 558,
+        "end_char": 611
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully resolved the customer's issue by granting the requested payment extension."
     },
     {
+      "evidence": {
+        "text": "أقدر أقدملك تمديد لمدة أسبوع إضافي لدفع الفاتورة، هل يناسبك هاد الكلام؟",
+        "speaker": "Agent",
+        "start_char": 396,
+        "end_char": 467
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent's offer and explanation of the extension period were clear and direct."
     },
     {
+      "evidence": {
+        "text": "هل في أي خدمة ثاني أقدر أساعدك فيها؟",
+        "speaker": "Agent",
+        "start_char": 613,
+        "end_char": 649
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent properly checked for additional needs and closed with a polite sign-off."
     },
     {
+      "evidence": {
+        "text": "تمام، أقدر أقدملك تمديد لمدة أسبوع إضافي لدفع الفاتورة",
+        "speaker": "Agent",
+        "start_char": 390,
+        "end_char": 444
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The provided information regarding the one-week extension option was accurate and actionable."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "ممكن تعطيني رقم الحساب أو رقم الهوية لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 197,
+        "end_char": 242
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent correctly asked for verification details (account or ID number) before addressing the account."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أهلاً أخوي، أنا فاتورتي نزلت عالية كثير ومش قادر أدفها كلها اليوم، وبدي تمديد لموعد الدفع فوراً.",
+          "speaker": "Customer",
+          "start_char": 76,
+          "end_char": 172
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "يا أخي مو فاضي أطلع أرقام، خلص هي رقم الهوية 123456789، شوفلي الموضوع بسرعة لإن خطي قرب ينفصل!",
+          "speaker": "Customer",
+          "start_char": 253,
+          "end_char": 347
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "أسبوع كويس، بس أحسنلك ما ينفصل الخط لإن صراحة طفشت من كثر ما أتصل عليكو!",
+          "speaker": "Customer",
+          "start_char": 478,
+          "end_char": 550
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "لا شكراً، مع السلامة.",
+          "speaker": "Customer",
+          "start_char": 660,
+          "end_char": 681
+        },
+        "speaker": "Customer",
+        "score": 0.0,
+        "timestamp_sec": 56.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

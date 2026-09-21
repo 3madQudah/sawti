@@ -1,104 +1,178 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:17:56.253029+00:00",
+    "human_reviewed": false
   },
+  "id": "40632e24-d5a1-4f04-aebd-c2a412b616ea",
   "call_id": "call_0123_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
-  "compliance_flags": [],
+  "summary": "The customer called to dispute an unexpected extra roaming charge on their bill. The agent located the account, identified the charge as a roaming fee, and offered to open a dispute ticket when the customer denied traveling. The call ended with the agent promising to submit the dispute.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "I can submit a dispute w open a ticket, okay?",
+        "speaker": "Agent",
+        "start_char": 799,
+        "end_char": 844
+      },
+      "promised_by": "Agent",
+      "description": "Submit a dispute and open a ticket for the roaming charge",
+      "deadline": null
+    }
+  ],
+  "compliance_flags": [
+    {
+      "evidence": {
+        "text": "Sure wallah, bas give me your account number, w la tatemmesh, I will check el tafaseel right now.",
+        "speaker": "Agent",
+        "start_char": 200,
+        "end_char": 297
+      },
+      "rule_id": "identity_verification",
+      "severity": "medium",
+      "description": "The agent asked for the account number but did not verify the customer's identity by requesting additional personal details before discussing account specifics."
+    }
+  ],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Sure wallah, bas give me your account number, w la tatemmesh, I will check el tafaseel right now.",
+        "speaker": "Agent",
+        "start_char": 200,
+        "end_char": 297
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.5,
+      "justification": "The agent used overly casual mixed Arabic-English language and slang ('la tatemmesh') which is unprofessional for a contact center."
     },
     {
+      "evidence": {
+        "text": "Wallah hek el system b2oul, bas la tkhaf, I can submit a dispute w open a ticket, okay?",
+        "speaker": "Agent",
+        "start_char": 757,
+        "end_char": 844
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The agent offered some reassurance ('la tkhaf'), but was dismissive of the customer's denial by simply blaming the system first."
     },
     {
+      "evidence": {
+        "text": "I can submit a dispute w open a ticket, okay?",
+        "speaker": "Agent",
+        "start_char": 799,
+        "end_char": 844
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent successfully identified the next required step (submitting a dispute ticket) to address the customer's issue."
     },
     {
+      "evidence": {
+        "text": "El account number, the nine-digit number on top of your bill, ba3deen I will explain shu heya el fees hadi.",
+        "speaker": "Agent",
+        "start_char": 379,
+        "end_char": 486
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The agent gave instructions on finding the account number, though the heavy code-switching can sometimes reduce clarity."
     },
     {
+      "evidence": {
+        "text": "Yareet wallah, shukran kteer, please fix it saria3an.",
+        "speaker": "Customer",
+        "start_char": 855,
+        "end_char": 908
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.4,
+      "justification": "The agent failed to properly close the call, offering no summary of next steps or professional closing statement before the customer finished speaking."
     },
     {
+      "evidence": {
+        "text": "Achaft el system, hadi roaming fee min el shahr el maadi, when you traveled.",
+        "speaker": "Agent",
+        "start_char": 582,
+        "end_char": 658
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent accurately reported what the system showed as the reason for the charge, though the charge itself was contested."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Sure wallah, bas give me your account number, w la tatemmesh, I will check el tafaseel right now.",
+        "speaker": "Agent",
+        "start_char": 200,
+        "end_char": 297
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.5,
+      "justification": "The agent failed to follow proper verification procedures before discussing sensitive billing details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Ahlan, ya akhi ana shufet el bill taba3i u fi extra charge wallah mesh fahem shu hada, can you repeat please?",
+          "speaker": "Customer",
+          "start_char": 83,
+          "end_char": 192
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Okay, bas slow down thwayya please, shu el raqam elly talabtah?",
+          "speaker": "Customer",
+          "start_char": 308,
+          "end_char": 371
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Aah, okay, one second, it is 452109837, so shu haqq el zeyadeh elly edfa3tha?",
+          "speaker": "Customer",
+          "start_char": 497,
+          "end_char": 574
+        },
+        "speaker": "Customer",
+        "score": 0.0,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "Roaming? Bas ana ma sefert, wallah ma sefert! Can you say that again, kif ya3ni?",
+          "speaker": "Customer",
+          "start_char": 669,
+          "end_char": 749
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "Yareet wallah, shukran kteer, please fix it saria3an.",
+          "speaker": "Customer",
+          "start_char": 855,
+          "end_char": 908
+        },
+        "speaker": "Customer",
+        "score": 0.4,
+        "timestamp_sec": 72.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

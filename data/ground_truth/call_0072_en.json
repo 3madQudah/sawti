@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:06:40.407491+00:00",
+    "human_reviewed": false
   },
+  "id": "e2ef7092-710b-45cf-a7f9-ebe248da82d9",
   "call_id": "call_0072_en",
   "language": "en",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called Apex Telecom reporting a two-hour home internet outage while working from home. The agent identified an unplanned fiber optic line cut nearby, informed the customer that field technicians were already on-site, provided an estimated restoration time, and applied a free 15-gigabyte mobile data pass to compensate for the inconvenience. The call ended satisfactorily with the customer thanking the agent.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "I would be happy to apply a 15-gigabyte temporary data pass to your mobile account free of charge right now so you can use your hotspot without worrying.",
+        "speaker": "Agent",
+        "start_char": 2627,
+        "end_char": 2780
+      },
+      "promised_by": "Agent",
+      "description": "Apply a free 15GB temporary data pass to the customer's mobile account.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Thank you for calling Apex Telecom, my name is Marcus. How can I help you today?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 87
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent was exceptionally polite, professional, and composed throughout the call."
     },
     {
+      "evidence": {
+        "text": "I am very sorry to hear that your internet is down, especially during your workday. I understand how stressful that can be.",
+        "speaker": "Agent",
+        "start_char": 274,
+        "end_char": 397
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent demonstrated sincere and prompt empathy regarding the customer's stressful remote work situation."
     },
     {
+      "evidence": {
+        "text": "The current estimated time for full restoration is about forty-five minutes to an hour. They are making good progress.",
+        "speaker": "Agent",
+        "start_char": 2287,
+        "end_char": 2405
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully diagnosed the regional outage, provided accurate timelines, and proactively offered a temporary data pass."
     },
     {
+      "evidence": {
+        "text": "No, your router hardware actually looks healthy. Let me check our regional network status board for 742 Evergreen Terrace.",
+        "speaker": "Agent",
+        "start_char": 1587,
+        "end_char": 1709
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent explained technical findings and next steps in a clear and easily understandable manner."
     },
     {
+      "evidence": {
+        "text": "Is there anything else I can assist you with today?",
+        "speaker": "Agent",
+        "start_char": 3752,
+        "end_char": 3803
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent properly checked for additional needs, summarized resolution, and provided a professional closing."
     },
     {
+      "evidence": {
+        "text": "As a matter of fact, yes! There is an unplanned fiber optic line cut about three blocks away from your home",
+        "speaker": "Agent",
+        "start_char": 1784,
+        "end_char": 1891
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately pulled account details, checked regional network statuses, and applied the promised data pass correctly."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "May I please have your account number or the phone number associated with your service to pull up your file?",
+        "speaker": "Agent",
+        "start_char": 739,
+        "end_char": 847
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent followed standard verification protocols before accessing customer account details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Hi Marcus. Look, my home internet has been down for the last two hours, and I am getting really frustrated because I work from home and I am missing important meetings.",
+          "speaker": "Customer",
+          "start_char": 98,
+          "end_char": 266
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Okay, fine. Please make it quick though, my boss is messaging me on my phone asking why I am offline.",
+          "speaker": "Customer",
+          "start_char": 1221,
+          "end_char": 1322
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "Please tell me there is an outage and it is not just me.",
+          "speaker": "Customer",
+          "start_char": 1720,
+          "end_char": 1776
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 72.0
+      },
+      {
+        "quote": {
+          "text": "I just got the text. Wow, okay, that is actually really helpful of you, Marcus.",
+          "speaker": "Customer",
+          "start_char": 3012,
+          "end_char": 3091
+        },
+        "speaker": "Customer",
+        "score": 0.7,
+        "timestamp_sec": 136.0
+      },
+      {
+        "quote": {
+          "text": "Alright. Well, I am still not thrilled about the outage, but I really appreciate you sorting this out quickly and giving me that extra data.",
+          "speaker": "Customer",
+          "start_char": 3521,
+          "end_char": 3661
+        },
+        "speaker": "Customer",
+        "score": 0.5,
+        "timestamp_sec": 160.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }

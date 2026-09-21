@@ -1,104 +1,177 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:17:41.035276+00:00",
+    "human_reviewed": false
   },
+  "id": "cdbd15e6-a37b-4ef5-87b2-34ba45bdfa95",
   "call_id": "call_0122_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to complain about an unexpected double charge on their bill after renewing their contract, claiming a sales representative promised the price would remain the same. The agent validated the customer's concerns, checked the account, and explained that the new contract was on the Pro plan. After rejecting a temporary discount, the customer considered cancelling, but the agent successfully offered a package modification to match the customer's budget. The customer agreed to the new package via SMS confirmation and ended the call somewhat appeased.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "رح أبعث لك تفاصيل الباقة الجديدة على رسالة نصية هسا، وفيك تطلع عليها وتوافق عليها مباشرة من تلفونك",
+        "speaker": "Agent",
+        "start_char": 2178,
+        "end_char": 2276
+      },
+      "promised_by": "Agent",
+      "description": "Send a text message with the details of the new package for the customer to review and approve.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
-      "criterion": "professionalism",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
+        "text": "أنا متفهم غضبك جداً يا أستاذ خالد، وغالباً الموظف وضحلك تفاصيل العرض بس ممكن صار في سوء فهم",
+        "speaker": "Agent",
+        "start_char": 983,
+        "end_char": 1074
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent acknowledged the customer's anger and apologized early on, though partially undermined empathy later by suggesting the customer misunderstood the sales rep."
     },
     {
-      "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
-      "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
-      "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
-      "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
+        "text": "أنا عارف يا أستاذ خالد، وبصفتي مشرف خدمة عملاء بصلاحيات محدودة، بقدر أقدم لك خصم خاص هالشهر يغطي الفارق",
+        "speaker": "Agent",
+        "start_char": 1570,
+        "end_char": 1673
+      },
       "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
+      "score": 0.7,
+      "justification": "The agent followed proper escalation handling by offering alternative solutions within system constraints, though avoiding penalties completely can sometimes require strict verification of sales calls."
+    },
+    {
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "أنا شايف عندك هون إنه تم تجديد العقد بتاريخ خمسة الشهر الماضي على باقة \"برو\"",
+        "speaker": "Agent",
+        "start_char": 615,
+        "end_char": 691
+      },
+      "criterion": "accuracy_of_information",
+      "score": 0.9,
+      "justification": "The agent accurately retrieved and described the contract renewal date and package details from the customer's account."
+    },
+    {
+      "evidence": {
+        "text": "للأسف العقد القديم انغلق نظماً وما بقدر أرجعه، بس بقدر أعمل لك تعديل على الباقة الحالية لتصير ملائمة لميزانيتك وتدفع نفس السعر تقريباً",
+        "speaker": "Agent",
+        "start_char": 1881,
+        "end_char": 2015
+      },
+      "criterion": "resolution_effectiveness",
+      "score": 0.8,
+      "justification": "The agent successfully resolved the customer's billing concern by offering a suitable package modification that fit the customer's budget."
+    },
+    {
+      "evidence": {
+        "text": "أهلاً بك في شركة الاتصالات، معك أحمد، كيف أستطيع مساعدتك اليوم؟",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 70
+      },
+      "criterion": "professionalism",
+      "score": 0.9,
+      "justification": "The agent maintained high professionalism and patience throughout the call, even when the customer was frustrated and aggressive."
+    },
+    {
+      "evidence": {
+        "text": "رح أبعث لك تفاصيل الباقة الجديدة على رسالة نصية هسا، وفيك تطلع عليها وتوافق عليها مباشرة من تلفونك، وهيك بنكون عدلنا السعر زي ما بدك.",
+        "speaker": "Agent",
+        "start_char": 2178,
+        "end_char": 2311
+      },
+      "criterion": "communication_clarity",
+      "score": 0.9,
+      "justification": "The agent clearly explained the alternative solution and the exact steps the customer needed to take via SMS."
+    },
+    {
+      "evidence": {
+        "text": "العفو يا أستاذ خالد، وسامحنا على التقصير وألف سلامة عليك، يوم سعيد!",
+        "speaker": "Agent",
+        "start_char": 2658,
+        "end_char": 2725
+      },
+      "criterion": "call_closure",
+      "score": 0.9,
+      "justification": "The call was closed politely with a warm sign-off after ensuring the customer's issue was fully resolved and accepted."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أهلاً أخ أحمد، أنا متصل وعندي مشكلة كبيرة بفاتورتي ومش فاضي صراحة ألف وأطول، نازل عليّ مبلغ زيادة هالشهر مش فاهمه أبداً!",
+          "speaker": "Customer",
+          "start_char": 81,
+          "end_char": 201
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "شو يعني سعره أعلى؟ أنا الموظف اللي كلمني بالمبيعات قالي بالحرف الواحد: \"رح نجددلك على نفس العقد وبنفس السعر القديم تماماً\"! ليش الكذب والنصب هذا؟",
+          "speaker": "Customer",
+          "start_char": 744,
+          "end_char": 889
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "سوء فهم شو؟! التسجيلات عندكم وعند غيركم بس رحتوا لتورطوا الزباين وبس! أنا بدي ترجعوا الفاتورة زي ما كانت فوراً ولا بلغي الاشتراك نهائياً اليوم!",
+          "speaker": "Customer",
+          "start_char": 1140,
+          "end_char": 1283
+        },
+        "speaker": "Customer",
+        "score": -1.0,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "لا شرط جزائي ولا بطيخ! أنا زبون عندكم من سنين وعمرها ما صارت معي هيك حركة تعبانة. بدي ترجعوهم والي مش عاجبه يشتكي.",
+          "speaker": "Customer",
+          "start_char": 1448,
+          "end_char": 1562
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 80.0
+      },
+      {
+        "quote": {
+          "text": "طيب ورجيني شو هاي الباقة وكيف رح تصير، بس بشرط، إذا ما عجبتني رح ألغي العقد كله وما تلومني وقتها.",
+          "speaker": "Customer",
+          "start_char": 2053,
+          "end_char": 2150
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 104.0
+      },
+      {
+        "quote": {
+          "text": "شكراً الك يا أحمد مع إنها طلعت روحي معك ومع الشركة كلها.",
+          "speaker": "Customer",
+          "start_char": 2594,
+          "end_char": 2650
+        },
+        "speaker": "Customer",
+        "score": 0.2,
+        "timestamp_sec": 136.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

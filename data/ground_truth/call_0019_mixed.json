@@ -1,104 +1,166 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T10:58:08.373170+00:00",
+    "human_reviewed": false
   },
+  "id": "f179be46-9161-476c-8ec3-c6288eb5726b",
   "call_id": "call_0019_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to complain about an unexpected 15 dinar international roaming charge on their bill despite not leaving the country. The agent investigated, acknowledged the system error, processed a credit to the account, and assured the customer the next bill would reflect this correction. The call ended on a positive note.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "bas don't worry, I just processed el credit to your account w el next bill hatekun zero fee.",
+        "speaker": "Agent",
+        "start_char": 644,
+        "end_char": 736
+      },
+      "promised_by": "Agent",
+      "description": "Process a credit to the customer's account so the next bill has a zero fee.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Wallah I am sorry about that, momken tqeeli what kind of charge bas to check the system?",
+        "speaker": "Agent",
+        "start_char": 208,
+        "end_char": 296
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent maintained a polite and professional tone throughout the interaction, using appropriate greeting and acknowledgment."
     },
     {
+      "evidence": {
+        "text": "Wallah I am sorry about that, momken tqeeli what kind of charge bas to check the system?",
+        "speaker": "Agent",
+        "start_char": 208,
+        "end_char": 296
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent immediately apologized and validated the customer's frustration regarding the unexpected charge."
     },
     {
+      "evidence": {
+        "text": "bas don't worry, I just processed el credit to your account w el next bill hatekun zero fee.",
+        "speaker": "Agent",
+        "start_char": 644,
+        "end_char": 736
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent quickly identified the error and successfully processed the credit during the call."
     },
     {
+      "evidence": {
+        "text": "Ahlan sidi, welcome to Zain support, with you Amer, kif baqdar asemak el yom?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 84
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent communicated clearly using an accessible bilingual mix, ensuring the customer understood each step."
     },
     {
+      "evidence": {
+        "text": "Afwan sidi, anything else baqdar asamak bee el yom before we end the call?",
+        "speaker": "Agent",
+        "start_char": 832,
+        "end_char": 906
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent properly checked for additional assistance and closed the call politely."
     },
     {
+      "evidence": {
+        "text": "Ah, wallah you are right, el system dafaak el fee by mistake, wallah sorry ya sidi.",
+        "speaker": "Unknown",
+        "start_char": 432,
+        "end_char": 515
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent accurately checked the system and correctly diagnosed the billing error."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Let me check your account details... Ah, wallah you are right, el system dafaak el fee by mistake",
+        "speaker": "Unknown",
+        "start_char": 395,
+        "end_char": 492
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.7,
+      "justification": "The agent resolved the issue effectively, though explicit identity verification before diving into the account details is missing from the transcript."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Ya akhi I am really annoyed, ana shafet bill tabaei el yom w laqeet unexpected charge mesh tabiei abadan!",
+          "speaker": "Customer",
+          "start_char": 95,
+          "end_char": 200
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Fee 15 dinar international roaming fee w ana ma talaat min el balad el shahar el maadi!",
+          "speaker": "Customer",
+          "start_char": 307,
+          "end_char": 394
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Alhamdulillah ennak shaftha, because wallah haram, el wahed bydfa el bill on time w btetfajaa!",
+          "speaker": "Customer",
+          "start_char": 526,
+          "end_char": 620
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "Wallah thank you very much ya Amer, maqsurt w aywa heik el khadmeh el saheeh.",
+          "speaker": "Customer",
+          "start_char": 747,
+          "end_char": 824
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "No thank you, shukran jazeelan w yteemak saeeda, goodbye!",
+          "speaker": "Customer",
+          "start_char": 917,
+          "end_char": 974
+        },
+        "speaker": "Customer",
+        "score": 0.9,
+        "timestamp_sec": 72.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

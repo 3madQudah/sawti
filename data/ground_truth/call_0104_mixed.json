@@ -1,104 +1,177 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:11:59.281509+00:00",
+    "human_reviewed": false
   },
+  "id": "d29a8b51-caf7-49d1-844d-04003d70a2f7",
   "call_id": "call_0104_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to complain about an unexpected thirty dinar extra charge on their bill for a third-party gaming service. The agent investigated, explained how the subscription might have occurred, and offered a one-time courtesy waiver, which the customer rejected because they wanted it treated as a company error rather than a favor. The agent then agreed to block all premium content services and submitted a refund request for the thirty dinars, resolving the customer's issue.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "I can block all premium content services for your number right now.",
+        "speaker": "Agent",
+        "start_char": 1506,
+        "end_char": 1573
+      },
+      "promised_by": "Agent",
+      "description": "Block all premium content services for the customer's number immediately.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "I have submitted el refund request, w it will be reflected in your next bill within 24 to 48 hours.",
+        "speaker": "Agent",
+        "start_char": 1725,
+        "end_char": 1824
+      },
+      "promised_by": "Agent",
+      "description": "Process a refund for the thirty dinars to be reflected in the next bill within 24 to 48 hours.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Wallah I am so sorry about that, momken aaref your account number aw phone number please?",
+        "speaker": "Agent",
+        "start_char": 236,
+        "end_char": 325
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent maintained a polite and professional bilingual tone throughout the call despite the customer's frustration."
     },
     {
+      "evidence": {
+        "text": "I completely understand your frustration, sidi.",
+        "speaker": "Agent",
+        "start_char": 770,
+        "end_char": 817
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent acknowledged the customer's frustration and validated their feelings appropriately."
     },
     {
+      "evidence": {
+        "text": "Fine, done. I have submitted el refund request, w it will be reflected in your next bill within 24 to 48 hours.",
+        "speaker": "Agent",
+        "start_char": 1713,
+        "end_char": 1824
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent successfully resolved the issue by processing a refund and blocking future premium content services."
     },
     {
+      "evidence": {
+        "text": "Let me check el system right now, ya sidi. Moment please...",
+        "speaker": "Agent",
+        "start_char": 479,
+        "end_char": 538
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent communicated clearly using mixed Arabic and English, keeping the customer informed of actions taken."
     },
     {
+      "evidence": {
+        "text": "العفو ya sidi, shukran for your patience, w have a great day!",
+        "speaker": "Agent",
+        "start_char": 1942,
+        "end_char": 2003
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent wrapped up the call politely, thanking the customer for their patience and offering a pleasant farewell."
     },
     {
+      "evidence": {
+        "text": "Okay, ana شايف هون انو fee subscription added to a third-party gaming service last week.",
+        "speaker": "Agent",
+        "start_char": 539,
+        "end_char": 627
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent accurately identified the root cause of the extra charge by checking the system."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Wallah ya sidi, el system hon bnaadi el request automatic, bas to make sure ma tetkarar, I can block all premium content services for your number right now.",
+        "speaker": "Agent",
+        "start_char": 1417,
+        "end_char": 1573
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.8,
+      "justification": "The agent followed standard procedures for handling billing disputes, offering service blocking and a refund request."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Ya akhi Rami, ana 3ndi mushkileh kbeereh bill bill taba3i, fee extra charge ana mesh fahemha abadan w basaraaha this is ridiculous!",
+          "speaker": "Customer",
+          "start_char": 97,
+          "end_char": 228
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Bas wallah listen to me, ana dayman bdafa3 nafs el mablegh, leish hal marra the bill is higher by thirty dinars?",
+          "speaker": "Customer",
+          "start_char": 359,
+          "end_char": 471
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Gaming service? Shu hada el hakee! Ana ma sajjalt aala ayy shi, ana hatta my phone mafih games abadan! This is a total scam!",
+          "speaker": "Customer",
+          "start_char": 638,
+          "end_char": 762
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "One-time courtesy?! Leish baddak taamli courtesy ala khata2 msh min side-ee? You guys should cancel it from the roots w ma tnazzelo el charge aslan!",
+          "speaker": "Customer",
+          "start_char": 1261,
+          "end_char": 1409
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 72.0
+      },
+      {
+        "quote": {
+          "text": "Inshallah, bas I hope ma arjaa ala el support next month w alqaa nafs el mushkileh. Thank you Rami.",
+          "speaker": "Customer",
+          "start_char": 1835,
+          "end_char": 1934
+        },
+        "speaker": "Customer",
+        "score": 0.3,
+        "timestamp_sec": 104.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

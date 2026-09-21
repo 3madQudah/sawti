@@ -1,104 +1,165 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T10:55:47.281531+00:00",
+    "human_reviewed": false
   },
+  "id": "db15d3e4-a3dd-4306-a389-23e749e77ad8",
   "call_id": "call_0011_mixed",
   "language": "mixed",
-  "summary": "",
+  "summary": "The customer called in frustrated because their newly purchased 5G router was blinking red and not working. The agent calmly guided the customer to check the SIM card placement and confirm the power setup. The issue was successfully resolved within minutes, resulting in a fully working connection with strong speeds.",
   "commitments": [],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Wallah I am so sorry about that, ana bahem shlon annoying hatha, bas don't worry, we'll fix it right now together.",
+        "speaker": "Agent",
+        "start_char": 247,
+        "end_char": 361
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent maintained a professional, encouraging, and polite tone throughout the call while effectively calming the frustrated customer."
     },
     {
+      "evidence": {
+        "text": "Wallah I am so sorry about that, ana bahem shlon annoying hatha, bas don't worry, we'll fix it right now together.",
+        "speaker": "Agent",
+        "start_char": 247,
+        "end_char": 361
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent immediately acknowledged the customer's frustration and validated their feelings, showing genuine understanding."
     },
     {
+      "evidence": {
+        "text": "Done. Mashallah, the speed test is showing 300 Mbps! Wallah satee' el internet.",
+        "speaker": "Customer",
+        "start_char": 1285,
+        "end_char": 1364
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully diagnosed and resolved the issue on the first contact, restoring full service quickly."
     },
     {
+      "evidence": {
+        "text": "Sure, awal shi, check the SIM card inside the router, mumken it's not inserted properly or loose.",
+        "speaker": "Agent",
+        "start_char": 484,
+        "end_char": 581
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "Instructions were given in clear, step-by-step chunks that the customer could easily follow."
     },
     {
+      "evidence": {
+        "text": "Is there anything else I can help you with today?",
+        "speaker": "Agent",
+        "start_char": 1421,
+        "end_char": 1470
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent handled the closure well by checking for additional needs and offering polite closing remarks."
     },
     {
+      "evidence": {
+        "text": "Awesome, el Wi-Fi name and password are written on the sticker underneath the router. Connect and tell me if it works.",
+        "speaker": "Agent",
+        "start_char": 1156,
+        "end_char": 1274
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "All troubleshooting steps provided (SIM card check, direct wall outlet, indicator light meanings) were accurate for the router."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Sure, awal shi, check the SIM card inside the router, mumken it's not inserted properly or loose.",
+        "speaker": "Agent",
+        "start_char": 484,
+        "end_char": 581
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.8,
+      "justification": "The agent followed standard troubleshooting flow, though customer identity verification was skipped (which is common for unauthenticated pre-setup device troubleshooting calls)."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Ya akhi marhaba, ana m3asab wallah. I bought this new 5G router three hours ago, and it's just blinking red, mush radhy yishtaghil at all!",
+          "speaker": "Customer",
+          "start_char": 101,
+          "end_char": 239
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Inshallah ya akhi, because I have work deadlines w el internet is crucial, so please tell me what to do.",
+          "speaker": "Customer",
+          "start_char": 372,
+          "end_char": 476
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Wait, let me open it... Ah, wallah you're right, el SIM card was a bit out. Let me push it in. Okay, shkaletha.",
+          "speaker": "Customer",
+          "start_char": 592,
+          "end_char": 703
+        },
+        "speaker": "Customer",
+        "score": 0.2,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "Aywa, it is already in a wall socket. Look, the light turned from red to blinking blue now.",
+          "speaker": "Customer",
+          "start_char": 833,
+          "end_char": 924
+        },
+        "speaker": "Customer",
+        "score": 0.4,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "Done. Mashallah, the speed test is showing 300 Mbps! Wallah satee' el internet.",
+          "speaker": "Customer",
+          "start_char": 1285,
+          "end_char": 1364
+        },
+        "speaker": "Customer",
+        "score": 1.0,
+        "timestamp_sec": 88.0
+      },
+      {
+        "quote": {
+          "text": "La, shukran jazeelan ya Fadi, you saved my day wallah. Maqasarte.",
+          "speaker": "Customer",
+          "start_char": 1481,
+          "end_char": 1546
+        },
+        "speaker": "Customer",
+        "score": 1.0,
+        "timestamp_sec": 104.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

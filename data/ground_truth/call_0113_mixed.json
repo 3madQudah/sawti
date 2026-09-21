@@ -1,104 +1,155 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:13:40.178410+00:00",
+    "human_reviewed": false
   },
+  "id": "2ea10c71-5859-4c40-85b4-f85866a885df",
   "call_id": "call_0113_mixed",
   "language": "mixed",
-  "summary": "",
+  "summary": "The customer called because their previous month bill was unexpectedly high and wanted an explanation for the extra charges. The agent asked for the account number, checked the system, and stated there was an extra data usage fee for exceeding the package limit. The customer remained confused and asked for clarification before the transcript ended.",
   "commitments": [],
-  "compliance_flags": [],
+  "compliance_flags": [
+    {
+      "evidence": {
+        "text": "Ahlan sidi, welcome to customer service, kif b2dr a3ink el yom?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 70
+      },
+      "rule_id": "missing_agent_identification",
+      "severity": "low",
+      "description": "The agent failed to state their own name or the company name upon greeting the customer."
+    }
+  ],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "Ahlan sidi, welcome to customer service, kif b2dr a3ink el yom?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 70
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The agent was polite and willing to help, but skipped standard identification protocols."
     },
     {
+      "evidence": {
+        "text": "Sure, wala yhemmak, bas khallini a3mil check aal-system",
+        "speaker": "Agent",
+        "start_char": 230,
+        "end_char": 285
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The agent offered a brief reassurance ('wala yhemmak') but did not fully acknowledge the customer's frustration about the high bill."
     },
     {
+      "evidence": {
+        "text": "Ah wallah bshof huna anna fi extra data usage fee",
+        "speaker": "Agent",
+        "start_char": 559,
+        "end_char": 608
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.5,
+      "justification": "The agent identified the core issue (extra data usage fee), but the call ended while the customer was still confused and asking for help."
     },
     {
+      "evidence": {
+        "text": "Yes, el-account number ya3ni, el-raqm el-mushtarak fiha el-khadma.",
+        "speaker": "Agent",
+        "start_char": 388,
+        "end_char": 454
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The agent had to rephrase 'el-number el-ra2isi' after the customer was confused, though they did clarify it."
     },
     {
+      "evidence": {
+        "text": "Ah wallah bshof huna anna fi extra data usage fee, y3ni anta tajawzit el-limit bta3 el-package, so addow el-fee.",
+        "speaker": "Agent",
+        "start_char": 559,
+        "end_char": 671
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.2,
+      "justification": "The call ended abruptly with the customer still seeking clarification, failing proper closure steps."
     },
     {
+      "evidence": {
+        "text": "Ah wallah bshof huna anna fi extra data usage fee, y3ni anta tajawzit el-limit bta3 el-package, so addow el-fee.",
+        "speaker": "Agent",
+        "start_char": 559,
+        "end_char": 671
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent accurately checked the system and identified that an extra data usage fee was applied."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Sure, wala yhemmak, bas khallini a3mil check aal-system, shno el-number el-ra2isi taba3ak please?",
+        "speaker": "Agent",
+        "start_char": 230,
+        "end_char": 327
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.5,
+      "justification": "The agent failed to properly identify themselves and did not complete standard identity verification before discussing account details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Ahlan, ya akhi ana bill taba3i bill-shahr el-maadi, it was so high w wallah I am so confused, mumkin t3id li shwaya shno ha-l-charge el-zaed?",
+          "speaker": "Customer",
+          "start_char": 81,
+          "end_char": 222
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Wait, repeat please, el-number el-ra2isi?",
+          "speaker": "Customer",
+          "start_char": 338,
+          "end_char": 379
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Oh okay, it is 554321, bas please speak slowly, shno el-sabab el-unexpected fee hatha?",
+          "speaker": "Customer",
+          "start_char": 465,
+          "end_char": 551
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "Wait wait, aidaan? 3eed min fadlak, ana ma fahamt kwayyis, how did that happen?",
+          "speaker": "Customer",
+          "start_char": 682,
+          "end_char": 761
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 56.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

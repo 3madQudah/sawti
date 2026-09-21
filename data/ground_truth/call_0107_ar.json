@@ -1,104 +1,177 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:12:40.446374+00:00",
+    "human_reviewed": false
   },
+  "id": "65247fa0-12fc-4ee1-806d-506c95d9a342",
   "call_id": "call_0107_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to complain about a delayed refund for a cancelled device order from two weeks ago. The agent identified a system error that prevented the financial transaction from being processed, opened an urgent refund request, and promised the funds would be returned within 24 to 48 hours.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "أنا فتحت طلب استرداد عاجل للقسم المالي، وخلال 24 لـ 48 ساعة رح يرجع المبلغ لحسابك البنكي بشكل كامل.",
+        "speaker": "Agent",
+        "start_char": 1009,
+        "end_char": 1108
+      },
+      "promised_by": "Agent",
+      "description": "Process an urgent refund request to return the full amount to the customer's bank account within 24 to 48 hours.",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "وراح أبعث لك رسالة نصية على رقمك فيها رقم مرجعي لمتابعة الطلب إذا احتجت.",
+        "speaker": "Customer",
+        "start_char": 1198,
+        "end_char": 1270
+      },
+      "promised_by": "Customer",
+      "description": "Send an SMS with a reference number for tracking.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "أعتذر منك يا أستاذ على الإزعاج، ولا تشيل هم، رح أتابع الموضوع معك فوراً وأحل لك المشكلة.",
+        "speaker": "Agent",
+        "start_char": 193,
+        "end_char": 281
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent maintained a polite, professional, and reassuring demeanor throughout the call."
     },
     {
+      "evidence": {
+        "text": "معك حق تزعل، وبعتذر عن أي تأخير صار معك.",
+        "speaker": "Agent",
+        "start_char": 377,
+        "end_char": 417
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent acknowledged the customer's frustration and validated his feelings sincerely."
     },
     {
+      "evidence": {
+        "text": "أنا فتحت طلب استرداد عاجل للقسم المالي، وخلال 24 لـ 48 ساعة رح يرجع المبلغ لحسابك البنكي بشكل كامل.",
+        "speaker": "Agent",
+        "start_char": 1009,
+        "end_char": 1108
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent successfully identified the root cause and took direct action by opening an urgent refund request."
     },
     {
+      "evidence": {
+        "text": "ممكن أعطيني رقم الطلب ورقم الهوية لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 418,
+        "end_char": 460
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent communicated clearly, asking for the necessary details directly and explaining the steps."
     },
     {
+      "evidence": {
+        "text": "في إشي ثاني بقدر أساعدك فيه اليوم؟",
+        "speaker": "Customer",
+        "start_char": 1364,
+        "end_char": 1398
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent closed the call properly by offering further assistance, though the transcript labels were slightly mixed up at the very end."
     },
     {
+      "evidence": {
+        "text": "آه، مبين عندي إنه الطلب انلغى بس المعاملة المالية ما انبعثت للقسم المالي بسبب خطأ بالنظام.",
+        "speaker": "Agent",
+        "start_char": 712,
+        "end_char": 802
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent correctly diagnosed the system error causing the delayed refund."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "ممكن أعطيني رقم الطلب ورقم الهوية لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 418,
+        "end_char": 460
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "The agent properly verified the customer's identity using the order number and ID before accessing account details."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أنا متضايق جداً بصراحة. ألغيت طلب الجهاز قبل أسبوعين ولغاية اليوم ما رجع المبلغ على حسابي!",
+          "speaker": "Customer",
+          "start_char": 95,
+          "end_char": 185
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "يا ريت، لأن المبلغ مش بسيط، وكل ما أتصل تحكولي اصبروا شوي، وين راحوا المصاري؟",
+          "speaker": "Customer",
+          "start_char": 292,
+          "end_char": 369
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "يعني ضلت معلقة بسببتكم؟ هذا إهمال بصراحة!",
+          "speaker": "Customer",
+          "start_char": 813,
+          "end_char": 854
+        },
+        "speaker": "Customer",
+        "score": -0.7,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "متأكد؟ يعني مش رح أرجع أتصل كمان مرة وأقعد أستنى؟",
+          "speaker": "Customer",
+          "start_char": 1119,
+          "end_char": 1168
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 80.0
+      },
+      {
+        "quote": {
+          "text": "لا شكراً، كفيت ووفيت يا أحمد، الله يعطيك العافية على حسن التعامل.",
+          "speaker": "Agent",
+          "start_char": 1406,
+          "end_char": 1471
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 104.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

@@ -1,104 +1,177 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T10:56:03.200885+00:00",
+    "human_reviewed": false
   },
+  "id": "c022c969-97b4-4dfb-84a8-0e8636114949",
   "call_id": "call_0013_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to inquire about an unexpectedly high monthly bill. The agent checked the account and explained that extra charges occurred because the customer's package upgrade took effect mid-month. After understanding the explanation, the customer agreed to upgrade to the Unlimited Plan to avoid future extra fees, and the agent promised to send a confirmation message.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "هسا ببعت لك رسالة تأكيد فيها كل التفاصيل ورقم المرجع للطلب تاعك.",
+        "speaker": "Agent",
+        "start_char": 2105,
+        "end_char": 2169
+      },
+      "promised_by": "Agent",
+      "description": "Send a confirmation message with all details and the reference number for the upgrade request.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "أكيد سيدي ولا يهمك، باخذ وقتي بالحديث.",
+        "speaker": "Agent",
+        "start_char": 431,
+        "end_char": 469
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent maintained a polite, professional, and helpful tone throughout the call, accommodating the customer's request to speak slowly."
     },
     {
+      "evidence": {
+        "text": "فاهم عليك تماماً سيدي، وبأكد لك ما في أي رسوم مخفية، السعر نهائي شامل الضريبة.",
+        "speaker": "Agent",
+        "start_char": 1644,
+        "end_char": 1722
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.8,
+      "justification": "The agent acknowledged the customer's frustration and lack of trust regarding hidden fees and reassured them effectively."
     },
     {
+      "evidence": {
+        "text": "لا أبداً سيدي، رح تبدأ فوراً من اللحظة هاي، وبنهاية الشهر رح تدفع بس الـ thirty dinars بدون أي زيادة.",
+        "speaker": "Agent",
+        "start_char": 1866,
+        "end_char": 1967
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.85,
+      "justification": "The agent successfully explained the reason for the high bill and provided a clear solution by moving the customer to the Unlimited Plan."
     },
     {
+      "evidence": {
+        "text": "ولا يهمك يا أستاذ، ببساطة إنت كنت على الـ old plan أول أسبوعين، وبعدين صرت على الـ new plan.",
+        "speaker": "Agent",
+        "start_char": 989,
+        "end_char": 1081
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.75,
+      "justification": "The agent initially used confusing phrasing regarding the prorated charges, but simplified the explanation when prompted by the customer."
     },
     {
+      "evidence": {
+        "text": "هل في أي خدمة تانية بقدر أساعدك فيها اليوم؟",
+        "speaker": "Agent",
+        "start_char": 2170,
+        "end_char": 2213
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The agent handled the closure well by summarizing the action taken, asking if anything else was needed, and offering a polite goodbye."
     },
     {
+      "evidence": {
+        "text": "التكلفة بتكون ثلاثين دينار شهرياً مع الـ tax، وبتشمل high-speed internet ومكالمات محلية غير محدودة.",
+        "speaker": "Agent",
+        "start_char": 1433,
+        "end_char": 1532
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.9,
+      "justification": "The information provided regarding the plan pricing, tax inclusion, and features of the Unlimited Plan was clear and accurate."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "ممكن تعطيني الـ phone number أو الـ account ID لو سمحت؟",
+        "speaker": "Agent",
+        "start_char": 234,
+        "end_char": 289
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.9,
+      "justification": "The agent correctly followed verification procedures by asking for the customer's phone number or account ID before accessing the account."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "والله أنا عندي سؤال بخصوص الـ bill تاع الشهر هاض، بحسها مرتفعة شوي ومش فاهم ليش.",
+          "speaker": "Customer",
+          "start_char": 98,
+          "end_char": 178
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "بتقدر تحكي لي شوي شوي لإنو عندي هسا ضجة وما عم بسمع منيح؟",
+          "speaker": "Customer",
+          "start_char": 366,
+          "end_char": 423
+        },
+        "speaker": "Customer",
+        "score": -0.4,
+        "timestamp_sec": 16.0
+      },
+      {
+        "quote": {
+          "text": "عذراً، ممكن تعيد آخر نقطة؟ بتقصد إني تجاوزت الـ data؟ طيب أنا متأكد إني عملت upgrade للـ package الشهر الماضي!",
+          "speaker": "Customer",
+          "start_char": 604,
+          "end_char": 714
+        },
+        "speaker": "Customer",
+        "score": -0.5,
+        "timestamp_sec": 32.0
+      },
+      {
+        "quote": {
+          "text": "عن جد مش فاهم ولا كلمة من اللي عم تحكيه، كيف يعني بمنتصف الشهر؟ بتقدر تشرح لي هيك بـ simple terms؟",
+          "speaker": "Customer",
+          "start_char": 883,
+          "end_char": 981
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 48.0
+      },
+      {
+        "quote": {
+          "text": "آه، يعني عشان هيك الـ total طلع كثير عالي اليوم؟ طيب شو الحل هسا، ضاع علي المصاري يعني؟",
+          "speaker": "Customer",
+          "start_char": 1116,
+          "end_char": 1203
+        },
+        "speaker": "Customer",
+        "score": -0.2,
+        "timestamp_sec": 64.0
+      },
+      {
+        "quote": {
+          "text": "لا تسلم يا رامي، تعبتك معي اليوم بس عن جد كنت محتاج حدا يوضح لي الأمور بوضوح. شكراً كثير لإلك.",
+          "speaker": "Customer",
+          "start_char": 2224,
+          "end_char": 2318
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 112.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

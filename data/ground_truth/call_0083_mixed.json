@@ -1,104 +1,155 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:08:20.555256+00:00",
+    "human_reviewed": false
   },
+  "id": "d0de123f-4653-4908-91c3-078d84d82a78",
   "call_id": "call_0083_mixed",
   "language": "mixed",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer contacted support expressing extreme frustration that their newly received router was not working despite spending three hours trying. The agent attempted to troubleshoot by asking about lights and cable connections, but the customer refused further troubleshooting and demanded a technician be sent immediately under threat of cancellation. The agent ultimately agreed to send a technician.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "Taib taib sidi wallahi we will send a technician",
+        "speaker": "Agent",
+        "start_char": 814,
+        "end_char": 862
+      },
+      "promised_by": "Agent",
+      "description": "Send a technician to the customer's location.",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
-      "criterion": "professionalism",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
-    },
-    {
+        "text": "Wallahi I am sorry to hear that ya akhi, please min fadlak calm down w tell me, what exact lights are blinking on il-device?",
+        "speaker": "Agent",
+        "start_char": 241,
+        "end_char": 365
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "The agent acknowledged the customer's frustration and apologized, though telling an angry customer to calm down can sometimes escalate tension."
     },
     {
+      "evidence": {
+        "text": "Taib taib sidi wallahi we will send a technician, bas momken check one last thing, did you enter il-username and password fi il-page?",
+        "speaker": "Agent",
+        "start_char": 814,
+        "end_char": 947
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.5,
+      "justification": "The agent agreed to send a technician as demanded, but prolonged the argument by pushing further troubleshooting steps instead of gracefully handling the escalation."
     },
     {
+      "evidence": {
+        "text": "Ahlan sidi, welcome to FiberNet support, معاكم محمد, how can I help you today?",
+        "speaker": "Agent",
+        "start_char": 7,
+        "end_char": 85
+      },
+      "criterion": "professionalism",
+      "score": 0.5,
+      "justification": "The agent used appropriate greeting elements but mixed Arabic and English casually, and later used overly casual phrasing like 'habibi' with an agitated customer."
+    },
+    {
+      "evidence": {
+        "text": "La la inshallah mesh kharabane, habibi just check il-cable illy min ill-wall la il-port ill-azraq, is it plugged in mnih?",
+        "speaker": "Agent",
+        "start_char": 533,
+        "end_char": 654
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.6,
+      "justification": "Instructions regarding the cable and port were reasonably clear, though code-switching heavily back and forth can create minor cognitive load."
     },
     {
+      "evidence": {
+        "text": "Taib taib sidi wallahi we will send a technician, bas momken check one last thing, did you enter il-username and password fi il-page?",
+        "speaker": "Agent",
+        "start_char": 814,
+        "end_char": 947
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.2,
+      "justification": "The call ended abruptly in the middle of a dispute without a proper professional closing or confirmation of details."
     },
     {
+      "evidence": {
+        "text": "La la inshallah mesh kharabane, habibi just check il-cable illy min ill-wall la il-port ill-azraq, is it plugged in mnih?",
+        "speaker": "Agent",
+        "start_char": 533,
+        "end_char": 654
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 0.7,
+      "justification": "The troubleshooting steps provided (checking cables and login page) are standard and accurate for router setup."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "Taib taib sidi wallahi we will send a technician, bas momken check one last thing, did you enter il-username and password fi il-page?",
+        "speaker": "Agent",
+        "start_char": 814,
+        "end_char": 947
+      },
+      "criterion": "procedure_adherence",
+      "score": 0.5,
+      "justification": "The agent followed basic troubleshooting flow but failed to properly de-escalate or follow proper ticketing protocol before agreeing to send a technician."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "Ya akhi wallahi I am losing my mind, ana jadid mdayej! This new router illy jebto mkom mesh radde yoshtaghal, I spent three hours trying!",
+          "speaker": "Customer",
+          "start_char": 96,
+          "end_char": 233
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "Kolshi blinking! Power light is red w the internet light mesh aam tdoo! I tried resetting it fifty times mesh عم يزبط, you sent me a kharabane piece!",
+          "speaker": "Customer",
+          "start_char": 376,
+          "end_char": 525
+        },
+        "speaker": "Customer",
+        "score": -0.9,
+        "timestamp_sec": 24.0
+      },
+      {
+        "quote": {
+          "text": "Ya akhi ana msh hmar, I plugged everything sah! Walla if you don't send a technician right now i will cancel il-subscription w call il-heiah!",
+          "speaker": "Customer",
+          "start_char": 665,
+          "end_char": 806
+        },
+        "speaker": "Customer",
+        "score": -1.0,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "Wallah ma bdi check ishi! Send someone now wla wallah i will take my business somewhere else, خلص زهقت!",
+          "speaker": "Customer",
+          "start_char": 958,
+          "end_char": 1061
+        },
+        "speaker": "Customer",
+        "score": -1.0,
+        "timestamp_sec": 56.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 0.95,
+  "requires_human_review": false
 }

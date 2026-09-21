@@ -1,104 +1,210 @@
 {
-  "_instructions": {
-    "_meaning": "This is a ground-truth authoring template, not part of the real CallAnalysis schema — this whole key is ignored by sawti.data.ground_truth.load_ground_truth(). Delete it or leave it; either is fine once the file is filled in.",
-    "call_id": "Do not edit — identifies the transcript this reviews (data/synthetic/<call_id>.txt).",
-    "language": "Do not edit — inferred from the transcript filename's _ar/_en/_mixed suffix.",
-    "summary": "Fill in: a short human-written summary of the call. Required, non-empty.",
-    "commitments": "Open-ended list — append one entry per promise/commitment you find in the call (evidence, promised_by, description, deadline). Leave as [] if there are none.",
-    "compliance_flags": "Open-ended list — append one entry per compliance violation you find in the call (evidence, rule_id, severity, description). Leave as [] if there are none.",
-    "rubric_scores": "Fill in every one of the 7 entries below (do not add, remove, or rename criteria) — set 'score' (0.0-1.0), 'justification', and a grounding 'evidence' quote for each.",
-    "evidence": "A verbatim quote grounding the claim/score: {text, speaker, start_char, end_char}. Use `uv run python scripts/find_quote.py <transcript> \"<exact substring>\"` to get exact offsets — do not hand-count them.",
-    "sentiment_trajectory": "Optional — append chronologically ordered {quote, speaker, score, timestamp_sec} points if you want to track sentiment across the call. Leave 'points' as [] if skipping.",
-    "confidence": "Fill in: your overall confidence in this review, 0.0-1.0. Required.",
-    "requires_human_review": "Fill in: true or false. Must be true if confidence is below the configured threshold (sawti.config.Settings.confidence_threshold)."
+  "_provenance": {
+    "method": "llm_generated",
+    "model": "gemini-flash-lite-latest",
+    "generated_at": "2026-09-21T11:03:49.296746+00:00",
+    "human_reviewed": false
   },
+  "id": "efc3c396-bb24-4dd7-94d4-ea9370556158",
   "call_id": "call_0051_ar",
   "language": "ar",
-  "summary": "",
-  "commitments": [],
+  "summary": "The customer called to complain about a delayed refund for a cancelled phone order and expressed frustration with previous support. The agent validated the customer's feelings, checked the system, expedited the refund request, provided a reference number, and confirmed it was sent via SMS. The issue was successfully handled, and the customer left satisfied.",
+  "commitments": [
+    {
+      "evidence": {
+        "text": "رح أساعدك اليوم لحتى نحل الموضوع نهائياً",
+        "speaker": "Agent",
+        "start_char": 400,
+        "end_char": 440
+      },
+      "promised_by": "Agent",
+      "description": "Help resolve the issue permanently",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "أنا هسا رح أعمل طلب استرداد عاجل ومستثنى من النظام العادي عشان يتحول المبلغ لبطاقتك اليوم قبل بكره.",
+        "speaker": "Agent",
+        "start_char": 1252,
+        "end_char": 1351
+      },
+      "promised_by": "Agent",
+      "description": "Process an urgent exception refund request",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "بوعدك يا أستاذ، أنا هسا رفعت الطلب للحصول على موافقة فورية من القسم المالي، ورقم مرجع الطلب الخاص بالاسترداد هو 9921.",
+        "speaker": "Agent",
+        "start_char": 1461,
+        "end_char": 1578
+      },
+      "promised_by": "Agent",
+      "description": "Submit the request for immediate financial approval with reference number 9921",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "برضه بعثته هسا برسالة نصية على رقم موبايلك المسجل عنا عشان يكون مرجع إلك.",
+        "speaker": "Agent",
+        "start_char": 1690,
+        "end_char": 1763
+      },
+      "promised_by": "Agent",
+      "description": "Send the reference number via SMS",
+      "deadline": null
+    },
+    {
+      "evidence": {
+        "text": "غالباً رح تلاحظ المبلغ نزل بحسابك خلال اربعة وعشرين ساعة كحد أقصى.",
+        "speaker": "Agent",
+        "start_char": 1907,
+        "end_char": 1973
+      },
+      "promised_by": "Agent",
+      "description": "Ensure the amount appears in the account within 24 hours maximum",
+      "deadline": null
+    }
+  ],
   "compliance_flags": [],
   "rubric_scores": [
     {
+      "evidence": {
+        "text": "أقدر تماماً شعورك بالانزعاج يا أستاذ، وباعتذر منك جداً عن التأخير وعن أي إزعاج سببناله إلك.",
+        "speaker": "Agent",
+        "start_char": 298,
+        "end_char": 389
+      },
       "criterion": "professionalism",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent maintained a polite, respectful, and professional tone throughout the call despite the customer's initial frustration."
     },
     {
+      "evidence": {
+        "text": "معك حق تزعل، والمفروض تم خدمتك بطريقة أفضل من هيك.",
+        "speaker": "Agent",
+        "start_char": 1201,
+        "end_char": 1251
+      },
       "criterion": "empathy",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent showed deep understanding, validated the customer's annoyance, and offered sincere apologies."
     },
     {
+      "evidence": {
+        "text": "أنا هسا رح أعمل طلب استرداد عاجل ومستثنى من النظام العادي عشان يتحول المبلغ لبطاقتك اليوم قبل بكره.",
+        "speaker": "Agent",
+        "start_char": 1252,
+        "end_char": 1351
+      },
       "criterion": "resolution_effectiveness",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent successfully resolved the issue by creating an urgent exception refund request and providing an SMS reference."
     },
     {
+      "evidence": {
+        "text": "هاض الرقم بيخليك تتابع حالة الاسترداد مباشرة، وبرضه بعثته هسا برسالة نصية على رقم موبايلك المسجل عنا عشان يكون مرجع إلك.",
+        "speaker": "Agent",
+        "start_char": 1643,
+        "end_char": 1763
+      },
       "criterion": "communication_clarity",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent explained the steps and the use of the reference number very clearly and concisely."
     },
     {
+      "evidence": {
+        "text": "يوم سعيد، مع السلامة.",
+        "speaker": "Agent",
+        "start_char": 2297,
+        "end_char": 2318
+      },
       "criterion": "call_closure",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "The agent closed the call warmly and professionally after confirming no further assistance was needed."
     },
     {
+      "evidence": {
+        "text": "بالنسبة للمبلغ، عادة عملية الاسترداد بتاخد بين ثلاث إلى خمس أيام عمل",
+        "speaker": "Agent",
+        "start_char": 962,
+        "end_char": 1030
+      },
       "criterion": "accuracy_of_information",
-      "score": null,
-      "justification": "",
-      "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+      "score": 1.0,
+      "justification": "Provided accurate standard refund timeframes and correct explanations regarding the system status."
     },
     {
-      "criterion": "procedure_adherence",
-      "score": null,
-      "justification": "",
       "evidence": {
-        "text": "",
-        "speaker": "",
-        "start_char": null,
-        "end_char": null
-      }
+        "text": "أنا هسا رح أعمل طلب استرداد عاجل ومستثنى من النظام العادي عشان يتحول المبلغ لبطاقتك اليوم قبل بكره.",
+        "speaker": "Agent",
+        "start_char": 1252,
+        "end_char": 1351
+      },
+      "criterion": "procedure_adherence",
+      "score": 1.0,
+      "justification": "Followed proper escalation and exception handling protocols for delayed refunds."
     }
   ],
   "sentiment_trajectory": {
-    "points": []
+    "points": [
+      {
+        "quote": {
+          "text": "أنا بصراحة كتير متضايق وزهقت من هالموضوع، طلبت جهاز هاتف من عندكم من أسبوعين وكنت مستعجل عليه، بس بعدين ألغيت الطلب لأن التوصيل تأخر كتير، ولغاية اليوم ما رجعلي المبلغ على بطاقتي! شو هالتأخير هاض؟",
+          "speaker": "Customer",
+          "start_char": 94,
+          "end_char": 290
+        },
+        "speaker": "Customer",
+        "score": -0.8,
+        "timestamp_sec": 8.0
+      },
+      {
+        "quote": {
+          "text": "يعني ضليتني أنتظر أسبوعين والفلوس محجوزة، والموظف اللي حكيت معه مبارح ما فادني بشيء ضل يحكيلي اصبر!",
+          "speaker": "Customer",
+          "start_char": 1094,
+          "end_char": 1193
+        },
+        "speaker": "Customer",
+        "score": -0.6,
+        "timestamp_sec": 40.0
+      },
+      {
+        "quote": {
+          "text": "بجد؟ يعني رح ينزلوا اليوم؟ أنا ما بدي كلام وبس، بدي نتيجة أكيدة لاني بجد تعبت من المراجعات.",
+          "speaker": "Customer",
+          "start_char": 1362,
+          "end_char": 1453
+        },
+        "speaker": "Customer",
+        "score": -0.3,
+        "timestamp_sec": 56.0
+      },
+      {
+        "quote": {
+          "text": "وصلتنـي الرسالة هسا، شكراً كتير إلك. يعني بتضمنلي إنه المبلغ ما راح يتاخر كمان؟",
+          "speaker": "Customer",
+          "start_char": 1774,
+          "end_char": 1853
+        },
+        "speaker": "Customer",
+        "score": 0.2,
+        "timestamp_sec": 72.0
+      },
+      {
+        "quote": {
+          "text": "ممتاز جداً. والله ريحتني، وبعتذر إذا كنت عصبي شوي بالبداية بس عنجد الواحد بينضغط.",
+          "speaker": "Customer",
+          "start_char": 1984,
+          "end_char": 2065
+        },
+        "speaker": "Customer",
+        "score": 0.8,
+        "timestamp_sec": 88.0
+      }
+    ]
   },
-  "confidence": null,
-  "requires_human_review": null
+  "confidence": 1.0,
+  "requires_human_review": false
 }
