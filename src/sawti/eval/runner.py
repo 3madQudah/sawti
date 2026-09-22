@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import logging
 import time
+from collections.abc import Callable
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -21,6 +22,7 @@ from sawti.eval.metrics import (
     accuracy_by_category,
     grounding_precision_by_category,
     rubric_agreement_by_category,
+    unsupported_claim_rate_by_category,
 )
 from sawti.eval.plain_extraction import run_plain_extraction
 from sawti.schemas import CallAnalysis, Language
@@ -35,7 +37,13 @@ REFERENCE_LABEL_CAVEAT = (
     "see docs/09-DECISIONS.md."
 )
 
-_METRIC_ORDER = ("Accuracy", "Rubric agreement", "Grounding precision")
+_METRIC_ORDER = (
+    "Accuracy",
+    "Rubric agreement",
+    "Grounding precision",
+    # Lower is better — the only metric in this table where that is true.
+    "Unsupported claim rate",
+)
 
 _LANGUAGE_ORDER = (Language.AR, Language.EN, Language.MIXED)
 
@@ -51,18 +59,27 @@ def _render_results(
     *,
     counts: dict[Language, int],
     failures: list[tuple[str, str]],
+    experiment_name: str | None = None,
 ) -> str:
     """Render a dated results section for `eval_results.md`.
 
     The LLM-generated-reference caveat is emitted first, before the table,
     and is not conditional on anything.
+
+    Args:
+        results: Metric name to per-language scores.
+        counts: Calls scored per language.
+        failures: `(call_id, reason)` for calls that produced no `CallAnalysis`.
+        experiment_name: Heading label. Defaults to the phase 1 baseline's, so
+            the existing caller renders exactly as before.
     """
     settings = get_settings()
+    label = experiment_name or "phase 1 baseline (plain-prompt extraction, no memory)"
     generated_at = datetime.now(UTC).strftime("%Y-%m-%d")
     total_calls = sum(counts.values())
 
     lines = [
-        f"## Round: {generated_at} — phase 1 baseline (plain-prompt extraction, no memory)",
+        f"## Round: {generated_at} — {label}",
         "",
         f"> **{REFERENCE_LABEL_CAVEAT}** These figures measure agreement between two "
         "LLM-driven processes, not accuracy against human judgment. Grounding "
@@ -71,7 +88,7 @@ def _render_results(
         "",
         "- Ground truth: `data/ground_truth` (LLM-generated reference labels, `human_reviewed: false`)",
         f"- Agent config / model: `{settings.llm_provider}` / `{settings.gemini_model}`",
-        "- Extraction: plain-prompt baseline (`sawti.eval.plain_extraction`), no memory",
+        f"- Extraction: `{label}`",
         "- Memory: `off`",
         "- N calls scored: "
         + ", ".join(f"{language.value}=`{counts.get(language, 0)}`" for language in _LANGUAGE_ORDER)
@@ -100,6 +117,19 @@ def _render_results(
     return "\n".join(lines)
 
 
+# An extractor turns one transcript file into one validated `CallAnalysis`.
+# `run_plain_extraction` (the phase 1 baseline) and
+# `sawti.eval.experiments.grounded_graph.extract_via_graph` (the phase 2 agent)
+# both satisfy it, which is what makes the two rounds comparable: same reference
+# set, same metrics, same harness — only this callable differs.
+Extractor = Callable[[Path], CallAnalysis]
+
+
+def _default_extractor(path: Path, *, max_retries: int, initial_delay: float) -> CallAnalysis:
+    """Phase 1 baseline extractor, kept as the default so existing callers are unchanged."""
+    return run_plain_extraction(path, max_retries=max_retries, initial_delay=initial_delay)
+
+
 def run_eval(
     ground_truth_path: Path,
     *,
@@ -107,6 +137,8 @@ def run_eval(
     synthetic_dir: Path = DEFAULT_SYNTHETIC_DIR,
     sleep_seconds: float = 4.0,
     max_retries: int = 4,
+    extractor: Extractor | None = None,
+    experiment_name: str | None = None,
 ) -> dict[str, dict[Language, float]]:
     """Run the full evaluation pipeline and append results to `output_path`.
 
@@ -126,6 +158,9 @@ def run_eval(
         synthetic_dir: Directory of `<call_id>.txt` transcripts.
         sleep_seconds: Delay between LLM calls, to respect free-tier rate limits.
         max_retries: Provider-error retries per call (not content retries).
+        extractor: How to turn a transcript into a `CallAnalysis`. Defaults to the
+            phase 1 plain-prompt baseline, so existing callers keep their behaviour.
+        experiment_name: Label written into the results section heading.
 
     Returns:
         A mapping from metric name to its per-`Language` category scores.
@@ -149,10 +184,10 @@ def run_eval(
             continue
         try:
             predictions.append(
-                run_plain_extraction(
-                    transcript_path,
-                    max_retries=max_retries,
-                    initial_delay=sleep_seconds,
+                extractor(transcript_path)
+                if extractor is not None
+                else _default_extractor(
+                    transcript_path, max_retries=max_retries, initial_delay=sleep_seconds
                 )
             )
             logger.info("[%d/%d] extracted %s", index, len(reference), record.call_id)
@@ -174,9 +209,14 @@ def run_eval(
         "Grounding precision": grounding_precision_by_category(
             predictions, transcript_dir=synthetic_dir
         ),
+        "Unsupported claim rate": unsupported_claim_rate_by_category(
+            predictions, transcript_dir=synthetic_dir
+        ),
     }
 
-    section = _render_results(results, counts=counts, failures=failures)
+    section = _render_results(
+        results, counts=counts, failures=failures, experiment_name=experiment_name
+    )
     existing = output_path.read_text(encoding="utf-8") if output_path.is_file() else ""
     separator = "" if existing.endswith("\n\n") or not existing else "\n"
     output_path.write_text(existing + separator + section, encoding="utf-8")

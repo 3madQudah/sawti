@@ -15,7 +15,13 @@ from sawti.data.ground_truth import RUBRIC_CRITERIA
 from sawti.eval.metrics import (
     accuracy_by_category,
     grounding_precision_by_category,
+    normalize_for_wer,
     rubric_agreement_by_category,
+    speaker_attribution_accuracy,
+    speaker_attribution_accuracy_by_category,
+    unsupported_claim_rate_by_category,
+    wer_by_category,
+    word_error_rate,
 )
 from sawti.schemas import (
     CallAnalysis,
@@ -286,3 +292,367 @@ def test_grounding_precision_counts_partially_grounded_calls(transcript_dir):
     score = grounding_precision_by_category([mixed], transcript_dir=transcript_dir)[Language.AR]
 
     assert 0.0 < score < 1.0
+
+
+# --- unsupported claim rate ----------------------------------------------
+#
+# This metric is position-exact, unlike grounding precision: a quote must sit at
+# the offsets it claims, not merely occur somewhere. The helpers above build
+# quotes at start_char=0, so these tests construct their own.
+
+
+def _located(text: str) -> Quote:
+    """A quote whose offsets are computed from TRANSCRIPT — genuinely grounded."""
+    start = TRANSCRIPT.index(text)
+    return Quote(text=text, speaker="Agent", start_char=start, end_char=start + len(text))
+
+
+def _misplaced(text: str) -> Quote:
+    """A quote whose text is real but whose offsets point at the wrong span.
+
+    Not unsupported: the grounding rule tests the text, and the graph re-anchors
+    offsets it computes itself.
+    """
+    return Quote(text=text, speaker="Agent", start_char=0, end_char=len(text))
+
+
+def _invented(text: str = UNGROUNDED_QUOTE) -> Quote:
+    """A quote whose text appears nowhere in the transcript — genuinely unsupported."""
+    return Quote(text=text, speaker="Agent", start_char=0, end_char=len(text))
+
+
+def _with_commitments(call_id: str, language: Language, quotes: list[Quote]) -> CallAnalysis:
+    """A CallAnalysis carrying one commitment per supplied quote and nothing else."""
+    return CallAnalysis(
+        call_id=call_id,
+        language=language,
+        summary="Summary.",
+        commitments=[
+            Commitment(evidence=quote, promised_by="Agent", description="refund") for quote in quotes
+        ],
+        confidence=1.0,
+        requires_human_review=False,
+    )
+
+
+def test_unsupported_claim_rate_is_zero_when_every_claim_is_located(transcript_dir):
+    """A pipeline that emits only verified claims scores 0.0 — lower is better here."""
+    predictions = [_with_commitments("call_0000_ar", Language.AR, [_located(GROUNDED_QUOTE)])]
+
+    rates = unsupported_claim_rate_by_category(predictions, transcript_dir=transcript_dir)
+
+    assert rates[Language.AR] == pytest.approx(0.0)
+
+
+def test_unsupported_claim_rate_is_one_when_every_claim_is_invented(transcript_dir):
+    """Failure path: a paraphrased or invented quote is unsupported, all of it."""
+    predictions = [_with_commitments("call_0000_ar", Language.AR, [_invented()])]
+
+    rates = unsupported_claim_rate_by_category(predictions, transcript_dir=transcript_dir)
+
+    assert rates[Language.AR] == pytest.approx(1.0)
+
+
+def test_unsupported_claim_rate_forgives_wrong_offsets_on_real_text(transcript_dir):
+    """Wrong offsets are not an unsupported claim — the metric follows the gate's rule.
+
+    Measured on real model output, quote text verified ~100% of the time while
+    start_char was right ~38% of the time. Counting offsets here would report a
+    hallucination rate that is really an arithmetic rate.
+    """
+    predictions = [_with_commitments("call_0000_ar", Language.AR, [_misplaced(GROUNDED_QUOTE)])]
+
+    rates = unsupported_claim_rate_by_category(predictions, transcript_dir=transcript_dir)
+
+    assert rates[Language.AR] == pytest.approx(0.0)
+
+
+def test_unsupported_claim_rate_complements_grounding_precision_on_claims(transcript_dir):
+    """On claim-only input the two metrics are complements, because they share a rule."""
+    predictions = [
+        _with_commitments("call_0000_ar", Language.AR, [_located(GROUNDED_QUOTE), _invented()])
+    ]
+
+    precision = grounding_precision_by_category(predictions, transcript_dir=transcript_dir)
+    rates = unsupported_claim_rate_by_category(predictions, transcript_dir=transcript_dir)
+
+    assert precision[Language.AR] == pytest.approx(0.5)
+    assert rates[Language.AR] == pytest.approx(1.0 - precision[Language.AR])
+
+
+def test_unsupported_claim_rate_pools_claims_within_a_language(transcript_dir):
+    """Half the claims unsupported means exactly 0.5, pooled across the language's calls."""
+    predictions = [
+        _with_commitments("call_0000_ar", Language.AR, [_located(GROUNDED_QUOTE)]),
+        _with_commitments("call_0002_mixed", Language.MIXED, [_invented()]),
+        _with_commitments("call_0001_en", Language.EN, [_located(GROUNDED_QUOTE), _invented()]),
+    ]
+
+    rates = unsupported_claim_rate_by_category(predictions, transcript_dir=transcript_dir)
+
+    assert rates[Language.AR] == pytest.approx(0.0)
+    assert rates[Language.MIXED] == pytest.approx(1.0)
+    assert rates[Language.EN] == pytest.approx(0.5)
+
+
+def test_unsupported_claim_rate_reports_languages_separately(transcript_dir):
+    """Never a blended number: each language gets its own rate."""
+    predictions = [
+        _with_commitments("call_0000_ar", Language.AR, [_invented()]),
+        _with_commitments("call_0001_en", Language.EN, [_located(GROUNDED_QUOTE)]),
+    ]
+
+    rates = unsupported_claim_rate_by_category(predictions, transcript_dir=transcript_dir)
+
+    assert set(rates) == {Language.AR, Language.EN}
+    assert rates[Language.AR] != rates[Language.EN]
+
+
+def test_unsupported_claim_rate_skips_calls_whose_transcript_is_missing(tmp_path):
+    """Failure path: a missing transcript must not look like a perfect score."""
+    predictions = [_with_commitments("call_0000_ar", Language.AR, [_located(GROUNDED_QUOTE)])]
+
+    rates = unsupported_claim_rate_by_category(predictions, transcript_dir=tmp_path)
+
+    assert rates == {}
+
+
+def test_unsupported_claim_rate_is_zero_for_a_call_with_no_claims(transcript_dir):
+    """A call that claimed nothing has nothing unsupported — vacuously 0.0."""
+    predictions = [_with_commitments("call_0000_ar", Language.AR, [])]
+
+    rates = unsupported_claim_rate_by_category(predictions, transcript_dir=transcript_dir)
+
+    assert rates == {}
+
+
+# ---------------------------------------------------------------------------
+# Phase 3: ASR metrics
+# ---------------------------------------------------------------------------
+
+
+class TestNormalizeForWer:
+    """The orthographic normalization applied before Arabic WER scoring."""
+
+    def test_strips_diacritics(self) -> None:
+        """Harakat carry no lexical difference and are dropped."""
+        assert normalize_for_wer("أَهْلاً بِكَ") == normalize_for_wer("أهلا بك")
+
+    def test_folds_alef_variants(self) -> None:
+        """أ إ آ ٱ all fold to bare alef."""
+        assert normalize_for_wer("أحمد إبراهيم آدم") == "احمد ابراهيم ادم"
+
+    def test_folds_ta_marbuta_and_alef_maqsura(self) -> None:
+        """ة folds to ه and ى folds to ي."""
+        assert normalize_for_wer("خدمة على") == "خدمه علي"
+
+    def test_maps_arabic_indic_digits_to_ascii(self) -> None:
+        """Digit script should not count as a recognition error."""
+        assert normalize_for_wer("٠٧٩٥٥٤٣٢١٠") == "0795543210"
+
+    def test_strips_punctuation_and_collapses_whitespace(self) -> None:
+        """Punctuation, Arabic and Latin, is removed."""
+        assert normalize_for_wer("مرحبا،  كيف   حالك؟") == "مرحبا كيف حالك"
+
+    def test_lowercases_latin_for_code_switched_text(self) -> None:
+        """The Latin half of a mixed call is case-folded too."""
+        assert normalize_for_wer("Hello YA akhi") == "hello ya akhi"
+
+    def test_orthographic_variants_collapse_to_the_same_string(self) -> None:
+        """The whole point: two spellings of one utterance become identical."""
+        assert normalize_for_wer("أهلاً بِكَ في خدمة العملاء،") == normalize_for_wer(
+            "اهلا بك في خدمه العملاء"
+        )
+
+
+class TestWordErrorRate:
+    """Single-pair WER."""
+
+    def test_identical_text_scores_zero(self) -> None:
+        """A perfect transcription has no errors."""
+        assert word_error_rate("مرحبا كيف حالك", "مرحبا كيف حالك") == 0.0
+
+    def test_one_substitution_in_three_words(self) -> None:
+        """One wrong word out of three is a third."""
+        assert word_error_rate("one two three", "one four three") == pytest.approx(1 / 3)
+
+    def test_deletion_counts_as_an_error(self) -> None:
+        """A dropped word is an error."""
+        assert word_error_rate("one two three", "one three") == pytest.approx(1 / 3)
+
+    def test_insertion_counts_as_an_error(self) -> None:
+        """An invented word is an error."""
+        assert word_error_rate("one two", "one two three") == pytest.approx(1 / 2)
+
+    def test_normalization_is_applied_by_default(self) -> None:
+        """Orthographic-only differences score 0.0 normalized."""
+        assert word_error_rate("أهلاً بِكَ في خدمة", "اهلا بك في خدمه") == 0.0
+
+    def test_raw_mode_charges_for_orthography(self) -> None:
+        """Without normalization the same pair looks badly wrong."""
+        raw = word_error_rate("أهلاً بِكَ في خدمة", "اهلا بك في خدمه", normalize=False)
+
+        assert raw > 0.5
+
+    def test_hallucination_may_exceed_one(self) -> None:
+        """A runaway hypothesis scores worse than total loss, not clipped at 1.0."""
+        assert word_error_rate("one", "one two three four five") > 1.0
+
+    def test_empty_reference_against_empty_hypothesis_is_zero(self) -> None:
+        """Nothing expected and nothing produced is not an error."""
+        assert word_error_rate("", "") == 0.0
+
+    def test_empty_reference_against_speech_is_total_error(self) -> None:
+        """Nothing expected but something produced is total error."""
+        assert word_error_rate("", "unexpected words") == 1.0
+
+
+class TestWerByCategory:
+    """Per-language WER aggregation."""
+
+    def test_returns_a_rate_per_language_present(self) -> None:
+        """Each category present in the input gets its own number."""
+        result = wer_by_category(
+            [
+                (Language.AR, "مرحبا كيف حالك", "مرحبا كيف حالك"),
+                (Language.EN, "one two three", "one four three"),
+            ]
+        )
+
+        assert set(result) == {Language.AR, Language.EN}
+        assert result[Language.AR] == 0.0
+        assert result[Language.EN] == pytest.approx(1 / 3)
+
+    def test_never_blends_languages_into_one_number(self) -> None:
+        """Mixed must stay separable from ar and en — the project's standing rule."""
+        result = wer_by_category(
+            [
+                (Language.AR, "a b c d", "a b c d"),
+                (Language.MIXED, "a b c d", "w x y z"),
+            ]
+        )
+
+        assert result[Language.AR] == 0.0
+        assert result[Language.MIXED] == 1.0
+
+    def test_aggregates_by_total_words_not_mean_of_call_rates(self) -> None:
+        """A one-word call must not weigh as much as a long one.
+
+        Per-call mean would give (1.0 + 0.0)/2 = 0.5; word-weighted gives
+        1 error over 11 reference words.
+        """
+        result = wer_by_category(
+            [
+                (Language.EN, "x", "y"),
+                (Language.EN, "a b c d e f g h i j", "a b c d e f g h i j"),
+            ]
+        )
+
+        assert result[Language.EN] == pytest.approx(1 / 11)
+
+    def test_empty_input_returns_empty_mapping(self) -> None:
+        """No data means no categories, not a zero for every language."""
+        assert wer_by_category([]) == {}
+
+
+class TestSpeakerAttributionAccuracy:
+    """The diarization sanity check."""
+
+    def test_identical_timelines_score_one(self) -> None:
+        """A perfect diarization attributes every speech frame correctly."""
+        reference = [(0.0, 2.0, "Agent"), (2.5, 4.5, "Customer")]
+
+        assert speaker_attribution_accuracy(reference, reference) == 1.0
+
+    def test_fully_swapped_labels_score_zero(self) -> None:
+        """Consistently inverted roles are wrong everywhere, not right everywhere."""
+        reference = [(0.0, 2.0, "Agent"), (2.5, 4.5, "Customer")]
+        hypothesis = [(0.0, 2.0, "Customer"), (2.5, 4.5, "Agent")]
+
+        assert speaker_attribution_accuracy(reference, hypothesis) == 0.0
+
+    def test_half_correct_scores_half(self) -> None:
+        """Two equal-length turns, one right, is 0.5."""
+        reference = [(0.0, 2.0, "Agent"), (2.5, 4.5, "Customer")]
+        hypothesis = [(0.0, 2.0, "Agent"), (2.5, 4.5, "Agent")]
+
+        assert speaker_attribution_accuracy(reference, hypothesis) == pytest.approx(0.5)
+
+    def test_silence_between_turns_is_excluded(self) -> None:
+        """Gaps must not inflate the score.
+
+        The reference has a 10s silence after a 1s turn. A hypothesis that is
+        correct on the speech still scores 1.0 — if silence counted, a
+        hypothesis silent everywhere would score ~0.9 for saying nothing.
+        """
+        reference = [(0.0, 1.0, "Agent"), (11.0, 12.0, "Customer")]
+        hypothesis = [(0.0, 1.0, "Agent"), (11.0, 12.0, "Customer")]
+
+        assert speaker_attribution_accuracy(reference, hypothesis) == 1.0
+
+    def test_empty_hypothesis_scores_zero(self) -> None:
+        """Detecting no speakers at all is total failure, not vacuous success."""
+        reference = [(0.0, 2.0, "Agent")]
+
+        assert speaker_attribution_accuracy(reference, []) == 0.0
+
+    def test_empty_reference_scores_zero(self) -> None:
+        """No reference speech means there is nothing to have got right."""
+        assert speaker_attribution_accuracy([], [(0.0, 2.0, "Agent")]) == 0.0
+
+
+class TestSpeakerAttributionAccuracyByCategory:
+    """Per-language aggregation of the diarization sanity check."""
+
+    def test_returns_a_score_per_language_present(self) -> None:
+        """Each category present gets its own number."""
+        perfect = [(0.0, 2.0, "Agent")]
+        swapped = [(0.0, 2.0, "Customer")]
+
+        result = speaker_attribution_accuracy_by_category(
+            [
+                (Language.AR, perfect, perfect),
+                (Language.MIXED, perfect, swapped),
+            ]
+        )
+
+        assert result[Language.AR] == 1.0
+        assert result[Language.MIXED] == 0.0
+
+    def test_never_blends_languages(self) -> None:
+        """mixed stays separable from ar — the project's standing rule."""
+        perfect = [(0.0, 2.0, "Agent")]
+
+        result = speaker_attribution_accuracy_by_category(
+            [(Language.AR, perfect, perfect), (Language.EN, perfect, perfect)]
+        )
+
+        assert set(result) == {Language.AR, Language.EN}
+
+    def test_empty_input_returns_empty_mapping(self) -> None:
+        """No data means no categories."""
+        assert speaker_attribution_accuracy_by_category([]) == {}
+
+
+class TestApostropheNormalization:
+    """Contractions must stay one token on both sides of the comparison."""
+
+    def test_word_internal_apostrophe_is_deleted_not_spaced(self) -> None:
+        """`let's` becomes `lets`, one token, not `let s`."""
+        assert normalize_for_wer("Let's see") == "lets see"
+
+    def test_contraction_against_apostrophe_free_asr_scores_zero(self) -> None:
+        """The bug this rule fixes: ASR dropping the apostrophe is not 2 errors."""
+        assert word_error_rate("Let's see", "lets see") == 0.0
+
+    def test_typographic_apostrophe_is_handled_too(self) -> None:
+        """Whisper emits U+2019, the reference may use U+0027."""
+        assert normalize_for_wer("it’s fine") == normalize_for_wer("it's fine")
+
+    def test_surrounding_quote_marks_are_still_stripped(self) -> None:
+        """Only word-internal apostrophes are deleted; quotes remain punctuation."""
+        assert normalize_for_wer("he said 'hello' loudly") == "he said hello loudly"
+
+    def test_arabic_text_is_unaffected(self) -> None:
+        """The rule targets Latin contractions and must not touch Arabic."""
+        assert normalize_for_wer("أهلاً بك، كيف حالك؟") == "اهلا بك كيف حالك"

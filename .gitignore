@@ -10,8 +10,15 @@ __pycache__/
 # Data — generated/regenerable, not committed
 data/audio/*
 data/synthetic/*
+data/asr_transcripts/*
 !data/audio/.gitkeep
 !data/synthetic/.gitkeep
+
+# The audio manifest IS tracked: ~700 KB of metadata, and it is the phase 3
+# ground truth — it maps each audio file to its reference transcript and to the
+# true speaker of every segment, which is what WER and the diarization check are
+# scored against. The WAVs it points at are ~640 MB and stay out.
+!data/audio/manifest.json
 
 # data/ground_truth/*.json is hand-labeled human work — irreplaceable,
 # tracked in git (unlike audio/synthetic, it cannot be regenerated).

@@ -90,3 +90,732 @@ labels on that sample. That converts the limitation from "unknown" into a
 measured number, and would let the full 150-call figures be read as an
 estimate with a known calibration, rather than as an unvalidated claim. Set
 `human_reviewed: true` per file for any record a person actually reviews.
+
+---
+
+## 2026-09-22 — Phase 2: a deterministic LangGraph pipeline, not a ReAct agent
+
+**Status:** accepted.
+
+### What was decided
+
+The analysis agent is a fixed graph — `extract → ground → score → compliance →
+assess_confidence`, with one conditional edge to `escalate` — rather than a
+ReAct-style agent that picks its own tools each turn.
+
+### Why
+
+The grounding check has to run on every claim, every time. A model that can
+decide *whether* to call a verification step can also decide to skip it, and
+that turns the project's hardest rule — an unsupported claim is rejected — from
+an invariant into a suggestion. Node ordering here is a control, not a
+performance choice: `ground` sits immediately after `extract` so that no
+downstream node can ever read a claim whose evidence has not been verified.
+
+The same reasoning drives the conditional edge. "Low confidence goes to a human"
+is enforced as *topology*: an escalated run suspends inside `escalate` and never
+reaches the auto-pass exit, so there is no provisional result a caller could
+mistake for a verdict. `route_after_confidence` also defaults
+`requires_human_review` to `True` when the key is missing, so a crashed or
+half-run graph escalates rather than silently passing.
+
+### What it costs
+
+No adaptive behaviour. The graph cannot decide to re-read a transcript, ask a
+follow-up, or route around a failing node. Every call pays for the same five
+nodes whether it needs them or not. That is an acceptable price for a system
+whose output is a compliance record; it would not be for an interactive one.
+
+---
+
+## 2026-09-22 — Grounding checks quote *text*, and computes offsets itself
+
+**Status:** accepted, after the first implementation was measured and rejected.
+
+### What was tried first
+
+`ground` was specified to be **position-exact**: keep a claim only if
+`transcript[evidence.start_char:evidence.end_char] == evidence.text`. The
+extraction prompt asked the model for its best-guess offsets on the theory that
+it would often get them wrong, and that catching exactly this was the node's job.
+
+### What measurement showed
+
+Run against real Gemini output on the synthetic set, position-exact grounding
+rejected **~62% of claims whose quote text was verbatim in the transcript**
+(3 of 8 survived across a 4-call, language-balanced sample; 0 of 6 in an earlier
+2-call sample). Inspecting the raw extractions showed why:
+
+| claimed `start_char` | true offset | text verbatim? |
+| --- | --- | --- |
+| 7 | 7 | yes |
+| 133 | 148 | yes |
+| 435 | 562 | yes |
+| 794 | 1109 | yes |
+
+The model copies text honestly and **estimates** offsets, drifting further the
+deeper into the transcript a quote sits. Worse, its `end_char` arithmetic was
+often self-inconsistent (`end_char - start_char != len(text)`), which `Quote`
+rejects — so a single bad offset pair failed the whole `ExtractionProposal` and
+lost every claim in the call, including well-located ones.
+
+Position-exactness was therefore measuring arithmetic competence, not
+truthfulness. It produced a near-total false-rejection rate that would have
+collapsed rubric agreement to ~0 while reporting an unsupported-claim rate of
+0.0 — a hollow number, since nothing survived to be unsupported.
+
+### What was decided instead
+
+A claim is grounded if its quote **text** appears verbatim in the transcript.
+Its offsets are then **computed** from the transcript with
+`sawti.quotes.find_quote_matches` — the same helper the ground-truth authoring
+path uses, for the same reason: a model's offsets are never trusted.
+
+Normalization is **exact**: byte-for-byte, no whitespace folding, no punctuation
+folding, no case folding, no Arabic diacritic stripping. The extraction prompt
+tells the model to copy, not to retype. Forgiving paraphrase or re-punctuation
+would forgive precisely the behaviour that produces unsupported claims, raising
+the pass rate without raising truthfulness.
+
+Separately, `sawti.agent.nodes.extract` now parses provider output through lax
+transport models that repair `end_char` from `start_char + len(text)`. The
+model's `start_char` — its actual positional claim — is carried through
+untouched; only the redundant end offset, which carries no independent
+information, is recomputed.
+
+### What it costs
+
+Two things, both stated rather than hidden:
+
+1. **Repeated phrases anchor to their first occurrence.** A claim about the
+   second "Thank you." in a transcript will be attributed to the first. This can
+   misattribute a claim; it cannot make an unsupported claim look supported.
+2. **The check is weaker than originally intended.** A model that quotes real
+   text about the wrong moment in the call is not caught. Catching that needs
+   the model to be able to locate its own quotes, which this one demonstrably
+   cannot. Revisit if a future model proves it can count.
+
+---
+
+## 2026-09-22 — `score` does real work; `compliance` is a documented passthrough
+
+**Status:** accepted.
+
+Both nodes were scaffolded with stubs implying a second LLM call. Reading what
+each stub actually asked for produced different answers, so they were
+implemented differently.
+
+### `score` — implemented
+
+The stub asked for "exactly one RubricScore per rubric criterion", and a
+canonical set genuinely exists: `sawti.data.ground_truth.RUBRIC_CRITERIA`, seven
+fixed, agreed criteria. Extraction does not enforce it. So `score` reconciles
+the model's output against that set deterministically — discarding criteria
+outside it, collapsing duplicates to their first occurrence, and returning
+results in canonical order so two runs over the same call are comparable.
+
+It never invents a score for a missing criterion. A fabricated `RubricScore`
+would need a fabricated quote, which is the exact failure grounding exists to
+prevent. Unscored criteria are reported as missing.
+
+### `compliance` — deliberate no-op
+
+The stub asked for two things, and neither is available:
+
+- *"Never emit a ComplianceFlag without a grounded evidence quote"* — already
+  guaranteed twice, by `Claim.evidence` at the schema level and by `ground`
+  running upstream. Nothing is left to enforce.
+- *"Assign the severity defined for each violated rule_id"* — needs a rule
+  registry that does not exist. `rule_id` is free-form: the analyst prompt in
+  `sawti.data.ground_truth` tells the model to "choose a short snake_case
+  rule_id", and `sawti.eval.metrics.accuracy_by_category` already acted on that,
+  scoring compliance as a binary "did both sides find any violation at all"
+  because "rule_id vocabularies are model-invented and not comparable, so
+  matching individual flags would measure naming, not detection".
+
+Inventing a registry would contradict a decision already taken in an
+implemented, tested module, and would drop every flag whose model-chosen id
+missed our spelling — lowering measured accuracy while detecting nothing new.
+The node stays in `PIPELINE` so that adding a real rule catalogue later is a
+change to one function body rather than to the graph's topology.
+
+---
+
+## 2026-09-22 — Confidence is grounding coverage, and the threshold stays 0.7
+
+**Status:** accepted as MVP.
+
+### The formula
+
+    confidence = grounding_coverage
+
+the fraction of proposed claims whose evidence survived verification. Chosen
+over a model self-rating for one reason: it is **measured, not asserted**. A
+model asked how confident it is produces a number with no external referent, and
+the phase 1 reference generator already demonstrated that models sound certain
+about quotes they paraphrased. Grounding coverage is computed from the
+transcript, so it cannot be talked up.
+
+It is also the number phase 2 is trying to move, which means the system escalates
+exactly when it has been caught being unsupported.
+
+A run that recorded an `error` scores 0.0 regardless of coverage. Without that
+guard, extraction dying before proposing anything leaves coverage at a vacuous
+1.0 and a broken run auto-passes.
+
+### The threshold
+
+`Settings.confidence_threshold`, default **0.7**, overridable via
+`SAWTI_CONFIDENCE_THRESHOLD`. It is a named setting, not a literal, and it is
+read on every call rather than captured at import, so it can be retuned without
+a redeploy.
+
+The value is inherited from phase 0 and kept deliberately. Under this formula it
+reads as: *a call where more than about a third of claims failed verification
+goes to a human.* Given seven rubric criteria plus commitments, a typical call
+proposes roughly 8-10 claims, so 0.7 tolerates two or three rejections before
+escalating — enough slack for an occasional paraphrase, not enough for a call
+the model was largely inventing. It is a judgment call, not a tuned optimum; the
+data to tune it properly would be human-reviewed escalation outcomes, which
+phase 4 produces.
+
+Comparison is `confidence >= threshold` for auto-pass, so a score sitting exactly
+on the threshold passes. This is pinned by test, because it is the kind of
+boundary that flips silently when someone tidies an operator.
+
+### MVP scope
+
+Ignores extraction completeness — a call proposing one claim and grounding it
+scores 1.0, same as one proposing twenty — along with rubric coverage and any
+notion of model self-certainty. Folding those in is future work.
+
+---
+
+## 2026-09-22 — MemorySaver checkpointer; Postgres deferred to phase 5
+
+**Status:** accepted, with the limitation stated.
+
+`build_graph()` defaults to LangGraph's in-process `MemorySaver`.
+
+A checkpointer is not optional here. `escalate` suspends the run with
+`interrupt()`, and measurement showed that **without a checkpointer the
+interrupt silently does nothing and the run continues past the point a human was
+supposed to take over** — a silent-wrong failure, not a loud one. Defaulting to
+a real saver makes the escalation branch work out of the box.
+
+Postgres was the obvious choice given the project stack, and was rejected for
+phase 2 on dependency grounds: `langgraph-checkpoint-postgres` is not installed,
+and the connection would come from `sawti.db.session`, which is still an
+unimplemented phase 1 stub. Adding a dependency and implementing phase 1 debt to
+serve a graph currently driven by tests and the eval harness is the wrong order
+of work.
+
+**The cost, stated plainly:** `MemorySaver` is process-local and volatile. A
+resume only works inside the same process, and every paused review is lost on
+restart. That is fine for tests and evaluation and **unacceptable for a real
+review queue** — a human-in-the-loop system whose queue evaporates on deploy is
+not a human-in-the-loop system. `build_graph(checkpointer=...)` takes an explicit
+saver, so this is a one-line swap once `sawti.db.session` exists. Deferred to
+phase 5 deployment.
+
+---
+
+## 2026-09-22 — `redact()` implemented at MVP scope: regex only, no NER
+
+**Status:** accepted, with a disclosed gap.
+
+`sawti.privacy.redaction.redact` was a phase 1 stub that raised
+`NotImplementedError`. Phase 2's `extract` sends transcript text to a cloud LLM,
+and "PII redaction runs before any text reaches a model" is a stated project
+rule, so it had to be implemented rather than deferred.
+
+### What it does
+
+Regex redaction of **structured identifiers** — emails, IBANs, payment cards,
+Jordanian national IDs, phone numbers — because those have shape, and shape is
+what a regex can see. Patterns are ordered so the more sensitive reading of an
+ambiguous digit run wins: a bare 10-digit number is treated as a national ID
+rather than a phone number. Arabic-Indic digits are covered, since Python's `\d`
+is Unicode-aware and the synthetic `ar` transcripts use both digit sets
+interchangeably.
+
+`extract` redacts defensively: if a caller did not supply `redacted_transcript`,
+the node redacts `transcript` itself rather than sending raw text to a model.
+
+### What it does not do
+
+**Personal names, addresses, employers, and anything identifiable only in
+context.** These have no regex shape; catching them needs NER. The existing test
+`test_redact_removes_names_in_arabic_and_english` is left in place and
+**skipped**, with a reason pointing here, so the gap stays visible in test output
+rather than being quietly deleted.
+
+Do not read this module as "the transcript is now anonymous". Read it as "the
+obvious identifiers are gone before the text leaves the process". Arabic/English
+NER redaction is the next step before any real customer data touches this system.
+
+---
+
+## 2026-09-22 — Phase 3 audio: synthesized corpus via edge-tts, Jordanian voice pair
+
+**Status:** accepted, with disclosed limitations on what the audio represents.
+
+### The problem
+
+Phase 3 measures ASR quality and how ASR error propagates into extraction.
+The project has no audio: the 150-call Phase 1 corpus is text only. Something
+had to be synthesized before any of it could be measured.
+
+### What was considered
+
+| Option | Arabic voices | Verdict |
+| --- | --- | --- |
+| macOS `say` | **one** (`Majed`, ar_001) | Rejected |
+| Gemini TTS | multi-speaker, official API | Viable, metered |
+| `edge-tts` | `ar-JO-TaimNeural` (M), `ar-JO-SanaNeural` (F) | **Chosen** |
+
+macOS `say` was rejected on a hard blocker: exactly one Arabic voice is
+installed, so both speakers in every `ar` and `mixed` call would be the same
+voice. Faking the second speaker with pitch or rate shifts leaves it the same
+voice acoustically, which would make the diarization ground truth meaningless
+— the metric would be measuring a synthesis artifact.
+
+`edge-tts` was chosen over the metered Gemini path because it needs no API
+key, costs nothing across ~4 hours of audio, and — decisively — carries an
+**ar-JO (Jordanian)** voice pair, matching the dialect the Phase 1 corpus was
+generated in. Voice assignment is per language category:
+
+| Category | Agent | Customer |
+| --- | --- | --- |
+| `ar` | `ar-JO-TaimNeural` | `ar-JO-SanaNeural` |
+| `en` | `en-US-AndrewNeural` | `en-US-AvaNeural` |
+| `mixed` | `en-US-AndrewMultilingualNeural` | `en-US-AvaMultilingualNeural` |
+
+`mixed` uses the multilingual voices because its turns carry Arabic script and
+English in one sentence, which the ar-JO and plain en-US voices both mangle.
+
+### What this costs — read every number against these
+
+1. **It is synthetic speech, not telephony.** No channel noise, no codec
+   artifacts, no crosstalk, no overlapping speech. Real call-centre WER will
+   be worse, likely much worse.
+2. **Both speakers always differ in gender.** ar-JO offers exactly two voices,
+   one of each. That is the easiest case a diarizer ever sees, so the
+   diarization numbers are an optimistic bound, not an estimate.
+3. **`mixed` audio is not authentically code-switched.** The romanized Arabic
+   the Phase 1 generator produced (`momken`, `wallah`, `akid`, `mesh`) is
+   rendered by an English-phonetics voice, because no TTS reads Latin-script
+   Arabic as Arabic. The `mixed` audio is therefore closer to
+   English-accented speech than to a Jordanian speaker code-switching. This
+   confounds the `mixed` category specifically, and it is the reason the
+   language-forcing result below must not be read as a fact about real
+   code-switched speech.
+4. **One voice per role across the whole corpus.** No speaker variability, so
+   nothing here measures robustness to an unfamiliar voice.
+
+Closing 1–4 needs real recorded calls, which is a data-collection problem
+rather than an engineering one.
+
+### Ground truth, and why it is exact
+
+Each turn is synthesized separately and the turns are concatenated
+sample-by-sample at 16 kHz with a fixed 0.3 s silent gap. Segment boundaries
+come from exact frame counts rather than from analyzing the mixed-down file,
+so `AudioSegment.start_sec` / `end_sec` in `data/audio/manifest.json` are
+accurate to the sample. A test asserts the manifest timeline against the
+duration of the WAV actually written; if those ever drift, every diarization
+number silently becomes wrong, so it is pinned rather than trusted.
+
+Boundary *reconstruction* from a finished file was tried and rejected —
+detecting the silent gaps recovered 12 segments for a call that truly has 8,
+because decoded TTS output contains its own runs of exact-zero samples, and
+misplaced boundaries by up to 224 ms. The progress sidecar exists instead.
+
+---
+
+## 2026-09-22 — Whisper `large-v3-turbo`, not `large-v3`
+
+**Status:** accepted. Config default changed, deliberately and visibly.
+
+### Why
+
+The development machine is an 8 GB M1 (8 cores, arm64). Measured on it:
+
+| Model / backend | Throughput | Full 150-call corpus (~4 h audio) |
+| --- | --- | --- |
+| `large-v3`, openai-whisper on CPU | well under 0.1x realtime | days |
+| `large-v3-turbo`, mlx-whisper on the M1 GPU | **~2.2x realtime** | ~2 hours |
+
+`large-v3` is also a 3.09 GB checkpoint against 8 GB of shared RAM. The turbo
+model is ~1.6 GB and runs through MLX on the GPU.
+
+### What changed
+
+`Settings.whisper_model` now defaults to `"large-v3-turbo"` rather than
+`"large-v3"`. This is a change to a documented default, so it is recorded here
+rather than made silently: the field carries a comment pointing at this entry,
+and `.env.example` says how to put `large-v3` back on hardware that can carry
+it.
+
+### What it costs
+
+Turbo is a distilled 809M-parameter decoder. It is measurably weaker than full
+`large-v3` on hard audio, and this project has not measured how much weaker on
+Arabic, because running the `large-v3` arm on this hardware was not practical.
+**So the WER figures in `eval_results.md` are turbo's, not the best this
+pipeline could do.** A machine with a real GPU should re-run the corpus under
+`large-v3` before any WER number here is quoted as the system's capability.
+
+`sawti.asr.transcribe` keeps both backends behind one interface and falls back
+to `openai-whisper` where MLX is unavailable, so this is a default, not a lock-in.
+
+---
+
+## 2026-09-22 — Arabic WER is scored on normalized text, with raw reported alongside
+
+**Status:** accepted.
+
+### The problem
+
+Arabic has several orthographic ways to write the same word. Whisper chooses
+among them differently than the reference text does, and none of the
+differences change what was said. Scoring raw text charges the recognizer for
+spelling it never got wrong.
+
+Measured on one reference/hypothesis pair that says the identical thing:
+
+| | WER |
+| --- | --- |
+| Raw | **0.80** |
+| Normalized | **0.00** |
+
+An unnormalized Arabic WER is not a small overstatement; it is dominated by
+orthography.
+
+### The rule
+
+`sawti.eval.metrics.normalize_for_wer`, applied to both sides before scoring:
+
+1. Strip diacritics (harakat, shadda, sukun, superscript alef) and tatweel.
+2. Fold alef variants `أ إ آ ٱ` → `ا`.
+3. Fold alef maqsura `ى` → `ي`, ta marbuta `ة` → `ه`.
+4. Fold hamza carriers `ؤ` → `و`, `ئ` → `ي`.
+5. Map Arabic-Indic digits `٠-٩` → `0-9`.
+6. Lowercase — this matters for the Latin half of code-switched text.
+7. Delete *word-internal* apostrophes, so `let's` becomes `lets` rather than
+   `let s`. Spacing them would split one token into two, and an ASR `lets`
+   would then score two errors against the reference for at most one. Quote
+   marks around a word are still stripped as punctuation.
+8. Strip remaining punctuation (Arabic and Latin) and collapse whitespace.
+
+This is the standard convention in Arabic ASR evaluation, so the resulting
+figures are comparable to published ones.
+
+### What is reported
+
+**Both.** Normalized WER is the headline; raw WER is reported next to it in
+every `eval_results.md` table, so the normalization cannot hide a regression.
+
+### What it costs
+
+Folds 2–4 are lossy: `ة`/`ه` and `ى`/`ي` are genuinely different letters, and
+a recognizer that confuses them is making a real error this metric forgives.
+The raw column is what catches that. Edit distance is computed in-repo
+(`_edit_distance`) rather than via `jiwer`, because jiwer's default transforms
+are Latin-oriented and would have to be disabled anyway; rolling it keeps what
+is being measured explicit.
+
+---
+
+## 2026-09-22 — Phase 1 transcripts carry a speaker-prefix defect; repaired by table, not in place
+
+**Status:** accepted. Defect documented, corpus left untouched.
+
+### The defect
+
+Sixteen lines across ten of the 150 Phase 1 transcripts have no usable
+`Agent:` / `Customer:` prefix:
+
+- **Three corrupted prefix words** — `Commissioner:` (`call_0064_en:3`),
+  `Component:` (`call_0072_en:5`), and a half-retracted
+  `Cousin... عفواً، Customer:` (`call_0067_mixed:6`).
+- **One prompt-metadata leak** — `Category: Account Closure`
+  (`call_0148_mixed:5`), which is not speech at all.
+- **Twelve bare lines** that simply lost the prefix, seven of them
+  consecutive in `call_0036_mixed`.
+
+### Why it could not be papered over
+
+The obvious rule — "a bare line continues the previous speaker" — is **wrong
+for nearly half the affected lines**. `call_0036_mixed` lines 5–11 alternate
+Agent/Customer/Agent/…; the continuation rule would collapse all seven into
+one speaker. Since the true speaker per turn *is* the reference signal the
+diarization metric is scored against, a guess there would mean the metric
+measures the guess.
+
+### What was done
+
+`sawti.data.transcript_parser.SPEAKER_REPAIRS` records a hand-verified
+attribution per affected line, each read against the turns around it. Any
+unprefixed line **not** in the table raises `UnattributableLineError` rather
+than defaulting — the parser fails loudly instead of inventing ground truth. A
+test asserts every repair still targets a genuinely defective line, so a stale
+entry cannot silently relabel a good one.
+
+The defect is **not** patched in `data/synthetic/`. That corpus is the frozen
+input to the Phase 1 and Phase 2 numbers already in `eval_results.md`; editing
+it would invalidate the clean-vs-ASR comparison this phase exists to make.
+
+### Carried debt
+
+The Phase 1 generator can emit these. Worth fixing at the source before the
+next corpus is generated; tracked here, not fixed in this phase.
+
+---
+
+## 2026-09-22 — Diarization implemented but unverified: pyannote weights are gated
+
+**Status:** blocked on a credential only the project owner can supply.
+
+### The blocker
+
+`pyannote/speaker-diarization-3.1` and its `pyannote/segmentation-3.0`
+dependency are gated on HuggingFace. Unauthenticated fetches return **HTTP
+401**; the repo metadata is public but the weights are not. Verified at the
+start of this phase, before any implementation:
+
+```
+pyannote/segmentation-3.0 pytorch_model.bin  ->  HTTP 401
+"Access to model pyannote/speaker-diarization-3.1 is restricted."
+```
+
+Clearing it needs a HuggingFace account to accept the licence conditions on
+**both** repos and mint a read token. That is an account action belonging to
+the project owner, not something this implementation could or should do.
+
+For the record, the rest of the network is open from this machine — the
+Whisper checkpoint host (`openaipublic.azureedge.net`), `huggingface.co` and
+PyPI are all reachable, and the Whisper weights downloaded without
+authentication. The gate is licence acceptance, not network policy.
+
+### What was built anyway
+
+`sawti.asr.diarization` is complete against the pyannote 3.1 API:
+`diarize()`, the `merge_transcript_with_speakers` overlap alignment, and
+`assign_roles_by_first_speaker`. Its tests stub the pipeline boundary, so they
+pin the contract this module owns — ordering, the token error path, greatest-
+overlap resolution, the no-overlap fallback — but **not** pyannote's
+clustering quality, which is unmeasured.
+
+`_load_pipeline` raises `DiarizationUnavailableError` naming both repos that
+need accepting, because pyannote's own failure mode here is to return `None`
+and fail confusingly further down.
+
+`speaker_attribution_accuracy_by_category` is implemented and tested against
+constructed timelines, ready to run the moment a token exists.
+
+### What is therefore unverified
+
+No diarization number appears in `eval_results.md` for this phase. Set
+`HF_TOKEN` in `.env` and the sanity check runs; until then the roadmap's
+"integrate Whisper with speaker diarization" is half-done, and honestly so.
+
+---
+
+## 2026-09-22 — The propagation experiment uses oracle speakers, deliberately
+
+**Status:** accepted. Makes the headline number a lower bound.
+
+### The decision
+
+`sawti.eval.experiments.asr_propagation` reruns the Phase 2 agent over ASR
+transcripts, but takes speaker labels from the audio manifest's **true**
+timeline rather than from diarization.
+
+### Why
+
+The clean Phase 1 transcripts are speaker-labelled. Feeding the agent
+unlabelled ASR text would change two things at once — the words *and* the
+presence of speaker structure — and the resulting delta would not be
+attributable to either. With oracle attribution the only variable is the
+words, so the delta is ASR text error and nothing else.
+
+This also happens to be the only option available while diarization is gated,
+but it is the right experimental design regardless, and it would remain the
+right *first* arm even with a token in hand.
+
+### What it costs
+
+**The propagation delta is a lower bound on the true cost of an audio front
+end.** Real deployment stacks diarization error on top: a mis-attributed turn
+can move a commitment from the customer to the agent, which is exactly the
+kind of error the rubric is sensitive to. Quantifying that needs the gated
+pipeline, and the second arm should be run once a token exists.
+
+The ASR text is re-rendered into the same `Agent:` / `Customer:` line format
+as the clean corpus, merging consecutive same-speaker segments into one turn,
+so the two runs differ in content rather than in shape.
+
+---
+
+## 2026-09-22 — Forced Whisper language is per language category, not global
+
+**Status:** accepted. Supersedes the single global `WHISPER_LANGUAGE` for the
+`en` category.
+
+### What measurement showed
+
+The first full corpus run forced `language="ar"` for all 150 calls, because
+`Settings.whisper_language` was a single global value. For the 30 English
+calls that means English audio decoded by the Arabic decoder. It mostly
+survived that — English median WER was **0.031** — but not always:
+
+| Call | Words | WER | What came back |
+| --- | --- | --- | --- |
+| `call_0070_en` | 615 | **1.000** | 93% Arabic script; one token is 44% of the output |
+
+`call_0070_en` is a total loss: Whisper entered a repetition loop and emitted
+Arabic gibberish (`بك بك بك …`) for a 615-word English call. One call, but it
+is most of the English mean — **median 0.031 against a mean of 0.130**. A
+single catastrophic failure was dominating the category's headline number.
+
+Four of 150 calls (2.7%) hit repetition loops overall: three `mixed`, one
+`en`. Only the `en` one is attributable to the forced language, since for
+`mixed` the Arabic decoder is the intended choice.
+
+### What was decided
+
+| Category | Forced language | Changed? |
+| --- | --- | --- |
+| `ar` | `ar` | unchanged |
+| `en` | **`en`** | **changed** |
+| `mixed` | `ar` | unchanged |
+
+`mixed` deliberately stays on the Arabic decoder. The forced-`ar`-versus-
+auto-detect comparison already covers the code-switched question the roadmap
+asks about; adding a forced-`en` arm for `mixed` would be a third condition
+answering a question nobody asked.
+
+### How it is configured
+
+`Settings.whisper_language` remains the fallback. A new
+`Settings.whisper_language_overrides` (`WHISPER_LANGUAGE_OVERRIDES`, JSON)
+maps a `Language` category to its forced code, and
+`Settings.whisper_language_for(category)` resolves one against the other.
+`transcribe()` takes a `category` argument; passing it opts into per-category
+resolution, and omitting it preserves the old global behaviour for existing
+callers.
+
+One implementation note worth keeping, because it failed silently first time:
+`Language` is a `str` Enum, so `str(Language.EN)` is `"Language.EN"`, not
+`"en"`. Resolving the override key by `str()` fell straight through to the
+global fallback and produced exactly the behaviour this setting exists to
+prevent. The lookup uses `.value`, and a test asserts the enum and the bare
+string resolve identically.
+
+Setting `WHISPER_LANGUAGE_OVERRIDES` replaces the whole mapping rather than
+merging into it, so an override set in the environment must list every
+category it wants changed. `.env.example` says so.
+
+### What it costs
+
+English WER figures from before this change are not comparable with those
+after it, so the `en` column was **re-measured** on the 30 English calls
+rather than carried forward. `ar` and `mixed` are untouched and their numbers
+stand. Both are recorded in `eval_results.md`.
+
+This does not make Whisper repetition-proof — it removes one cause of one
+failure. The three `mixed` repetition loops remain, and no mitigation
+(`condition_on_previous_text=False`, a compression-ratio threshold, or
+chunking) has been tried. Carried debt.
+
+---
+
+## 2026-09-22 — Roadmap phase numbers reconciled: audio is Phase 3, Service folds into Phase 5
+
+**Status:** accepted.
+
+### The conflict
+
+`docs/08-ROADMAP.md` numbered Phase 3 *Service* (FastAPI, Postgres, Celery —
+never started) and Phase 5 *Deployment* (containerization, Postgres
+checkpointing, Langfuse, plus the ASR front end). The ASR work that actually
+landed on 2026-09-22 was built against a working brief that called it
+"Phase 3 (Audio)", and every place the code refers to its own phase —
+`sawti.asr`'s module docstrings, this file's audio-related entries, and
+`eval_results.md`'s round headings — says `phase-3`. Continuous-learning
+work (`sawti.memory.*`, `sawti.api.routes.reviews`, `sawti.config`) already
+says `phase-4` in both the code and this file, so that number was never in
+dispute.
+
+Two numbering schemes for the same repository, disagreeing about what
+"Phase 3" and "Phase 5" mean, is worse than either one alone — it makes
+"Phase 3" ambiguous in conversation and in future commit messages.
+
+### What was decided
+
+Resolved in favor of the code, since it is the larger, harder-to-edit
+surface and rewriting docs is cheaper than relabeling working modules and
+their tests:
+
+- **Phase 3 is Audio** — matches `sawti.asr`, its existing decision records,
+  and `eval_results.md` exactly. No code or test changes needed.
+- **Phase 4 stays Memory and self-improvement** — already agreed everywhere.
+- **Service (FastAPI, Postgres persistence, Celery workers, the review API)
+  folds into Phase 5**, alongside the deployment work it was always going to
+  ship with (containerization, Postgres-backed checkpointing, Langfuse).
+  Nothing built exists under the old Phase 3 *Service* label, so nothing
+  needed relabeling there — only the roadmap's own text and phase number.
+
+### What it costs
+
+Nothing was built under the old numbering, so this is a documentation-only
+change: `docs/08-ROADMAP.md`'s phase headings and "done when" criteria were
+rewritten, this entry records why, and no source module, test, or prior
+decision entry needed touching. Phase 4 (continuous learning) can now
+proceed without an unresolved numbering question sitting in front of it.
+
+---
+
+## 2026-09-22 — `sawti.db.session` implemented; needs a running Postgres, not assumed by the code
+
+**Status:** accepted.
+
+`get_engine()` and `get_session()` are implemented: `get_engine()` is an
+`lru_cache`-memoized `create_engine(get_settings().database_url,
+pool_pre_ping=True)`, and `get_session()` is a `@contextlib.contextmanager`
+wrapping a `sqlalchemy.orm.Session` bound to it — commits on a clean exit,
+rolls back and re-raises on exception, always closes via the `Session`'s own
+context-manager protocol. Neither function reads anything except
+`Settings.database_url`; there is no `docker`, `localhost`, or hardcoded
+credential anywhere in the module. Pointing at a different Postgres —
+CI, staging, a teammate's own instance — is purely a `DATABASE_URL` change.
+
+### Running it locally
+
+`docker-compose.yml` has a matching `postgres` service; `docker compose up
+-d` starts it. `tests/db/test_session.py` and `tests/db/test_models.py` are
+integration tests against a real Postgres — `sawti.db.models` uses
+Postgres-only column types (`JSONB`, native `UUID`), so sqlite cannot stand
+in — and will fail with a connection error if nothing is listening.
+
+One local wrinkle, recorded here because it cost real debugging time and
+will recur for anyone else with the same setup: this machine already runs a
+Homebrew-installed Postgres bound to `127.0.0.1:5432` and `[::1]:5432`.
+Docker's own port-forwarding for `5432` binds the IPv6 wildcard address, and
+on macOS the more specific Homebrew socket wins for connections to
+`localhost`/`127.0.0.1`, so the app silently talked to the wrong Postgres
+(no `sawti` role, so it failed loudly here — it would not have if a role of
+that name had existed there by coincidence). Fixed by remapping the
+`postgres` service to host port `5433` via `docker-compose.yml`'s existing
+`POSTGRES_PORT` variable and pointing `DATABASE_URL` at `5433` — both set in
+the local `.env`, not in code, so it costs nothing on a machine without this
+conflict.
+
+### What it costs
+
+`Base.metadata.create_all()` is called directly by the `test_session.py`
+fixture rather than through Alembic — this project has an `alembic`
+dependency but no migrations directory yet. Fine for tests against a
+disposable container; a real deployment (Phase 5) needs actual migrations
+before this stops being acceptable.

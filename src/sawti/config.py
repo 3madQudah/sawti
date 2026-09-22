@@ -66,8 +66,51 @@ class Settings(BaseSettings):
     langfuse_host: str = Field(default="https://cloud.langfuse.com", alias="LANGFUSE_HOST")
 
     # --- ASR ---
-    whisper_model: str = Field(default="large-v3", alias="WHISPER_MODEL")
+    # "large-v3-turbo" rather than "large-v3": on the 8 GB M1 this project is
+    # developed on, turbo runs at ~2x realtime against well under 0.1x for
+    # large-v3 on CPU, which is the difference between a 2-hour and a multi-day
+    # corpus run. Accuracy cost is measured in eval_results.md; rationale in
+    # docs/09-DECISIONS.md. Override with WHISPER_MODEL=large-v3 on a box that
+    # can carry it.
+    whisper_model: str = Field(default="large-v3-turbo", alias="WHISPER_MODEL")
+    # Forced, never auto-detected — Whisper detects from the first 30s only and
+    # mis-commits code-switched calls. See sawti.asr.transcribe.
+    #
+    # This is the *fallback*, applied to any language category without an entry
+    # in `whisper_language_overrides`. It is deliberately not the only knob: a
+    # single global forced language sent every English call through the Arabic
+    # decoder, which mostly worked but produced one total loss
+    # (`call_0070_en`, 615 words of Arabic repetition-loop output, WER 1.000).
+    # See docs/09-DECISIONS.md.
     whisper_language: str = Field(default="ar", alias="WHISPER_LANGUAGE")
+    # Per-language-category forced language, overriding `whisper_language`.
+    # Keys are `sawti.schemas.Language` values. The default encodes the decision
+    # of 2026-09-22: `en` decodes as English, while `ar` and `mixed` both stay
+    # on the Arabic decoder. Set as JSON, e.g.
+    # WHISPER_LANGUAGE_OVERRIDES='{"en": "en", "mixed": "ar"}'
+    whisper_language_overrides: dict[str, str] = Field(
+        default_factory=lambda: {"en": "en"}, alias="WHISPER_LANGUAGE_OVERRIDES"
+    )
+    # Required for pyannote's gated diarization pipelines. Accept the licences
+    # at pyannote/segmentation-3.0 and pyannote/speaker-diarization-3.1 first.
+    hf_token: str | None = Field(default=None, alias="HF_TOKEN")
+
+
+    def whisper_language_for(self, category: str) -> str:
+        """Return the forced Whisper language for a language category.
+
+        Args:
+            category: A `sawti.schemas.Language` value, e.g. `"en"`. A
+                `Language` member may be passed directly; its `.value` is
+                used, since `str(Language.EN)` is `"Language.EN"` rather
+                than `"en"`.
+
+        Returns:
+            The override for `category` if one is configured, else
+            `whisper_language`.
+        """
+        key = getattr(category, "value", category)
+        return self.whisper_language_overrides.get(key, self.whisper_language)
 
 
 @lru_cache

@@ -136,6 +136,30 @@ class RubricScore(Claim):
     justification: str = Field(..., min_length=1)
 
 
+class ExtractionProposal(BaseModel):
+    """Raw shape the LLM is asked to produce during extraction.
+
+    NOT the validated agent output — this exists only as the response_model
+    for LLMProvider.structured_complete(). It mirrors CallAnalysis's
+    extractable fields but omits what extraction doesn't decide yet (id,
+    call_id, language, confidence, requires_human_review).
+
+    Commitment/ComplianceFlag/RubricScore all require a valid Quote, which
+    only checks internal arithmetic (end_char - start_char == len(text)) —
+    not that the offsets actually point at that text in the real transcript.
+    A model can satisfy the first while being wrong about the second.
+    ground() closes that gap by re-checking every quote against the real
+    transcript at those offsets. A model's offsets are a proposal, never a
+    fact, until grounding confirms them.
+    """
+
+    summary: str = Field(..., min_length=1)
+    commitments: list[Commitment] = Field(default_factory=list)
+    compliance_flags: list[ComplianceFlag] = Field(default_factory=list)
+    rubric_scores: list[RubricScore] = Field(default_factory=list)
+    sentiment_trajectory: SentimentTrajectory = Field(default_factory=SentimentTrajectory)
+
+
 class CallAnalysis(BaseModel):
     """Top-level output of the analysis agent for a single call.
 

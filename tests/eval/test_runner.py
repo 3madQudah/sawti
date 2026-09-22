@@ -143,13 +143,18 @@ def _stub_llm(monkeypatch):
     return provider
 
 
-def test_run_eval_returns_all_three_metrics_per_language(dataset, _stub_llm):
+def test_run_eval_returns_all_metrics_per_language(dataset, _stub_llm):
     """run_eval() returns every metric keyed by name, each mapping Language to a float."""
     ground_truth_dir, synthetic_dir, output_path = dataset
 
     results = run_eval(ground_truth_dir, output_path=output_path, synthetic_dir=synthetic_dir)
 
-    assert set(results) == {"Accuracy", "Rubric agreement", "Grounding precision"}
+    assert set(results) == {
+        "Accuracy",
+        "Rubric agreement",
+        "Grounding precision",
+        "Unsupported claim rate",
+    }
     for scores in results.values():
         assert set(scores) == {Language.AR, Language.EN}
         assert all(isinstance(value, float) for value in scores.values())
@@ -232,3 +237,35 @@ def test_run_eval_rejects_an_empty_reference_set(tmp_path, _stub_llm):
 
     with pytest.raises(ValueError, match="no reference-label records"):
         run_eval(empty, output_path=tmp_path / "out.md", synthetic_dir=tmp_path)
+
+
+def test_run_eval_uses_a_supplied_extractor_instead_of_the_baseline(dataset, _stub_llm):
+    """run_eval() runs whatever extractor it is given — this is what makes phase 2 comparable.
+
+    The phase 1 baseline and the phase 2 graph differ only by this callable;
+    reference set, metrics, and reporting stay identical.
+    """
+    ground_truth_dir, synthetic_dir, output_path = dataset
+    seen: list[str] = []
+
+    def _fake_extractor(path):
+        seen.append(path.name)
+        # Language is irrelevant here; what matters is that run_eval used *this*
+        # callable and produced real predictions from it.
+        return _reference(path.stem, Language.AR)
+
+    run_eval(
+        ground_truth_dir,
+        output_path=output_path,
+        synthetic_dir=synthetic_dir,
+        extractor=_fake_extractor,
+        experiment_name="phase 2 test",
+    )
+
+    assert len(seen) == 2
+    # The baseline extractor must not have been called at all.
+    assert _stub_llm.calls == 0
+    written = output_path.read_text(encoding="utf-8")
+    assert "phase 2 test" in written
+    # And the run really scored something — no swallowed extractor error.
+    assert "Extraction failures" not in written

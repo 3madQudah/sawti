@@ -30,6 +30,16 @@ dependencies = [
 asr = [
     "openai-whisper>=20231117",
     "pyannote.audio>=3.1,<4.0",
+    # Apple-Silicon Whisper backend. Runs large-v3-turbo on the M1 GPU via MLX,
+    # ~8x faster than CPU large-v3 on this hardware (see docs/09-DECISIONS.md).
+    # Optional at runtime: sawti.asr.transcribe falls back to openai-whisper
+    # where MLX is unavailable.
+    "mlx-whisper>=0.4; sys_platform == 'darwin' and platform_machine == 'arm64'",
+]
+tts = [
+    # Synthesizes the Phase 3 evaluation audio from the Phase 1 transcripts.
+    # Chosen for its ar-JO (Jordanian) voice pair; see docs/09-DECISIONS.md.
+    "edge-tts>=6.1,<8.0",
 ]
 vllm = [
     "vllm>=0.5,<0.6",
@@ -59,7 +69,14 @@ src = ["src", "tests"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "N", "ANN", "RUF"]
-ignore = ["ANN401"]
+# ANN101/ANN102 (annotate `self`/`cls`) are deprecated upstream in ruff and
+# were never satisfied in this repo — annotating `self` carries no information.
+# RUF001/2/3 (ambiguous unicode) fire on essentially every Arabic literal —
+# alef reads as `l`, heh as `o`, the Arabic-Indic digits as Latin letters. This
+# is a bilingual Arabic/English codebase whose test fixtures, WER normalization
+# table and transcript repairs are all necessarily Arabic text, so the rule is
+# pure noise here rather than a real homoglyph risk.
+ignore = ["ANN401", "ANN101", "ANN102", "RUF001", "RUF002", "RUF003"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["ANN"]
@@ -72,7 +89,7 @@ mypy_path = "src"
 exclude = ["notebooks", "scripts"]
 
 [[tool.mypy.overrides]]
-module = ["whisper.*", "pyannote.*", "vllm.*", "langfuse.*"]
+module = ["whisper.*", "pyannote.*", "vllm.*", "langfuse.*", "mlx_whisper.*", "edge_tts.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

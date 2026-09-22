@@ -5,7 +5,10 @@ Phase 0: mirrors `src/sawti/config.py`.
 
 from __future__ import annotations
 
+import pytest
+
 from sawti.config import Settings, get_settings
+from sawti.schemas import Language
 
 
 def test_settings_defaults_confidence_threshold_when_unset(monkeypatch) -> None:
@@ -32,3 +35,44 @@ def test_settings_defaults_llm_provider_to_anthropic(monkeypatch) -> None:
 def test_get_settings_returns_cached_singleton() -> None:
     """get_settings() returns the same Settings instance on repeated calls."""
     assert get_settings() is get_settings()
+
+
+class TestWhisperLanguageForCategory:
+    """Per-language-category forced Whisper language."""
+
+    def test_english_overrides_the_global_default(self) -> None:
+        """The 2026-09-22 decision: en decodes as English, not Arabic."""
+        assert Settings().whisper_language_for(Language.EN) == "en"
+
+    @pytest.mark.parametrize("category", [Language.AR, Language.MIXED])
+    def test_arabic_and_mixed_use_the_global_default(self, category: Language) -> None:
+        """ar and mixed both stay on the Arabic decoder."""
+        settings = Settings()
+
+        assert settings.whisper_language_for(category) == settings.whisper_language
+
+    def test_accepts_a_plain_string_category(self) -> None:
+        """Callers holding a bare 'en' need not construct the enum."""
+        assert Settings().whisper_language_for("en") == "en"
+
+    def test_enum_member_resolves_by_value_not_repr(self) -> None:
+        """Guards a real bug: str(Language.EN) is 'Language.EN', not 'en'.
+
+        Resolving by repr silently fell through to the global fallback, which
+        is exactly the behaviour this setting exists to fix.
+        """
+        assert Settings().whisper_language_for(Language.EN) == Settings().whisper_language_for("en")
+
+    def test_unknown_category_falls_back_to_the_global_default(self) -> None:
+        """An unmapped category must not raise mid-corpus."""
+        settings = Settings()
+
+        assert settings.whisper_language_for("klingon") == settings.whisper_language
+
+    def test_overrides_are_configurable_from_the_environment(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """The mapping is settings, not a hardcoded table."""
+        monkeypatch.setenv("WHISPER_LANGUAGE_OVERRIDES", '{"mixed": "en"}')
+
+        assert Settings().whisper_language_for(Language.MIXED) == "en"

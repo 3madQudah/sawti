@@ -19,8 +19,9 @@ import re
 from collections import defaultdict
 from pathlib import Path
 
+from sawti.agent.nodes.ground import is_grounded
 from sawti.quotes import is_verbatim
-from sawti.schemas import CallAnalysis, Language, Quote
+from sawti.schemas import CallAnalysis, Claim, Language, Quote
 
 DEFAULT_SYNTHETIC_DIR = Path("data/synthetic")
 
@@ -261,3 +262,310 @@ def grounding_precision_by_category(
     return {
         language: (grounded[language] / count if count else 0.0) for language, count in total.items()
     }
+
+
+def unsupported_claim_rate_by_category(
+    predictions: list[CallAnalysis],
+    *,
+    transcript_dir: Path = DEFAULT_SYNTHETIC_DIR,
+) -> dict[Language, float]:
+    """Fraction of emitted claims whose evidence does not hold up, per category. Lower is better.
+
+    This is the phase 2 headline metric, and the one number that says whether
+    the grounding gate did anything. Like `grounding_precision_by_category` it
+    needs no reference labels — it checks predictions against the transcripts
+    themselves — so it is not an LLM-vs-LLM comparison.
+
+    Scoring rule: pooled over every `Claim` in every call of a language —
+    commitments, compliance flags, and rubric scores. Sentiment points are
+    excluded because `SentimentPoint` is not a `Claim`; it is an interpretation
+    of the call rather than an assertion about it, and the project rule this
+    metric tracks is about claims.
+
+    A claim counts as unsupported when its quote text does not appear verbatim
+    in the transcript. This deliberately reuses `sawti.agent.nodes.ground`'s own
+    predicate rather than restating it, so the metric measures exactly what the
+    graph's gate enforces and the two can never drift apart.
+
+    It differs from `grounding_precision_by_category` in *what it counts*, not in
+    how it decides: that metric pools every evidence quote including sentiment
+    points and reports the fraction that verify; this one pools `Claim`s only and
+    reports the fraction that do not. On claim-only input the two are
+    complements.
+
+    What a drop in this number does and does not mean: it means fewer
+    unsupported claims reach anything downstream. It does **not** by itself mean
+    the model hallucinates less — a pipeline that rejects bad claims and one
+    that never produces them both score 0.0 here. Read it alongside the
+    grounding-gate counts recorded in `eval_results.md`.
+
+    A prediction whose transcript file is missing is skipped with no claims
+    counted, so a missing file cannot look like a perfect score.
+
+    Args:
+        predictions: Analyses as the pipeline emits them.
+        transcript_dir: Directory holding `<call_id>.txt` transcripts.
+
+    Returns:
+        A mapping from each `Language` present in the data to its unsupported
+        claim rate, in [0.0, 1.0]. Never a single blended float.
+    """
+    unsupported: dict[Language, int] = defaultdict(int)
+    total: dict[Language, int] = defaultdict(int)
+
+    transcript_cache: dict[str, str | None] = {}
+
+    for prediction in predictions:
+        if prediction.call_id not in transcript_cache:
+            path = transcript_dir / f"{prediction.call_id}.txt"
+            transcript_cache[prediction.call_id] = (
+                path.read_text(encoding="utf-8") if path.is_file() else None
+            )
+        transcript = transcript_cache[prediction.call_id]
+        if transcript is None:
+            continue
+
+        claims: list[Claim] = [*prediction.commitments, *prediction.compliance_flags]
+        claims.extend(prediction.rubric_scores)
+        for claim in claims:
+            total[prediction.language] += 1
+            if not is_grounded(transcript, claim):
+                unsupported[prediction.language] += 1
+
+    return {
+        language: (unsupported[language] / count if count else 0.0)
+        for language, count in total.items()
+    }
+
+
+# ---------------------------------------------------------------------------
+# Phase 3: ASR metrics
+# ---------------------------------------------------------------------------
+
+#: Arabic diacritics (harakat, shadda, sukun) and the superscript alef.
+_ARABIC_DIACRITICS = re.compile(r"[ً-ٰٟ]")
+#: Tatweel / kashida, a purely decorative letter-stretching character.
+_TATWEEL = re.compile(r"ـ")
+#: Apostrophes are *deleted*, not spaced: replacing them would split "let's"
+#: into two tokens, so an ASR "lets" would score two errors against a
+#: one-token reference for what is at most one. Applies to the Latin half of
+#: code-switched text, where contractions are common.
+_APOSTROPHE = re.compile(
+    r"(?<=[A-Za-z])[\u0027\u2018\u2019\u02BC](?=[A-Za-z])"
+)
+#: Punctuation to drop, Arabic and Latin, plus the common typographic quotes.
+#: Replaced by a space, since these genuinely separate words.
+_PUNCTUATION = re.compile(r"[.,!?;:\-–—_'\"“”‘’()\[\]{}/\\«»…،؛؟٪]")
+_WHITESPACE = re.compile(r"\s+")
+
+#: Orthographic folds applied before scoring Arabic WER.
+_ARABIC_FOLDS = str.maketrans(
+    {
+        "أ": "ا", "إ": "ا", "آ": "ا", "ٱ": "ا",  # alef variants
+        "ى": "ي",  # alef maqsura -> ya
+        "ة": "ه",  # ta marbuta -> ha
+        "ؤ": "و", "ئ": "ي",  # hamza carriers
+        "٠": "0", "١": "1", "٢": "2", "٣": "3", "٤": "4",
+        "٥": "5", "٦": "6", "٧": "7", "٨": "8", "٩": "9",
+    }
+)
+
+
+def normalize_for_wer(text: str) -> str:
+    """Apply the project's orthographic normalization before WER scoring.
+
+    Arabic has several ways to write the same word, and Whisper picks between
+    them differently than the reference does. Scoring raw text charges the
+    recognizer for orthography it never got wrong: an unnormalized Arabic WER
+    is inflated by hamza seating, ta-marbuta and absent diacritics, none of
+    which change what was said.
+
+    The rule, applied in order:
+
+    1. Strip diacritics (harakat, shadda, sukun, superscript alef) and tatweel.
+    2. Fold alef variants (أ إ آ ٱ) to bare alef.
+    3. Fold alef maqsura (ى) to ya, ta marbuta (ة) to ha.
+    4. Fold hamza carriers (ؤ → و, ئ → ي).
+    5. Map Arabic-Indic digits to ASCII.
+    6. Lowercase, which matters for the Latin half of code-switched text.
+    7. Strip punctuation and collapse whitespace.
+
+    This is the standard convention in Arabic ASR evaluation, so the numbers it
+    produces are comparable to published figures. The unnormalized WER is
+    reported alongside it in `eval_results.md` so nothing is hidden — see
+    `docs/09-DECISIONS.md`.
+
+    Args:
+        text: Raw reference or hypothesis text.
+
+    Returns:
+        The normalized text, space-separated.
+    """
+    text = _ARABIC_DIACRITICS.sub("", text)
+    text = _TATWEEL.sub("", text)
+    text = text.translate(_ARABIC_FOLDS)
+    text = text.lower()
+    text = _APOSTROPHE.sub("", text)
+    text = _PUNCTUATION.sub(" ", text)
+    return _WHITESPACE.sub(" ", text).strip()
+
+
+def _edit_distance(reference: list[str], hypothesis: list[str]) -> int:
+    """Levenshtein distance between two token sequences.
+
+    Iterative two-row implementation: the corpus is small, but a full matrix
+    over long calls is needless memory.
+    """
+    if not reference:
+        return len(hypothesis)
+    previous = list(range(len(reference) + 1))
+    for hypothesis_index, hypothesis_token in enumerate(hypothesis, start=1):
+        current = [hypothesis_index]
+        for reference_index, reference_token in enumerate(reference, start=1):
+            current.append(
+                previous[reference_index - 1]
+                if reference_token == hypothesis_token
+                else 1 + min(previous[reference_index - 1], previous[reference_index], current[-1])
+            )
+        previous = current
+    return previous[-1]
+
+
+def word_error_rate(reference: str, hypothesis: str, *, normalize: bool = True) -> float:
+    """Word error rate of `hypothesis` against `reference`.
+
+    Args:
+        reference: The true transcript text.
+        hypothesis: The ASR-produced text.
+        normalize: Apply `normalize_for_wer` to both sides first. `False`
+            gives the raw, unnormalized rate.
+
+    Returns:
+        (substitutions + insertions + deletions) / reference word count.
+        Can exceed 1.0 when the hypothesis is longer than the reference —
+        deliberately not clipped, since a runaway hallucination should show
+        as worse than total loss rather than saturating at 1.0.
+        An empty reference scores 0.0 against an empty hypothesis, else 1.0.
+    """
+    if normalize:
+        reference, hypothesis = normalize_for_wer(reference), normalize_for_wer(hypothesis)
+
+    reference_tokens = reference.split()
+    hypothesis_tokens = hypothesis.split()
+    if not reference_tokens:
+        return 0.0 if not hypothesis_tokens else 1.0
+
+    return _edit_distance(reference_tokens, hypothesis_tokens) / len(reference_tokens)
+
+
+def wer_by_category(
+    pairs: list[tuple[Language, str, str]], *, normalize: bool = True
+) -> dict[Language, float]:
+    """Compute word error rate, grouped by `Language`.
+
+    Aggregated per category the way WER is conventionally aggregated — total
+    errors over total reference words, not the mean of per-call rates — so one
+    short call cannot swing the category.
+
+    Args:
+        pairs: `(language, reference_text, hypothesis_text)` per call.
+        normalize: Apply `normalize_for_wer` before scoring.
+
+    Returns:
+        A mapping from each `Language` present in the data to its WER. Never a
+        single blended float: `ar`, `en` and `mixed` ASR difficulty differ far
+        too much for an average across them to mean anything.
+    """
+    errors: dict[Language, int] = defaultdict(int)
+    reference_words: dict[Language, int] = defaultdict(int)
+
+    for language, reference, hypothesis in pairs:
+        if normalize:
+            reference, hypothesis = normalize_for_wer(reference), normalize_for_wer(hypothesis)
+        reference_tokens, hypothesis_tokens = reference.split(), hypothesis.split()
+        errors[language] += _edit_distance(reference_tokens, hypothesis_tokens)
+        reference_words[language] += len(reference_tokens)
+
+    return {
+        language: (errors[language] / count if count else 0.0)
+        for language, count in reference_words.items()
+    }
+
+
+#: Resolution at which the diarization timelines are compared, in seconds.
+_DIARIZATION_FRAME_SEC = 0.01
+
+
+def _speaker_at(segments: list[tuple[float, float, str]], time_sec: float) -> str | None:
+    """Speaker covering `time_sec`, or `None` where no segment covers it."""
+    for start, end, speaker in segments:
+        if start <= time_sec < end:
+            return speaker
+    return None
+
+
+def speaker_attribution_accuracy(
+    reference: list[tuple[float, float, str]],
+    hypothesis: list[tuple[float, float, str]],
+    *,
+    frame_sec: float = _DIARIZATION_FRAME_SEC,
+) -> float:
+    """Fraction of reference speech time attributed to the right speaker.
+
+    Compares the two timelines frame by frame over the reference's speech
+    regions. Frames where the reference has no speaker — the silence between
+    turns — are excluded: crediting a diarizer for correctly labelling silence
+    would inflate the score toward whatever fraction of the call is quiet.
+
+    This is deliberately not DER. DER charges false alarm, missed detection and
+    confusion separately against total speech time; this is the simpler
+    question "of the speech we know the speaker of, how much did we get right",
+    which is what a sanity check on a two-speaker synthetic call needs. Both
+    timelines must already use the same label vocabulary — see
+    `sawti.asr.diarization.assign_roles_by_first_speaker`.
+
+    Args:
+        reference: True `(start_sec, end_sec, speaker)` segments.
+        hypothesis: Predicted `(start_sec, end_sec, speaker)` segments.
+        frame_sec: Comparison resolution.
+
+    Returns:
+        Accuracy in [0.0, 1.0]. Returns 0.0 when the reference has no speech.
+    """
+    if not reference:
+        return 0.0
+
+    total = 0
+    correct = 0
+    end_sec = max(end for _, end, _ in reference)
+    frames = int(end_sec / frame_sec)
+
+    for frame in range(frames):
+        time_sec = frame * frame_sec
+        true_speaker = _speaker_at(reference, time_sec)
+        if true_speaker is None:
+            continue
+        total += 1
+        if _speaker_at(hypothesis, time_sec) == true_speaker:
+            correct += 1
+
+    return correct / total if total else 0.0
+
+
+def speaker_attribution_accuracy_by_category(
+    entries: list[tuple[Language, list[tuple[float, float, str]], list[tuple[float, float, str]]]],
+) -> dict[Language, float]:
+    """Compute speaker attribution accuracy, grouped by `Language`.
+
+    Args:
+        entries: `(language, reference_segments, hypothesis_segments)` per call.
+
+    Returns:
+        A mapping from each `Language` present to its mean attribution
+        accuracy. Never a single blended float.
+    """
+    per_language: dict[Language, list[float]] = defaultdict(list)
+    for language, reference, hypothesis in entries:
+        per_language[language].append(speaker_attribution_accuracy(reference, hypothesis))
+
+    return {language: _mean(scores) for language, scores in per_language.items()}
