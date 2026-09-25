@@ -1518,3 +1518,54 @@ and untouched.
   having been decided on 2026-09-22, which is not what happened; the
   append-only convention exists precisely to avoid this kind of quiet
   retroactive edit.
+
+---
+
+## 2026-09-25 — `requires-python` upper bound widened for Colab's Python 3.13
+
+**Status:** accepted.
+
+`pyproject.toml` capped `requires-python` at `<3.13`, so
+`pip install -e ".[finetune]"` failed immediately on Colab, which ships
+Python 3.13.15: `"requires a different Python: 3.13.15 not in
+'<3.13,>=3.11'"`. Nothing in `docs/09-DECISIONS.md` records why `<3.13` was
+chosen — it reads like an unexamined scaffolding default, not a considered
+constraint.
+
+### What was checked before widening it
+
+- Every dependency's resolution against Python 3.13.15 on Colab's actual
+  platform shape (`uv pip install --dry-run --python-platform
+  x86_64-manylinux_2_28`, Linux x86_64/CUDA, not this Mac): both the base
+  dependency set and the `finetune` extra resolve cleanly, including
+  `bitsandbytes==0.43.3`. On *this* Mac, the same `finetune` install fails
+  for an unrelated, already-documented reason: `bitsandbytes` ships no
+  macOS wheels at all, independent of Python version — exactly what
+  `scripts/train_qlora.py`'s own docstring already says.
+- `src/`, `scripts/`, and `tests/` grepped for removed/deprecated stdlib
+  patterns that changed across 3.12/3.13 (`distutils`,
+  `asyncio.get_event_loop()`, `datetime.utcnow()`, `imp.load_module`) —
+  none found.
+- Full test suite run for real under a scratch Python 3.13.15 venv on this
+  machine (base deps + `dev` extra, no CUDA extras): 563 passed, 26
+  skipped — identical to the 3.12 result.
+
+### What was decided
+
+Widened to `>=3.11,<3.14`, not dropped entirely — conservative: nothing
+here has been checked against 3.14, so there is no basis yet for claiming
+support past the next major version boundary. `[tool.ruff.target-version]`
+(`py311`) and `[tool.mypy.python_version]` (`3.11`) are left untouched —
+they set the *minimum* syntax/typing target this codebase writes against,
+not a ceiling on what can run it, and this project's own dev environment
+still runs 3.12.
+
+### Rejected alternatives
+
+- **Drop the upper bound entirely.** The user's own suggested fallback,
+  considered and not taken — `<3.14` costs nothing today (Colab is on
+  3.13) and avoids silently claiming 3.14 support that was never verified.
+- **Pin Colab to install Python 3.12 instead of relaxing the bound.**
+  Rejected: fragile (extra setup steps in `notebooks/qlora_train.ipynb`
+  that Colab's default runtime doesn't need) to work around a constraint
+  that, per the verification above, does not actually need to exist.

@@ -3,7 +3,7 @@ name = "sawti"
 version = "0.1.0"
 description = "Self-improving agent for bilingual (Arabic/English/code-switched) contact center call analysis."
 readme = "README.md"
-requires-python = ">=3.11,<3.13"
+requires-python = ">=3.11,<3.14"
 license = { text = "Proprietary" }
 authors = [{ name = "Sawti" }]
 
