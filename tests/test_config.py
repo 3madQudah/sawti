@@ -37,6 +37,20 @@ def test_get_settings_returns_cached_singleton() -> None:
     assert get_settings() is get_settings()
 
 
+def test_settings_defaults_finetune_base_model_to_qwen3_8b_instruct(monkeypatch) -> None:
+    """Confirmed explicitly with the user, 2026-09-25 — not a guess. See docs/09-DECISIONS.md."""
+    monkeypatch.delenv("SAWTI_FINETUNE_BASE_MODEL", raising=False)
+    settings = Settings(_env_file=None)
+    assert settings.finetune_base_model == "Qwen/Qwen3-8B"
+
+
+def test_settings_reads_finetune_base_model_from_env(monkeypatch) -> None:
+    """Overridable, not a magic string baked into scripts/train_qlora.py."""
+    monkeypatch.setenv("SAWTI_FINETUNE_BASE_MODEL", "Qwen/Qwen3-8B-Base")
+    settings = Settings(_env_file=None)
+    assert settings.finetune_base_model == "Qwen/Qwen3-8B-Base"
+
+
 class TestWhisperLanguageForCategory:
     """Per-language-category forced Whisper language."""
 

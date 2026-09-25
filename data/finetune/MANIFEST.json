@@ -1,0 +1,26 @@
+{
+  "caveat": "Every example in this dataset is synthetic: sourced from auto-generated Correction/ReviewerAction rows (reviewer_id 'five-batch-experiment' or 'synthetic-day1') or from this script's own fresh ground-truth-vs-agent-output diffs (reviewer_id 'phase1-2-diff-augmentation'). None is a real human QA judgment. See docs/09-DECISIONS.md, 2026-09-25.",
+  "diff_augmentation_skipped": false,
+  "dropped": [],
+  "generated_at": "2026-09-25T11:47:07.671032+00:00",
+  "held_out_call_ids_file": "held_out_call_ids.json",
+  "held_out_fraction": 0.25,
+  "held_out_seed": 20260925,
+  "languages_included": [
+    "ar"
+  ],
+  "per_language": {
+    "ar": {
+      "corpus_size": 60,
+      "eligible_count": 45,
+      "examples_from_phase1_2_diff": 6,
+      "examples_from_reviewer_action": 16,
+      "held_out_count": 15,
+      "total_examples": 22
+    }
+  },
+  "split_seed": 20260925,
+  "train_count": 18,
+  "val_count": 4,
+  "val_fraction": 0.15
+}

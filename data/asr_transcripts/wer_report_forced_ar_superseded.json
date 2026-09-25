@@ -1,0 +1,1516 @@
+{
+  "wer_by_category": {
+    "ar": 0.1534,
+    "mixed": 0.4328,
+    "en": 0.1303
+  },
+  "wer_raw_by_category": {
+    "ar": 0.328,
+    "mixed": 0.5722,
+    "en": 0.1657
+  },
+  "realtime_factor": 2.98,
+  "failures": [],
+  "calls": [
+    {
+      "call_id": "call_0000_ar",
+      "language": "ar",
+      "wer": 0.188,
+      "wer_raw": 0.3333,
+      "reference_words": 117,
+      "hypothesis_words": 120,
+      "audio_sec": 68.928,
+      "transcribe_sec": 41.74
+    },
+    {
+      "call_id": "call_0001_ar",
+      "language": "ar",
+      "wer": 0.0779,
+      "wer_raw": 0.3312,
+      "reference_words": 154,
+      "hypothesis_words": 154,
+      "audio_sec": 93.552,
+      "transcribe_sec": 22.5
+    },
+    {
+      "call_id": "call_0002_ar",
+      "language": "ar",
+      "wer": 0.1069,
+      "wer_raw": 0.4733,
+      "reference_words": 131,
+      "hypothesis_words": 128,
+      "audio_sec": 81.708,
+      "transcribe_sec": 18.28
+    },
+    {
+      "call_id": "call_0003_mixed",
+      "language": "mixed",
+      "wer": 0.1852,
+      "wer_raw": 0.3771,
+      "reference_words": 350,
+      "hypothesis_words": 341,
+      "audio_sec": 139.596,
+      "transcribe_sec": 101.19
+    },
+    {
+      "call_id": "call_0004_mixed",
+      "language": "mixed",
+      "wer": 0.3824,
+      "wer_raw": 0.4485,
+      "reference_words": 136,
+      "hypothesis_words": 132,
+      "audio_sec": 70.98,
+      "transcribe_sec": 24.61
+    },
+    {
+      "call_id": "call_0005_ar",
+      "language": "ar",
+      "wer": 0.0949,
+      "wer_raw": 0.3051,
+      "reference_words": 295,
+      "hypothesis_words": 299,
+      "audio_sec": 184.14,
+      "transcribe_sec": 50.48
+    },
+    {
+      "call_id": "call_0006_en",
+      "language": "en",
+      "wer": 0.0392,
+      "wer_raw": 0.052,
+      "reference_words": 250,
+      "hypothesis_words": 247,
+      "audio_sec": 87.576,
+      "transcribe_sec": 37.28
+    },
+    {
+      "call_id": "call_0007_mixed",
+      "language": "mixed",
+      "wer": 0.5657,
+      "wer_raw": 0.7257,
+      "reference_words": 175,
+      "hypothesis_words": 220,
+      "audio_sec": 88.38,
+      "transcribe_sec": 73.75
+    },
+    {
+      "call_id": "call_0008_mixed",
+      "language": "mixed",
+      "wer": 0.476,
+      "wer_raw": 0.6731,
+      "reference_words": 208,
+      "hypothesis_words": 248,
+      "audio_sec": 111.252,
+      "transcribe_sec": 82.13
+    },
+    {
+      "call_id": "call_0009_ar",
+      "language": "ar",
+      "wer": 0.1701,
+      "wer_raw": 0.2863,
+      "reference_words": 241,
+      "hypothesis_words": 241,
+      "audio_sec": 145.308,
+      "transcribe_sec": 45.37
+    },
+    {
+      "call_id": "call_0010_ar",
+      "language": "ar",
+      "wer": 0.1436,
+      "wer_raw": 0.2926,
+      "reference_words": 188,
+      "hypothesis_words": 182,
+      "audio_sec": 117.012,
+      "transcribe_sec": 36.6
+    },
+    {
+      "call_id": "call_0011_mixed",
+      "language": "mixed",
+      "wer": 0.7926,
+      "wer_raw": 0.9925,
+      "reference_words": 268,
+      "hypothesis_words": 400,
+      "audio_sec": 106.98,
+      "transcribe_sec": 121.48
+    },
+    {
+      "call_id": "call_0012_ar",
+      "language": "ar",
+      "wer": 0.154,
+      "wer_raw": 0.2943,
+      "reference_words": 435,
+      "hypothesis_words": 430,
+      "audio_sec": 276.828,
+      "transcribe_sec": 70.13
+    },
+    {
+      "call_id": "call_0013_mixed",
+      "language": "mixed",
+      "wer": 0.3522,
+      "wer_raw": 0.5,
+      "reference_words": 422,
+      "hypothesis_words": 384,
+      "audio_sec": 204.78,
+      "transcribe_sec": 53.56
+    },
+    {
+      "call_id": "call_0014_ar",
+      "language": "ar",
+      "wer": 0.1438,
+      "wer_raw": 0.2484,
+      "reference_words": 306,
+      "hypothesis_words": 305,
+      "audio_sec": 185.4,
+      "transcribe_sec": 47.14
+    },
+    {
+      "call_id": "call_0015_mixed",
+      "language": "mixed",
+      "wer": 0.4725,
+      "wer_raw": 0.6324,
+      "reference_words": 272,
+      "hypothesis_words": 316,
+      "audio_sec": 156.78,
+      "transcribe_sec": 69.58
+    },
+    {
+      "call_id": "call_0016_mixed",
+      "language": "mixed",
+      "wer": 0.316,
+      "wer_raw": 0.4275,
+      "reference_words": 269,
+      "hypothesis_words": 268,
+      "audio_sec": 131.208,
+      "transcribe_sec": 38.94
+    },
+    {
+      "call_id": "call_0017_ar",
+      "language": "ar",
+      "wer": 0.0959,
+      "wer_raw": 0.2785,
+      "reference_words": 219,
+      "hypothesis_words": 219,
+      "audio_sec": 134.568,
+      "transcribe_sec": 31.86
+    },
+    {
+      "call_id": "call_0018_ar",
+      "language": "ar",
+      "wer": 0.1189,
+      "wer_raw": 0.3049,
+      "reference_words": 328,
+      "hypothesis_words": 325,
+      "audio_sec": 192.216,
+      "transcribe_sec": 48.11
+    },
+    {
+      "call_id": "call_0019_mixed",
+      "language": "mixed",
+      "wer": 0.7791,
+      "wer_raw": 0.8405,
+      "reference_words": 163,
+      "hypothesis_words": 160,
+      "audio_sec": 64.632,
+      "transcribe_sec": 89.45
+    },
+    {
+      "call_id": "call_0020_mixed",
+      "language": "mixed",
+      "wer": 0.5929,
+      "wer_raw": 0.7406,
+      "reference_words": 451,
+      "hypothesis_words": 578,
+      "audio_sec": 217.812,
+      "transcribe_sec": 84.11
+    },
+    {
+      "call_id": "call_0021_mixed",
+      "language": "mixed",
+      "wer": 0.2957,
+      "wer_raw": 0.4286,
+      "reference_words": 301,
+      "hypothesis_words": 280,
+      "audio_sec": 139.452,
+      "transcribe_sec": 35.72
+    },
+    {
+      "call_id": "call_0022_mixed",
+      "language": "mixed",
+      "wer": 0.5111,
+      "wer_raw": 0.6889,
+      "reference_words": 135,
+      "hypothesis_words": 165,
+      "audio_sec": 54.504,
+      "transcribe_sec": 83.26
+    },
+    {
+      "call_id": "call_0023_ar",
+      "language": "ar",
+      "wer": 0.512,
+      "wer_raw": 0.568,
+      "reference_words": 125,
+      "hypothesis_words": 169,
+      "audio_sec": 82.956,
+      "transcribe_sec": 57.38
+    },
+    {
+      "call_id": "call_0024_ar",
+      "language": "ar",
+      "wer": 0.094,
+      "wer_raw": 0.3162,
+      "reference_words": 117,
+      "hypothesis_words": 121,
+      "audio_sec": 74.964,
+      "transcribe_sec": 22.78
+    },
+    {
+      "call_id": "call_0025_ar",
+      "language": "ar",
+      "wer": 0.0866,
+      "wer_raw": 0.3307,
+      "reference_words": 127,
+      "hypothesis_words": 124,
+      "audio_sec": 78.204,
+      "transcribe_sec": 22.4
+    },
+    {
+      "call_id": "call_0026_en",
+      "language": "en",
+      "wer": 0.0368,
+      "wer_raw": 0.0826,
+      "reference_words": 351,
+      "hypothesis_words": 345,
+      "audio_sec": 125.916,
+      "transcribe_sec": 33.94
+    },
+    {
+      "call_id": "call_0027_mixed",
+      "language": "mixed",
+      "wer": 0.2769,
+      "wer_raw": 0.4937,
+      "reference_words": 239,
+      "hypothesis_words": 226,
+      "audio_sec": 133.212,
+      "transcribe_sec": 30.87
+    },
+    {
+      "call_id": "call_0028_ar",
+      "language": "ar",
+      "wer": 0.1475,
+      "wer_raw": 0.2396,
+      "reference_words": 434,
+      "hypothesis_words": 430,
+      "audio_sec": 265.02,
+      "transcribe_sec": 52.73
+    },
+    {
+      "call_id": "call_0029_ar",
+      "language": "ar",
+      "wer": 0.0458,
+      "wer_raw": 0.162,
+      "reference_words": 284,
+      "hypothesis_words": 280,
+      "audio_sec": 165.924,
+      "transcribe_sec": 36.95
+    },
+    {
+      "call_id": "call_0030_en",
+      "language": "en",
+      "wer": 0.1935,
+      "wer_raw": 0.2142,
+      "reference_words": 607,
+      "hypothesis_words": 687,
+      "audio_sec": 208.164,
+      "transcribe_sec": 83.18
+    },
+    {
+      "call_id": "call_0031_ar",
+      "language": "ar",
+      "wer": 0.1417,
+      "wer_raw": 0.252,
+      "reference_words": 127,
+      "hypothesis_words": 127,
+      "audio_sec": 76.62,
+      "transcribe_sec": 23.26
+    },
+    {
+      "call_id": "call_0032_ar",
+      "language": "ar",
+      "wer": 0.4688,
+      "wer_raw": 0.5703,
+      "reference_words": 128,
+      "hypothesis_words": 179,
+      "audio_sec": 80.7,
+      "transcribe_sec": 52.16
+    },
+    {
+      "call_id": "call_0033_mixed",
+      "language": "mixed",
+      "wer": 0.2939,
+      "wer_raw": 0.4337,
+      "reference_words": 279,
+      "hypothesis_words": 285,
+      "audio_sec": 135.948,
+      "transcribe_sec": 38.87
+    },
+    {
+      "call_id": "call_0034_en",
+      "language": "en",
+      "wer": 0.0556,
+      "wer_raw": 0.0834,
+      "reference_words": 815,
+      "hypothesis_words": 801,
+      "audio_sec": 279.108,
+      "transcribe_sec": 59.69
+    },
+    {
+      "call_id": "call_0035_mixed",
+      "language": "mixed",
+      "wer": 0.2,
+      "wer_raw": 0.35,
+      "reference_words": 140,
+      "hypothesis_words": 140,
+      "audio_sec": 75.912,
+      "transcribe_sec": 16.99
+    },
+    {
+      "call_id": "call_0036_mixed",
+      "language": "mixed",
+      "wer": 1.0,
+      "wer_raw": 1.0,
+      "reference_words": 117,
+      "hypothesis_words": 98,
+      "audio_sec": 46.164,
+      "transcribe_sec": 68.3
+    },
+    {
+      "call_id": "call_0037_mixed",
+      "language": "mixed",
+      "wer": 0.25,
+      "wer_raw": 0.3908,
+      "reference_words": 284,
+      "hypothesis_words": 265,
+      "audio_sec": 151.668,
+      "transcribe_sec": 27.82
+    },
+    {
+      "call_id": "call_0038_en",
+      "language": "en",
+      "wer": 0.1525,
+      "wer_raw": 0.2857,
+      "reference_words": 588,
+      "hypothesis_words": 640,
+      "audio_sec": 194.436,
+      "transcribe_sec": 96.02
+    },
+    {
+      "call_id": "call_0039_mixed",
+      "language": "mixed",
+      "wer": 0.3514,
+      "wer_raw": 0.5405,
+      "reference_words": 222,
+      "hypothesis_words": 218,
+      "audio_sec": 126.852,
+      "transcribe_sec": 31.38
+    },
+    {
+      "call_id": "call_0040_ar",
+      "language": "ar",
+      "wer": 0.1986,
+      "wer_raw": 0.3972,
+      "reference_words": 282,
+      "hypothesis_words": 291,
+      "audio_sec": 184.296,
+      "transcribe_sec": 38.38
+    },
+    {
+      "call_id": "call_0041_mixed",
+      "language": "mixed",
+      "wer": 0.2203,
+      "wer_raw": 0.3983,
+      "reference_words": 118,
+      "hypothesis_words": 119,
+      "audio_sec": 63.9,
+      "transcribe_sec": 16.51
+    },
+    {
+      "call_id": "call_0042_mixed",
+      "language": "mixed",
+      "wer": 0.6648,
+      "wer_raw": 0.743,
+      "reference_words": 179,
+      "hypothesis_words": 210,
+      "audio_sec": 98.076,
+      "transcribe_sec": 49.56
+    },
+    {
+      "call_id": "call_0043_mixed",
+      "language": "mixed",
+      "wer": 0.5962,
+      "wer_raw": 0.728,
+      "reference_words": 364,
+      "hypothesis_words": 431,
+      "audio_sec": 179.76,
+      "transcribe_sec": 96.67
+    },
+    {
+      "call_id": "call_0044_ar",
+      "language": "ar",
+      "wer": 0.0508,
+      "wer_raw": 0.0712,
+      "reference_words": 295,
+      "hypothesis_words": 298,
+      "audio_sec": 173.052,
+      "transcribe_sec": 58.38
+    },
+    {
+      "call_id": "call_0045_ar",
+      "language": "ar",
+      "wer": 0.2566,
+      "wer_raw": 0.5619,
+      "reference_words": 226,
+      "hypothesis_words": 260,
+      "audio_sec": 136.416,
+      "transcribe_sec": 66.8
+    },
+    {
+      "call_id": "call_0046_en",
+      "language": "en",
+      "wer": 0.1725,
+      "wer_raw": 0.242,
+      "reference_words": 281,
+      "hypothesis_words": 325,
+      "audio_sec": 94.968,
+      "transcribe_sec": 58.57
+    },
+    {
+      "call_id": "call_0047_ar",
+      "language": "ar",
+      "wer": 0.0566,
+      "wer_raw": 0.1934,
+      "reference_words": 212,
+      "hypothesis_words": 213,
+      "audio_sec": 134.508,
+      "transcribe_sec": 28.39
+    },
+    {
+      "call_id": "call_0048_ar",
+      "language": "ar",
+      "wer": 0.1788,
+      "wer_raw": 0.4469,
+      "reference_words": 179,
+      "hypothesis_words": 173,
+      "audio_sec": 109.944,
+      "transcribe_sec": 59.82
+    },
+    {
+      "call_id": "call_0049_mixed",
+      "language": "mixed",
+      "wer": 0.3519,
+      "wer_raw": 0.4815,
+      "reference_words": 162,
+      "hypothesis_words": 148,
+      "audio_sec": 89.832,
+      "transcribe_sec": 25.51
+    },
+    {
+      "call_id": "call_0050_ar",
+      "language": "ar",
+      "wer": 0.1104,
+      "wer_raw": 0.3311,
+      "reference_words": 299,
+      "hypothesis_words": 300,
+      "audio_sec": 192.684,
+      "transcribe_sec": 51.33
+    },
+    {
+      "call_id": "call_0051_ar",
+      "language": "ar",
+      "wer": 0.1465,
+      "wer_raw": 0.3342,
+      "reference_words": 389,
+      "hypothesis_words": 394,
+      "audio_sec": 240.036,
+      "transcribe_sec": 46.88
+    },
+    {
+      "call_id": "call_0052_ar",
+      "language": "ar",
+      "wer": 0.0915,
+      "wer_raw": 0.1765,
+      "reference_words": 306,
+      "hypothesis_words": 297,
+      "audio_sec": 181.14,
+      "transcribe_sec": 34.71
+    },
+    {
+      "call_id": "call_0053_ar",
+      "language": "ar",
+      "wer": 0.4143,
+      "wer_raw": 0.6048,
+      "reference_words": 210,
+      "hypothesis_words": 270,
+      "audio_sec": 130.692,
+      "transcribe_sec": 64.16
+    },
+    {
+      "call_id": "call_0054_mixed",
+      "language": "mixed",
+      "wer": 0.1425,
+      "wer_raw": 0.2961,
+      "reference_words": 385,
+      "hypothesis_words": 386,
+      "audio_sec": 194.808,
+      "transcribe_sec": 41.14
+    },
+    {
+      "call_id": "call_0055_ar",
+      "language": "ar",
+      "wer": 0.0986,
+      "wer_raw": 0.2324,
+      "reference_words": 142,
+      "hypothesis_words": 150,
+      "audio_sec": 88.872,
+      "transcribe_sec": 17.33
+    },
+    {
+      "call_id": "call_0056_en",
+      "language": "en",
+      "wer": 0.0257,
+      "wer_raw": 0.0443,
+      "reference_words": 384,
+      "hypothesis_words": 383,
+      "audio_sec": 134.856,
+      "transcribe_sec": 43.14
+    },
+    {
+      "call_id": "call_0057_ar",
+      "language": "ar",
+      "wer": 0.1474,
+      "wer_raw": 0.3243,
+      "reference_words": 407,
+      "hypothesis_words": 420,
+      "audio_sec": 252.252,
+      "transcribe_sec": 67.65
+    },
+    {
+      "call_id": "call_0058_ar",
+      "language": "ar",
+      "wer": 0.1441,
+      "wer_raw": 0.2542,
+      "reference_words": 118,
+      "hypothesis_words": 120,
+      "audio_sec": 75.948,
+      "transcribe_sec": 15.21
+    },
+    {
+      "call_id": "call_0059_mixed",
+      "language": "mixed",
+      "wer": 0.9872,
+      "wer_raw": 0.9891,
+      "reference_words": 274,
+      "hypothesis_words": 147,
+      "audio_sec": 153.852,
+      "transcribe_sec": 121.75
+    },
+    {
+      "call_id": "call_0060_ar",
+      "language": "ar",
+      "wer": 0.1778,
+      "wer_raw": 0.3717,
+      "reference_words": 495,
+      "hypothesis_words": 483,
+      "audio_sec": 308.436,
+      "transcribe_sec": 71.69
+    },
+    {
+      "call_id": "call_0061_mixed",
+      "language": "mixed",
+      "wer": 0.2998,
+      "wer_raw": 0.4627,
+      "reference_words": 415,
+      "hypothesis_words": 397,
+      "audio_sec": 217.332,
+      "transcribe_sec": 46.65
+    },
+    {
+      "call_id": "call_0062_en",
+      "language": "en",
+      "wer": 0.0059,
+      "wer_raw": 0.0294,
+      "reference_words": 170,
+      "hypothesis_words": 170,
+      "audio_sec": 57.036,
+      "transcribe_sec": 19.53
+    },
+    {
+      "call_id": "call_0063_en",
+      "language": "en",
+      "wer": 0.117,
+      "wer_raw": 0.1585,
+      "reference_words": 448,
+      "hypothesis_words": 501,
+      "audio_sec": 147.972,
+      "transcribe_sec": 69.47
+    },
+    {
+      "call_id": "call_0064_en",
+      "language": "en",
+      "wer": 0.0197,
+      "wer_raw": 0.0557,
+      "reference_words": 754,
+      "hypothesis_words": 760,
+      "audio_sec": 259.788,
+      "transcribe_sec": 64.37
+    },
+    {
+      "call_id": "call_0065_en",
+      "language": "en",
+      "wer": 0.0196,
+      "wer_raw": 0.08,
+      "reference_words": 400,
+      "hypothesis_words": 400,
+      "audio_sec": 141.396,
+      "transcribe_sec": 36.71
+    },
+    {
+      "call_id": "call_0066_ar",
+      "language": "ar",
+      "wer": 0.1632,
+      "wer_raw": 0.4351,
+      "reference_words": 239,
+      "hypothesis_words": 244,
+      "audio_sec": 160.14,
+      "transcribe_sec": 32.64
+    },
+    {
+      "call_id": "call_0067_mixed",
+      "language": "mixed",
+      "wer": 0.2577,
+      "wer_raw": 0.4724,
+      "reference_words": 163,
+      "hypothesis_words": 161,
+      "audio_sec": 95.052,
+      "transcribe_sec": 23.66
+    },
+    {
+      "call_id": "call_0068_mixed",
+      "language": "mixed",
+      "wer": 0.4078,
+      "wer_raw": 0.5198,
+      "reference_words": 177,
+      "hypothesis_words": 173,
+      "audio_sec": 100.956,
+      "transcribe_sec": 26.09
+    },
+    {
+      "call_id": "call_0069_ar",
+      "language": "ar",
+      "wer": 0.1479,
+      "wer_raw": 0.3099,
+      "reference_words": 142,
+      "hypothesis_words": 142,
+      "audio_sec": 90.06,
+      "transcribe_sec": 26.9
+    },
+    {
+      "call_id": "call_0070_en",
+      "language": "en",
+      "wer": 1.0,
+      "wer_raw": 1.0,
+      "reference_words": 615,
+      "hypothesis_words": 232,
+      "audio_sec": 213.42,
+      "transcribe_sec": 154.08
+    },
+    {
+      "call_id": "call_0071_mixed",
+      "language": "mixed",
+      "wer": 0.2851,
+      "wer_raw": 0.4355,
+      "reference_words": 248,
+      "hypothesis_words": 239,
+      "audio_sec": 130.128,
+      "transcribe_sec": 26.96
+    },
+    {
+      "call_id": "call_0072_en",
+      "language": "en",
+      "wer": 0.0193,
+      "wer_raw": 0.0598,
+      "reference_words": 669,
+      "hypothesis_words": 671,
+      "audio_sec": 233.928,
+      "transcribe_sec": 49.03
+    },
+    {
+      "call_id": "call_0073_mixed",
+      "language": "mixed",
+      "wer": 0.3566,
+      "wer_raw": 0.414,
+      "reference_words": 285,
+      "hypothesis_words": 268,
+      "audio_sec": 148.056,
+      "transcribe_sec": 41.18
+    },
+    {
+      "call_id": "call_0074_mixed",
+      "language": "mixed",
+      "wer": 0.3443,
+      "wer_raw": 0.5656,
+      "reference_words": 122,
+      "hypothesis_words": 124,
+      "audio_sec": 69.096,
+      "transcribe_sec": 17.19
+    },
+    {
+      "call_id": "call_0075_ar",
+      "language": "ar",
+      "wer": 0.1603,
+      "wer_raw": 0.4684,
+      "reference_words": 237,
+      "hypothesis_words": 238,
+      "audio_sec": 151.548,
+      "transcribe_sec": 32.75
+    },
+    {
+      "call_id": "call_0076_mixed",
+      "language": "mixed",
+      "wer": 0.4519,
+      "wer_raw": 0.649,
+      "reference_words": 208,
+      "hypothesis_words": 221,
+      "audio_sec": 108.48,
+      "transcribe_sec": 51.94
+    },
+    {
+      "call_id": "call_0077_mixed",
+      "language": "mixed",
+      "wer": 0.7364,
+      "wer_raw": 0.7984,
+      "reference_words": 129,
+      "hypothesis_words": 62,
+      "audio_sec": 60.132,
+      "transcribe_sec": 73.53
+    },
+    {
+      "call_id": "call_0078_ar",
+      "language": "ar",
+      "wer": 0.1508,
+      "wer_raw": 0.2563,
+      "reference_words": 199,
+      "hypothesis_words": 195,
+      "audio_sec": 121.872,
+      "transcribe_sec": 25.82
+    },
+    {
+      "call_id": "call_0079_ar",
+      "language": "ar",
+      "wer": 0.1422,
+      "wer_raw": 0.2974,
+      "reference_words": 232,
+      "hypothesis_words": 230,
+      "audio_sec": 143.724,
+      "transcribe_sec": 35.27
+    },
+    {
+      "call_id": "call_0080_en",
+      "language": "en",
+      "wer": 0.0209,
+      "wer_raw": 0.0585,
+      "reference_words": 855,
+      "hypothesis_words": 852,
+      "audio_sec": 300.252,
+      "transcribe_sec": 58.5
+    },
+    {
+      "call_id": "call_0081_en",
+      "language": "en",
+      "wer": 0.4066,
+      "wer_raw": 0.4684,
+      "reference_words": 395,
+      "hypothesis_words": 552,
+      "audio_sec": 130.776,
+      "transcribe_sec": 67.34
+    },
+    {
+      "call_id": "call_0082_mixed",
+      "language": "mixed",
+      "wer": 0.2578,
+      "wer_raw": 0.4036,
+      "reference_words": 384,
+      "hypothesis_words": 377,
+      "audio_sec": 193.164,
+      "transcribe_sec": 41.99
+    },
+    {
+      "call_id": "call_0083_mixed",
+      "language": "mixed",
+      "wer": 0.6257,
+      "wer_raw": 0.7978,
+      "reference_words": 178,
+      "hypothesis_words": 132,
+      "audio_sec": 72.336,
+      "transcribe_sec": 41.01
+    },
+    {
+      "call_id": "call_0084_mixed",
+      "language": "mixed",
+      "wer": 0.5368,
+      "wer_raw": 0.6721,
+      "reference_words": 183,
+      "hypothesis_words": 167,
+      "audio_sec": 78.276,
+      "transcribe_sec": 43.07
+    },
+    {
+      "call_id": "call_0085_ar",
+      "language": "ar",
+      "wer": 0.4196,
+      "wer_raw": 0.5664,
+      "reference_words": 143,
+      "hypothesis_words": 193,
+      "audio_sec": 96.708,
+      "transcribe_sec": 53.32
+    },
+    {
+      "call_id": "call_0086_en",
+      "language": "en",
+      "wer": 0.0151,
+      "wer_raw": 0.0456,
+      "reference_words": 329,
+      "hypothesis_words": 328,
+      "audio_sec": 111.828,
+      "transcribe_sec": 33.72
+    },
+    {
+      "call_id": "call_0087_mixed",
+      "language": "mixed",
+      "wer": 0.2908,
+      "wer_raw": 0.4332,
+      "reference_words": 337,
+      "hypothesis_words": 323,
+      "audio_sec": 167.892,
+      "transcribe_sec": 36.73
+    },
+    {
+      "call_id": "call_0088_ar",
+      "language": "ar",
+      "wer": 0.1602,
+      "wer_raw": 0.2864,
+      "reference_words": 206,
+      "hypothesis_words": 194,
+      "audio_sec": 122.388,
+      "transcribe_sec": 26.99
+    },
+    {
+      "call_id": "call_0089_ar",
+      "language": "ar",
+      "wer": 0.0885,
+      "wer_raw": 0.2555,
+      "reference_words": 407,
+      "hypothesis_words": 410,
+      "audio_sec": 249.396,
+      "transcribe_sec": 52.66
+    },
+    {
+      "call_id": "call_0090_mixed",
+      "language": "mixed",
+      "wer": 0.3837,
+      "wer_raw": 0.4795,
+      "reference_words": 171,
+      "hypothesis_words": 171,
+      "audio_sec": 100.02,
+      "transcribe_sec": 22.32
+    },
+    {
+      "call_id": "call_0091_mixed",
+      "language": "mixed",
+      "wer": 0.7118,
+      "wer_raw": 0.7706,
+      "reference_words": 170,
+      "hypothesis_words": 133,
+      "audio_sec": 65.304,
+      "transcribe_sec": 68.34
+    },
+    {
+      "call_id": "call_0092_ar",
+      "language": "ar",
+      "wer": 0.0865,
+      "wer_raw": 0.2861,
+      "reference_words": 416,
+      "hypothesis_words": 417,
+      "audio_sec": 246.972,
+      "transcribe_sec": 47.99
+    },
+    {
+      "call_id": "call_0093_mixed",
+      "language": "mixed",
+      "wer": 0.3546,
+      "wer_raw": 0.5096,
+      "reference_words": 418,
+      "hypothesis_words": 382,
+      "audio_sec": 227.604,
+      "transcribe_sec": 53.66
+    },
+    {
+      "call_id": "call_0094_ar",
+      "language": "ar",
+      "wer": 0.1029,
+      "wer_raw": 0.2686,
+      "reference_words": 175,
+      "hypothesis_words": 175,
+      "audio_sec": 97.272,
+      "transcribe_sec": 22.77
+    },
+    {
+      "call_id": "call_0095_mixed",
+      "language": "mixed",
+      "wer": 1.0,
+      "wer_raw": 1.0,
+      "reference_words": 404,
+      "hypothesis_words": 81,
+      "audio_sec": 133.932,
+      "transcribe_sec": 54.67
+    },
+    {
+      "call_id": "call_0096_ar",
+      "language": "ar",
+      "wer": 0.1796,
+      "wer_raw": 0.3892,
+      "reference_words": 334,
+      "hypothesis_words": 351,
+      "audio_sec": 215.208,
+      "transcribe_sec": 43.66
+    },
+    {
+      "call_id": "call_0097_ar",
+      "language": "ar",
+      "wer": 0.145,
+      "wer_raw": 0.34,
+      "reference_words": 200,
+      "hypothesis_words": 211,
+      "audio_sec": 128.364,
+      "transcribe_sec": 29.39
+    },
+    {
+      "call_id": "call_0098_en",
+      "language": "en",
+      "wer": 0.3982,
+      "wer_raw": 0.4529,
+      "reference_words": 223,
+      "hypothesis_words": 311,
+      "audio_sec": 81.156,
+      "transcribe_sec": 57.34
+    },
+    {
+      "call_id": "call_0099_mixed",
+      "language": "mixed",
+      "wer": 0.41,
+      "wer_raw": 0.61,
+      "reference_words": 100,
+      "hypothesis_words": 75,
+      "audio_sec": 50.136,
+      "transcribe_sec": 8.68
+    },
+    {
+      "call_id": "call_0100_ar",
+      "language": "ar",
+      "wer": 0.1226,
+      "wer_raw": 0.3208,
+      "reference_words": 318,
+      "hypothesis_words": 316,
+      "audio_sec": 189.972,
+      "transcribe_sec": 36.23
+    },
+    {
+      "call_id": "call_0101_en",
+      "language": "en",
+      "wer": 0.0142,
+      "wer_raw": 0.0206,
+      "reference_words": 632,
+      "hypothesis_words": 627,
+      "audio_sec": 207.936,
+      "transcribe_sec": 35.58
+    },
+    {
+      "call_id": "call_0102_en",
+      "language": "en",
+      "wer": 0.0118,
+      "wer_raw": 0.0385,
+      "reference_words": 338,
+      "hypothesis_words": 338,
+      "audio_sec": 113.172,
+      "transcribe_sec": 25.81
+    },
+    {
+      "call_id": "call_0103_mixed",
+      "language": "mixed",
+      "wer": 0.4199,
+      "wer_raw": 0.5399,
+      "reference_words": 489,
+      "hypothesis_words": 456,
+      "audio_sec": 258.276,
+      "transcribe_sec": 53.87
+    },
+    {
+      "call_id": "call_0104_mixed",
+      "language": "mixed",
+      "wer": 0.4408,
+      "wer_raw": 0.6527,
+      "reference_words": 334,
+      "hypothesis_words": 324,
+      "audio_sec": 143.652,
+      "transcribe_sec": 58.41
+    },
+    {
+      "call_id": "call_0105_ar",
+      "language": "ar",
+      "wer": 0.0861,
+      "wer_raw": 0.2997,
+      "reference_words": 337,
+      "hypothesis_words": 336,
+      "audio_sec": 204.828,
+      "transcribe_sec": 39.94
+    },
+    {
+      "call_id": "call_0106_mixed",
+      "language": "mixed",
+      "wer": 0.4041,
+      "wer_raw": 0.561,
+      "reference_words": 385,
+      "hypothesis_words": 342,
+      "audio_sec": 207.924,
+      "transcribe_sec": 42.89
+    },
+    {
+      "call_id": "call_0107_ar",
+      "language": "ar",
+      "wer": 0.1451,
+      "wer_raw": 0.3059,
+      "reference_words": 255,
+      "hypothesis_words": 257,
+      "audio_sec": 168.276,
+      "transcribe_sec": 40.91
+    },
+    {
+      "call_id": "call_0108_ar",
+      "language": "ar",
+      "wer": 0.3558,
+      "wer_raw": 0.5184,
+      "reference_words": 326,
+      "hypothesis_words": 399,
+      "audio_sec": 192.072,
+      "transcribe_sec": 69.66
+    },
+    {
+      "call_id": "call_0109_mixed",
+      "language": "mixed",
+      "wer": 0.3578,
+      "wer_raw": 0.5138,
+      "reference_words": 218,
+      "hypothesis_words": 210,
+      "audio_sec": 113.736,
+      "transcribe_sec": 25.11
+    },
+    {
+      "call_id": "call_0110_mixed",
+      "language": "mixed",
+      "wer": 0.2614,
+      "wer_raw": 0.5227,
+      "reference_words": 88,
+      "hypothesis_words": 88,
+      "audio_sec": 50.628,
+      "transcribe_sec": 8.87
+    },
+    {
+      "call_id": "call_0111_ar",
+      "language": "ar",
+      "wer": 0.1514,
+      "wer_raw": 0.3028,
+      "reference_words": 218,
+      "hypothesis_words": 209,
+      "audio_sec": 131.34,
+      "transcribe_sec": 30.68
+    },
+    {
+      "call_id": "call_0112_ar",
+      "language": "ar",
+      "wer": 0.168,
+      "wer_raw": 0.3659,
+      "reference_words": 369,
+      "hypothesis_words": 365,
+      "audio_sec": 243.996,
+      "transcribe_sec": 55.38
+    },
+    {
+      "call_id": "call_0113_mixed",
+      "language": "mixed",
+      "wer": 0.7578,
+      "wer_raw": 1.0092,
+      "reference_words": 109,
+      "hypothesis_words": 119,
+      "audio_sec": 68.448,
+      "transcribe_sec": 42.62
+    },
+    {
+      "call_id": "call_0114_mixed",
+      "language": "mixed",
+      "wer": 0.4333,
+      "wer_raw": 0.475,
+      "reference_words": 120,
+      "hypothesis_words": 127,
+      "audio_sec": 65.988,
+      "transcribe_sec": 17.59
+    },
+    {
+      "call_id": "call_0115_ar",
+      "language": "ar",
+      "wer": 0.0943,
+      "wer_raw": 0.2264,
+      "reference_words": 106,
+      "hypothesis_words": 106,
+      "audio_sec": 69.996,
+      "transcribe_sec": 16.34
+    },
+    {
+      "call_id": "call_0116_en",
+      "language": "en",
+      "wer": 0.019,
+      "wer_raw": 0.0363,
+      "reference_words": 524,
+      "hypothesis_words": 521,
+      "audio_sec": 181.788,
+      "transcribe_sec": 41.52
+    },
+    {
+      "call_id": "call_0117_en",
+      "language": "en",
+      "wer": 0.0569,
+      "wer_raw": 0.0905,
+      "reference_words": 210,
+      "hypothesis_words": 202,
+      "audio_sec": 74.124,
+      "transcribe_sec": 23.19
+    },
+    {
+      "call_id": "call_0118_ar",
+      "language": "ar",
+      "wer": 0.3476,
+      "wer_raw": 0.508,
+      "reference_words": 187,
+      "hypothesis_words": 215,
+      "audio_sec": 106.932,
+      "transcribe_sec": 66.14
+    },
+    {
+      "call_id": "call_0119_mixed",
+      "language": "mixed",
+      "wer": 0.2751,
+      "wer_raw": 0.4704,
+      "reference_words": 338,
+      "hypothesis_words": 323,
+      "audio_sec": 167.628,
+      "transcribe_sec": 44.21
+    },
+    {
+      "call_id": "call_0120_en",
+      "language": "en",
+      "wer": 0.0114,
+      "wer_raw": 0.0571,
+      "reference_words": 175,
+      "hypothesis_words": 174,
+      "audio_sec": 58.824,
+      "transcribe_sec": 19.91
+    },
+    {
+      "call_id": "call_0121_en",
+      "language": "en",
+      "wer": 0.0184,
+      "wer_raw": 0.0513,
+      "reference_words": 702,
+      "hypothesis_words": 706,
+      "audio_sec": 241.5,
+      "transcribe_sec": 52.83
+    },
+    {
+      "call_id": "call_0122_ar",
+      "language": "ar",
+      "wer": 0.1221,
+      "wer_raw": 0.2912,
+      "reference_words": 467,
+      "hypothesis_words": 456,
+      "audio_sec": 265.872,
+      "transcribe_sec": 52.63
+    },
+    {
+      "call_id": "call_0123_mixed",
+      "language": "mixed",
+      "wer": 0.8867,
+      "wer_raw": 0.9262,
+      "reference_words": 149,
+      "hypothesis_words": 147,
+      "audio_sec": 68.784,
+      "transcribe_sec": 47.32
+    },
+    {
+      "call_id": "call_0124_ar",
+      "language": "ar",
+      "wer": 0.0548,
+      "wer_raw": 0.2945,
+      "reference_words": 146,
+      "hypothesis_words": 146,
+      "audio_sec": 93.588,
+      "transcribe_sec": 59.6
+    },
+    {
+      "call_id": "call_0125_ar",
+      "language": "ar",
+      "wer": 0.192,
+      "wer_raw": 0.3808,
+      "reference_words": 323,
+      "hypothesis_words": 331,
+      "audio_sec": 202.512,
+      "transcribe_sec": 47.48
+    },
+    {
+      "call_id": "call_0126_en",
+      "language": "en",
+      "wer": 0.002,
+      "wer_raw": 0.0185,
+      "reference_words": 487,
+      "hypothesis_words": 487,
+      "audio_sec": 169.908,
+      "transcribe_sec": 39.47
+    },
+    {
+      "call_id": "call_0127_mixed",
+      "language": "mixed",
+      "wer": 0.2281,
+      "wer_raw": 0.3158,
+      "reference_words": 228,
+      "hypothesis_words": 226,
+      "audio_sec": 124.572,
+      "transcribe_sec": 27.44
+    },
+    {
+      "call_id": "call_0128_en",
+      "language": "en",
+      "wer": 0.2524,
+      "wer_raw": 0.2955,
+      "reference_words": 511,
+      "hypothesis_words": 612,
+      "audio_sec": 177.936,
+      "transcribe_sec": 66.92
+    },
+    {
+      "call_id": "call_0129_ar",
+      "language": "ar",
+      "wer": 0.2189,
+      "wer_raw": 0.5075,
+      "reference_words": 201,
+      "hypothesis_words": 217,
+      "audio_sec": 130.692,
+      "transcribe_sec": 46.7
+    },
+    {
+      "call_id": "call_0130_ar",
+      "language": "ar",
+      "wer": 0.1027,
+      "wer_raw": 0.2205,
+      "reference_words": 263,
+      "hypothesis_words": 259,
+      "audio_sec": 161.16,
+      "transcribe_sec": 31.7
+    },
+    {
+      "call_id": "call_0131_en",
+      "language": "en",
+      "wer": 0.0354,
+      "wer_raw": 0.0501,
+      "reference_words": 499,
+      "hypothesis_words": 499,
+      "audio_sec": 179.1,
+      "transcribe_sec": 43.55
+    },
+    {
+      "call_id": "call_0132_ar",
+      "language": "ar",
+      "wer": 0.1267,
+      "wer_raw": 0.2986,
+      "reference_words": 221,
+      "hypothesis_words": 221,
+      "audio_sec": 139.188,
+      "transcribe_sec": 31.97
+    },
+    {
+      "call_id": "call_0133_en",
+      "language": "en",
+      "wer": 0.0,
+      "wer_raw": 0.0139,
+      "reference_words": 360,
+      "hypothesis_words": 360,
+      "audio_sec": 113.82,
+      "transcribe_sec": 44.11
+    },
+    {
+      "call_id": "call_0134_ar",
+      "language": "ar",
+      "wer": 0.1232,
+      "wer_raw": 0.3623,
+      "reference_words": 138,
+      "hypothesis_words": 141,
+      "audio_sec": 87.972,
+      "transcribe_sec": 36.37
+    },
+    {
+      "call_id": "call_0135_mixed",
+      "language": "mixed",
+      "wer": 0.2629,
+      "wer_raw": 0.4217,
+      "reference_words": 230,
+      "hypothesis_words": 224,
+      "audio_sec": 91.956,
+      "transcribe_sec": 79.07
+    },
+    {
+      "call_id": "call_0136_en",
+      "language": "en",
+      "wer": 0.0188,
+      "wer_raw": 0.0745,
+      "reference_words": 631,
+      "hypothesis_words": 630,
+      "audio_sec": 215.964,
+      "transcribe_sec": 39.08
+    },
+    {
+      "call_id": "call_0137_ar",
+      "language": "ar",
+      "wer": 0.1524,
+      "wer_raw": 0.3429,
+      "reference_words": 210,
+      "hypothesis_words": 210,
+      "audio_sec": 135.528,
+      "transcribe_sec": 27.05
+    },
+    {
+      "call_id": "call_0138_mixed",
+      "language": "mixed",
+      "wer": 0.392,
+      "wer_raw": 0.5025,
+      "reference_words": 199,
+      "hypothesis_words": 192,
+      "audio_sec": 99.408,
+      "transcribe_sec": 24.17
+    },
+    {
+      "call_id": "call_0139_ar",
+      "language": "ar",
+      "wer": 0.1173,
+      "wer_raw": 0.257,
+      "reference_words": 358,
+      "hypothesis_words": 357,
+      "audio_sec": 206.772,
+      "transcribe_sec": 44.2
+    },
+    {
+      "call_id": "call_0140_mixed",
+      "language": "mixed",
+      "wer": 0.3597,
+      "wer_raw": 0.4532,
+      "reference_words": 139,
+      "hypothesis_words": 144,
+      "audio_sec": 82.908,
+      "transcribe_sec": 26.98
+    },
+    {
+      "call_id": "call_0141_mixed",
+      "language": "mixed",
+      "wer": 0.219,
+      "wer_raw": 0.4234,
+      "reference_words": 274,
+      "hypothesis_words": 276,
+      "audio_sec": 151.452,
+      "transcribe_sec": 33.5
+    },
+    {
+      "call_id": "call_0142_en",
+      "language": "en",
+      "wer": 0.6623,
+      "wer_raw": 0.7013,
+      "reference_words": 231,
+      "hypothesis_words": 372,
+      "audio_sec": 75.66,
+      "transcribe_sec": 55.94
+    },
+    {
+      "call_id": "call_0143_mixed",
+      "language": "mixed",
+      "wer": 1.0,
+      "wer_raw": 1.0,
+      "reference_words": 161,
+      "hypothesis_words": 134,
+      "audio_sec": 70.716,
+      "transcribe_sec": 122.47
+    },
+    {
+      "call_id": "call_0144_mixed",
+      "language": "mixed",
+      "wer": 0.3178,
+      "wer_raw": 0.5211,
+      "reference_words": 213,
+      "hypothesis_words": 202,
+      "audio_sec": 115.092,
+      "transcribe_sec": 23.03
+    },
+    {
+      "call_id": "call_0145_mixed",
+      "language": "mixed",
+      "wer": 0.1885,
+      "wer_raw": 0.4016,
+      "reference_words": 122,
+      "hypothesis_words": 121,
+      "audio_sec": 68.748,
+      "transcribe_sec": 17.1
+    },
+    {
+      "call_id": "call_0146_en",
+      "language": "en",
+      "wer": 0.2874,
+      "wer_raw": 0.3014,
+      "reference_words": 501,
+      "hypothesis_words": 642,
+      "audio_sec": 165.588,
+      "transcribe_sec": 68.08
+    },
+    {
+      "call_id": "call_0147_ar",
+      "language": "ar",
+      "wer": 0.1488,
+      "wer_raw": 0.3843,
+      "reference_words": 242,
+      "hypothesis_words": 243,
+      "audio_sec": 143.472,
+      "transcribe_sec": 40.07
+    },
+    {
+      "call_id": "call_0148_mixed",
+      "language": "mixed",
+      "wer": 0.2831,
+      "wer_raw": 0.4866,
+      "reference_words": 411,
+      "hypothesis_words": 418,
+      "audio_sec": 165.78,
+      "transcribe_sec": 54.17
+    },
+    {
+      "call_id": "call_0149_mixed",
+      "language": "mixed",
+      "wer": 0.678,
+      "wer_raw": 0.71,
+      "reference_words": 231,
+      "hypothesis_words": 186,
+      "audio_sec": 100.428,
+      "transcribe_sec": 167.32
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "_meta": {
+    "ar": {
+      "corpus_size": 60,
+      "fraction": 0.25,
+      "generated_at": "2026-09-25T11:39:23.609946+00:00",
+      "held_out_count": 15,
+      "seed": 20260925
+    }
+  },
+  "ar": [
+    "call_0014_ar",
+    "call_0017_ar",
+    "call_0031_ar",
+    "call_0048_ar",
+    "call_0053_ar",
+    "call_0057_ar",
+    "call_0069_ar",
+    "call_0075_ar",
+    "call_0088_ar",
+    "call_0094_ar",
+    "call_0100_ar",
+    "call_0112_ar",
+    "call_0118_ar",
+    "call_0122_ar",
+    "call_0129_ar"
+  ]
+}

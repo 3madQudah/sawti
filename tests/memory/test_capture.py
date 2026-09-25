@@ -18,7 +18,7 @@ import pytest
 
 from sawti.db.models import Agent, Base, Call, CallAnalysisRecord, ReviewerAction
 from sawti.db.session import get_engine, get_session
-from sawti.memory.capture import capture_correction
+from sawti.memory.capture import capture_correction, get_or_create_placeholder_agent, persist_analysis_record
 from sawti.schemas import CallAnalysis, Language
 
 
@@ -118,3 +118,53 @@ def test_capture_correction_preserves_original_and_corrected_analyses(
     assert correction.original == _persisted_original
     assert correction.corrected == corrected
     assert correction.original.summary != correction.corrected.summary
+
+
+def test_get_or_create_placeholder_agent_is_idempotent_by_external_id() -> None:
+    """A second call with the same external_id returns the same Agent, not a new one."""
+    external_id = f"test-placeholder-{uuid.uuid4()}"
+    try:
+        with get_session() as session:
+            first_id = get_or_create_placeholder_agent(session, external_id=external_id, name="Test Bot")
+        with get_session() as session:
+            second_id = get_or_create_placeholder_agent(session, external_id=external_id, name="Test Bot")
+
+        assert first_id == second_id
+    finally:
+        with get_session() as session:
+            row = session.query(Agent).filter_by(external_id=external_id).one_or_none()
+            if row is not None:
+                session.delete(row)
+
+
+def test_persist_analysis_record_satisfies_capture_correction_fk() -> None:
+    """persist_analysis_record() + get_or_create_placeholder_agent() is enough for capture_correction()."""
+    external_id = f"test-placeholder-{uuid.uuid4()}"
+    original = _sample_analysis("call_test_persist_helper", summary="Placeholder summary.")
+    corrected = _sample_analysis("call_test_persist_helper", summary="Corrected summary.")
+
+    with get_session() as session:
+        agent_id = get_or_create_placeholder_agent(session, external_id=external_id, name="Test Bot")
+    with get_session() as session:
+        persist_analysis_record(session, original, agent_id=agent_id, transcript="a transcript")
+
+    try:
+        correction = capture_correction(
+            original, corrected, error_location="summary", reviewer_id="qa-reviewer-3"
+        )
+        assert correction.original == original
+    finally:
+        with get_session() as session:
+            for action in session.query(ReviewerAction).filter_by(call_analysis_id=original.id):
+                session.delete(action)
+            record = session.get(CallAnalysisRecord, original.id)
+            call_row_id = record.call_id if record is not None else None
+            if record is not None:
+                session.delete(record)
+            if call_row_id is not None:
+                call_row = session.get(Call, call_row_id)
+                if call_row is not None:
+                    session.delete(call_row)
+            agent_row = session.query(Agent).filter_by(external_id=external_id).one_or_none()
+            if agent_row is not None:
+                session.delete(agent_row)

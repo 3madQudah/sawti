@@ -4,7 +4,10 @@ Phase 4: mirrors the synthetic-corrections generator script.
 
 The end-to-end test needs a real Postgres (via `capture_correction()`'s
 persistence path) — run `docker compose up -d` first. See
-`docs/09-DECISIONS.md`. `_first_difference` itself needs no database.
+`docs/09-DECISIONS.md`. The diff logic itself (`sawti.memory.diff.
+first_difference`, which this script uses) has its own tests in
+`tests/memory/test_diff.py` — it moved there in Stage 8 to be shared with
+`sawti.eval.experiments.five_batch`.
 """
 
 from __future__ import annotations
@@ -13,7 +16,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
-from generate_synthetic_corrections import _first_difference, generate_synthetic_corrections
+from generate_synthetic_corrections import generate_synthetic_corrections
 
 from sawti.db.models import Base, Call, CallAnalysisRecord, ReviewerAction
 from sawti.db.session import get_engine, get_session
@@ -28,10 +31,6 @@ def _commitment(*, deadline: datetime | None) -> Commitment:
     return Commitment(
         evidence=_quote("we will call back"), promised_by="Agent", description="callback", deadline=deadline
     )
-
-
-def _flag(rule_id: str) -> ComplianceFlag:
-    return ComplianceFlag(evidence=_quote("hello"), rule_id=rule_id, severity="low", description="x")
 
 
 def _score(criterion: str, value: float) -> RubricScore:
@@ -56,47 +55,6 @@ def _analysis(
         confidence=0.9,
         requires_human_review=False,
     )
-
-
-class TestFirstDifference:
-    """`_first_difference` is pure and deliberately narrow — see its docstring."""
-
-    def test_no_difference_returns_none(self) -> None:
-        agent = _analysis("call_0000_en", rubric_scores=[_score("professionalism", 0.8)])
-        truth = _analysis("call_0000_en", rubric_scores=[_score("professionalism", 0.8)])
-        assert _first_difference(agent, truth) is None
-
-    def test_commitment_count_mismatch(self) -> None:
-        agent = _analysis("call_0000_en", commitments=[])
-        truth = _analysis("call_0000_en", commitments=[_commitment(deadline=None)])
-        assert _first_difference(agent, truth) == "commitments"
-
-    def test_commitment_deadline_presence_mismatch(self) -> None:
-        agent = _analysis("call_0000_en", commitments=[_commitment(deadline=None)])
-        truth = _analysis("call_0000_en", commitments=[_commitment(deadline=datetime.now(UTC))])
-        assert _first_difference(agent, truth) == "commitments[0].deadline"
-
-    def test_compliance_flag_set_mismatch(self) -> None:
-        agent = _analysis("call_0000_en", compliance_flags=[_flag("rude_agent")])
-        truth = _analysis("call_0000_en", compliance_flags=[_flag("no_id_check")])
-        assert _first_difference(agent, truth) == "compliance_flags"
-
-    def test_rubric_score_beyond_tolerance(self) -> None:
-        agent = _analysis("call_0000_en", rubric_scores=[_score("empathy", 0.9)])
-        truth = _analysis("call_0000_en", rubric_scores=[_score("empathy", 0.2)])
-        assert _first_difference(agent, truth) == "rubric_scores[empathy]"
-
-    def test_rubric_score_within_tolerance_is_ignored(self) -> None:
-        agent = _analysis("call_0000_en", rubric_scores=[_score("empathy", 0.8)])
-        truth = _analysis("call_0000_en", rubric_scores=[_score("empathy", 0.65)])
-        assert _first_difference(agent, truth) is None
-
-    def test_free_text_wording_alone_is_not_a_difference(self) -> None:
-        """summary/description wording is deliberately excluded — see the docstring."""
-        agent = _analysis("call_0000_en", commitments=[_commitment(deadline=None)])
-        truth = _analysis("call_0000_en", commitments=[_commitment(deadline=None)])
-        truth.commitments[0].description = "a completely different description"
-        assert _first_difference(agent, truth) is None
 
 
 @pytest.fixture(scope="module", autouse=True)

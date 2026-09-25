@@ -153,7 +153,7 @@ def build_graph(checkpointer: BaseCheckpointSaver[Any] | None = None) -> Compile
     and everything is lost on restart. That is the correct trade for phase 2,
     where the graph is driven by tests and the eval harness. Durable review
     queues need a Postgres-backed saver, which depends on `sawti.db.session` —
-    still an unimplemented phase 1 stub — and is deferred to phase 5 deployment.
+    still an unimplemented phase 1 stub — and is deferred to phase 6 deployment.
     See `docs/09-DECISIONS.md`.
 
     Args:

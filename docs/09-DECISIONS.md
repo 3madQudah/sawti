@@ -819,3 +819,702 @@ fixture rather than through Alembic — this project has an `alembic`
 dependency but no migrations directory yet. Fine for tests against a
 disposable container; a real deployment (Phase 5) needs actual migrations
 before this stops being acceptable.
+
+---
+
+## 2026-09-22 — `sawti.memory.store`: local multilingual sentence-transformers, not pgvector or an embedding API
+
+**Status:** accepted.
+
+### The choice
+
+`MemoryStore` embeds every `MemoryRule.rule_text` with a local
+`sentence-transformers` model (`paraphrase-multilingual-MiniLM-L12-v2`) and
+does top-k retrieval by in-process cosine similarity (`numpy`). No
+embedding provider is configured anywhere in `sawti.config` — this was
+checked before choosing, not assumed — so this needed to be the simplest
+option requiring no new infrastructure.
+
+**Multilingual, not English-only, and that was not a minor choice.** This
+project is Arabic/English/code-switched throughout, and `induce_rule()`
+(Stage 3) always writes `rule_text` in English regardless of the source
+call's language — its system prompt never asks for Arabic output. A
+`retrieve()` query, though, is derived from whatever the current call's
+transcript is, which can be Arabic or `mixed`. An English-only embedding
+model (e.g. `all-MiniLM-L6-v2`) would put Arabic queries and English rules
+in barely-related regions of the embedding space, degrading exactly the
+cross-lingual matching this store exists to do — silently, since nothing
+would error, retrieval would just quietly return poor matches. Verified by
+hand, not just asserted: an Arabic query paraphrasing "the customer asked
+for a refund and the agent gave no deadline" correctly ranked a
+deadline-related rule above an unrelated identity-verification rule and a
+still-more-unrelated empathy-scoring rule, with rules and query on opposite
+sides of the language boundary throughout.
+
+### Rejected alternatives
+
+- **pgvector.** The obvious "we already use Postgres" answer, and rejected
+  for the same reason `docs/09-DECISIONS.md`'s MemorySaver entry rejected
+  Postgres for phase 2's checkpointer: it is a new Postgres extension plus
+  a migration (this project has no migrations directory yet — see the
+  `sawti.db.session` entry above), serving a phase whose done-when
+  criterion (Stage 8's five-batch experiment) does not need the index to
+  outlive one process. Worth reconsidering once Phase 5 gives this project
+  migrations and a reason for the index to survive a restart.
+- **An external embedding API** (OpenAI, Cohere, Voyage, ...). Rejected on
+  the same grounds as pgvector plus one more: it adds a new provider, a new
+  network dependency for every `add()`/`retrieve()` call, and a per-call
+  cost, for a capability a small local model already provides adequately.
+  `openai` is already a dependency here (used for typed schemas elsewhere,
+  not embeddings), so this was a real, not hypothetical, option — set aside
+  because nothing about this stage needs cloud-quality embeddings.
+
+### What it costs
+
+`sentence-transformers` pulls in `transformers`, which re-pinned this
+project's already-installed `torch` from `2.14.0` down to `2.4.0` on
+`uv sync`. `torch` was already a dependency (via the `asr` extra's
+`pyannote.audio`/`mlx-whisper`), so this is a version shift, not a new
+heavy dependency — but it is a real one, worth naming rather than
+discovering later. The full suite (`make test`) was re-run after the
+downgrade specifically to check the ASR tests for fallout; nothing broke.
+
+The index is in-process and volatile, same limitation and same reasoning as
+`MemorySaver` in the checkpointer entry above: fine for tests, for Stage 8's
+experiment, and for a single long-running process — not fine for a
+horizontally-scaled deployment, where each process would build its own
+index from scratch and two processes could disagree about what rules exist
+until both have re-ingested the same corrections. Carried debt, same as the
+checkpointer, deferred to the same phase (5) for the same reason.
+
+---
+
+## 2026-09-22 — `sawti.memory.consolidate`'s near-duplicate threshold, calibrated against real embeddings
+
+**Status:** accepted.
+
+### What was measured
+
+`consolidate()`'s first draft defaulted `similarity_threshold` to 0.85 — a
+guess, not a measurement, written before anything had actually been
+embedded. Before shipping it, three real induced rules (Stage 3's output,
+`DEFAULT_EMBEDDING_MODEL`) were embedded and compared by hand:
+
+| Pair | Relationship | Cosine similarity |
+| --- | --- | --- |
+| "Flag commitments lacking a deadline as incomplete" vs. "Commitments without a timeframe should be marked incomplete" | genuine near-duplicate | 0.75 |
+| Same as above, vs. a longer third phrasing of the same principle | genuine near-duplicate | 0.61 |
+| "Flag commitments lacking a deadline" vs. "Commitments may omit a deadline when the customer waives one" | same topic, opposite guidance | 0.58 |
+| Two Stage-3-induced rules, both about commitments, different phrasing/emphasis | same topic, not a duplicate | 0.58 |
+
+0.85 would have merged nothing — not one of these pairs reaches it. Worse,
+the honest finding is that **no threshold cleanly separates "same
+principle, different words" from "same topic, different guidance"** with
+this model: 0.61 (a real near-duplicate) and 0.58 (genuinely conflicting
+guidance) are close enough that some real near-duplicates will be missed at
+any threshold that also excludes the same-topic case.
+
+### What was decided
+
+`DEFAULT_SIMILARITY_THRESHOLD = 0.7` — above the measured same-topic score
+(0.58) and below the strongest near-duplicate pair (0.75), accepting that
+the weaker near-duplicate pair (0.61) will not be merged. **Erring toward
+under-merging is deliberate**: a missed merge just means one extra rule
+sitting in the store until a later consolidation run catches it (or two
+correction batches produce closer phrasing); a wrongful merge collapses two
+rules that actually said different things into one, and that mistake does
+not get automatically undone. Consistent with `sawti.memory.conflict`'s own
+"same topic is not a conflict" stance — the parallel judgment here is "same
+topic is not automatically a duplicate either."
+
+### What it costs
+
+This threshold is calibrated against three hand-picked pairs, not a
+labeled dataset — a real threshold-tuning pass wants many more examples
+than Stage 3's ~18 corrections produced, ideally with a human judging which
+pairs should have merged. Revisit once `consolidate()` has run against a
+larger, real rule set. `similarity_threshold` is a keyword argument
+specifically so this default can be overridden per-call without a code
+change while better data accumulates.
+
+---
+
+## 2026-09-25 — Two real incidents running the five-batch experiment, and their fixes
+
+**Status:** both fixed and regression-tested.
+
+Running `sawti.eval.experiments.five_batch.run_five_batch()` for real,
+against the full 150-call corpus, surfaced two problems no test had caught
+— recorded here because both are the kind of thing that looks like "bad
+luck" in the moment and is actually a real gap, worth knowing about if this
+experiment (or anything shaped like it — a long-running, multi-hour local
+process) gets run again.
+
+### Incident 1: an unbounded provider call hung for 12+ hours
+
+The run appeared to freeze completely overnight. Root cause: the host
+machine went to sleep mid-run, and `extract_via_graph()`'s graph invocation
+was a bare `asyncio.run(graph.ainvoke(...))` — no timeout anywhere in the
+call chain. `extract()`'s own LLM call is likewise unbounded. When the
+machine woke, the stalled connection had nothing forcing it to fail, so it
+hung indefinitely instead of erroring into the retry loop this incident
+also motivated (see below).
+
+**Fixed two ways:**
+1. `extract_via_graph()` gained a `timeout` parameter (default
+   `sawti.llm.provider.DEFAULT_REQUEST_TIMEOUT_SECONDS`, the same 120s
+   deadline every other provider call in this project already uses),
+   wrapping the whole graph invocation in `run_with_timeout()` rather than
+   a bare `asyncio.run()`. A hang now surfaces as `TimeoutError` within
+   120s of the connection actually failing, not indefinitely.
+2. `sawti.eval.experiments.five_batch._run_batch()` gained retry-with-
+   backoff (3 retries, exponential from 10s) around each extraction call —
+   this was *also* needed independently: Gemini's free tier was separately
+   observed returning `503 UNAVAILABLE` ("high demand") at a sustained
+   ~40% rate during this run, which Phase 2's original evaluation never
+   hit. Without a retry, ~40% of a 150-call ground-truth set would have
+   been silently, non-randomly excluded from the result.
+
+Both fixes live in the experiment's own orchestration layer
+(`five_batch.py`, and `extract_via_graph`'s optional `timeout`/
+`retrieved_rules` parameters), not in `sawti.agent.nodes.extract` itself —
+Phase 2's evaluation deliberately treats an immediate provider failure as
+escalate-worthy, and changing that would change what every other caller of
+`extract`/`extract_via_graph` sees. Regression tests: `test_extract_via_graph_
+times_out_rather_than_hanging_forever` (a stalled fake provider, tiny
+timeout) and `test_run_five_batch_retries_transient_extraction_failures`
+(a flaky fake extractor).
+
+The run was also relaunched under `caffeinate -i` afterward, so the host
+cannot sleep mid-run again — a process-level mitigation, not a code fix,
+worth remembering for any future long unattended run on this machine.
+
+### Incident 2: the test suite deleted the real run's database rows
+
+Between killing the hung run (incident 1) and relaunching it, `make test`
+was run to verify the timeout fix. `tests/eval/experiments/test_five_batch.py`
+had a `_cleanup_db` fixture that deleted rows by matching
+`REVIEWER_ID`/`_PLACEHOLDER_AGENT_EXTERNAL_ID` — the exact same constants
+`run_five_batch()` uses by default in production. The test's cleanup
+deleted the real, previously-completed run's placeholder `Agent` row,
+because it matched on a **shared identity**, not on which rows the test
+itself had created. The next real run crashed with a foreign-key violation
+(`calls_agent_id_fkey`) the moment it tried to persist a correction against
+an `agent_id` that had already been deleted out from under it.
+
+**Fixed structurally, not by convention:** `run_five_batch()` gained
+`reviewer_id`/`agent_external_id` parameters (defaulting to the production
+constants), and every test now generates and passes its own
+`f"test-five-batch-{uuid4()}"` identity, cleaning up only rows matching
+that exact value. This makes the failure mode impossible by construction —
+a test can no longer touch production-identified rows no matter when it
+runs relative to a real experiment, rather than relying on someone
+remembering not to. The `reviewer_id`/`agent_external_id` docstrings say so
+explicitly, pointing back at this entry.
+
+**The lesson, stated plainly:** a DB-integration test suite and a
+long-running real job sharing one database is fine, but only if every
+identity a test writes is guaranteed unique to that test run. A shared
+"well-known" constant (chosen for convenience, to make production data
+easy to find) is exactly the thing that turns "tests are isolated by
+construction" into "tests are isolated as long as nothing real is running
+right now" — which is false precisely when it matters most.
+
+### Incident 3: a hard rate limit crashed the process from an unretried code path
+
+The relaunched run (with incidents 1 and 2 fixed) crashed again, this time
+with an unhandled `google.genai.errors.ClientError: 429 RESOURCE_EXHAUSTED`:
+`"Quota exceeded for metric: generate_content_free_tier_requests, limit:
+15, model: gemini-3.5-flash-lite"`. This is the actual, confirmed hard
+limit on this project's Gemini free-tier key — **15 requests/minute** — not
+previously measured, only assumed to be roughly in line with
+`sleep_seconds`'s prior default of 4.0s (which is exactly 15/minute with no
+margin at all).
+
+The crash happened inside `induce_rule()`, called from
+`_capture_and_induce()` — a code path with **no retry protection
+whatsoever**. Incident 1's retry fix only covered `_run_batch()`'s
+extraction calls; every LLM call in the memory pipeline itself
+(`induce_rule`, `insert_rule`'s conflict check, `consolidate`) was
+unretried and unpaced, so a transient `429` there had nothing to catch it
+and took the whole process down.
+
+**Fixed by extracting the retry logic into one shared helper,
+`_call_with_retry()`, used everywhere this experiment calls an LLM** —
+extraction and the memory pipeline alike — rather than special-casing
+extraction as "the expensive path that needs retries" and leaving
+everything else unprotected. Also:
+- `sleep_seconds` (paced after *every* LLM call now, not just extraction)
+  defaults to 5.0s instead of 4.0s, trading a small amount of wall-clock
+  time for real headroom under the confirmed 15/minute ceiling.
+- The docstring for `sleep_seconds` now states the 15/minute figure
+  explicitly, so a future reader tuning it down isn't guessing.
+
+Regression test: `test_run_five_batch_retries_transient_induction_failures`
+— a fake provider that fails the first call of each kind
+(induction/conflict/consolidation), confirming the run completes and no
+correction is permanently lost to it.
+
+**The pattern across all three incidents, stated once:** every one of them
+was a real external condition (sleep, load, a hard quota) hitting a code
+path that assumed happy-path timing and let a failure propagate somewhere
+with no explicit handling. None were about `run_five_batch()`'s *logic*
+being wrong — the batching, scoring, and memory-loop wiring worked
+correctly every time. Long-running, LLM-heavy orchestration code needs
+every call site treated as a boundary that fails sometimes, not just the
+ones that failed in the first run.
+
+### Incident 4: a hard *daily* quota, and checkpoint/resume as the fix
+
+With incidents 1-3 fixed, the relaunched run got through batches 1-3
+cleanly (~257 real requests) and then hit a *different*, non-retryable
+`429`: `GenerateRequestsPerDayPerProjectPerModel-FreeTier, limit: 500` —
+this project's Gemini free-tier key's actual daily cap, confirmed for the
+first time by hitting it. Retrying does nothing here; the quota does not
+reset on the timescale any backoff could bridge. The run was stopped by
+hand rather than left to burn through the rest of its retry budget for no
+benefit.
+
+Before this, `run_five_batch()` had no way to resume — an interruption at
+batch 4 meant re-running batches 1-3 from scratch, re-spending the ~257
+requests they had already legitimately consumed, on a key whose daily
+budget the run had just proven is tight enough for this to matter.
+
+**Fixed with checkpoint/resume**, not by waiting or narrowing scope, since
+this is a recurring hazard for any full-corpus run on a free-tier key, not
+a one-off: `run_five_batch()` gained a `checkpoint_path` parameter. After
+every batch, it writes the batch scores so far, corrections captured,
+active-rules counts, and the memory store's current rules to that path as
+JSON. A subsequent call with the same `checkpoint_path` resumes from the
+first incomplete batch — already-completed batches are restored from the
+checkpoint, not re-extracted — and the checkpoint is deleted once the run
+finishes successfully. `scripts/run_five_batch_experiment.py` sets this by
+default (`data/five_batch_checkpoint.json`, gitignored — transient resume
+state, not a result).
+
+**What was decided about scope, explicitly:** given a clean run costs
+~430 requests against a 500/day budget (extrapolated from the measured
+~257 for 3 batches), resuming from a checkpoint on a fresh day should
+complete — but the margin is genuinely tight, not comfortable. If a future
+run needs more headroom, the honest options are: reduce `n_batches`'s
+per-batch call count, get a paid-tier key, or spread the run across
+multiple days via checkpointing (now possible, previously it was not).
+This entry does not pick one of those — that is a cost/time tradeoff for
+whoever is running the experiment next, not something to default silently.
+
+Regression tests: `test_run_five_batch_resumes_from_checkpoint` (a
+hand-written "batch 1 of 2 already done" checkpoint; confirms the restored
+batch is not re-extracted and the checkpoint is removed on success) and
+`test_run_five_batch_raises_on_checkpoint_batch_count_mismatch` (a
+checkpoint written for a different `n_batches` is rejected outright, not
+silently misapplied against the wrong batch boundaries).
+
+---
+
+## 2026-09-25 — Phase 4 done-when result: the delta, not memory's own trajectory, is the right comparison
+
+**Status:** accepted. This is the design-notes entry for the five-batch
+result recorded in `eval_results.md`'s 2026-09-25 round — read that round's
+full "Finding" and "Caveats" sections for the actual numbers; this entry is
+about the methodology, specifically a bug the first run's own output
+exposed.
+
+### What the done-when criterion actually needs to measure
+
+The original design (this project's working instructions, and
+`docs/08-ROADMAP.md`'s "five successive batches with memory on beat the
+same five with memory off") implicitly assumed the no-memory control would
+be roughly **flat** across batches, so "does memory's accuracy rise" would
+be a fair stand-in for "does memory help." The first real run's own control
+arm falsified that assumption: `ar`'s control fell from 0.907 to 0.780 over
+five batches — a large, real swing driven by whatever made later batches'
+calls harder for the *identical*, memory-free agent, nothing to do with the
+memory loop at all.
+
+Once the control moves, "does memory's own score rise" stops answering the
+question the experiment asks. The question is whether memory helps, and
+the only way to isolate that from shared batch-to-batch noise (both arms
+run over the same batch, same difficulty) is the **delta**,
+`memory_accuracy − control_accuracy`, per batch. `ar`'s delta rose from
++0.015 to +0.129 — memory beat control by a growing margin every single
+batch — while memory's own raw score fell alongside the control's larger
+fall. Judged on raw trajectory, that is a failure. Judged on delta, it is
+the cleanest result in the run.
+
+### What was decided, and what it cost
+
+`sawti.eval.experiments.five_batch._render_report()`'s finding logic was
+rewritten to require (a) the delta's own batch-to-batch trend is rising,
+and (b) memory beats control in every batch — both computed from
+`memory_accuracy − control_accuracy`, not from either arm's raw score in
+isolation. This is not a retroactive reinterpretation invented to rescue a
+disappointing headline number: the delta was already the right
+comparison for the stated question ("does memory help, versus an identical
+run without it") the moment the control turned out not to be flat, and the
+old code was checking the wrong thing from the start.
+
+**Caught before the result was reported, not after**: the first render of
+this round's report called `ar` a failure. It was corrected in the same
+sitting the bug was found, with a regression test
+(`test_render_report_judges_the_memory_control_delta_not_memorys_own_trajectory`)
+that pins the corrected behavior down using exactly this scenario (memory's
+raw score falling while its delta over a faster-falling control rises).
+`eval_results.md`'s round documents the correction inline, in a "bug this
+result caught" subsection, rather than silently presenting only the fixed
+numbers as if they were always what the tool said.
+
+### The result, stated once more without the methodology framing
+
+`ar` meets the corrected done-when bar outright (rising delta, beats
+control every batch). `en` shows a real but partial effect — losing early,
+winning from batch 4 onward, plausibly because the memory store needed a
+few batches of accumulated corrections before its rules paid for
+themselves — but does not clear the "every batch" bar. `mixed` shows no
+consistent effect at all. **The done-when criterion is met for one of
+three language categories, not all three** — reported as exactly that,
+not rounded up to a project-wide success. Phase 5's LoRA dataset plan
+should be scoped accordingly: `ar`'s corrections are the strongest
+candidate signal to build on; `mixed`'s are not evidence of anything yet.
+
+---
+
+## 2026-09-25 — Stage 7's lifecycle wired into the five-batch experiment, judged per rule not per call
+
+**Status:** accepted.
+
+`sawti.memory.lifecycle.record_outcome()`/`maybe_retire()` (Stage 7) existed
+and were unit-tested from the start, but nothing called them — the
+five-batch experiment retrieved rules and used them, but never fed their
+outcomes back. Wired in now, in `sawti.eval.experiments.five_batch`, with
+one explicit requirement: **judge each retrieved rule independently, not
+the whole call at once.**
+
+### Why per-rule, not per-call
+
+A call can retrieve up to `top_k_rules` (5) rules on unrelated topics.
+`first_difference()` finds at most one differing field per call. Judging
+"the call had a diff, so every rule retrieved for it failed" would punish
+4 unrelated rules for 1 rule's actual miss — and reward all 5 when the
+diff happened to be on a completely different topic than any of them
+addressed. Only the rule whose own topic matches the diff should move.
+
+### How a rule's "own topic" is determined
+
+Every `MemoryRule` induced by `induce_rule()` carries
+`source_correction_ids` — the `Correction` record(s) it was generalized
+from. Each `Correction` already carries its own `error_location`
+(`sawti.memory.diff.topic_for` normalizes it, e.g.
+`"commitments[0].deadline"` → `"commitments.deadline"`). Looking those
+source corrections back up (`ReviewerAction.id.in_(rule.source_correction_ids)`
+— a rule's `source_correction_ids` **are** `ReviewerAction.id`s, by
+construction of `capture_correction()`) gives the rule's topic(s) without
+adding a new field to `MemoryRule` or changing its schema. A rule
+consolidated from multiple corrections gets the union of their topics — a
+scope decision, not obviously the only one, but the simplest that needed no
+new data: the merged rule genuinely does cover more than one original
+topic. A rule with no traceable source (e.g. injected directly in a test)
+is left unjudged — an empty topic set, not a guessed success or failure.
+
+Memoized per rule id for the run's lifetime (`_rule_topic_cache`): a
+batch's several calls repeatedly retrieve the same rules, each needing the
+same lookup, and `ReviewerAction` rows are never mutated after
+`capture_correction()` writes them, so there is nothing to invalidate.
+
+### Ordering: outcomes are judged before this batch's own new corrections change the store
+
+Per batch, the order is: retrieve → extract (existing) → **record outcomes
+against what was retrieved** → capture new corrections + induce + insert →
+consolidate → **auto-retire** → checkpoint. Outcomes are recorded against
+the rules as they existed *before* this batch's inductions, so a rule isn't
+judged on corrections it could not possibly have caused. Retirement runs
+last, against the post-consolidation set, for the same reason in reverse:
+retiring a rule by its pre-merge counters would be judging a rule that no
+longer exists in that form once it has been merged into another.
+
+### What was decided about scope
+
+Not re-run against the real 150-call corpus — the user asked for the
+wiring and a regression test, explicitly not a fresh real run. The existing
+2026-09-25 result stands as reported; this entry documents new machinery
+that a *future* real run will exercise, not a re-measurement of the one
+already recorded.
+
+Regression tests: `test_record_rule_outcomes_judges_each_rule_by_its_own_topic`
+(two rules retrieved for one call get opposite verdicts, proving the
+per-rule/not-per-call distinction directly) and
+`test_run_five_batch_retires_an_underperforming_rule` (a rule seeded near
+`maybe_retire()`'s default threshold is actually retired by the end of a
+real, if faked, batch run).
+
+---
+
+## 2026-09-25 — Phase 5 fine-tuning dataset: scope, held-out set, and augmentation
+
+### The problem the done-when result (above) created
+
+The five-batch finding says memory only clearly helps `ar` — `en`'s
+advantage is partial, `mixed` shows none. `ar`-only was therefore the
+obvious default scope for a QLoRA fine-tuning corpus. But querying Postgres
+directly (not `eval_results.md`'s per-batch table, which turned out to
+combine sources) found only **27 `ar` `ReviewerAction` rows across 21
+distinct call_ids**, split across two synthetic sources
+(`five-batch-experiment`: 20 call_ids; `synthetic-day1`: 4; 3 overlapping).
+21 usable examples is below the ~40-50 floor a QLoRA run needs to be a
+credible result, even a small-sample one. Both sources are equally
+synthetic — `synthetic-day1` (`scripts/generate_synthetic_corrections.py`)
+diffs an agent output against an LLM-generated reference label exactly the
+same way `five-batch-experiment` does; neither is a real QA reviewer's
+judgment.
+
+### What was decided
+
+Option (a) from the three offered (proceed thin-and-labeled / augment /
+redefine "example"): **augment**, with a held-out set carved out first so
+the augmentation can't contaminate the Phase 5 step-4 before/after
+comparison.
+
+1. **Held out 25% of the 60-call `ar` corpus (15 calls) before building a
+   single training pair.** Chosen deterministically
+   (`select_held_out_call_ids`: sort call_ids, `random.Random(seed=20260925)
+   .sample`) and written immediately to
+   `data/finetune/held_out_call_ids.json`. `ensure_held_out_call_ids()`
+   reads that file back on every subsequent run rather than recomputing —
+   the set cannot drift once written. These 15 never enter train/val; they
+   are reserved for step 4's base-vs-tuned comparison.
+2. **Augmented the remaining 45 calls with a second, wider diff pass.**
+   `scripts/build_finetune_dataset.py` runs the same mechanism as
+   `scripts/generate_synthetic_corrections.py` (`extract_via_graph` +
+   `sawti.memory.diff.first_difference`) over all 45 eligible calls, not
+   just the ones already in Postgres, tagged with a distinct reviewer_id
+   (`phase1-2-diff-augmentation`) so it is traceable apart from the two
+   existing sources. **This was a real, live run** — 45 Gemini
+   `gemini-flash-lite-latest` calls, paced 5s apart per the 15/min free-tier
+   ceiling measured in the five-batch incidents above, with each agent
+   output cached to `data/finetune/_diff_cache/` by call_id (gitignored) so
+   a re-run doesn't re-spend quota.
+3. **Every corrected claim is grounding-checked again** before entering the
+   dataset (`sawti.agent.nodes.ground.is_grounded`, reused rather than
+   reimplemented) — a corrected field whose evidence quote doesn't verify
+   against the transcript is dropped and logged in `MANIFEST.json`, not
+   silently skipped.
+4. **`en`/`mixed` stay opt-in** (`--include-en`/`--include-mixed`), off by
+   default, each printing the five-batch caveat verbatim when used.
+
+### The result
+
+Combining both sources over the 45 held-in calls and deduplicating
+identical `(call_id, error_location, corrected content)` triples produced
+**22 examples** (16 from the existing Postgres corrections, 6 new from the
+diff-augmentation pass; 0 dropped by the grounding check). Split 85/15,
+stratified by topic (`sawti.memory.diff.topic_for`): **18 train / 4 val**.
+Zero overlap between the 15 held-out call_ids and every call_id that ended
+up in train/val — asserted in code (`build_dataset()` raises
+`RuntimeError` on any leak, not a warning), not just checked after the
+fact.
+
+**Augmentation added volume, not field-type diversity.** The hope going in
+was that a fresh diff pass, unconstrained by whatever
+`sawti.memory.lifecycle` narrowed the five-batch run's corrections down to,
+would surface error types beyond the three seen in Postgres. It did not:
+`sawti.memory.diff.first_difference` only ever emits four shapes
+(`commitments`, `commitments[i].deadline`, `compliance_flags`,
+`rubric_scores[criterion]`) regardless of which run calls it, so the
+augmentation pass could only add more instances of those same shapes, not
+new ones. The final 22-example set is topic-skewed: 19 `commitments`
+(including `.deadline`), 2 `compliance_flags`, 1 `rubric_scores`.
+
+### What this means for how the result should be read
+
+22 examples (18 train) is a small-sample proof that the QLoRA mechanism
+runs end to end on real, grounded, Correction-derived data — not a claim
+that Phase 5 has enough signal to teach the model general QA judgment.
+Every example, from both sources, is synthetic: manufactured by diffing an
+agent output against an LLM-generated reference label, never a real
+reviewer's correction. Step 4's held-out-call comparison should be read the
+same way — a sanity check that fine-tuning didn't break the model or
+regress catastrophically, not a measurement of real-world QA-correction
+capacity.
+
+### Rejected alternatives
+
+- **Proceed with the 21-call_id Postgres-only set, unaugmented.** Rejected
+  as the sole path — below the credibility floor stated up front, though
+  it's exactly what "proceed thin, label it" (option a-minimal) would have
+  been if augmentation had failed to add usable examples.
+- **Blend in `en`/`mixed` corrections to hit a larger N.** Explicitly
+  rejected — this is precisely what the five-batch finding says not to do;
+  bulking up sample size by mixing in unvalidated categories would
+  contradict the reason `ar`-only was chosen in the first place.
+- **Treat every `Correction` row as one example regardless of dedup.**
+  Would have reported 27 (Postgres) + more (diff pass) without collapsing
+  identical corrected content across the two sources — inflates N with
+  duplicate signal from the same call disagreeing the same way twice.
+
+### What it costs
+
+~45 live LLM requests (well inside the 500/day free-tier cap measured in
+the five-batch incidents), cached to avoid repeat cost on re-runs. The
+resulting dataset is checked into `data/finetune/` (not gitignored, like
+`data/ground_truth/` — small, and the whole point is to be inspectable and
+reproducible from a fixed held-out set, not regenerated fresh next time).
+
+---
+
+## 2026-09-25 — Phase 5 base model checkpoint and QLoRA hyperparameters
+
+### Base model: confirmed, not guessed
+
+`PROJECT_BRIEF.md` names "Qwen3-8B" but no exact Hugging Face repo id was
+wired into `src/sawti/llm/` anywhere before this phase — Phase 5 is the
+first to actually load it. Qwen3-8B ships as two checkpoints:
+`Qwen/Qwen3-8B` (instruction/chat-tuned, with Qwen3's hybrid
+thinking-mode chat template) and `Qwen/Qwen3-8B-Base` (raw pretrained, no
+chat template, no instruction-following prior). Asked the user explicitly
+rather than defaulting: **`Qwen/Qwen3-8B` (instruct)**. Reasoning for why
+that's also the correct choice, not just the confirmed one: every training
+pair `scripts/build_finetune_dataset.py` builds is framed as an
+instruction + input -> corrected output turn, which needs a model that
+already has an instruction-following prior and a chat template to render
+against — starting from `-Base` would mean designing a template from
+scratch and very likely needing far more than 18 training examples to
+teach chat behavior *and* the correction task at once.
+
+Wired as `Settings.finetune_base_model`
+(`SAWTI_FINETUNE_BASE_MODEL`, default `"Qwen/Qwen3-8B"`) — a named,
+overridable setting, not a string literal in `scripts/train_qlora.py`.
+
+### QLoRA hyperparameters: documented defaults, not tuned
+
+Explicitly not hand-tuned against this run's own data — 18 training
+examples is far too small to tune hyperparameters against without simply
+overfitting the tuning itself, which is a worse failure mode than picking
+a slightly-suboptimal but well-documented default. Every value below is
+the QLoRA paper's own (Dettmers et al., 2023) recommended configuration:
+
+- **Quantization**: 4-bit NF4, double-quantized, `bfloat16` compute dtype.
+- **LoRA**: rank 16, alpha 32 (the paper's "alpha = 2x rank" convention),
+  dropout 0.05, applied to every linear projection — attention
+  (`q/k/v/o_proj`) *and* MLP (`gate/up/down_proj`) — per the paper's
+  finding that attention-only adaptation underperforms adapting
+  everything. `bias="none"`.
+- **Training**: 3 epochs, batch size 1 with 4-step gradient accumulation
+  (effective batch 4), learning rate 2e-4, cosine schedule, 3% warmup,
+  `max_seq_length=3072` (covers the longest observed training example,
+  ~4.9K chars, with headroom for tokenization variance across scripts).
+
+### Loss logging: plain CSV, not Langfuse
+
+`Settings` already has Langfuse config (`langfuse_public_key`/etc.), but
+nothing in this codebase has ever wired it into anything — it exists for a
+future LLM-call-tracing use case that Phase 5 training isn't. Langfuse
+traces individual LLM calls; a training loop's per-step loss is a
+different shape of data it isn't built for, and there's no existing
+integration pattern here to extend. Per the user's own scoping ("favor the
+simplest thing that gets the numbers recorded, don't build new
+observability infra for this"): a `transformers.TrainerCallback` writing
+`step,epoch,train_loss,eval_loss` to `data/finetune/train_log.csv` on every
+log event. `report_to=[]` in `TrainingArguments` — no W&B/TensorBoard
+either, for the same reason.
+
+### Why the script imports its heavy dependencies lazily
+
+`peft`/`bitsandbytes`/`trl`/`datasets` are CUDA-only and not installed on
+this Mac dev environment (see the `finetune` extra's comment in
+`pyproject.toml`). Every import of one of them happens inside the function
+that needs it (`build_model_and_tokenizer`, `build_lora_config`,
+`build_datasets`, `train`), not at module top level — so
+`scripts/train_qlora.py` imports cleanly here (verified), and the pure-Python
+parts (JSONL loading, chat-message formatting, template rendering against a
+test fake tokenizer) are unit-tested for real on this machine
+(`tests/scripts/test_train_qlora.py`). The CUDA-only paths are guarded with
+`pytest.importorskip` — they run for real on a CUDA host with the
+`finetune` extra installed (Colab), and skip cleanly here rather than
+failing the suite.
+
+### What was not done, and why: an actual training run
+
+This script has never executed — no CUDA is available in this session or
+on this machine. The runtime/Colab-tier estimate in the script's own
+docstring (~10-15 minutes on a T4, mostly download/quantization rather
+than the 18-example training set itself) is a calculation from published
+QLoRA VRAM figures, not a measurement. `notebooks/qlora_train.ipynb` is
+the actual execution path — Emad runs it on Colab and the real loss
+numbers get recorded in `eval_results.md` at that point, not invented here.
+
+### Rejected alternatives
+
+- **`Qwen/Qwen3-8B-Base`.** Rejected for the reason above — wrong prior for
+  an 18-example instruction-tuning run.
+- **Hand-tuning LoRA rank/alpha or the learning rate against a quick trial
+  run.** Not possible without CUDA in this session, and inadvisable even
+  with it — 18 examples is too small a set to tune against without just
+  overfitting the hyperparameter search itself.
+- **Wiring Langfuse into the training loop.** Rejected as scope creep for
+  a one-off small run; plain CSV gets the same numbers recorded with zero
+  new infrastructure.
+
+---
+
+## 2026-09-25 — Roadmap phase numbers reconciled again: fine-tuning is Phase 5, deployment is Phase 6
+
+**Status:** accepted.
+
+This is the second time this file's phase numbering has needed reconciling
+— see the 2026-09-22 entry above ("Roadmap phase numbers reconciled: audio
+is Phase 3, Service folds into Phase 5") for the first. QLoRA fine-tuning
+work (`scripts/build_finetune_dataset.py`, `scripts/train_qlora.py`,
+`scripts/check_forgetting.py`, and every DECISIONS entry above dated
+2026-09-25) started under an informal "Phase 5" label — used in code
+comments and here because it was the next unclaimed number at the time —
+before anyone updated `docs/08-ROADMAP.md`, whose own Phase 5 was still
+*Deployment and service* (FastAPI, Postgres, Celery, the review API,
+containerization, Langfuse). Two different things were sharing one number.
+
+### What was decided
+
+`docs/08-ROADMAP.md` now has a real **Phase 5 — Fine-tuning (QLoRA)**
+section (started 2026-09-25, status 🟡: dataset built and scripts written
+and unit-tested, but the actual Colab training run has not happened —
+tracked there, not restated here). The former Phase 5, deployment and
+service, **renumbers to Phase 6**, unchanged in content.
+
+### What was, and was not, changed to match
+
+`docs/08-ROADMAP.md` is a living document describing current status, so it
+was edited directly — the old Phase 5 section became Phase 6 in place, and
+a second "status note" (alongside 2026-09-22's) records this renumbering
+for anyone who bookmarked the old numbers.
+
+This file (`docs/09-DECISIONS.md`) is append-only by convention — past
+entries are not rewritten to match later reality. So the 2026-09-22 entry
+above, and the 2026-09-22 "MemorySaver checkpointer; Postgres deferred to
+phase 5" entry, still say "Phase 5" meaning deployment: that was correct
+when written and stays as the historical record. **Read any pre-2026-09-25
+"Phase 5" in this file as deployment; read every 2026-09-25 entry's "Phase
+5" as fine-tuning; read anything dated after today as matching the roadmap
+current at that date.**
+
+Source-code comments, by contrast, describe current architecture rather
+than a historical decision, so those *were* updated to Phase 6 for
+internal consistency: `scripts/generate_synthetic_corrections.py`,
+`src/sawti/memory/consolidate.py`, `src/sawti/memory/conflict.py`,
+`src/sawti/memory/capture.py`, and `src/sawti/agent/graph.py` all had a
+"Phase 5" meaning deployment/service-layer absence, now "Phase 6". Every
+fine-tuning script's own "Phase 5" (`scripts/build_finetune_dataset.py`,
+`scripts/train_qlora.py`, `scripts/check_forgetting.py`,
+`src/sawti/config.py`'s `finetune_base_model` comment) was already correct
+and untouched.
+
+### Rejected alternatives
+
+- **Leave deployment as Phase 5 and give fine-tuning a different label**
+  (e.g., "Phase 4.5" or an unnumbered initiative). Rejected: fine-tuning
+  is already extensively documented as "Phase 5" across three scripts,
+  their tests, and four DECISIONS entries written today: renumbering
+  *that* would touch more files than renumbering the not-yet-started
+  deployment phase, for no benefit.
+- **Rewrite the 2026-09-22 entries to say "Phase 6".** Rejected — would
+  make the decision log describe a phase-6-labeled deployment deferral as
+  having been decided on 2026-09-22, which is not what happened; the
+  append-only convention exists precisely to avoid this kind of quiet
+  retroactive edit.

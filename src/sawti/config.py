@@ -95,6 +95,15 @@ class Settings(BaseSettings):
     # at pyannote/segmentation-3.0 and pyannote/speaker-diarization-3.1 first.
     hf_token: str | None = Field(default=None, alias="HF_TOKEN")
 
+    # --- Fine-tuning (Phase 5) ---
+    # PROJECT_BRIEF.md names "Qwen3-8B" without an exact checkpoint; confirmed
+    # explicitly (not guessed — see docs/09-DECISIONS.md, 2026-09-25) as the
+    # instruction/chat-tuned variant, not `Qwen/Qwen3-8B-Base`: its chat
+    # template matches how `scripts/build_finetune_dataset.py` frames each
+    # training pair (instruction + input -> corrected output). Consumed by
+    # `scripts/train_qlora.py` on a CUDA host (Colab), never loaded on this
+    # Mac dev environment.
+    finetune_base_model: str = Field(default="Qwen/Qwen3-8B", alias="SAWTI_FINETUNE_BASE_MODEL")
 
     def whisper_language_for(self, category: str) -> str:
         """Return the forced Whisper language for a language category.

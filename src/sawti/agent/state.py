@@ -68,6 +68,15 @@ class AgentState(TypedDict, total=False):
     # schema. Checking against `transcript` instead would reject every claim
     # whose quote happens to span a redacted span.
     redacted_transcript: str
+    # Rule text from `sawti.memory.store.MemoryStore.retrieve()` — top-5,
+    # best match first — for `extract` to fold into its prompt. `list[str]`
+    # rather than `list[sawti.memory.rule_schema.MemoryRule]` deliberately:
+    # the graph only ever needs the text, and this keeps the agent package
+    # from depending on the memory package's schema for a single field.
+    # Absent or empty means "run as if memory does not exist" — the phase 2
+    # behavior, and what `sawti.eval.experiments.five_batch`'s no-memory
+    # control arm relies on by simply never setting this key.
+    retrieved_rules: list[str]
 
     # --- Written by `extract` ---
     # Unvalidated LLM output, kept for debugging and for the eval harness to

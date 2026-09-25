@@ -8,6 +8,7 @@ graph and assembles its state correctly, not that the model is any good.
 
 from __future__ import annotations
 
+import asyncio
 from pathlib import Path
 
 import pytest
@@ -119,6 +120,34 @@ def test_gate_stats_rejection_rate_is_zero_when_nothing_was_proposed() -> None:
     assert GateStats().rejection_rate(Language.EN) == 0.0
 
 
+def test_extract_via_graph_threads_retrieved_rules_into_the_extraction_prompt(
+    transcript: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """retrieved_rules reaches extract's system prompt — the memory-on arm's whole mechanism."""
+    _use(monkeypatch, grounded=True)
+    rules = ["Flag commitments without a stated deadline as incomplete."]
+
+    captured_system_prompts: list[str] = []
+
+    class _RecordingProvider:
+        async def structured_complete(self, prompt: str, **kwargs: object) -> ExtractionProposal:
+            captured_system_prompts.append(str(kwargs.get("system", "")))
+            start = prompt.index(QUOTE_TEXT)
+            quote = Quote(
+                text=QUOTE_TEXT, speaker="Agent", start_char=start, end_char=start + len(QUOTE_TEXT)
+            )
+            return ExtractionProposal(
+                summary="Refund promised.",
+                commitments=[Commitment(evidence=quote, promised_by="Agent", description="Refund.")],
+            )
+
+    monkeypatch.setattr(extract_module, "get_llm_provider", lambda: _RecordingProvider())
+
+    extract_via_graph(transcript, retrieved_rules=rules)
+
+    assert rules[0] in captured_system_prompts[0]
+
+
 def test_extract_via_graph_raises_when_the_graph_errored(
     transcript: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -136,3 +165,25 @@ def test_extract_via_graph_raises_when_the_graph_errored(
 
     with pytest.raises(RuntimeError, match="graph run failed"):
         extract_via_graph(transcript)
+
+
+def test_extract_via_graph_times_out_rather_than_hanging_forever(
+    transcript: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A stalled provider call is bounded by `timeout`, not left to block indefinitely.
+
+    Regression test for a real incident: running the five-batch experiment
+    overnight, the host machine slept mid-call, and the in-flight provider
+    call — previously unbounded — hung for 12+ hours on wake instead of
+    failing into the caller's retry loop.
+    """
+
+    class _HangingProvider:
+        async def structured_complete(self, prompt: str, **kwargs: object) -> ExtractionProposal:
+            await asyncio.sleep(10)
+            raise AssertionError("should have timed out long before this returned")
+
+    monkeypatch.setattr(extract_module, "get_llm_provider", lambda: _HangingProvider())
+
+    with pytest.raises(TimeoutError):
+        extract_via_graph(transcript, timeout=0.05)

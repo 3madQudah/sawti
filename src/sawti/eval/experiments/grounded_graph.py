@@ -18,11 +18,10 @@ model proposed something unsupported, and how much of that reached the output.
 
 from __future__ import annotations
 
-import asyncio
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 from langchain_core.runnables import RunnableConfig
 
@@ -31,6 +30,7 @@ from sawti.agent.state import AgentState
 from sawti.data.ground_truth import infer_call_id_and_language
 from sawti.eval.metrics import DEFAULT_SYNTHETIC_DIR
 from sawti.eval.runner import run_eval
+from sawti.llm.provider import DEFAULT_REQUEST_TIMEOUT_SECONDS, run_with_timeout
 from sawti.schemas import CallAnalysis, Language, SentimentTrajectory
 
 logger = logging.getLogger(__name__)
@@ -107,19 +107,46 @@ def _to_call_analysis(state: AgentState, call_id: str, language: Language) -> Ca
     )
 
 
-def extract_via_graph(transcript_path: Path, *, stats: GateStats | None = None) -> CallAnalysis:
+def extract_via_graph(
+    transcript_path: Path,
+    *,
+    stats: GateStats | None = None,
+    retrieved_rules: list[str] | None = None,
+    timeout: float = DEFAULT_REQUEST_TIMEOUT_SECONDS,
+) -> CallAnalysis:
     """Run the phase 2 agent graph over one transcript and return its analysis.
 
     Role: the `Extractor` handed to `run_eval`, mirroring `run_plain_extraction`'s
-    signature so the two experiments differ by exactly one callable.
+    signature so the two experiments differ by exactly one callable. Also the
+    extractor `sawti.eval.experiments.five_batch` uses for both its arms —
+    `retrieved_rules` is what tells them apart: omitted (or empty) for the
+    no-memory control, populated from `sawti.memory.store.MemoryStore.retrieve()`
+    for the memory-on arm. Neither arm needed a second code path here.
 
     A run that escalates is *not* resumed — there is no human here. The suspended
     state already holds everything the metrics need, and its
     `requires_human_review=True` is itself part of what the eval reports.
 
+    The whole graph run is bounded by `timeout` (`run_with_timeout`, not a
+    bare `asyncio.run`) — found necessary the hard way running
+    `sawti.eval.experiments.five_batch`'s real experiment overnight: the
+    host machine slept mid-run, and the in-flight provider call, with
+    nothing bounding it, hung indefinitely on wake rather than failing into
+    that module's own retry loop. `extract()`'s own LLM call has no timeout
+    of its own; this one wraps the entire graph invocation instead, so a
+    hang anywhere in the pipeline — not just in `extract` — surfaces as a
+    `TimeoutError` a retrying caller can catch.
+
     Args:
         transcript_path: Path to a `call_<idx>_<lang>.txt` transcript.
         stats: Optional tally to fold this call's grounding-gate outcome into.
+        retrieved_rules: Rule text to fold into `extract`'s prompt via
+            `AgentState["retrieved_rules"]` (see that node). Omitted or
+            empty runs exactly as phase 2 did — no memory involved.
+        timeout: Seconds to allow the whole graph run before raising
+            `TimeoutError`. Defaults to the same
+            `sawti.llm.provider.DEFAULT_REQUEST_TIMEOUT_SECONDS` every
+            provider call in this project is already bounded by.
 
     Returns:
         The agent's analysis as a validated `CallAnalysis`.
@@ -130,14 +157,10 @@ def extract_via_graph(transcript_path: Path, *, stats: GateStats | None = None) 
     graph = build_graph()
     # Each call is its own thread: runs must not share checkpointed state.
     config: RunnableConfig = {"configurable": {"thread_id": f"eval-{call_id}"}}
-    state = cast(
-        AgentState,
-        asyncio.run(
-            graph.ainvoke(
-                {"call_id": call_id, "transcript": transcript, "language": language}, config
-            )
-        ),
-    )
+    initial_state: dict[str, Any] = {"call_id": call_id, "transcript": transcript, "language": language}
+    if retrieved_rules:
+        initial_state["retrieved_rules"] = retrieved_rules
+    state = cast(AgentState, run_with_timeout(graph.ainvoke(initial_state, config), timeout=timeout))
 
     if stats is not None:
         rejected = len(state.get("rejected_claims", []))

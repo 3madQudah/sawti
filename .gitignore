@@ -20,8 +20,26 @@ data/asr_transcripts/*
 # scored against. The WAVs it points at are ~640 MB and stay out.
 !data/audio/manifest.json
 
+# Result records are tracked too — small JSON, and they are the per-call detail
+# behind the tables in eval_results.md. The ASR transcripts themselves are
+# regenerable and stay out.
+!data/asr_transcripts/wer_report.json
+!data/asr_transcripts/wer_report_forced_ar_superseded.json
+!data/asr_transcripts/en_reextract_metrics.json
+!data/asr_transcripts/en_reextract_predictions.json
+
 # data/ground_truth/*.json is hand-labeled human work — irreplaceable,
 # tracked in git (unlike audio/synthetic, it cannot be regenerated).
+
+# Phase 4 five-batch experiment resume state — transient, deleted by a
+# successful run, and meaningless outside the machine/DB it was written on.
+data/five_batch_checkpoint.json
+
+# Phase 5 dataset-build memoization cache (scripts/build_finetune_dataset.py)
+# — raw agent outputs keyed by call_id, regenerable, exists only to avoid
+# re-spending LLM quota on a re-run. Not a result; train/val.jsonl and
+# MANIFEST.json are.
+data/finetune/_diff_cache/
 
 # Test / build artifacts
 .pytest_cache/

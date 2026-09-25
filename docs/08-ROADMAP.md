@@ -22,6 +22,19 @@ Phase 3**. Service folds into Phase 5, next to the other not-yet-started
 infrastructure work it belongs with. See `docs/09-DECISIONS.md` for the
 decision record.
 
+## Status note — numbering reconciled again, 2026-09-25
+
+QLoRA fine-tuning work started under an ad hoc "Phase 5" label in code
+comments and `docs/09-DECISIONS.md` before this file had a matching phase —
+this roadmap's own Phase 5 was still *Deployment*. Resolved by giving
+fine-tuning an actual phase rather than leaving two different things
+sharing one number: **fine-tuning is now Phase 5**, and deployment/service
+(the note above) **renumbers to Phase 6**. Every existing "Phase 5" mention
+of deployment across the codebase (comments, `docs/09-DECISIONS.md`'s prior
+entries) was written when deployment held that number — see
+`docs/09-DECISIONS.md` for the decision record and which references were
+updated vs. left as historical.
+
 ---
 
 ## Phase 0 — Foundations ✅
@@ -94,9 +107,18 @@ transcripts. Built 2026-09-22.
       (`sawti.asr.transcribe`), plus a measured forced-vs-auto-detect
       comparison on the `mixed` category.
 - [x] WER measured per language category, normalized and raw
-      (`sawti.eval.metrics.wer_by_category`).
+      (`sawti.eval.metrics.wer_by_category`). Results: `ar` 0.153, `en` 0.064,
+      `mixed` 0.433 normalized.
+- [x] Forced language is per language category, not one global value
+      (`Settings.whisper_language_overrides`). Forcing `ar` on English audio
+      cost one call a total loss; `en` WER halved once corrected.
 - [x] Extraction accuracy delta, clean text vs ASR text, per language
       (`sawti.eval.experiments.asr_propagation`) — the phase's headline number.
+      Rubric agreement falls `mixed` −0.149, `ar` −0.037, `en` −0.012, tracking
+      WER. **A lower bound**: speaker labels are oracle, so diarization error is
+      not included.
+- [x] The escalation path fired on real data for the first time (4 calls),
+      having never triggered on clean text in phase 2.
 - [~] Speaker diarization (`sawti.asr.diarization`): **implemented and unit
       tested, but never run.** pyannote's pretrained pipelines are gated on
       HuggingFace and no `HF_TOKEN` exists. Needs licence acceptance on
@@ -129,7 +151,47 @@ memory off, per language.
 
 ---
 
-## Phase 5 — Deployment and service 🔮
+## Phase 5 — Fine-tuning (QLoRA) 🟡
+
+Distills the Phase 4 finding — reviewer corrections clearly and
+consistently help `ar` extraction, per the five-batch done-when result —
+into the model itself via QLoRA fine-tuning, rather than relying solely on
+retrieval at inference time. Started 2026-09-25.
+
+- [x] Base model checkpoint confirmed explicitly, not guessed:
+      `Qwen/Qwen3-8B` (instruct), wired as `Settings.finetune_base_model`
+      (`SAWTI_FINETUNE_BASE_MODEL`). See `docs/09-DECISIONS.md`.
+- [x] Fine-tuning dataset built (`scripts/build_finetune_dataset.py`): 22
+      examples (18 train / 4 val) from 45 of the 60 `ar` calls, 15 held out
+      before any training pair was built and reserved for the step-4
+      comparison below. Every example is synthetic — manufactured from an
+      agent-output-vs-ground-truth diff, never a real QA reviewer's
+      judgment. See `docs/09-DECISIONS.md` and `eval_results.md`'s
+      2026-09-25 entry.
+- [x] QLoRA training script written and unit-tested
+      (`scripts/train_qlora.py`, `notebooks/qlora_train.ipynb`) — **never
+      run.** CUDA-only; this dev environment has none. Hyperparameters
+      (4-bit NF4, LoRA r=16/α=32 over every linear layer) are the QLoRA
+      paper's documented defaults, not tuned against this dataset. See
+      `docs/09-DECISIONS.md`.
+- [x] Catastrophic-forgetting scaffold written and unit-tested
+      (`scripts/check_forgetting.py`) — **never run**, same CUDA
+      constraint. A handful of generic prompts, base vs. tuned, checked for
+      a large regression (empty or drastically shorter output) — not a
+      full eval suite.
+- [ ] Actual Colab training run: train/val loss and the forgetting-check
+      result recorded in `eval_results.md`, replacing the runtime estimate
+      currently in `docs/09-DECISIONS.md`.
+
+**Done when:** the QLoRA adapter trains end to end on Colab, its train/val
+loss is recorded, and the forgetting check shows no large regression on
+generic prompts. Read the result as validating the fine-tuning *mechanism*,
+not as a scaled result — 18 training examples, all synthetic. See
+`docs/09-DECISIONS.md`.
+
+---
+
+## Phase 6 — Deployment and service 🔮
 
 Everything needed to run this as a real deployed system rather than a
 collection of eval scripts: FastAPI service, Postgres persistence, Celery

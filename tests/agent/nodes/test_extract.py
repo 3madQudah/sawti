@@ -174,12 +174,39 @@ async def test_extract_reports_missing_transcript_as_an_error() -> None:
     assert "no transcript" in update["error"]
 
 
-async def test_extract_does_not_retrieve_memory_rules_in_phase_2(fake_provider: _FakeProvider) -> None:
-    """Memory retrieval is phase 4; the prompt carries no injected rules today.
+async def test_extract_uses_the_plain_prompt_when_no_rules_are_retrieved(
+    fake_provider: _FakeProvider,
+) -> None:
+    """No `retrieved_rules` in state reproduces the exact phase 2 prompt.
 
-    `sawti.memory.store` raises NotImplementedError, so calling it would crash
-    the graph. This test pins the deliberate absence so it is a decision, not drift.
+    This is what `sawti.eval.experiments.five_batch`'s no-memory control arm
+    relies on: simply never setting the key.
     """
     await extract({"transcript": RAW})
 
     assert fake_provider.calls[0]["system"] == EXTRACTION_SYSTEM_PROMPT
+
+
+async def test_extract_ignores_an_empty_retrieved_rules_list(fake_provider: _FakeProvider) -> None:
+    """An empty list behaves exactly like an absent key — same plain prompt."""
+    await extract({"transcript": RAW, "retrieved_rules": []})
+
+    assert fake_provider.calls[0]["system"] == EXTRACTION_SYSTEM_PROMPT
+
+
+async def test_extract_injects_retrieved_rules_into_the_system_prompt(
+    fake_provider: _FakeProvider,
+) -> None:
+    """extract() folds AgentState["retrieved_rules"] into the system prompt when present."""
+    rules = [
+        "Flag commitments without a stated deadline as incomplete.",
+        "Do not flag identity verification when no such verification event occurs.",
+    ]
+
+    await extract({"transcript": RAW, "retrieved_rules": rules})
+
+    system_prompt = fake_provider.calls[0]["system"]
+    assert isinstance(system_prompt, str)
+    assert system_prompt.startswith(EXTRACTION_SYSTEM_PROMPT)
+    for rule in rules:
+        assert rule in system_prompt

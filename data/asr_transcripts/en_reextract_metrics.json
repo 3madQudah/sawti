@@ -1,0 +1,24 @@
+{
+  "scored": 30,
+  "failures": [],
+  "metrics": {
+    "Accuracy": {
+      "en": 0.9113
+    },
+    "Rubric agreement": {
+      "en": 0.9476
+    },
+    "Grounding precision": {
+      "en": 0.9632
+    },
+    "Unsupported claim rate": {
+      "en": 0.0
+    }
+  },
+  "gate": {
+    "proposed": 253,
+    "rejected": 22,
+    "escalated": 4,
+    "calls": 30
+  }
+}

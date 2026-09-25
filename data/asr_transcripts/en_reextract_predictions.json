@@ -1,0 +1,4689 @@
+[
+  {
+    "id": "30303267-04d1-412f-a83b-cc55b30b4dd3",
+    "call_id": "call_0006_en",
+    "language": "en",
+    "summary": "The customer called to request a payment extension on his utility bill due to unexpected expenses. The agent verified his account, checked his payment history, and successfully extended the due date to October 26th.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "I have successfully updated your new due date to October 26th.",
+          "speaker": "Agent",
+          "start_char": 1039,
+          "end_char": 1101
+        },
+        "promised_by": "Agent",
+        "description": "Extend the bill due date to October 26th",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "Thank you for calling Metro Utilities. My name is Sarah. How can I help you today?",
+          "speaker": "Agent",
+          "start_char": 7,
+          "end_char": 89
+        },
+        "criterion": "professionalism",
+        "score": 1.0,
+        "justification": "The agent was exceptionally polite, professional, and courteous throughout the call."
+      },
+      {
+        "evidence": {
+          "text": "I understand, David, and I'd be happy to check your account for extension options today.",
+          "speaker": "Agent",
+          "start_char": 325,
+          "end_char": 413
+        },
+        "criterion": "empathy",
+        "score": 1.0,
+        "justification": "The agent acknowledged the customer's situation with understanding and reassurance."
+      },
+      {
+        "evidence": {
+          "text": "I have successfully updated your new due date to October 26th.",
+          "speaker": "Agent",
+          "start_char": 1039,
+          "end_char": 1101
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 1.0,
+        "justification": "The agent successfully granted the requested extension and confirmed the details."
+      },
+      {
+        "evidence": {
+          "text": "I see your current balance of $145 is due on the 12th of this month.",
+          "speaker": "Agent",
+          "start_char": 613,
+          "end_char": 681
+        },
+        "criterion": "communication_clarity",
+        "score": 1.0,
+        "justification": "Communication was clear, concise, and easy to follow."
+      },
+      {
+        "evidence": {
+          "text": "Is there anything else I can assist you with today, David?",
+          "speaker": "Customer",
+          "start_char": 1255,
+          "end_char": 1313
+        },
+        "criterion": "call_closure",
+        "score": 1.0,
+        "justification": "The agent offered further assistance and closed the call properly."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Hi Sarah, my name is David. I'm calling to see if it might be possible to get a short payment extension on my current bill.",
+            "speaker": "Customer",
+            "start_char": 83,
+            "end_char": 206
+          },
+          "speaker": "Customer",
+          "score": -0.2,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "The phone number is 555-019-8234.",
+            "speaker": "Customer",
+            "start_char": 465,
+            "end_char": 498
+          },
+          "speaker": "Customer",
+          "score": 0.0,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "Would it be possible to push that due date back to the 26th?",
+            "speaker": "Customer",
+            "start_char": 645,
+            "end_char": 705
+          },
+          "speaker": "Customer",
+          "score": 0.2,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "Oh, that is such a relief. Thank you so much for checking.",
+            "speaker": "Customer",
+            "start_char": 844,
+            "end_char": 902
+          },
+          "speaker": "Customer",
+          "score": 0.9,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "No, that's everything I needed. Have a wonderful rest of your day.",
+            "speaker": "Customer",
+            "start_char": 1188,
+            "end_char": 1254
+          },
+          "speaker": "Customer",
+          "score": 0.9,
+          "timestamp_sec": 32.0
+        }
+      ]
+    },
+    "confidence": 0.75,
+    "requires_human_review": false
+  },
+  {
+    "id": "409be6a0-5b5b-43b7-96c8-ecfa77e743f2",
+    "call_id": "call_0026_en",
+    "language": "en",
+    "summary": "The customer called to complain about a delayed refund for a canceled internet installation order that had been pending for three weeks. The agent located the order, explained it was stuck in a manual review queue, overrode the hold to push the refund through, and stated it would take two to three business days to appear. The call ended with the customer expressing frustration but acknowledging the steps taken.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "I am overriding the hold on my end right now to push",
+          "speaker": "Agent",
+          "start_char": 1172,
+          "end_char": 1224
+        },
+        "promised_by": "Agent",
+        "description": "Override the hold and push the refund through immediately",
+        "deadline": null
+      },
+      {
+        "evidence": {
+          "text": "I've expedited the transaction to the highest priority.",
+          "speaker": "Agent",
+          "start_char": 1670,
+          "end_char": 1725
+        },
+        "promised_by": "Agent",
+        "description": "Expedite the refund transaction to the highest priority",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "Thank you for calling Metro Telecom. My name is Marcus. How can I help you today?",
+          "speaker": "Agent",
+          "start_char": 7,
+          "end_char": 88
+        },
+        "criterion": "professionalism",
+        "score": 0.8,
+        "justification": "The agent maintained a polite and professional tone throughout the call despite some customer hostility, though there were minor conversational overlaps."
+      },
+      {
+        "evidence": {
+          "text": "I completely understand why you're upset.",
+          "speaker": "Agent",
+          "start_char": 869,
+          "end_char": 910
+        },
+        "criterion": "empathy",
+        "score": 0.7,
+        "justification": "The agent acknowledged the customer's frustration and apologized, though some empathy statements felt slightly formulaic."
+      },
+      {
+        "evidence": {
+          "text": "I am overriding the hold on my end right now to push",
+          "speaker": "Agent",
+          "start_char": 1172,
+          "end_char": 1224
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 0.9,
+        "justification": "The agent successfully identified the issue (stuck in manual review) and took direct action by overriding the hold to push the refund."
+      },
+      {
+        "evidence": {
+          "text": "Once I process this override, it typically takes two to three",
+          "speaker": "Agent",
+          "start_char": 1375,
+          "end_char": 1436
+        },
+        "criterion": "communication_clarity",
+        "score": 0.8,
+        "justification": "The explanation of the timeframe and the override process was clear, despite some speech overlapping."
+      },
+      {
+        "evidence": {
+          "text": "Is there anything else I can assist you with today?",
+          "speaker": "Agent",
+          "start_char": 1950,
+          "end_char": 2001
+        },
+        "criterion": "call_closure",
+        "score": 0.8,
+        "justification": "The agent offered further assistance and closed the call politely, although the customer cut the conversation short with 'Goodbye'."
+      },
+      {
+        "evidence": {
+          "text": "Okay, I see the cancellation was processed on October 12th. Let me check the refund status.",
+          "speaker": "Agent",
+          "start_char": 625,
+          "end_char": 716
+        },
+        "criterion": "accuracy_of_information",
+        "score": 0.9,
+        "justification": "The agent accurately pulled up the account details and identified why the refund was delayed."
+      },
+      {
+        "evidence": {
+          "text": "May I have your account number or the phone number associated with the order?",
+          "speaker": "Agent",
+          "start_char": 353,
+          "end_char": 430
+        },
+        "criterion": "procedure_adherence",
+        "score": 0.9,
+        "justification": "The agent correctly asked for verification details before accessing the account and handled the order investigation appropriately."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Look, I am calling because I canceled my internet installation order three weeks ago and I still haven't received my refund.",
+            "speaker": "Customer",
+            "start_char": 89,
+            "end_char": 213
+          },
+          "speaker": "Customer",
+          "score": -0.6,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "It better be there. Your automated system said it takes five to seven business days and it has been nearly a month. Where is my money?",
+            "speaker": "Customer",
+            "start_char": 421,
+            "end_char": 555
+          },
+          "speaker": "Customer",
+          "score": -0.8,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "A manual review queue? For a standard refund? That is ridiculous. Nobody told me it was stuck.",
+            "speaker": "Customer",
+            "start_char": 648,
+            "end_char": 742
+          },
+          "speaker": "Customer",
+          "score": -0.7,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "Two to three days? You guys are quick to take the money out, but taking it back takes an act of Congress.",
+            "speaker": "Customer",
+            "start_char": 883,
+            "end_char": 988
+          },
+          "speaker": "Customer",
+          "score": -0.5,
+          "timestamp_sec": 32.0
+        },
+        {
+          "quote": {
+            "text": "No, just make sure the money actually gets sent. Goodbye.",
+            "speaker": "Customer",
+            "start_char": 1161,
+            "end_char": 1218
+          },
+          "speaker": "Customer",
+          "score": -0.3,
+          "timestamp_sec": 40.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  },
+  {
+    "id": "cbfb1976-cbe0-4c9a-9def-757902f2ea11",
+    "call_id": "call_0030_en",
+    "language": "en",
+    "summary": "The customer called to dispute an unexpectedly high bill caused by an automatic renewal into a 2-year contract after a promotional period ended. The agent explained the terms, quoted a $150 early termination fee for cancellation, and offered a $20 monthly loyalty discount instead. The customer declined to resolve it through the discount and requested a supervisor transfer, which the agent agreed to do.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "I will transfer you to a supervisor right away.",
+          "speaker": "Agent",
+          "start_char": 3390,
+          "end_char": 3437
+        },
+        "promised_by": "Agent",
+        "description": "Transfer the call to a supervisor.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "I can certainly understand your concern about a higher bill.",
+          "speaker": "Agent",
+          "start_char": 236,
+          "end_char": 296
+        },
+        "criterion": "professionalism",
+        "score": 0.8,
+        "justification": "The agent remained polite and professional throughout the call despite customer frustration."
+      },
+      {
+        "evidence": {
+          "text": "I apologize for the confusion, Ms. Davis.",
+          "speaker": "Agent",
+          "start_char": 1156,
+          "end_char": 1197
+        },
+        "criterion": "empathy",
+        "score": 0.7,
+        "justification": "The agent offered appropriate apologies and acknowledged the customer's concerns."
+      },
+      {
+        "evidence": {
+          "text": "I will transfer you to a supervisor right away.",
+          "speaker": "Agent",
+          "start_char": 3390,
+          "end_char": 3437
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 0.6,
+        "justification": "The issue was not resolved on the spot, but the agent properly routed the call to a supervisor as requested."
+      },
+      {
+        "evidence": {
+          "text": "The early termination fee would be $150, Ms. Davis.",
+          "speaker": "Agent",
+          "start_char": 2056,
+          "end_char": 2107
+        },
+        "criterion": "communication_clarity",
+        "score": 0.7,
+        "justification": "Agent communicated clearly, though sometimes the pacing required repetition."
+      },
+      {
+        "evidence": {
+          "text": "Please hold for just a moment while I get them on the line. Thank you.",
+          "speaker": "Agent",
+          "start_char": 3438,
+          "end_char": 3508
+        },
+        "criterion": "call_closure",
+        "score": 0.7,
+        "justification": "The agent set clear expectations for the transfer before closing their part of the interaction."
+      },
+      {
+        "evidence": {
+          "text": "The 24-month agreement would remain active, but you would receive the $20 discount each month",
+          "speaker": "Agent",
+          "start_char": 3096,
+          "end_char": 3189
+        },
+        "criterion": "accuracy_of_information",
+        "score": 0.9,
+        "justification": "Account policies, promotion expirations, and fee amounts were stated consistently."
+      },
+      {
+        "evidence": {
+          "text": "Could I please have your name and account number?",
+          "speaker": "Agent",
+          "start_char": 332,
+          "end_char": 381
+        },
+        "criterion": "procedure_adherence",
+        "score": 1.0,
+        "justification": "The agent properly verified the customer's identity before discussing account details."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Hi, yes, I'm calling because I just got my latest bill and it's way higher than it usually is, and I'm really confused about why.",
+            "speaker": "Customer",
+            "start_char": 13,
+            "end_char": 142
+          },
+          "speaker": "Customer",
+          "score": -0.3,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "Automatically? Nobody told me about any automatic renewal. How is that even legal? I certainly didn't agree to sign up for two more years.",
+            "speaker": "Customer",
+            "start_char": 569,
+            "end_char": 707
+          },
+          "speaker": "Customer",
+          "score": -0.7,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "A $150 fee? For a contract I didn't even know I was in? Could you repeat the amount you just said?",
+            "speaker": "Customer",
+            "start_char": 1215,
+            "end_char": 1313
+          },
+          "speaker": "Customer",
+          "score": -0.8,
+          "timestamp_sec": 40.0
+        },
+        {
+          "quote": {
+            "text": "Oh, okay. If you can lower the bill, that might help, but I still don't want to be locked into a two-year contract.",
+            "speaker": "Customer",
+            "start_char": 1968,
+            "end_char": 2083
+          },
+          "speaker": "Customer",
+          "score": -0.2,
+          "timestamp_sec": 56.0
+        },
+        {
+          "quote": {
+            "text": "I really don't like being locked in like this. Let me just speak to that manager you mentioned. Can you transfer me now?",
+            "speaker": "Customer",
+            "start_char": 2363,
+            "end_char": 2483
+          },
+          "speaker": "Customer",
+          "score": -0.6,
+          "timestamp_sec": 64.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  },
+  {
+    "id": "122fb345-cd91-4ad7-8d7c-a25258ef038d",
+    "call_id": "call_0034_en",
+    "language": "en",
+    "summary": "The customer called because their monthly bill increased from $60 to $95. The agent explained that the promotional rate expired and the contract auto-renewed for 12 months at standard pricing. After customer frustration, the agent offered and applied a loyalty credit of $15 per month, bringing the bill to $80 per month for the remainder of the 12-month term.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "I'll apply the loyalty credit right now, and it will reflect on your next billing cycle.",
+          "speaker": "Agent",
+          "start_char": 4320,
+          "end_char": 4408
+        },
+        "promised_by": "Agent",
+        "description": "Apply the $15 loyalty credit to the account starting on the next billing cycle",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "I completely understand your frustration and I want to help you find the best solution possible without adding extra charges.",
+          "speaker": "Agent",
+          "start_char": 2836,
+          "end_char": 2961
+        },
+        "criterion": "professionalism",
+        "score": 0.9,
+        "justification": "The agent remained polite, calm, and professional throughout the call despite customer frustration."
+      },
+      {
+        "evidence": {
+          "text": "I completely understand your frustration and I want to help you find the best solution possible without adding extra charges.",
+          "speaker": "Agent",
+          "start_char": 2836,
+          "end_char": 2961
+        },
+        "criterion": "empathy",
+        "score": 0.8,
+        "justification": "The agent acknowledged the customer's frustration and validated their feelings about the situation."
+      },
+      {
+        "evidence": {
+          "text": "Is there anything else I can clarify for you today?",
+          "speaker": "Agent",
+          "start_char": 4409,
+          "end_char": 4460
+        },
+        "criterion": "call_closure",
+        "score": 0.9,
+        "justification": "The agent properly checked for additional questions and closed the call politely."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Hi, yes, I'm calling because I got my latest bill and it's much higher than it usually is and I'm really confused about why that's happening.",
+            "speaker": "Customer",
+            "start_char": 95,
+            "end_char": 236
+          },
+          "speaker": "Customer",
+          "score": -0.3,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "Wait, did you need me to spell my last name too?",
+            "speaker": "Customer",
+            "start_char": 425,
+            "end_char": 473
+          },
+          "speaker": "Customer",
+          "score": 0.0,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "Wait, what? Can you say that again? I'm sorry, I'm not really good with these technical terms.",
+            "speaker": "Customer",
+            "start_char": 1221,
+            "end_char": 1315
+          },
+          "speaker": "Customer",
+          "score": -0.4,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "An early termination fee? Now I have to pay a fee just because I'm confused about my bill? This is getting ridiculous.",
+            "speaker": "Customer",
+            "start_char": 2947,
+            "end_char": 3065
+          },
+          "speaker": "Customer",
+          "score": -0.8,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "All right, I suppose I don't have much of a choice then. Let's go ahead with that $80 option, please.",
+            "speaker": "Customer",
+            "start_char": 4526,
+            "end_char": 4627
+          },
+          "speaker": "Customer",
+          "score": -0.2,
+          "timestamp_sec": 32.0
+        }
+      ]
+    },
+    "confidence": 0.5,
+    "requires_human_review": true
+  },
+  {
+    "id": "11a2a9f7-a38f-4afb-8676-a659bd47d98f",
+    "call_id": "call_0038_en",
+    "language": "en",
+    "summary": "The customer called to immediately cancel his account due to an unexpected overcharge and frustration with waiting. Despite the customer's hostility, refusal of credits, and threats of legal action, the agent reviewed policy, applied a credit to clear the balance, processed the cancellation, disabled auto-pay, and sent a confirmation email.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "I am generating the cancellation confirmation right now.",
+          "speaker": "Agent",
+          "start_char": 2843,
+          "end_char": 2899
+        },
+        "promised_by": "Agent",
+        "description": "Generate and provide a cancellation confirmation.",
+        "deadline": null
+      },
+      {
+        "evidence": {
+          "text": "Your auto pay has been disabled, and the confirmation email has just been sent.",
+          "speaker": "Agent",
+          "start_char": 3155,
+          "end_char": 3234
+        },
+        "promised_by": "Agent",
+        "description": "Disable auto-pay and send a confirmation email.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "I'm sorry to hear that you're feeling frustrated today.",
+          "speaker": "Agent",
+          "start_char": 187,
+          "end_char": 242
+        },
+        "criterion": "professionalism",
+        "score": 0.8,
+        "justification": "The agent maintained professional composure and a polite tone throughout the call despite verbal abuse and threats from the customer."
+      },
+      {
+        "evidence": {
+          "text": "I hear how angry you are, Mr. Pendleton, and I am processing the cancellation right now to respect your wishes.",
+          "speaker": "Agent",
+          "start_char": 2620,
+          "end_char": 2731
+        },
+        "criterion": "empathy",
+        "score": 0.7,
+        "justification": "The agent acknowledged the customer's frustration and validated his emotional state repeatedly."
+      },
+      {
+        "evidence": {
+          "text": "Your auto pay has been disabled, and the confirmation email has just been sent. Is there anything else I can assist you with today?",
+          "speaker": "Agent",
+          "start_char": 3155,
+          "end_char": 3286
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 0.9,
+        "justification": "The agent successfully processed the cancellation, waived the disputed fee, disabled auto-pay, and sent confirmation as requested."
+      },
+      {
+        "evidence": {
+          "text": "I am authorized to process cancellations, but per our company policy, I am required to review any pending credits or final prorated charges before the account closure is finalized.",
+          "speaker": "Agent",
+          "start_char": 1578,
+          "end_char": 1758
+        },
+        "criterion": "communication_clarity",
+        "score": 0.8,
+        "justification": "The agent explained company policies and actions clearly, though the customer was impatient."
+      },
+      {
+        "evidence": {
+          "text": "Is there anything else I can assist you with today?",
+          "speaker": "Agent",
+          "start_char": 3235,
+          "end_char": 3286
+        },
+        "criterion": "call_closure",
+        "score": 0.7,
+        "justification": "The agent attempted a standard closure, though the customer abruptly dismissed it."
+      },
+      {
+        "evidence": {
+          "text": "According to your account, the extra charge was due to a temporary promotional rate expiring, but I can apply a loyalty credit right now to waive that entire amount.",
+          "speaker": "Agent",
+          "start_char": 2251,
+          "end_char": 2416
+        },
+        "criterion": "accuracy_of_information",
+        "score": 0.9,
+        "justification": "The agent accurately identified the root cause of the billing discrepancy and offered the correct credit option."
+      },
+      {
+        "evidence": {
+          "text": "per our company policy, I am required to review any pending credits or final prorated charges before the account closure is finalized.",
+          "speaker": "Agent",
+          "start_char": 1624,
+          "end_char": 1758
+        },
+        "criterion": "procedure_adherence",
+        "score": 0.9,
+        "justification": "The agent followed proper procedure by reviewing the account balance, applying a credit to ensure a zero balance, and disabling auto-pay before closure."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "I want to close my account right now, and I am sick of dealing with your company.",
+            "speaker": "Customer",
+            "start_char": 15,
+            "end_char": 96
+          },
+          "speaker": "Customer",
+          "score": -0.8,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "My name is Arthur Pendleton, and you don't need my account number. It's on your screen if you have half a brain. I've been on hold for 20 minutes just to get someone who actually speaks English.",
+            "speaker": "Customer",
+            "start_char": 268,
+            "end_char": 462
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "I don't want you to look at it. I want you to cancel it. I already switched my service to your competitor this morning, so just process the cancellation and stop wasting my time.",
+            "speaker": "Customer",
+            "start_char": 791,
+            "end_char": 969
+          },
+          "speaker": "Customer",
+          "score": -0.8,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "You are just reading a script to keep me trapped. I am not paying another single dime to this scam of a company.",
+            "speaker": "Customer",
+            "start_char": 1320,
+            "end_char": 1432
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "Fine. Send the confirmation to my email on file and make sure my auto pay is permanently deleted from your system.",
+            "speaker": "Customer",
+            "start_char": 2154,
+            "end_char": 2268
+          },
+          "speaker": "Customer",
+          "score": -0.3,
+          "timestamp_sec": 32.0
+        }
+      ]
+    },
+    "confidence": 0.9,
+    "requires_human_review": false
+  },
+  {
+    "id": "c8475709-676f-43db-afb5-1df5f5b2e669",
+    "call_id": "call_0046_en",
+    "language": "en",
+    "summary": "The customer called to complain about a dead internet connection impacting their work. The agent identified an unexpected fiber outage in the area, offered an account credit and 50GB of mobile data for tethering, which the customer accepted while expressing continuing dissatisfaction.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "However, I can credit your account for today's downtime and push 50 gigabytes of mobile data to your phone right now so you can hotspot your computer.",
+          "speaker": "Agent",
+          "start_char": 1310,
+          "end_char": 1460
+        },
+        "promised_by": "Agent",
+        "description": "Credit the account for today's downtime and push 50 GB of mobile data to the customer's phone.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [
+      {
+        "evidence": {
+          "text": "I completely understand your frustration,",
+          "speaker": "Customer",
+          "start_char": 552,
+          "end_char": 593
+        },
+        "rule_id": "robotic_scripting",
+        "severity": "low",
+        "description": "The agent misattributed an empathy statement to the customer mid-sentence or repeated a scripted phrase out of context."
+      }
+    ],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "My name is Sarah. How can I help you today?",
+          "speaker": "Agent",
+          "start_char": 44,
+          "end_char": 87
+        },
+        "criterion": "professionalism",
+        "score": 0.6,
+        "justification": "Maintained composure despite a very angry customer, though handling of the manager escalation request was slightly argumentative."
+      },
+      {
+        "evidence": {
+          "text": "I am very sorry for the frustration.",
+          "speaker": "Agent",
+          "start_char": 241,
+          "end_char": 277
+        },
+        "criterion": "empathy",
+        "score": 0.6,
+        "justification": "The agent acknowledged the customer's frustration early on, though some responses included awkward phrasing or minor script slips."
+      },
+      {
+        "evidence": {
+          "text": "However, I can credit your account for today's downtime and push 50 gigabytes of mobile data to your phone right now so you can hotspot your computer.",
+          "speaker": "Agent",
+          "start_char": 1310,
+          "end_char": 1460
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 0.7,
+        "justification": "Offered a practical workaround (mobile data hotspot) and a credit to resolve the immediate crisis."
+      },
+      {
+        "evidence": {
+          "text": "I can certainly check the status of the network in your area for you.",
+          "speaker": "Agent",
+          "start_char": 278,
+          "end_char": 347
+        },
+        "criterion": "communication_clarity",
+        "score": 0.8,
+        "justification": "The agent spoke clearly and explained technical status and solutions effectively."
+      },
+      {
+        "evidence": {
+          "text": "Our technicians are already on-site working to repair a damaged cable, and the estimated restoration time is currently set for another two hours.",
+          "speaker": "Agent",
+          "start_char": 900,
+          "end_char": 1045
+        },
+        "criterion": "accuracy_of_information",
+        "score": 0.8,
+        "justification": "Provided clear and direct details about the ongoing fiber outage and repair timeline."
+      },
+      {
+        "evidence": {
+          "text": "May I have your account number or phone number, please?",
+          "speaker": "Agent",
+          "start_char": 348,
+          "end_char": 403
+        },
+        "criterion": "procedure_adherence",
+        "score": 0.8,
+        "justification": "The agent correctly requested identity verification before looking up the account details."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "How can you help? My internet has been completely dead for the last three hours, and I work from home. This is completely unacceptable.",
+            "speaker": "Customer",
+            "start_char": 88,
+            "end_char": 223
+          },
+          "speaker": "Customer",
+          "score": -0.8,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "It's 555-0199. And I don't want excuses. I want to know why I'm paying full price for a service that never works when I actually need it.",
+            "speaker": "Customer",
+            "start_char": 329,
+            "end_char": 466
+          },
+          "speaker": "Customer",
+          "score": -0.7,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "An outage? Great. So how long is it going to take to fix? Because I have a critical client meeting in 20 minutes and I am about to lose my mind.",
+            "speaker": "Customer",
+            "start_char": 551,
+            "end_char": 695
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "Two hours? That is ridiculous. I am losing money by the minute because of your faulty equipment. I demand to speak to a manager right now.",
+            "speaker": "Customer",
+            "start_char": 837,
+            "end_char": 975
+          },
+          "speaker": "Customer",
+          "score": -1.0,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "Fine, just do that immediately so I can get back online, but I expect a much larger credit on my next bill for this disaster.",
+            "speaker": "Customer",
+            "start_char": 1132,
+            "end_char": 1257
+          },
+          "speaker": "Customer",
+          "score": -0.5,
+          "timestamp_sec": 32.0
+        }
+      ]
+    },
+    "confidence": 0.8888888888888888,
+    "requires_human_review": false
+  },
+  {
+    "id": "12c489ad-a1b3-4d79-849d-da3548b4c4b2",
+    "call_id": "call_0056_en",
+    "language": "en",
+    "summary": "The customer called to inquire about a sudden increase in their monthly utility bill. The agent verified the account, explained that a 12-month promotional rate had expired, and investigated previous notes. To resolve the customer's concern, the agent successfully enrolled the customer in a new 12-month loyalty plan matching the previous pricing, along with additional paperless and auto-pay discounts.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "I have successfully enrolled you in the new loyalty plan and applied the discounts, effective immediately.",
+          "speaker": "Agent",
+          "start_char": 1949,
+          "end_char": 2055
+        },
+        "promised_by": "Agent",
+        "description": "Enroll the customer in the new loyalty plan and apply discounts effective immediately.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "Thank you for calling Metro Utilities. My name is Sarah.",
+          "speaker": "Agent",
+          "start_char": 7,
+          "end_char": 63
+        },
+        "criterion": "professionalism",
+        "score": 1.0,
+        "justification": "The agent was polite, professional, and helpful throughout the entire interaction."
+      },
+      {
+        "evidence": {
+          "text": "I would be happy to look into your billing details for you.",
+          "speaker": "Agent",
+          "start_char": 228,
+          "end_char": 287
+        },
+        "criterion": "empathy",
+        "score": 0.9,
+        "justification": "The agent acknowledged the customer's concerns and expressed a willingness to help and understand the confusion."
+      },
+      {
+        "evidence": {
+          "text": "I have successfully enrolled you in the new loyalty plan and applied the discounts, effective immediately.",
+          "speaker": "Agent",
+          "start_char": 1949,
+          "end_char": 2055
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 1.0,
+        "justification": "The agent completely resolved the customer's issue by finding and applying a new promotional loyalty plan."
+      },
+      {
+        "evidence": {
+          "text": "Yes, it locks in the rate for 12 months, and you can enroll in paperless billing and auto-pay for an additional $5 monthly discount.",
+          "speaker": "Agent",
+          "start_char": 1719,
+          "end_char": 1851
+        },
+        "criterion": "communication_clarity",
+        "score": 1.0,
+        "justification": "The agent explained the new plan terms and additional discount options very clearly."
+      },
+      {
+        "evidence": {
+          "text": "You are very welcome. Thank you for choosing Metro Utilities, and have a wonderful day as well.",
+          "speaker": "Agent",
+          "start_char": 2212,
+          "end_char": 2307
+        },
+        "criterion": "call_closure",
+        "score": 1.0,
+        "justification": "The agent handled the closure smoothly, responding appropriately to the customer's farewell."
+      },
+      {
+        "evidence": {
+          "text": "I see that your promotional rate expired last month and your account automatically transitioned to our standard monthly plan.",
+          "speaker": "Agent",
+          "start_char": 552,
+          "end_char": 677
+        },
+        "criterion": "accuracy_of_information",
+        "score": 1.0,
+        "justification": "The information provided regarding the expired promotion and the transition to the standard plan was accurate."
+      },
+      {
+        "evidence": {
+          "text": "May I please have your account number and the phone number associated with it?",
+          "speaker": "Agent",
+          "start_char": 288,
+          "end_char": 366
+        },
+        "criterion": "procedure_adherence",
+        "score": 1.0,
+        "justification": "The agent properly authenticated the customer by requesting the account number and phone number before proceeding."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Hi, Sarah. I am calling because I just received my latest bill and noticed a significant increase",
+            "speaker": "Customer",
+            "start_char": 56,
+            "end_char": 153
+          },
+          "speaker": "Customer",
+          "score": -0.2,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "I understand. However, when I spoke with a representative a year ago when I first signed up, I was under the impression this rate would remain locked in for two years.",
+            "speaker": "Customer",
+            "start_char": 662,
+            "end_char": 829
+          },
+          "speaker": "Customer",
+          "score": -0.1,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "Yes, it was a bit unexpected, but I appreciate you taking the time to look into it.",
+            "speaker": "Customer",
+            "start_char": 1176,
+            "end_char": 1259
+          },
+          "speaker": "Customer",
+          "score": 0.3,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "That sounds fantastic. Please go ahead and apply that to my account.",
+            "speaker": "Customer",
+            "start_char": 1718,
+            "end_char": 1786
+          },
+          "speaker": "Customer",
+          "score": 0.8,
+          "timestamp_sec": 32.0
+        },
+        {
+          "quote": {
+            "text": "Thank you so much for your help and patience today, Sarah. Have a wonderful rest of your day.",
+            "speaker": "Customer",
+            "start_char": 1892,
+            "end_char": 1985
+          },
+          "speaker": "Customer",
+          "score": 1.0,
+          "timestamp_sec": 40.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  },
+  {
+    "id": "0da19dc3-a766-4bea-84ae-e349066885ef",
+    "call_id": "call_0062_en",
+    "language": "en",
+    "summary": "The customer called to request a payment extension on his utility bill due to upcoming payday. The agent sympathized, offered an extension to September 22nd with no late fees, and confirmed the system was updated.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "I can go ahead and extend your due date to next Friday, the 22nd, with no late fees applied.",
+          "speaker": "Agent",
+          "start_char": 530,
+          "end_char": 622
+        },
+        "promised_by": "Agent",
+        "description": "Extend payment due date to September 22nd with no late fees applied.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "Thank you for calling Metro Utilities. My name is Sarah. How can I help you today?",
+          "speaker": "Agent",
+          "start_char": 7,
+          "end_char": 89
+        },
+        "criterion": "professionalism",
+        "score": 0.9,
+        "justification": "Maintained a professional tone despite the customer's initial aggressive demeanor."
+      },
+      {
+        "evidence": {
+          "text": "I completely understand and I can certainly help you with a payment extension today.",
+          "speaker": "Agent",
+          "start_char": 259,
+          "end_char": 343
+        },
+        "criterion": "empathy",
+        "score": 0.8,
+        "justification": "The agent acknowledged the customer's frustration and validated his concerns promptly."
+      },
+      {
+        "evidence": {
+          "text": "I can go ahead and extend your due date to next Friday, the 22nd, with no late fees applied.",
+          "speaker": "Agent",
+          "start_char": 530,
+          "end_char": 622
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 1.0,
+        "justification": "The agent efficiently resolved the customer's issue by granting the requested extension and waiving late fees."
+      },
+      {
+        "evidence": {
+          "text": "Thank you for calling Metro Utilities. My name is Sarah. How can I help you today?",
+          "speaker": "Agent",
+          "start_char": 7,
+          "end_char": 89
+        },
+        "criterion": "communication_clarity",
+        "score": 0.9,
+        "justification": "Clear and professional communication throughout the call."
+      },
+      {
+        "evidence": {
+          "text": "Have a good rest of your day.",
+          "speaker": "Agent",
+          "start_char": 951,
+          "end_char": 980
+        },
+        "criterion": "call_closure",
+        "score": 0.7,
+        "justification": "The agent closed the call politely, though without summarizing the finalized action in the final sign-off."
+      },
+      {
+        "evidence": {
+          "text": "I can go ahead and extend your due date to next Friday, the 22nd, with no late fees applied.",
+          "speaker": "Agent",
+          "start_char": 530,
+          "end_char": 622
+        },
+        "criterion": "accuracy_of_information",
+        "score": 1.0,
+        "justification": "Provided accurate account modifications as requested."
+      },
+      {
+        "evidence": {
+          "text": "I can go ahead and extend your due date to next Friday, the 22nd, with no late fees applied.",
+          "speaker": "Agent",
+          "start_char": 530,
+          "end_char": 622
+        },
+        "criterion": "procedure_adherence",
+        "score": 0.9,
+        "justification": "Handled the payment extension correctly according to standard policies."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Yeah, I'm looking at my bill and it's ridiculous. I need an extension on my payment because I get paid next Friday and I don't have time for a lecture.",
+            "speaker": "Customer",
+            "start_char": 83,
+            "end_char": 234
+          },
+          "speaker": "Customer",
+          "score": -0.7,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "Good, because I'm sick of getting threat messages about my power being shut off when",
+            "speaker": "Customer",
+            "start_char": 262,
+            "end_char": 346
+          },
+          "speaker": "Customer",
+          "score": -0.6,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "Finally, someone who just does their job. Yes, do that.",
+            "speaker": "Customer",
+            "start_char": 422,
+            "end_char": 477
+          },
+          "speaker": "Customer",
+          "score": 0.4,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "No, that's it. Just make sure it actually updates in your system so I don't get any more automated calls.",
+            "speaker": "Customer",
+            "start_char": 535,
+            "end_char": 640
+          },
+          "speaker": "Customer",
+          "score": 0.1,
+          "timestamp_sec": 32.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  },
+  {
+    "id": "43841d0b-1988-4e47-8859-721f8d920ee4",
+    "call_id": "call_0063_en",
+    "language": "en",
+    "summary": "The customer called in extreme frustration because their newly purchased router was showing a blinking red light and failing to connect. The agent, Marcus, attempted troubleshooting by asking about power sources and suggesting a direct wall connection and factory reset. When the customer reached their limit and demanded to cancel service and return the router, the agent offered to connect a senior technician for a free replacement.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "let me get a senior technician on the line right now to swap this out for a replacement at zero cost to you.",
+          "speaker": "Agent",
+          "start_char": 2469,
+          "end_char": 2577
+        },
+        "promised_by": "Agent",
+        "description": "Bring a senior technician on the line to arrange a free replacement router.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "I sincerely apologize for the wait time, and I understand you're frustrated. I'd be happy to help you get your new router set up properly.",
+          "speaker": "Agent",
+          "start_char": 244,
+          "end_char": 382
+        },
+        "criterion": "professionalism",
+        "score": 0.8,
+        "justification": "The agent remained polite, calm, and professional throughout the interaction despite the customer's escalating hostility."
+      },
+      {
+        "evidence": {
+          "text": "I know how frustrating it is when a new device doesn't work right out of the box.",
+          "speaker": "Agent",
+          "start_char": 533,
+          "end_char": 614
+        },
+        "criterion": "empathy",
+        "score": 0.9,
+        "justification": "The agent repeatedly validated the customer's frustration and used empathetic phrasing throughout."
+      },
+      {
+        "evidence": {
+          "text": "let me get a senior technician on the line right now to swap this out for a replacement at zero cost to you.",
+          "speaker": "Agent",
+          "start_char": 2469,
+          "end_char": 2577
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 0.6,
+        "justification": "Basic troubleshooting failed to fix the router, but the agent ultimately pivoted to offering a free replacement and senior escalation."
+      },
+      {
+        "evidence": {
+          "text": "Is the main power cord plugged directly into a wall outlet, or a power strip?",
+          "speaker": "Agent",
+          "start_char": 978,
+          "end_char": 1055
+        },
+        "criterion": "communication_clarity",
+        "score": 0.8,
+        "justification": "Instructions and diagnostic questions were clear and easy to understand."
+      },
+      {
+        "evidence": {
+          "text": "We'll be right back. We'll be right back.",
+          "speaker": "Agent",
+          "start_char": 2578,
+          "end_char": 2619
+        },
+        "criterion": "call_closure",
+        "score": 0.3,
+        "justification": "The call ended abruptly with a glitchy looping statement from the agent before a proper closing could occur."
+      },
+      {
+        "evidence": {
+          "text": "I am showing your line is active on our end, but let's go ahead and bypass the setup app entirely and try a hard factory reset.",
+          "speaker": "Agent",
+          "start_char": 2109,
+          "end_char": 2236
+        },
+        "criterion": "accuracy_of_information",
+        "score": 0.7,
+        "justification": "Technical troubleshooting steps were standard, though they failed to resolve the hardware issue."
+      },
+      {
+        "evidence": {
+          "text": "Can you confirm the model number on the bottom of the device?",
+          "speaker": "Agent",
+          "start_char": 642,
+          "end_char": 703
+        },
+        "criterion": "procedure_adherence",
+        "score": 0.6,
+        "justification": "The agent attempted standard troubleshooting steps, though they did not explicitly verify the account through security protocols on the recording provided."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Finally, someone picked up. I've been on hold for 20 minutes, and I am at my wit's end with this stupid new router I bought from you guys.",
+            "speaker": "Customer",
+            "start_char": 64,
+            "end_char": 202
+          },
+          "speaker": "Customer",
+          "score": -0.8,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "I am not crawling under my desk again to read tiny serial numbers. Just tell me why your junk equipment won't connect to the internet.",
+            "speaker": "Customer",
+            "start_char": 609,
+            "end_char": 743
+          },
+          "speaker": "Customer",
+          "score": -0.7,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "Are you kidding me? I have to tear apart my entire entertainment center just to plug in a cable? This is ridiculous.",
+            "speaker": "Customer",
+            "start_char": 1137,
+            "end_char": 1253
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "Okay. It's plugged directly into the wall now. Still a blinking red light. What a surprise. Total waste of money.",
+            "speaker": "Customer",
+            "start_char": 1612,
+            "end_char": 1725
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "A reset? I already did that twice. I am done playing tech support games with you. I want to cancel my service and return this useless brick.",
+            "speaker": "Customer",
+            "start_char": 1859,
+            "end_char": 1999
+          },
+          "speaker": "Customer",
+          "score": -1.0,
+          "timestamp_sec": 32.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  },
+  {
+    "id": "6bbe1ae7-1463-44fe-be1c-83b2d0bec74c",
+    "call_id": "call_0064_en",
+    "language": "en",
+    "summary": "The customer called because they were having trouble setting up a new Apex Home Mesh Wi-Fi system, specifically seeing a blinking orange light instead of solid white. The agent guided the customer through power cycling the modem and router, waiting for connection, and using the mobile app to complete the setup. The router successfully turned solid white, and the customer ended the call satisfied.",
+    "commitments": [],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "I would be more than happy to help you get that up and running. Which specific step are you stuck on?",
+          "speaker": "Agent",
+          "start_char": 240,
+          "end_char": 341
+        },
+        "criterion": "professionalism",
+        "score": 1.0,
+        "justification": "The agent maintained a polite, professional, and supportive tone throughout the entire call."
+      },
+      {
+        "evidence": {
+          "text": "I am so glad to hear that.",
+          "speaker": "Agent",
+          "start_char": 3834,
+          "end_char": 3860
+        },
+        "criterion": "empathy",
+        "score": 0.9,
+        "justification": "The agent showed genuine enthusiasm and validated the customer's relief and progress."
+      },
+      {
+        "evidence": {
+          "text": "Once that light turns solid white, your main router setup is officially complete.",
+          "speaker": "Agent",
+          "start_char": 3654,
+          "end_char": 3735
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 1.0,
+        "justification": "The agent successfully resolved the customer's technical issue step by step until the router light turned solid white."
+      },
+      {
+        "evidence": {
+          "text": "Yes. Please unplug the power cable from both your modem and the new Apex router. Wait about 30 seconds, and then plug just the modem back in first.",
+          "speaker": "Agent",
+          "start_char": 735,
+          "end_char": 882
+        },
+        "criterion": "communication_clarity",
+        "score": 1.0,
+        "justification": "Instructions were extremely clear, sequential, and easy for the customer to follow."
+      },
+      {
+        "evidence": {
+          "text": "Is there anything else I can help you with today regarding your new system",
+          "speaker": "Agent",
+          "start_char": 4136,
+          "end_char": 4210
+        },
+        "criterion": "call_closure",
+        "score": 0.9,
+        "justification": "The agent checked for additional questions and provided a warm closing, though slightly interrupted by the customer completing the sentence."
+      },
+      {
+        "evidence": {
+          "text": "Blinking white is actually a great sign. That means it is booting up and searching for firmware updates. Let's give it about two minutes.",
+          "speaker": "Agent",
+          "start_char": 2265,
+          "end_char": 2402
+        },
+        "criterion": "accuracy_of_information",
+        "score": 1.0,
+        "justification": "The technical information and troubleshooting steps provided regarding light statuses and setup procedures were fully accurate."
+      },
+      {
+        "evidence": {
+          "text": "Yes. You can open the app and make sure your phone's Bluetooth is turned on, as the app uses Bluetooth to discover nearby routers during setup.",
+          "speaker": "Agent",
+          "start_char": 2509,
+          "end_char": 2652
+        },
+        "criterion": "procedure_adherence",
+        "score": 1.0,
+        "justification": "The agent followed proper troubleshooting protocol for mesh Wi-Fi setup, including power cycling and app-based pairing."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Hi Sarah, I recently purchased the new Apex Home Mesh Wi-Fi system, and I am having a little bit of trouble getting it set up properly.",
+            "speaker": "Customer",
+            "start_char": 201,
+            "end_char": 336
+          },
+          "speaker": "Customer",
+          "score": -0.2,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "Okay, I have unplugged both of them now. I'll wait 30 seconds.",
+            "speaker": "Customer",
+            "start_char": 704,
+            "end_char": 766
+          },
+          "speaker": "Customer",
+          "score": 0.0,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "That explains it. Look at the modem now. All the status lights are solid green.",
+            "speaker": "Customer",
+            "start_char": 1827,
+            "end_char": 1906
+          },
+          "speaker": "Customer",
+          "score": 0.4,
+          "timestamp_sec": 48.0
+        },
+        {
+          "quote": {
+            "text": "Oh, it found it instantly. It says Apex router detected. Should I tap connect?",
+            "speaker": "Customer",
+            "start_char": 2772,
+            "end_char": 2850
+          },
+          "speaker": "Customer",
+          "score": 0.8,
+          "timestamp_sec": 72.0
+        },
+        {
+          "quote": {
+            "text": "It just turned solid white. That was much easier once we power cycled the modem.",
+            "speaker": "Customer",
+            "start_char": 3209,
+            "end_char": 3289
+          },
+          "speaker": "Customer",
+          "score": 1.0,
+          "timestamp_sec": 96.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  },
+  {
+    "id": "6c45d54e-60a1-40be-91d5-2f6a2df04d58",
+    "call_id": "call_0065_en",
+    "language": "en",
+    "summary": "The customer called to close her account because she moved. The agent verified her account details, informed her of a $12.50 credit balance and that a refund check will be mailed, and arranged to mail a prepaid shipping box for equipment return to her new address. The call ended politely.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "We will be mailing a refund check for $12.50 to your new address.",
+          "speaker": "Agent",
+          "start_char": 1399,
+          "end_char": 1464
+        },
+        "promised_by": "Agent",
+        "description": "Mail a refund check for $12.50 to the customer's new address.",
+        "deadline": null
+      },
+      {
+        "evidence": {
+          "text": "I will mail the equipment return box out today.",
+          "speaker": "Agent",
+          "start_char": 1972,
+          "end_char": 2019
+        },
+        "promised_by": "Agent",
+        "description": "Mail an equipment return box today.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "I can certainly help you with closing your account, ma'am. May I please have your full name and the phone number or account number associated with the service?",
+          "speaker": "Agent",
+          "start_char": 217,
+          "end_char": 376
+        },
+        "criterion": "professionalism",
+        "score": 1.0,
+        "justification": "The agent maintained a polite, respectful, and professional tone throughout the call."
+      },
+      {
+        "evidence": {
+          "text": "You've been very patient with me. Thank you so much.",
+          "speaker": "Customer",
+          "start_char": 2104,
+          "end_char": 2156
+        },
+        "criterion": "empathy",
+        "score": 1.0,
+        "justification": "The agent showed great patience and empathy when dealing with an elderly customer who had difficulty with details."
+      },
+      {
+        "evidence": {
+          "text": "I will mail the equipment return box out today.",
+          "speaker": "Agent",
+          "start_char": 1972,
+          "end_char": 2019
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 1.0,
+        "justification": "The agent successfully addressed all the customer's inquiries regarding account closure, the credit balance, and equipment return."
+      },
+      {
+        "evidence": {
+          "text": "That means we owe you money, Martha. We will be mailing a refund check for $12.50 to your new address.",
+          "speaker": "Agent",
+          "start_char": 1362,
+          "end_char": 1464
+        },
+        "criterion": "communication_clarity",
+        "score": 1.0,
+        "justification": "The agent explained financial and procedural details clearly and in terms the customer could easily understand."
+      },
+      {
+        "evidence": {
+          "text": "You are very welcome, Martha. Have a wonderful day and enjoy your new home. Goodbye.",
+          "speaker": "Agent",
+          "start_char": 2164,
+          "end_char": 2248
+        },
+        "criterion": "call_closure",
+        "score": 1.0,
+        "justification": "The agent checked for additional needs, warmly closed the call, and said goodbye."
+      },
+      {
+        "evidence": {
+          "text": "It looks like you have a small credit balance of $12.50 remaining on the account.",
+          "speaker": "Agent",
+          "start_char": 1168,
+          "end_char": 1249
+        },
+        "criterion": "accuracy_of_information",
+        "score": 1.0,
+        "justification": "The agent correctly retrieved and reported the account balance and offered accurate options for equipment return."
+      },
+      {
+        "evidence": {
+          "text": "May I please have your full name and the phone number or account number associated with the service?",
+          "speaker": "Agent",
+          "start_char": 276,
+          "end_char": 376
+        },
+        "criterion": "procedure_adherence",
+        "score": 1.0,
+        "justification": "The agent properly verified the customer's identity and account information before discussing account specifics."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Hi there. Um, someone told me I need to call you guys too. Well, stop getting bills from you because I moved.",
+            "speaker": "Customer",
+            "start_char": 0,
+            "end_char": 109
+          },
+          "speaker": "Customer",
+          "score": -0.2,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "Oh goodness, account number? Let me look. It is. Wait, let me put my glasses on. Can you say that again, dear?",
+            "speaker": "Customer",
+            "start_char": 328,
+            "end_char": 438
+          },
+          "speaker": "Customer",
+          "score": 0.0,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "A credit? Does that mean you owe me money or do I owe you? I get so mixed up with these bills.",
+            "speaker": "Customer",
+            "start_char": 988,
+            "end_char": 1082
+          },
+          "speaker": "Customer",
+          "score": 0.1,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "Oh, a check in the mail. How nice.",
+            "speaker": "Customer",
+            "start_char": 1121,
+            "end_char": 1155
+          },
+          "speaker": "Customer",
+          "score": 0.6,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "I don't think so, dear. You've been very patient with me. Thank you so much.",
+            "speaker": "Customer",
+            "start_char": 1620,
+            "end_char": 1696
+          },
+          "speaker": "Customer",
+          "score": 0.8,
+          "timestamp_sec": 32.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  },
+  {
+    "id": "9389659b-9a50-400d-9345-e7c6a3f38666",
+    "call_id": "call_0070_en",
+    "language": "en",
+    "summary": "The customer called because their internet was not working and they were confused. The agent identified that there was an area-wide fiber cable outage caused by construction. The agent explained the repair timeline (estimating restoration by 4 p.m.), provided troubleshooting instructions if service does not return by 4:30 p.m., and informed the customer about requesting a prorated bill credit through the app or by calling back.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "We estimate that service will be fully restored within about 2 to 3 hours, so by roughly 4 p.m. today.",
+          "speaker": "Agent",
+          "start_char": 2150,
+          "end_char": 2252
+        },
+        "promised_by": "Agent",
+        "description": "Service will be fully restored by roughly 4 p.m. today.",
+        "deadline": null
+      },
+      {
+        "evidence": {
+          "text": "Once the outage is officially marked as resolved in our system, you can call us back or use our app to request an automatic prorated credit for the downtime.",
+          "speaker": "Agent",
+          "start_char": 2765,
+          "end_char": 2922
+        },
+        "promised_by": "Agent",
+        "description": "Customer can request a prorated credit for the downtime once the outage is resolved.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "Thank you for calling Metro Connect Support. My name is David. How can I help you today?",
+          "speaker": "Agent",
+          "start_char": 7,
+          "end_char": 95
+        },
+        "criterion": "professionalism",
+        "score": 1.0,
+        "justification": "The agent maintained a polite, professional, and helpful tone throughout the call without any unprofessional behavior."
+      },
+      {
+        "evidence": {
+          "text": "I am sorry to hear that your internet is down. I can certainly help you look into that.",
+          "speaker": "Agent",
+          "start_char": 236,
+          "end_char": 323
+        },
+        "criterion": "empathy",
+        "score": 0.9,
+        "justification": "The agent acknowledged the customer's frustration and confusion empathetically at the beginning and accommodated the customer's hearing difficulty later by speaking up."
+      },
+      {
+        "evidence": {
+          "text": "We estimate that service will be fully restored within about 2 to 3 hours, so by roughly 4 p.m. today.",
+          "speaker": "Agent",
+          "start_char": 2150,
+          "end_char": 2252
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 1.0,
+        "justification": "The agent successfully diagnosed the cause of the issue as an area-wide outage, provided an ETA, gave clear restart instructions, and explained how to get a bill credit."
+      },
+      {
+        "evidence": {
+          "text": "I said there is a known service outage in your neighborhood affecting several blocks around Maple Street.",
+          "speaker": "Agent",
+          "start_char": 1376,
+          "end_char": 1481
+        },
+        "criterion": "communication_clarity",
+        "score": 1.0,
+        "justification": "The agent spoke clearly, repeated information when the customer asked due to hearing issues, and ensured the customer understood the steps."
+      },
+      {
+        "evidence": {
+          "text": "Thank you for calling MetroConnect, and have a wonderful day.",
+          "speaker": "Agent",
+          "start_char": 3479,
+          "end_char": 3540
+        },
+        "criterion": "call_closure",
+        "score": 1.0,
+        "justification": "The agent confirmed no further assistance was needed and provided a polite, proper closing."
+      },
+      {
+        "evidence": {
+          "text": "Yes, I am checking the signal from our system right now. While that runs, I do want to let you know we are showing a known service outage in your neighborhood affecting several blocks.",
+          "speaker": "Agent",
+          "start_char": 1047,
+          "end_char": 1231
+        },
+        "criterion": "accuracy_of_information",
+        "score": 1.0,
+        "justification": "The information provided regarding the area outage, estimated restoration time, and credit policy was consistent and accurate according to the conversation."
+      },
+      {
+        "evidence": {
+          "text": "Could I please have your account number or the phone number associated with your service?",
+          "speaker": "Agent",
+          "start_char": 324,
+          "end_char": 413
+        },
+        "criterion": "procedure_adherence",
+        "score": 1.0,
+        "justification": "The agent followed proper procedure by verifying customer account information before discussing details and running diagnostics."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Hi, yes, hello. I am calling because my internet is completely not working and I am very confused about what is happening.",
+            "speaker": "Customer",
+            "start_char": 92,
+            "end_char": 214
+          },
+          "speaker": "Customer",
+          "score": -0.5,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "Wait, what did you say? An outage? My hearing isn't great. Could you speak a little louder, please?",
+            "speaker": "Customer",
+            "start_char": 827,
+            "end_char": 926
+          },
+          "speaker": "Customer",
+          "score": -0.3,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "Utility work? Like construction down the road? I saw some big trucks earlier today, but I didn't think it would cut my internet.",
+            "speaker": "Customer",
+            "start_char": 1159,
+            "end_char": 1287
+          },
+          "speaker": "Customer",
+          "score": 0.0,
+          "timestamp_sec": 32.0
+        },
+        {
+          "quote": {
+            "text": "4 o'clock today? Okay, let me write that down. So, 4 o'clock this afternoon. And do I need to restart my router after that time, or will it just come back on by itself?",
+            "speaker": "Customer",
+            "start_char": 1494,
+            "end_char": 1662
+          },
+          "speaker": "Customer",
+          "score": 0.2,
+          "timestamp_sec": 48.0
+        },
+        {
+          "quote": {
+            "text": "All right, well, thank you for explaining it all to me. I was getting quite worried it was broken",
+            "speaker": "Customer",
+            "start_char": 2185,
+            "end_char": 2282
+          },
+          "speaker": "Customer",
+          "score": 0.5,
+          "timestamp_sec": 64.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  },
+  {
+    "id": "0ff7bea8-e09c-4097-9e07-ef1bf5ae2b23",
+    "call_id": "call_0072_en",
+    "language": "en",
+    "summary": "The customer called Apex Telecom because their home internet was down while working from home. The agent identified an unplanned fiber optic line cut nearby, explained that field technicians were already working on it with an estimated 45-minute to one-hour repair time, and successfully compensated the customer with a free 15 gigabyte mobile data pass.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "I would be happy to apply a 15 gigabyte temporary data pass to your mobile account free of charge right now so you can use your hotspot without worrying.",
+          "speaker": "Agent",
+          "start_char": 2521,
+          "end_char": 2674
+        },
+        "promised_by": "Agent",
+        "description": "Apply a 15 GB temporary data pass to the customer's mobile account free of charge.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "My name is Marcus. How can I help you today?",
+          "speaker": "Agent",
+          "start_char": 43,
+          "end_char": 87
+        },
+        "criterion": "professionalism",
+        "score": 1.0,
+        "justification": "The agent maintained a polite, professional tone throughout the call."
+      },
+      {
+        "evidence": {
+          "text": "I am very sorry to hear that your internet is down, especially during your workday. I understand how stressful that can be.",
+          "speaker": "Agent",
+          "start_char": 274,
+          "end_char": 397
+        },
+        "criterion": "empathy",
+        "score": 1.0,
+        "justification": "The agent showed strong empathy regarding the customer's work disruption and stress."
+      },
+      {
+        "evidence": {
+          "text": "I have just applied that data pass to your phone number. You should receive a text message confirming it in just a moment.",
+          "speaker": "Agent",
+          "start_char": 2756,
+          "end_char": 2878
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 1.0,
+        "justification": "The agent fully resolved the customer's immediate concern by explaining the outage and providing temporary mobile data."
+      },
+      {
+        "evidence": {
+          "text": "The current estimated time for full restoration is about 45 minutes to an hour.",
+          "speaker": "Agent",
+          "start_char": 2189,
+          "end_char": 2268
+        },
+        "criterion": "accuracy_of_information",
+        "score": 1.0,
+        "justification": "The agent accurately diagnosed the regional outage and provided clear ETA details."
+      },
+      {
+        "evidence": {
+          "text": "May I please have your account number or the phone number associated with your service to pull",
+          "speaker": "Agent",
+          "start_char": 727,
+          "end_char": 821
+        },
+        "criterion": "procedure_adherence",
+        "score": 1.0,
+        "justification": "The agent followed proper verification and troubleshooting procedures."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Look, my home internet has been down for the last two hours, and I am getting really frustrated because I work from home and I am missing important meetings.",
+            "speaker": "Customer",
+            "start_char": 91,
+            "end_char": 248
+          },
+          "speaker": "Customer",
+          "score": -0.6,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "Please tell me there is an outage and it is not just me.",
+            "speaker": "Customer",
+            "start_char": 1500,
+            "end_char": 1556
+          },
+          "speaker": "Customer",
+          "score": -0.4,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "You are kidding me. Construction? So that is why it went out suddenly.",
+            "speaker": "Customer",
+            "start_char": 1658,
+            "end_char": 1728
+          },
+          "speaker": "Customer",
+          "score": -0.5,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "Oh, well, actually, that would be fantastic. Can you really do that?",
+            "speaker": "Customer",
+            "start_char": 2366,
+            "end_char": 2434
+          },
+          "speaker": "Customer",
+          "score": 0.4,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "All right. Well, I am still not thrilled about the outage, but I really appreciate you sorting this out quickly and giving me that extra data.",
+            "speaker": "Customer",
+            "start_char": 3097,
+            "end_char": 3239
+          },
+          "speaker": "Customer",
+          "score": 0.5,
+          "timestamp_sec": 32.0
+        }
+      ]
+    },
+    "confidence": 0.75,
+    "requires_human_review": false
+  },
+  {
+    "id": "50af298a-2dd3-4227-907a-addb400e0993",
+    "call_id": "call_0080_en",
+    "language": "en",
+    "summary": "The customer called to dispute an unexpected $50 increase and an extra $45 roaming charge on his bill, caused by a previous agent failing to disclose that a home internet bundle was required for a promotional rate. After initially offering a one-time credit which the customer rejected, and facing threats of cancellation and an FCC complaint, the agent consulted a supervisor and successfully secured a permanent promotional discount matching the quoted price, along with a $45 credit.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "what I can do is apply a one-time courtesy credit of $50 to your account right now to cover this month.",
+          "speaker": "Agent",
+          "start_char": 2492,
+          "end_char": 2595
+        },
+        "promised_by": "Agent",
+        "description": "Apply a one-time courtesy credit of $50 to the account.",
+        "deadline": null
+      },
+      {
+        "evidence": {
+          "text": "Let me consult with my supervisor to see if we can override the system requirements for this promotion.",
+          "speaker": "Agent",
+          "start_char": 3598,
+          "end_char": 3701
+        },
+        "promised_by": "Agent",
+        "description": "Consult with supervisor about overriding promotion system requirements.",
+        "deadline": null
+      },
+      {
+        "evidence": {
+          "text": "we have authorized a permanent promotional discount matching the price you were quoted.",
+          "speaker": "Agent",
+          "start_char": 4218,
+          "end_char": 4305
+        },
+        "promised_by": "Agent",
+        "description": "Apply a permanent promotional discount matching the quoted price.",
+        "deadline": null
+      },
+      {
+        "evidence": {
+          "text": "I have successfully credited the disputed $45 back to your card today.",
+          "speaker": "Agent",
+          "start_char": 4533,
+          "end_char": 4603
+        },
+        "promised_by": "Agent",
+        "description": "Credit the disputed $45 back to the card.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "I sincerely apologize for the long wait time and any frustration it has caused. I'd be more than happy to look into your billing concerns today.",
+          "speaker": "Agent",
+          "start_char": 274,
+          "end_char": 418
+        },
+        "criterion": "professionalism",
+        "score": 0.9,
+        "justification": "The agent maintained a calm, polite, and professional demeanor throughout the call despite the customer's severe frustration and hostility."
+      },
+      {
+        "evidence": {
+          "text": "I completely understand why you're upset. Let me look closely at the plan changes made on the 14th of last month.",
+          "speaker": "Agent",
+          "start_char": 1363,
+          "end_char": 1476
+        },
+        "criterion": "empathy",
+        "score": 0.85,
+        "justification": "The agent repeatedly acknowledged the customer's frustration, apologized for the previous agent's miscommunication, and validated his feelings."
+      },
+      {
+        "evidence": {
+          "text": "we have authorized a permanent promotional discount matching the price you were quoted.",
+          "speaker": "Agent",
+          "start_char": 4218,
+          "end_char": 4305
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 1.0,
+        "justification": "The agent successfully resolved the issue by consulting a supervisor to override the system, securing the promised rate permanently and refunding the charge."
+      },
+      {
+        "evidence": {
+          "text": "Yes, exactly. The corrected rate will reflect on your next billing cycle, and I have successfully credited the disputed $45 back to your card today.",
+          "speaker": "Agent",
+          "start_char": 4455,
+          "end_char": 4603
+        },
+        "criterion": "communication_clarity",
+        "score": 0.9,
+        "justification": "The agent clearly explained how and when the billing corrections would take effect without using confusing jargon."
+      },
+      {
+        "evidence": {
+          "text": "Is there anything else I can assist you with today?",
+          "speaker": "Agent",
+          "start_char": 4817,
+          "end_char": 4868
+        },
+        "criterion": "call_closure",
+        "score": 0.9,
+        "justification": "The agent handled the closure well by asking if there was anything else needed, addressing the customer's final remarks, and providing a polite sign-off."
+      },
+      {
+        "evidence": {
+          "text": "The promotion was only applicable if you also bundled our home internet service, which wasn't added.",
+          "speaker": "Agent",
+          "start_char": 1780,
+          "end_char": 1880
+        },
+        "criterion": "accuracy_of_information",
+        "score": 0.9,
+        "justification": "The agent accurately identified the root cause of the billing discrepancy by reviewing the promotion terms and prior notes."
+      },
+      {
+        "evidence": {
+          "text": "May I please have your account number and the phone number associated with the account?",
+          "speaker": "Agent",
+          "start_char": 419,
+          "end_char": 506
+        },
+        "criterion": "procedure_adherence",
+        "score": 0.9,
+        "justification": "The agent followed proper security verification procedures by asking for the account and phone number before accessing account details."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Finally, someone picked up. I've been on hold for 20 minutes listening to terrible music. I am absolutely furious about my current bill and I want this fixed right now.",
+            "speaker": "Customer",
+            "start_char": 64,
+            "end_char": 232
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "Notes? I don't care about your notes. Your agent lied to my face or your system is completely broken. Either way, I am not paying this ridiculous amount.",
+            "speaker": "Customer",
+            "start_char": 661,
+            "end_char": 814
+          },
+          "speaker": "Customer",
+          "score": -0.8,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "Are you kidding me right now? Nobody told me I had to bundle home internet. The agent explicitly said, this covers everything, no hidden fees. This is completely deceptive business practice.",
+            "speaker": "Customer",
+            "start_char": 1236,
+            "end_char": 1426
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 32.0
+        },
+        {
+          "quote": {
+            "text": "You better find a way, because I am at my absolute limit. I've been with you for six years and this is how you treat loyal customers? It's disgusting.",
+            "speaker": "Customer",
+            "start_char": 1891,
+            "end_char": 2041
+          },
+          "speaker": "Customer",
+          "score": -0.8,
+          "timestamp_sec": 48.0
+        },
+        {
+          "quote": {
+            "text": "Oh. Well, okay. It took long enough, but I'm glad you finally did the right thing. So my bill will actually be what I was promised?",
+            "speaker": "Customer",
+            "start_char": 2420,
+            "end_char": 2551
+          },
+          "speaker": "Customer",
+          "score": 0.2,
+          "timestamp_sec": 64.0
+        },
+        {
+          "quote": {
+            "text": "No, that's everything. Just make sure it doesn't happen again next month. Goodbye.",
+            "speaker": "Customer",
+            "start_char": 2885,
+            "end_char": 2967
+          },
+          "speaker": "Customer",
+          "score": 0.1,
+          "timestamp_sec": 80.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  },
+  {
+    "id": "03ad5b42-6f5f-4d62-84f6-650651a6be9d",
+    "call_id": "call_0081_en",
+    "language": "en",
+    "summary": "The customer called in furious because his monthly rate increased by $30 due to an automatic contract renewal, which he claims he never agreed to and previously asked to cancel. The agent checked the account, explained the expired promotion and previous notes, but the interaction escalated due to the customer's anger and demands to cancel the contract and credit the fee immediately. The agent offered to transfer the call to a supervisor, ending with the customer issuing further threats and demands while waiting for the transfer.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "I can certainly transfer you to a supervisor if you prefer, Mr. Vance.",
+          "speaker": "Agent",
+          "start_char": 2047,
+          "end_char": 2117
+        },
+        "promised_by": "Agent",
+        "description": "Transfer the call to a supervisor.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "I certainly understand your frustration regarding an unexpected charge on your bill.",
+          "speaker": "Agent",
+          "start_char": 266,
+          "end_char": 350
+        },
+        "criterion": "professionalism",
+        "score": 0.7,
+        "justification": "The agent remained calm and professional throughout the call, even when the customer became aggressive and shouted, though did briefly police the customer's tone."
+      },
+      {
+        "evidence": {
+          "text": "I certainly understand your frustration regarding an unexpected charge on your bill.",
+          "speaker": "Agent",
+          "start_char": 266,
+          "end_char": 350
+        },
+        "criterion": "empathy",
+        "score": 0.5,
+        "justification": "The agent used some empathetic phrasing initially, but it was perceived as scripted and generic by the customer, and the agent later became defensive regarding tone."
+      },
+      {
+        "evidence": {
+          "text": "I can certainly transfer you to a supervisor if you prefer, Mr. Vance. Please hold for just a moment while I connect you.",
+          "speaker": "Agent",
+          "start_char": 2047,
+          "end_char": 2168
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 0.6,
+        "justification": "The agent was unable to resolve the billing dispute directly due to policy constraints, but appropriately offered a supervisor escalation."
+      },
+      {
+        "evidence": {
+          "text": "It looks like your promotional discount expired because your two-year contract recently renewed automatically.",
+          "speaker": "Agent",
+          "start_char": 780,
+          "end_char": 890
+        },
+        "criterion": "communication_clarity",
+        "score": 0.8,
+        "justification": "The agent clearly explained why the rate increase occurred based on the account notes."
+      },
+      {
+        "evidence": {
+          "text": "Please hold for just a moment while I connect you.",
+          "speaker": "Agent",
+          "start_char": 2118,
+          "end_char": 2168
+        },
+        "criterion": "call_closure",
+        "score": 0.5,
+        "justification": "The call did not reach a true resolution, but the agent correctly initiated a transfer as requested before the customer continued ranting."
+      },
+      {
+        "evidence": {
+          "text": "I do see notes on your account from that previous call a month ago, and it indicates that the agent discussed the renewal options and sent you a confirmation email regarding the new terms.",
+          "speaker": "Agent",
+          "start_char": 1079,
+          "end_char": 1267
+        },
+        "criterion": "accuracy_of_information",
+        "score": 0.8,
+        "justification": "The agent accurately reported what was documented in the account history regarding the previous call."
+      },
+      {
+        "evidence": {
+          "text": "May I have your name and account number, please?",
+          "speaker": "Agent",
+          "start_char": 438,
+          "end_char": 486
+        },
+        "criterion": "procedure_adherence",
+        "score": 0.8,
+        "justification": "The agent properly followed identification verification procedures and handled the escalation path correctly."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "I am absolutely furious. That's how I am.",
+            "speaker": "Customer",
+            "start_char": 99,
+            "end_char": 140
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "My name is Robert Vance, and the account number is on the screen in front of you.",
+            "speaker": "Customer",
+            "start_char": 431,
+            "end_char": 512
+          },
+          "speaker": "Customer",
+          "score": -0.8,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "That is a complete lie.",
+            "speaker": "Customer",
+            "start_char": 915,
+            "end_char": 938
+          },
+          "speaker": "Customer",
+          "score": -1.0,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "No, you do not understand.",
+            "speaker": "Customer",
+            "start_char": 1042,
+            "end_char": 1068
+          },
+          "speaker": "Customer",
+          "score": -1.0,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "Do not tell me to lower my voice.",
+            "speaker": "Customer",
+            "start_char": 1275,
+            "end_char": 1308
+          },
+          "speaker": "Customer",
+          "score": -1.0,
+          "timestamp_sec": 32.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  },
+  {
+    "id": "6a8b33b1-fe3d-4629-afff-f2b99764bb90",
+    "call_id": "call_0086_en",
+    "language": "en",
+    "summary": "The customer called to dispute a $40 activation fee that should have been waived under an online promotion. The agent verified the account, identified the system error, and promptly issued a $40 credit to resolve the issue.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "I am going to issue a credit of $40 to your account right now.",
+          "speaker": "Agent",
+          "start_char": 1324,
+          "end_char": 1386
+        },
+        "promised_by": "Agent",
+        "description": "Issue a $40 credit to the customer's account immediately.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "Thank you for calling Metro Telecom Customer Service. My name is Alex. How can I help you today?",
+          "speaker": "Agent",
+          "start_char": 7,
+          "end_char": 103
+        },
+        "criterion": "professionalism",
+        "score": 1.0,
+        "justification": "The agent maintained a polite, professional, and helpful demeanor throughout the call."
+      },
+      {
+        "evidence": {
+          "text": "I completely understand your frustration with unexpected charges.",
+          "speaker": "Agent",
+          "start_char": 264,
+          "end_char": 329
+        },
+        "criterion": "empathy",
+        "score": 1.0,
+        "justification": "The agent actively validated the customer's frustration and agreed with them."
+      },
+      {
+        "evidence": {
+          "text": "I am going to issue a credit of $40 to your account right now. It will reflect on your balance immediately and cover this billing cycle.",
+          "speaker": "Agent",
+          "start_char": 1324,
+          "end_char": 1460
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 1.0,
+        "justification": "The agent quickly identified the root cause and successfully resolved the issue by issuing the correct credit."
+      },
+      {
+        "evidence": {
+          "text": "I see the charge here on your account. Let me check the notes from when you processed the upgrade online.",
+          "speaker": "Agent",
+          "start_char": 813,
+          "end_char": 918
+        },
+        "criterion": "communication_clarity",
+        "score": 1.0,
+        "justification": "The agent explained each step clearly and kept the customer informed."
+      },
+      {
+        "evidence": {
+          "text": "Is there anything else I can assist you with today?",
+          "speaker": "Agent",
+          "start_char": 1630,
+          "end_char": 1681
+        },
+        "criterion": "call_closure",
+        "score": 1.0,
+        "justification": "The agent checked for further assistance and provided a professional closing statement."
+      },
+      {
+        "evidence": {
+          "text": "It looks like the system failed to automatically apply the waiver at checkout. That was definitely an error on our end.",
+          "speaker": "Agent",
+          "start_char": 1142,
+          "end_char": 1261
+        },
+        "criterion": "accuracy_of_information",
+        "score": 1.0,
+        "justification": "The agent correctly located the promo code and accurately diagnosed the system error."
+      },
+      {
+        "evidence": {
+          "text": "May I have your phone number and account PIN, please?",
+          "speaker": "Agent",
+          "start_char": 398,
+          "end_char": 451
+        },
+        "criterion": "procedure_adherence",
+        "score": 1.0,
+        "justification": "The agent properly authenticated the customer before discussing account details."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "I'm calling because I just looked at my latest bill and there is a $40 activation fee on here that I definitely should not be paying.",
+            "speaker": "Customer",
+            "start_char": 109,
+            "end_char": 242
+          },
+          "speaker": "Customer",
+          "score": -0.4,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "Yes, exactly that one. I upgraded my phone online last month and the promotion specifically said the activation fee would be waived.",
+            "speaker": "Customer",
+            "start_char": 476,
+            "end_char": 608
+          },
+          "speaker": "Customer",
+          "score": -0.2,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "Please do, because I wouldn't have done it if I had to pay an extra 40 bucks. It completely defeats the purpose of the promo.",
+            "speaker": "Customer",
+            "start_char": 711,
+            "end_char": 836
+          },
+          "speaker": "Customer",
+          "score": -0.5,
+          "timestamp_sec": 40.0
+        },
+        {
+          "quote": {
+            "text": "Oh, wow. That was a lot faster and easier than I expected. Thank you.",
+            "speaker": "Customer",
+            "start_char": 1090,
+            "end_char": 1159
+          },
+          "speaker": "Customer",
+          "score": 0.8,
+          "timestamp_sec": 56.0
+        },
+        {
+          "quote": {
+            "text": "No, that takes care of everything. I really appreciate your help, Alex. Have a great day.",
+            "speaker": "Customer",
+            "start_char": 1237,
+            "end_char": 1326
+          },
+          "speaker": "Customer",
+          "score": 0.9,
+          "timestamp_sec": 64.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  },
+  {
+    "id": "f7194215-3718-45c8-8b68-e455d5665746",
+    "call_id": "call_0098_en",
+    "language": "en",
+    "summary": "The customer called to inquire about a delayed mobile phone order that was supposed to arrive three days ago. The agent investigated, explained that a courier sorting facility delay occurred, and confirmed the package is out for delivery today by 4 p.m. The customer was satisfied and the call concluded successfully.",
+    "commitments": [],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "Thank you for calling Swift Communications. My name is Marcus. How can I help you today?",
+          "speaker": "Agent",
+          "start_char": 7,
+          "end_char": 95
+        },
+        "criterion": "professionalism",
+        "score": 1.0,
+        "justification": "The agent maintained a courteous and polite demeanor throughout the entire conversation, greeting the customer properly and using appropriate professional language."
+      },
+      {
+        "evidence": {
+          "text": "I completely understand your frustration and I apologize for the delay with your shipment.",
+          "speaker": "Agent",
+          "start_char": 312,
+          "end_char": 402
+        },
+        "criterion": "empathy",
+        "score": 1.0,
+        "justification": "The agent acknowledged the customer's frustration and offered a sincere apology for the delivery delay."
+      },
+      {
+        "evidence": {
+          "text": "Ah, I see the courier experienced a sorting facility delay in your area, which held it up over the weekend.",
+          "speaker": "Agent",
+          "start_char": 597,
+          "end_char": 704
+        },
+        "criterion": "communication_clarity",
+        "score": 1.0,
+        "justification": "The agent clearly and concisely explained the reason for the tracking delay without any confusing jargon."
+      },
+      {
+        "evidence": {
+          "text": "Thank you for choosing Swift Communications and enjoy your new phone.",
+          "speaker": "Agent",
+          "start_char": 1277,
+          "end_char": 1346
+        },
+        "criterion": "call_closure",
+        "score": 1.0,
+        "justification": "The agent properly closed the call with a warm closing statement and well wishes after verifying no further assistance was needed."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Hi Marcus. I'm calling because I ordered a new mobile phone last week and according to the tracking information, it was supposed to arrive three days ago. It's still not here and I need",
+            "speaker": "Customer",
+            "start_char": 91,
+            "end_char": 276
+          },
+          "speaker": "Customer",
+          "score": -0.4,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "Sure. It's order number SC-884920.",
+            "speaker": "Customer",
+            "start_char": 400,
+            "end_char": 434
+          },
+          "speaker": "Customer",
+          "score": 0.0,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "Oh really? So it's actually coming today?",
+            "speaker": "Customer",
+            "start_char": 643,
+            "end_char": 684
+          },
+          "speaker": "Customer",
+          "score": 0.3,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "Well, that's a relief. I was worried it got lost in transit. Thanks for checking that so quickly, Marcus.",
+            "speaker": "Customer",
+            "start_char": 773,
+            "end_char": 878
+          },
+          "speaker": "Customer",
+          "score": 0.8,
+          "timestamp_sec": 32.0
+        },
+        {
+          "quote": {
+            "text": "No, that covers it. Have a good day.",
+            "speaker": "Customer",
+            "start_char": 954,
+            "end_char": 990
+          },
+          "speaker": "Customer",
+          "score": 0.8,
+          "timestamp_sec": 40.0
+        }
+      ]
+    },
+    "confidence": 0.5714285714285714,
+    "requires_human_review": true
+  },
+  {
+    "id": "067b9b16-030c-4adf-bb39-f653a465f752",
+    "call_id": "call_0101_en",
+    "language": "en",
+    "summary": "The customer called to request a payment extension for their utility bill until next Friday. The agent processed the seven-day extension but informed the customer of a mandatory five-dollar late fee. After expressing frustration and considering speaking to a supervisor, the customer decided to accept the extension with the fee rather than wait on hold.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "You will receive a confirmation text shortly.",
+          "speaker": "Customer",
+          "start_char": 3296,
+          "end_char": 3341
+        },
+        "promised_by": "Agent",
+        "description": "Send a confirmation text shortly.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "I understand you'd like to discuss your payment due date.",
+          "speaker": "Agent",
+          "start_char": 286,
+          "end_char": 343
+        },
+        "criterion": "professionalism",
+        "score": 0.8,
+        "justification": "The agent maintained a calm, polite demeanor throughout the call despite the customer's impatience and frustration."
+      },
+      {
+        "evidence": {
+          "text": "Yes, just do it. Get it over with.",
+          "speaker": "Agent",
+          "start_char": 3183,
+          "end_char": 3217
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 0.8,
+        "justification": "The agent successfully granted the requested seven-day payment extension as desired by the customer."
+      },
+      {
+        "evidence": {
+          "text": "According to our policy, I can grant a standard seven-day extension, which would move your due date to next Friday, exactly when you need it.",
+          "speaker": "Agent",
+          "start_char": 1698,
+          "end_char": 1839
+        },
+        "criterion": "communication_clarity",
+        "score": 0.85,
+        "justification": "The agent clearly explained the available extension options and policy terms."
+      },
+      {
+        "evidence": {
+          "text": "Have a good day, Mr. Davis. Thank you for calling Metro Utilities.",
+          "speaker": "Customer",
+          "start_char": 3504,
+          "end_char": 3570
+        },
+        "criterion": "call_closure",
+        "score": 0.8,
+        "justification": "The agent properly checked if there were other needs and closed with a standard professional greeting."
+      },
+      {
+        "evidence": {
+          "text": "Before I apply that, I do need to let you know that a small late fee of $5 will be added to your next bill for moving the due date past today.",
+          "speaker": "Agent",
+          "start_char": 1906,
+          "end_char": 2048
+        },
+        "criterion": "accuracy_of_information",
+        "score": 0.9,
+        "justification": "The agent accurately informed the customer about the automated system fee associated with the extension."
+      },
+      {
+        "evidence": {
+          "text": "Let me check the system to see what extension options are available for your account.",
+          "speaker": "Agent",
+          "start_char": 948,
+          "end_char": 1033
+        },
+        "criterion": "procedure_adherence",
+        "score": 0.9,
+        "justification": "The agent followed the proper system verification and policy disclosure procedures."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Yeah, Marcus, I'm calling because I just looked at my bill and it's ridiculous, and now I need to figure out how to push my payment date back because I am not paying this today.",
+            "speaker": "Customer",
+            "start_char": 85,
+            "end_char": 262
+          },
+          "speaker": "Customer",
+          "score": -0.6,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "It's 458921034 and you already have my phone number because it's the one I'm calling from. Look, I don't have all day, so let's just make this quick.",
+            "speaker": "Customer",
+            "start_char": 381,
+            "end_char": 530
+          },
+          "speaker": "Customer",
+          "score": -0.5,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "Well, your system is way too slow and, franco, I shouldn't even be in this position if your billing department didn't hike up my rates last month without any warning.",
+            "speaker": "Customer",
+            "start_char": 1058,
+            "end_char": 1224
+          },
+          "speaker": "Customer",
+          "score": -0.7,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "Finally, some common sense. Yes, do that. Put it for next Friday.",
+            "speaker": "Customer",
+            "start_char": 1472,
+            "end_char": 1537
+          },
+          "speaker": "Customer",
+          "score": 0.2,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "A late fee? The bill isn't even technically late yet today and you're going to charge me five extra dollars just because my payday is a week away? That is complete garbage.",
+            "speaker": "Customer",
+            "start_char": 1690,
+            "end_char": 1862
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 32.0
+        },
+        {
+          "quote": {
+            "text": "No, that's it. Just make sure it's actually saved so I don't get my power shut off. Goodbye.",
+            "speaker": "Customer",
+            "start_char": 2631,
+            "end_char": 2723
+          },
+          "speaker": "Customer",
+          "score": -0.4,
+          "timestamp_sec": 40.0
+        }
+      ]
+    },
+    "confidence": 0.875,
+    "requires_human_review": false
+  },
+  {
+    "id": "df16f301-fd22-443b-9749-6dd2a326e741",
+    "call_id": "call_0102_en",
+    "language": "en",
+    "summary": "The customer called to complain about a rude representative who hung up on her and failed to explain a billing increase. The agent apologized, investigated the account, explained the municipal tax adjustment, documented the feedback, and resolved the customer's issue satisfactorily.",
+    "commitments": [],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "Thank you for calling Metro Utilities. My name is Marcus. How can I assist you today?",
+          "speaker": "Agent",
+          "start_char": 7,
+          "end_char": 92
+        },
+        "criterion": "professionalism",
+        "score": 1.0,
+        "justification": "The agent maintained a polite, calm, and professional demeanor throughout the call, effectively managing an upset customer without losing composure."
+      },
+      {
+        "evidence": {
+          "text": "You have every right to be upset, and I completely understand why you are frustrated.",
+          "speaker": "Agent",
+          "start_char": 756,
+          "end_char": 841
+        },
+        "criterion": "empathy",
+        "score": 1.0,
+        "justification": "The agent actively validated the customer's feelings and showed genuine empathy regarding the poor treatment she received."
+      },
+      {
+        "evidence": {
+          "text": "Ah, I see a one-time municipal tax adjustment was added last month, which explains the slight increase.",
+          "speaker": "Agent",
+          "start_char": 1106,
+          "end_char": 1209
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 1.0,
+        "justification": "The agent quickly identified the root cause of the customer's initial inquiry and fully answered her question about the higher bill."
+      },
+      {
+        "evidence": {
+          "text": "Let me look into your account right now and make sure your original issue gets resolved properly.",
+          "speaker": "Agent",
+          "start_char": 842,
+          "end_char": 939
+        },
+        "criterion": "communication_clarity",
+        "score": 1.0,
+        "justification": "The agent's explanations were clear, direct, and easy for the customer to follow."
+      },
+      {
+        "evidence": {
+          "text": "Is there anything else I can help you with today?",
+          "speaker": "Agent",
+          "start_char": 1739,
+          "end_char": 1788
+        },
+        "criterion": "call_closure",
+        "score": 1.0,
+        "justification": "The agent checked for additional needs, thanked the customer, and provided a polite closing."
+      },
+      {
+        "evidence": {
+          "text": "Ah, I see a one-time municipal tax adjustment was added last month, which explains the slight increase.",
+          "speaker": "Agent",
+          "start_char": 1106,
+          "end_char": 1209
+        },
+        "criterion": "accuracy_of_information",
+        "score": 1.0,
+        "justification": "The billing explanation provided by looking up the account details was accurate."
+      },
+      {
+        "evidence": {
+          "text": "Let me pull that up right here.",
+          "speaker": "Agent",
+          "start_char": 1074,
+          "end_char": 1105
+        },
+        "criterion": "procedure_adherence",
+        "score": 1.0,
+        "justification": "The agent correctly accessed the account, reviewed the relevant billing entries, and addressed both the complaint and the billing question properly."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "I am calling because I am furious about the way I was treated by one of your representatives about",
+            "speaker": "Customer",
+            "start_char": 88,
+            "end_char": 186
+          },
+          "speaker": "Customer",
+          "score": -0.8,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "what happened? I called to ask a simple question about my billing cycle, and the woman who answered was completely condescending and rude, and then she hung up on me. That is completely unacceptable",
+            "speaker": "Customer",
+            "start_char": 273,
+            "end_char": 471
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "Well, okay. My account number is 4589-2103. I just wanted to know why my last bill was higher than",
+            "speaker": "Customer",
+            "start_char": 748,
+            "end_char": 846
+          },
+          "speaker": "Customer",
+          "score": -0.3,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "I appreciate you actually listening to me and fixing this so quickly, Marcus.",
+            "speaker": "Customer",
+            "start_char": 1260,
+            "end_char": 1337
+          },
+          "speaker": "Customer",
+          "score": 0.7,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "No, that covers it. Thank you for your help. You've completely turned my day around.",
+            "speaker": "Customer",
+            "start_char": 1441,
+            "end_char": 1525
+          },
+          "speaker": "Customer",
+          "score": 0.9,
+          "timestamp_sec": 32.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  },
+  {
+    "id": "d77474a7-1c5a-4a3f-af5c-71d150bb67f8",
+    "call_id": "call_0116_en",
+    "language": "en",
+    "summary": "The customer called Metro Utilities frustrated about an impending high power bill due in two days that they could not pay. The agent verified the account, showed empathy, and offered a 14-day payment extension with no extra fees. The agent processed the extension, sent a confirmation text to the customer's phone, and successfully resolved the issue.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "I can offer you a standard extension of 14 days from your",
+          "speaker": "Agent",
+          "start_char": 1344,
+          "end_char": 1401
+        },
+        "promised_by": "Agent",
+        "description": "Offer a 14-day payment extension on the current balance.",
+        "deadline": null
+      },
+      {
+        "evidence": {
+          "text": "I am generating a confirmation number right now, and I can either email it to",
+          "speaker": "Agent",
+          "start_char": 2245,
+          "end_char": 2322
+        },
+        "promised_by": "Agent",
+        "description": "Generate and send a confirmation number via text or email.",
+        "deadline": null
+      },
+      {
+        "evidence": {
+          "text": "The text should arrive in just a moment.",
+          "speaker": "Agent",
+          "start_char": 2451,
+          "end_char": 2491
+        },
+        "promised_by": "Agent",
+        "description": "Send a confirmation text message to the customer's mobile number.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "Thank you for calling Metro Utilities. My name is Sarah. How can I help you today?",
+          "speaker": "Agent",
+          "start_char": 7,
+          "end_char": 89
+        },
+        "criterion": "professionalism",
+        "score": 1.0,
+        "justification": "The agent was polite, professional, and courteous throughout the call, addressing the customer respectfully."
+      },
+      {
+        "evidence": {
+          "text": "I completely understand that getting a high bill can be stressful and I'd be happy to look into some options for you today.",
+          "speaker": "Agent",
+          "start_char": 273,
+          "end_char": 396
+        },
+        "criterion": "empathy",
+        "score": 1.0,
+        "justification": "The agent acknowledged the customer's stress and validated their frustration genuinely."
+      },
+      {
+        "evidence": {
+          "text": "No, that actually completely solves my problem. I was dreading this call, but you've been extremely",
+          "speaker": "Customer",
+          "start_char": 2766,
+          "end_char": 2865
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 1.0,
+        "justification": "The agent fully resolved the customer's concern by providing a fee-free 14-day extension."
+      },
+      {
+        "evidence": {
+          "text": "I can offer you a standard extension of 14 days from your",
+          "speaker": "Agent",
+          "start_char": 1344,
+          "end_char": 1401
+        },
+        "criterion": "communication_clarity",
+        "score": 1.0,
+        "justification": "The agent explained the payment extension program and terms clearly without confusing jargon."
+      },
+      {
+        "evidence": {
+          "text": "Is there anything else regarding your account or services that I can assist you with today?",
+          "speaker": "Agent",
+          "start_char": 2664,
+          "end_char": 2755
+        },
+        "criterion": "call_closure",
+        "score": 1.0,
+        "justification": "The agent checked for additional assistance, confirmed resolution, and provided a warm closing."
+      },
+      {
+        "evidence": {
+          "text": "May I please have your account number and the phone number associated",
+          "speaker": "Agent",
+          "start_char": 397,
+          "end_char": 466
+        },
+        "criterion": "procedure_adherence",
+        "score": 1.0,
+        "justification": "The agent properly followed identification and account verification procedures before discussing details."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Hi, yes, I'm calling because I just opened my bill and I'm honestly pretty frustrated.",
+            "speaker": "Customer",
+            "start_char": 83,
+            "end_char": 169
+          },
+          "speaker": "Customer",
+          "score": -0.5,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "Look, I've been a customer for five years and I always pay, but things are tight this month.",
+            "speaker": "Customer",
+            "start_char": 472,
+            "end_char": 564
+          },
+          "speaker": "Customer",
+          "score": -0.3,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "14 days? That would actually be a huge relief.",
+            "speaker": "Customer",
+            "start_char": 963,
+            "end_char": 1009
+          },
+          "speaker": "Customer",
+          "score": 0.6,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "Well, that is a pleasant surprise. Every",
+            "speaker": "Customer",
+            "start_char": 1304,
+            "end_char": 1344
+          },
+          "speaker": "Customer",
+          "score": 0.7,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "No, that actually completely solves my problem. I was dreading this call, but you've been extremely",
+            "speaker": "Customer",
+            "start_char": 1948,
+            "end_char": 2047
+          },
+          "speaker": "Customer",
+          "score": 0.9,
+          "timestamp_sec": 32.0
+        }
+      ]
+    },
+    "confidence": 0.9,
+    "requires_human_review": false
+  },
+  {
+    "id": "a72f89ca-4f23-4d30-b98f-47affdb3c780",
+    "call_id": "call_0117_en",
+    "language": "en",
+    "summary": "The customer called to complain about a delayed refund for a canceled internet installation kit order. The agent identified the issue as a system failure to automatically trigger the refund, processed the $150 refund manually, and informed the customer that it would take three to five business days.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "I am processing it manually for you right now, sir.",
+          "speaker": "Agent",
+          "start_char": 791,
+          "end_char": 842
+        },
+        "promised_by": "Agent",
+        "description": "Process the $150 refund manually right away.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "Thank you for calling Swiftcom Customer Support. My name is Alex. How can I help you today?",
+          "speaker": "Agent",
+          "start_char": 7,
+          "end_char": 98
+        },
+        "criterion": "professionalism",
+        "score": 0.9,
+        "justification": "The agent maintained a polite, professional demeanor throughout the call despite the customer's anger."
+      },
+      {
+        "evidence": {
+          "text": "I certainly understand your frustration regarding the delayed refund.",
+          "speaker": "Agent",
+          "start_char": 245,
+          "end_char": 314
+        },
+        "criterion": "empathy",
+        "score": 0.8,
+        "justification": "The agent acknowledged the customer's frustration immediately and apologized/validated their feelings regarding the delayed refund."
+      },
+      {
+        "evidence": {
+          "text": "I am processing it manually for you right now, sir. The refund of $150 has been initiated to",
+          "speaker": "Agent",
+          "start_char": 791,
+          "end_char": 883
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 0.9,
+        "justification": "The agent successfully identified the system error and manually processed the requested refund."
+      },
+      {
+        "evidence": {
+          "text": "It typically takes three to five business days to reflect in your account. You will also receive a confirmation email shortly.",
+          "speaker": "Agent",
+          "start_char": 995,
+          "end_char": 1121
+        },
+        "criterion": "communication_clarity",
+        "score": 0.9,
+        "justification": "Clear and concise explanation of next steps and expected processing times."
+      },
+      {
+        "evidence": {
+          "text": "Thank you for your patience. Have a good day.",
+          "speaker": "Agent",
+          "start_char": 1188,
+          "end_char": 1233
+        },
+        "criterion": "call_closure",
+        "score": 0.8,
+        "justification": "The agent closed the call politely despite the customer hanging up abruptly."
+      },
+      {
+        "evidence": {
+          "text": "It typically takes three to five business days to reflect in your account.",
+          "speaker": "Agent",
+          "start_char": 995,
+          "end_char": 1069
+        },
+        "criterion": "accuracy_of_information",
+        "score": 1.0,
+        "justification": "Provided accurate standard timeframes for refund processing to bank accounts."
+      },
+      {
+        "evidence": {
+          "text": "May I have your account number or phone number,",
+          "speaker": "Agent",
+          "start_char": 364,
+          "end_char": 411
+        },
+        "criterion": "procedure_adherence",
+        "score": 0.9,
+        "justification": "The agent verified the customer's identity by asking for their account or phone number before checking account details."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Look, I canceled my internet installation kit order two weeks ago, and I still haven't seen my refund. I want my money back now.",
+            "speaker": "Customer",
+            "start_char": 93,
+            "end_char": 221
+          },
+          "speaker": "Customer",
+          "score": -0.8,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "It's 555-0198. And I don't want excuses. I want to know where my 100",
+            "speaker": "Customer",
+            "start_char": 252,
+            "end_char": 320
+          },
+          "speaker": "Customer",
+          "score": -0.6,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "That is ridiculous. Why is that my problem? Just process it right this second.",
+            "speaker": "Customer",
+            "start_char": 348,
+            "end_char": 426
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "How long is this actually going to take to hit my bank account?",
+            "speaker": "Customer",
+            "start_char": 520,
+            "end_char": 583
+          },
+          "speaker": "Customer",
+          "score": -0.4,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "Fine. It better be there in three days. Goodbye.",
+            "speaker": "Customer",
+            "start_char": 719,
+            "end_char": 767
+          },
+          "speaker": "Customer",
+          "score": -0.3,
+          "timestamp_sec": 32.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  },
+  {
+    "id": "dbc9d8fb-d5d4-4396-8e37-dc81a6e12b47",
+    "call_id": "call_0120_en",
+    "language": "en",
+    "summary": "The customer called to complain about an unexpected $30 increase in their bill despite being promised a two-year locked promotional rate. The agent reviewed the account, noted a renewal from last month with a confirmation recording, and offered to escalate the dispute to a supervisor. The call ended with the customer demanding an immediate fix by the end of the day.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "I can escalate this to my supervisor right away.",
+          "speaker": "Agent",
+          "start_char": 857,
+          "end_char": 905
+        },
+        "promised_by": "Agent",
+        "description": "Escalate the dispute to a supervisor",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "Thank you for calling Metro Telecom. My name is Sarah. How can I help you today?",
+          "speaker": "Agent",
+          "start_char": 7,
+          "end_char": 87
+        },
+        "criterion": "professionalism",
+        "score": 0.9,
+        "justification": "The agent maintained a calm and professional demeanor throughout the call despite the customer's aggression."
+      },
+      {
+        "evidence": {
+          "text": "I certainly understand your frustration regarding an unexpected price increase.",
+          "speaker": "Agent",
+          "start_char": 236,
+          "end_char": 315
+        },
+        "criterion": "empathy",
+        "score": 0.8,
+        "justification": "The agent acknowledged and validated the customer's frustration immediately."
+      },
+      {
+        "evidence": {
+          "text": "I can escalate this to my supervisor right away.",
+          "speaker": "Agent",
+          "start_char": 857,
+          "end_char": 905
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 0.7,
+        "justification": "The agent offered a valid escalation path for a disputed authorization."
+      },
+      {
+        "evidence": {
+          "text": "I am looking at your file now and I see a contract renewal was processed last month.",
+          "speaker": "Agent",
+          "start_char": 522,
+          "end_char": 606
+        },
+        "criterion": "communication_clarity",
+        "score": 0.8,
+        "justification": "The agent clearly communicated the findings from the account review."
+      },
+      {
+        "evidence": {
+          "text": "Yes, do it now and I expect this fixed before the end of the day or I am switching providers.",
+          "speaker": "Customer",
+          "start_char": 916,
+          "end_char": 1009
+        },
+        "criterion": "call_closure",
+        "score": 0.4,
+        "justification": "The call ended abruptly on the customer's threat without a proper closing procedure by the agent."
+      },
+      {
+        "evidence": {
+          "text": "I see the confirmation recording on file from November 12th.",
+          "speaker": "Agent",
+          "start_char": 743,
+          "end_char": 803
+        },
+        "criterion": "accuracy_of_information",
+        "score": 0.9,
+        "justification": "The agent accurately reported the details found in the system records."
+      },
+      {
+        "evidence": {
+          "text": "Let me pull up your account to review the contract details.",
+          "speaker": "Agent",
+          "start_char": 316,
+          "end_char": 375
+        },
+        "criterion": "procedure_adherence",
+        "score": 0.8,
+        "justification": "The agent followed the correct procedure by pulling up the account and offering an escalation when the customer disputed the renewal."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "I am calling because my bill just went up by $30 and I am furious.",
+            "speaker": "Customer",
+            "start_char": 81,
+            "end_char": 147
+          },
+          "speaker": "Customer",
+          "score": -0.8,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "You better figure it out fast because I don't have all day to sit on hold while you look at my file.",
+            "speaker": "Customer",
+            "start_char": 313,
+            "end_char": 413
+          },
+          "speaker": "Customer",
+          "score": -0.7,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "I never agreed to any renewal. Someone signed me up without my permission and I want this charge reversed immediately.",
+            "speaker": "Customer",
+            "start_char": 521,
+            "end_char": 639
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "Yes, do it now and I expect this fixed before the end of the day or I am switching providers.",
+            "speaker": "Customer",
+            "start_char": 710,
+            "end_char": 803
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 32.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  },
+  {
+    "id": "f702aee0-ce2b-4dc0-bd42-95b04c5dd4a1",
+    "call_id": "call_0121_en",
+    "language": "en",
+    "summary": "The customer called to report a dead internet connection and expressed frustration over losing work time. The agent diagnosed a fiber cut in the area with an estimated restoration time of 5 PM, applied a prorated bill credit, and set up an automated SMS alert for when service is restored.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "Once the outage is fully resolved and your service is restored, you can contact us back or I can apply a prorated credit for today's downtime right now.",
+          "speaker": "Agent",
+          "start_char": 2562,
+          "end_char": 2714
+        },
+        "promised_by": "Agent",
+        "description": "Apply a prorated credit for today's downtime.",
+        "deadline": null
+      },
+      {
+        "evidence": {
+          "text": "I have just added the outage credit request to your account, and I have set up an automated SMS alert to your phone number to notify you the second the network is restored.",
+          "speaker": "Agent",
+          "start_char": 3763,
+          "end_char": 3935
+        },
+        "promised_by": "Agent",
+        "description": "Add outage credit to account and set up automated SMS alert when network is restored.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "I completely share your frustration regarding the disruption, Mr. Carson. I know how critical a stable connection is for your work.",
+          "speaker": "Agent",
+          "start_char": 2314,
+          "end_char": 2445
+        },
+        "criterion": "professionalism",
+        "score": 0.9,
+        "justification": "The agent maintained a polite, calm, and professional demeanor despite the customer being irritable and using harsh language."
+      },
+      {
+        "evidence": {
+          "text": "I am very sorry to hear that your service is down, Mr. Carson. I understand how frustrating that is, especially when you need to get things done. Let me look into this right away for you.",
+          "speaker": "Agent",
+          "start_char": 228,
+          "end_char": 415
+        },
+        "criterion": "empathy",
+        "score": 0.9,
+        "justification": "The agent acknowledged the customer's frustration and the critical impact on his work right at the beginning and maintained an understanding tone throughout."
+      },
+      {
+        "evidence": {
+          "text": "I have just added the outage credit request to your account, and I have set up an automated SMS alert to your phone number to notify you the second the network is restored.",
+          "speaker": "Agent",
+          "start_char": 3763,
+          "end_char": 3935
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 0.8,
+        "justification": "The agent successfully resolved the billing credit concern and set up SMS alerts, although the core physical outage could not be resolved immediately due to a fiber cut."
+      },
+      {
+        "evidence": {
+          "text": "I can definitely help you with a temporary data pass for your mobile phone if you are also a Metronet mobile customer.",
+          "speaker": "Agent",
+          "start_char": 2881,
+          "end_char": 2999
+        },
+        "criterion": "communication_clarity",
+        "score": 0.9,
+        "justification": "All explanations regarding the fiber cut, inability to reroute traffic, mobile data policy, and credit process were communicated clearly and transparently."
+      },
+      {
+        "evidence": {
+          "text": "Thank you for your patience, Mr. Carson. Have a good rest of your day.",
+          "speaker": "Agent",
+          "start_char": 4022,
+          "end_char": 4092
+        },
+        "criterion": "call_closure",
+        "score": 0.9,
+        "justification": "The agent closed the call politely after confirming the customer's requests for a credit and text alert were fulfilled."
+      },
+      {
+        "evidence": {
+          "text": "The current estimated time of restoration is about four hours from now, so roughly 5pm.",
+          "speaker": "Agent",
+          "start_char": 1764,
+          "end_char": 1851
+        },
+        "criterion": "accuracy_of_information",
+        "score": 1.0,
+        "justification": "The agent provided clear and accurate information retrieved from the network status map regarding the fiber cut and estimated restoration time."
+      },
+      {
+        "evidence": {
+          "text": "Thank you. I have your account pulled up here. Let me run a diagnostic test on the line serving your address.",
+          "speaker": "Agent",
+          "start_char": 802,
+          "end_char": 911
+        },
+        "criterion": "procedure_adherence",
+        "score": 0.9,
+        "justification": "The agent correctly requested the phone or account number, verified the account, ran diagnostics, checked the network map, and offered valid remediation steps."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Finally. Look, my internet has been completely dead for the last three hours, and I need it to work. What is going on?",
+            "speaker": "Customer",
+            "start_char": 113,
+            "end_char": 231
+          },
+          "speaker": "Customer",
+          "score": -0.8,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "It's more than just frustrating. I'm losing money here because I work from home. Every time I try to load a page, nothing happens.",
+            "speaker": "Customer",
+            "start_char": 423,
+            "end_char": 553
+          },
+          "speaker": "Customer",
+          "score": -0.7,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "A fiber cut? Are you serious? How long is that going to take to fix?",
+            "speaker": "Customer",
+            "start_char": 1130,
+            "end_char": 1198
+          },
+          "speaker": "Customer",
+          "score": -0.6,
+          "timestamp_sec": 48.0
+        },
+        {
+          "quote": {
+            "text": "5pm? Are you out of your mind? That ruins my entire workday. Can you reroute my traffic or something?",
+            "speaker": "Customer",
+            "start_char": 1420,
+            "end_char": 1521
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 64.0
+        },
+        {
+          "quote": {
+            "text": "All right. Thanks for the info, even though the news sucks. Goodbye.",
+            "speaker": "Customer",
+            "start_char": 2903,
+            "end_char": 2971
+          },
+          "speaker": "Customer",
+          "score": -0.4,
+          "timestamp_sec": 88.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  },
+  {
+    "id": "a296875d-e07f-4c80-b065-9385245727c3",
+    "call_id": "call_0126_en",
+    "language": "en",
+    "summary": "The customer called to request a payment extension on their utility bill due to a change in their company's payroll schedule. The agent verified the account and billing address, checked eligibility, and successfully granted a 10-day payment extension moving the due date to November 25th with a hold on late fees. The call ended politely after the customer confirmed no further assistance was needed.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "The new due date will be set for November 25th, and I will place a temporary hold on any late fee assessments during that grace period.",
+          "speaker": "Agent",
+          "start_char": 2073,
+          "end_char": 2208
+        },
+        "promised_by": "Agent",
+        "description": "Set new due date to November 25th and place a temporary hold on late fee assessments.",
+        "deadline": null
+      },
+      {
+        "evidence": {
+          "text": "You will receive a quick confirmation email shortly with the updated payment date details",
+          "speaker": "Agent",
+          "start_char": 2611,
+          "end_char": 2700
+        },
+        "promised_by": "Agent",
+        "description": "Send a confirmation email with updated payment date details shortly.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "Thank you for calling Metro Utilities. My name is Sarah. How can I help you today?",
+          "speaker": "Agent",
+          "start_char": 7,
+          "end_char": 89
+        },
+        "criterion": "professionalism",
+        "score": 1.0,
+        "justification": "The agent maintained a high level of professional and courteous behavior throughout the call."
+      },
+      {
+        "evidence": {
+          "text": "The new due date will be set for November 25th, and I will place a temporary hold on any late fee assessments during that grace period.",
+          "speaker": "Agent",
+          "start_char": 2073,
+          "end_char": 2208
+        },
+        "criterion": "communication_clarity",
+        "score": 1.0,
+        "justification": "The agent clearly and unambiguously explained the new due date and late fee policy."
+      },
+      {
+        "evidence": {
+          "text": "Thank you for calling Metro Utilities, and you have a wonderful day as well.",
+          "speaker": "Agent",
+          "start_char": 2806,
+          "end_char": 2882
+        },
+        "criterion": "call_closure",
+        "score": 1.0,
+        "justification": "The agent properly checked for additional questions and delivered a professional closing."
+      },
+      {
+        "evidence": {
+          "text": "I see your current balance is $142.50, and it is scheduled for auto pay or manual due on the 15th of this month.",
+          "speaker": "Agent",
+          "start_char": 871,
+          "end_char": 983
+        },
+        "criterion": "accuracy_of_information",
+        "score": 1.0,
+        "justification": "Account balance and due date information provided matched account details accurately."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Hi Sarah, good afternoon. I am calling just to see if I might be able to request a short payment extension on my current bill. I always try to pay on time, but things have been a bit tight this",
+            "speaker": "Customer",
+            "start_char": 84,
+            "end_char": 277
+          },
+          "speaker": "Customer",
+          "score": 0.2,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "That is correct. Unfortunately, my company changed our payroll schedule this month, so my direct deposit won't hit until the 25th.",
+            "speaker": "Customer",
+            "start_char": 934,
+            "end_char": 1064
+          },
+          "speaker": "Customer",
+          "score": -0.1,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "It has been working wonderfully, actually. Speeds are great for",
+            "speaker": "Customer",
+            "start_char": 1699,
+            "end_char": 1762
+          },
+          "speaker": "Customer",
+          "score": 0.6,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "That would be fantastic. So that would move my new",
+            "speaker": "Customer",
+            "start_char": 2019,
+            "end_char": 2069
+          },
+          "speaker": "Customer",
+          "score": 0.8,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "That is such a relief. I really appreciate your help with this today, Sarah.",
+            "speaker": "Customer",
+            "start_char": 2309,
+            "end_char": 2385
+          },
+          "speaker": "Customer",
+          "score": 1.0,
+          "timestamp_sec": 32.0
+        }
+      ]
+    },
+    "confidence": 0.6666666666666666,
+    "requires_human_review": true
+  },
+  {
+    "id": "21ab967c-5c67-4269-9693-9b79a0bfc08a",
+    "call_id": "call_0128_en",
+    "language": "en",
+    "summary": "The customer called to demand an immediate refund of a $250 charge for a service installation order they had canceled two weeks prior. The agent located the cancellation record, confirmed the billing error, and initiated a $250 refund, explaining the 3-5 business day processing time. The customer became angry about the delay, demanded an instant transfer, and ultimately requested a supervisor transfer, which the agent initiated.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "I can certainly process that refund of $250 for you today.",
+          "speaker": "Agent",
+          "start_char": 1378,
+          "end_char": 1436
+        },
+        "promised_by": "Agent",
+        "description": "Process a refund of $250 for the customer.",
+        "deadline": null
+      },
+      {
+        "evidence": {
+          "text": "The refund has been initiated, but please allow 3 to 5 business days for it to appear on your statement.",
+          "speaker": "Agent",
+          "start_char": 1724,
+          "end_char": 1828
+        },
+        "promised_by": "Agent",
+        "description": "Return $250 to the customer's credit card within 3 to 5 business days.",
+        "deadline": null
+      },
+      {
+        "evidence": {
+          "text": "I am transferring you to a supervisor now, Mr. Davis.",
+          "speaker": "Agent",
+          "start_char": 2601,
+          "end_char": 2654
+        },
+        "promised_by": "Agent",
+        "description": "Transfer the call to a supervisor.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "I am very sorry about the long wait time and I understand you are upset. I would be happy to help you with a refund.",
+          "speaker": "Agent",
+          "start_char": 221,
+          "end_char": 337
+        },
+        "criterion": "professionalism",
+        "score": 0.8,
+        "justification": "The agent maintained a calm and professional demeanor throughout the call despite the customer's insults and hostility."
+      },
+      {
+        "evidence": {
+          "text": "I completely understand your frustration regarding an unexpected charge.",
+          "speaker": "Agent",
+          "start_char": 897,
+          "end_char": 969
+        },
+        "criterion": "empathy",
+        "score": 0.7,
+        "justification": "The agent acknowledged the customer's frustration and apologized for the long wait time and the billing error."
+      },
+      {
+        "evidence": {
+          "text": "I can certainly process that refund of $250 for you today.",
+          "speaker": "Agent",
+          "start_char": 1378,
+          "end_char": 1436
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 0.8,
+        "justification": "The agent successfully identified the issue, processed the refund, and escalated to a supervisor as requested."
+      },
+      {
+        "evidence": {
+          "text": "I wish I could force an instant transfer, Mr. Davis, but our banking merchant processor requires 3 to 5 business days for electronic refunds to clear back to a credit card.",
+          "speaker": "Agent",
+          "start_char": 1993,
+          "end_char": 2165
+        },
+        "criterion": "communication_clarity",
+        "score": 0.9,
+        "justification": "The agent spoke clearly and explained the merchant processor timeline transparently."
+      },
+      {
+        "evidence": {
+          "text": "I am transferring you to a supervisor now, Mr. Davis. Please stay on the line and the next available manager will assist you.",
+          "speaker": "Agent",
+          "start_char": 2601,
+          "end_char": 2726
+        },
+        "criterion": "call_closure",
+        "score": 0.7,
+        "justification": "The agent closed the call by clearly explaining the transfer steps, though the call ended in an escalation rather than a full resolution."
+      },
+      {
+        "evidence": {
+          "text": "Okay, I do see the cancellation request submitted on the 12th.",
+          "speaker": "Agent",
+          "start_char": 1018,
+          "end_char": 1080
+        },
+        "criterion": "accuracy_of_information",
+        "score": 1.0,
+        "justification": "The agent correctly located the cancellation request and diagnosed why the billing hold caused the automated charge."
+      },
+      {
+        "evidence": {
+          "text": "Can I please have your account number and the phone number associated with it?",
+          "speaker": "Agent",
+          "start_char": 338,
+          "end_char": 416
+        },
+        "criterion": "procedure_adherence",
+        "score": 1.0,
+        "justification": "The agent followed proper procedure by verifying account details before discussing account history and processing a refund."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Finally, someone picked up. I have been on hold for 20 minutes and I am furious.",
+            "speaker": "Customer",
+            "start_char": 69,
+            "end_char": 149
+          },
+          "speaker": "Customer",
+          "score": -0.8,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "My account number is 449-281039 and you already have my phone number. More importantly, you charged my credit card for a service installation order that I canceled two weeks ago.",
+            "speaker": "Customer",
+            "start_char": 342,
+            "end_char": 520
+          },
+          "speaker": "Customer",
+          "score": -0.7,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "Exactly. So, why was my card charged on the 18th? Are your systems completely incompetent or is this deliberate?",
+            "speaker": "Customer",
+            "start_char": 601,
+            "end_char": 713
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "3 to 5 business days? No, unacceptable. You took my money instantly, so you need to put it back instantly. I want an expedited transfer right now.",
+            "speaker": "Customer",
+            "start_char": 1023,
+            "end_char": 1169
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 32.0
+        },
+        {
+          "quote": {
+            "text": "15 minutes? Unbelievable. You people are completely useless. Put me through right now and they better be able to give me my money today.",
+            "speaker": "Customer",
+            "start_char": 1419,
+            "end_char": 1555
+          },
+          "speaker": "Customer",
+          "score": -1.0,
+          "timestamp_sec": 40.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  },
+  {
+    "id": "75d10f24-ce33-461a-93b0-a2c4eec392f7",
+    "call_id": "call_0131_en",
+    "language": "en",
+    "summary": "The customer called to inquire about a missing package she expected. The agent looked up the tracking number, clarified that the package was a Wi-Fi router kit rather than a phone, explained that delivery was delayed due to a storm earlier in the week, and confirmed that delivery is rescheduled for tomorrow afternoon by 4 p.m. without requiring a signature. The call ended satisfactorily.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "It should be delivered by 4 p.m. tomorrow.",
+          "speaker": "Agent",
+          "start_char": 2261,
+          "end_char": 2303
+        },
+        "promised_by": "Agent",
+        "description": "Deliver the router package by 4 p.m. tomorrow",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "I can certainly help you look into that shipment for you.",
+          "speaker": "Agent",
+          "start_char": 197,
+          "end_char": 254
+        },
+        "criterion": "professionalism",
+        "score": 0.8,
+        "justification": "The agent maintained a polite and professional tone throughout the call despite minor communication hurdles."
+      },
+      {
+        "evidence": {
+          "text": "Sorry, my hearing isn't great. No problem at all.",
+          "speaker": "Agent",
+          "start_char": 408,
+          "end_char": 457
+        },
+        "criterion": "empathy",
+        "score": 0.7,
+        "justification": "The agent was patient and accommodating when the customer had trouble hearing or understanding."
+      },
+      {
+        "evidence": {
+          "text": "Just wait for it to arrive tomorrow. Is there anything else I can assist you with today?",
+          "speaker": "Agent",
+          "start_char": 2629,
+          "end_char": 2717
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 0.9,
+        "justification": "The agent successfully identified the package, explained the delay reason, and provided a precise rescheduled delivery time."
+      },
+      {
+        "evidence": {
+          "text": "No, 4 p.m. in the afternoon.",
+          "speaker": "Agent",
+          "start_char": 2355,
+          "end_char": 2383
+        },
+        "criterion": "communication_clarity",
+        "score": 0.6,
+        "justification": "Both parties experienced several misunderstandings regarding numbers, letters, and delivery times, requiring multiple clarifications."
+      },
+      {
+        "evidence": {
+          "text": "You're very welcome. Have a wonderful rest of your day, and stay safe.",
+          "speaker": "Agent",
+          "start_char": 2803,
+          "end_char": 2873
+        },
+        "criterion": "call_closure",
+        "score": 0.8,
+        "justification": "The agent verified if further assistance was needed and provided a polite, appropriate closing."
+      },
+      {
+        "evidence": {
+          "text": "Yes, the storm was on Monday night, which created a backlog at the local sorting facility. But the carrier update shows it is rescheduled for delivery tomorrow afternoon.",
+          "speaker": "Agent",
+          "start_char": 2009,
+          "end_char": 2179
+        },
+        "criterion": "accuracy_of_information",
+        "score": 0.9,
+        "justification": "The agent accurately retrieved tracking details and current carrier status updates."
+      },
+      {
+        "evidence": {
+          "text": "May I have your account number or the",
+          "speaker": "Agent",
+          "start_char": 255,
+          "end_char": 292
+        },
+        "criterion": "procedure_adherence",
+        "score": 0.6,
+        "justification": "The agent requested account or tracking information, but the sentence was cut off before full standard verification procedure was completed, though tracking was obtained."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Hi, yes, I'm calling about a package I was supposed to get, but it's not here.",
+            "speaker": "Customer",
+            "start_char": 94,
+            "end_char": 172
+          },
+          "speaker": "Customer",
+          "score": -0.2,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "Oh, I thought this was about my new phone. Wait, is the phone coming in a different box?",
+            "speaker": "Customer",
+            "start_char": 709,
+            "end_char": 797
+          },
+          "speaker": "Customer",
+          "score": -0.4,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "Wait, what? Is it lost? Who had an incident?",
+            "speaker": "Customer",
+            "start_char": 1020,
+            "end_char": 1064
+          },
+          "speaker": "Customer",
+          "score": -0.6,
+          "timestamp_sec": 40.0
+        },
+        {
+          "quote": {
+            "text": "Okay, 4 a.m.? Did you say 4 a.m.?",
+            "speaker": "Customer",
+            "start_char": 1433,
+            "end_char": 1466
+          },
+          "speaker": "Customer",
+          "score": -0.1,
+          "timestamp_sec": 56.0
+        },
+        {
+          "quote": {
+            "text": "No, I think that covers it. Thank you for clearing that up, Marcus.",
+            "speaker": "Customer",
+            "start_char": 1745,
+            "end_char": 1812
+          },
+          "speaker": "Customer",
+          "score": 0.7,
+          "timestamp_sec": 64.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  },
+  {
+    "id": "9d8cd853-3042-44e4-9034-9887ed910954",
+    "call_id": "call_0133_en",
+    "language": "en",
+    "summary": "The customer called technical support because they were lost on how to set up a new Wi-Fi extender. The agent guided the customer step-by-step on plugging the device into an outlet near the router, explained the indicator lights, and instructed them to wait for the light to change color before proceeding to Wi-Fi settings on their phone. The call ended while the setup process was still ongoing.",
+    "commitments": [],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "I can certainly help you with the setup process today.",
+          "speaker": "Agent",
+          "start_char": 243,
+          "end_char": 297
+        },
+        "criterion": "professionalism",
+        "score": 0.9,
+        "justification": "The agent maintained a polite, professional, and patient tone throughout the interaction."
+      },
+      {
+        "evidence": {
+          "text": "Once you select that network on your phone, a setup page should automatically pop up on your screen.",
+          "speaker": "Agent",
+          "start_char": 1900,
+          "end_char": 2000
+        },
+        "criterion": "call_closure",
+        "score": 0.5,
+        "justification": "The call transcript ends abruptly during the setup process without a formal closing or confirmation of resolution."
+      },
+      {
+        "evidence": {
+          "text": "A blinking red light just means it is powering up and waiting for a connection.",
+          "speaker": "Agent",
+          "start_char": 1158,
+          "end_char": 1237
+        },
+        "criterion": "accuracy_of_information",
+        "score": 1.0,
+        "justification": "The technical information provided regarding device lights and setup procedures was accurate."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Hi, yes, I just got this new Wi-Fi extender in the mail and I am completely lost on how to plug it in and make it work.",
+            "speaker": "Customer",
+            "start_char": 82,
+            "end_char": 201
+          },
+          "speaker": "Customer",
+          "score": -0.4,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "Yes, it's sitting right here on the kitchen table, but there are so many lights and buttons. I'm not sure where to start.",
+            "speaker": "Customer",
+            "start_char": 205,
+            "end_char": 326
+          },
+          "speaker": "Customer",
+          "score": -0.3,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "Wait, did you say near the router or somewhere else? Sorry, I get easily confused with these things.",
+            "speaker": "Customer",
+            "start_char": 466,
+            "end_char": 566
+          },
+          "speaker": "Customer",
+          "score": -0.2,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "Oh, okay. Let me just stare at it for a minute then. Should I press any buttons yet?",
+            "speaker": "Customer",
+            "start_char": 997,
+            "end_char": 1081
+          },
+          "speaker": "Customer",
+          "score": 0.1,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "Hold on, let me write this down. Go into settings, find the name on the back. Did I get that right?",
+            "speaker": "Customer",
+            "start_char": 1262,
+            "end_char": 1361
+          },
+          "speaker": "Customer",
+          "score": 0.2,
+          "timestamp_sec": 32.0
+        }
+      ]
+    },
+    "confidence": 0.42857142857142855,
+    "requires_human_review": true
+  },
+  {
+    "id": "d29b4e36-89e3-4126-99db-2230f3d2955b",
+    "call_id": "call_0136_en",
+    "language": "en",
+    "summary": "The customer called in an angry state because her power was scheduled for shut-off due to an unpaid bill, and she was denied an extension by the automated system. The agent explained policy limitations regarding extensions and offered alternative options, but the customer refused them and demanded a supervisor. The agent initiated a transfer to a supervisor at the end of the call.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "I can certainly transfer you to a supervisor, Ms. Davis, but please be aware that the supervisor will have to adhere to the same account guidelines regarding payment extensions.",
+          "speaker": "Agent",
+          "start_char": 1804,
+          "end_char": 1981
+        },
+        "promised_by": "Agent",
+        "description": "Transfer the customer to a supervisor",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "I understand you are frustrated and I apologize for the stress this has caused. Let me look into your account right away.",
+          "speaker": "Agent",
+          "start_char": 285,
+          "end_char": 406
+        },
+        "criterion": "professionalism",
+        "score": 0.9,
+        "justification": "The agent maintained a calm and polite tone throughout the call despite the customer's verbal abuse and anger."
+      },
+      {
+        "evidence": {
+          "text": "I do hear how difficult things are right now, and I apologize that my previous options didn't fit",
+          "speaker": "Agent",
+          "start_char": 3275,
+          "end_char": 3372
+        },
+        "criterion": "empathy",
+        "score": 0.8,
+        "justification": "The agent consistently acknowledged the customer's frustration and difficult situation, though some statements felt slightly scripted."
+      },
+      {
+        "evidence": {
+          "text": "I am initiating the transfer to my supervisor, Ms. Davis. Please stay on the line, and the next available manager will be with you shortly.",
+          "speaker": "Agent",
+          "start_char": 3575,
+          "end_char": 3714
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 0.6,
+        "justification": "The agent could not grant the extension due to system restrictions, but successfully processed the requested supervisor transfer."
+      },
+      {
+        "evidence": {
+          "text": "Our system policy allows for one payment extension per calendar year, Ms. Davis, which is",
+          "speaker": "Agent",
+          "start_char": 1051,
+          "end_char": 1140
+        },
+        "criterion": "communication_clarity",
+        "score": 0.9,
+        "justification": "The agent clearly explained the company policies, limits on extensions, and the reasons for disconnection."
+      },
+      {
+        "evidence": {
+          "text": "I am initiating the transfer to my supervisor, Ms. Davis. Please stay on the line, and the next available manager will be with you shortly.",
+          "speaker": "Agent",
+          "start_char": 3575,
+          "end_char": 3714
+        },
+        "criterion": "call_closure",
+        "score": 0.7,
+        "justification": "The call was closed appropriately by handling the supervisor transfer, though the customer remained very unhappy."
+      },
+      {
+        "evidence": {
+          "text": "Our system policy allows for one payment extension per calendar year, Ms. Davis, which is",
+          "speaker": "Agent",
+          "start_char": 1051,
+          "end_char": 1140
+        },
+        "criterion": "accuracy_of_information",
+        "score": 1.0,
+        "justification": "The agent provided accurate information regarding payment extension rules and disconnection procedures."
+      },
+      {
+        "evidence": {
+          "text": "May I please have your account number or the phone number associated with the account?",
+          "speaker": "Agent",
+          "start_char": 407,
+          "end_char": 493
+        },
+        "criterion": "procedure_adherence",
+        "score": 1.0,
+        "justification": "The agent followed proper verification steps and respected system constraints while trying to find alternative solutions."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "I am absolutely furious. That's how I am. I just got a notification that my power is scheduled to be shut off tomorrow morning and I want to know why nobody warned me properly.",
+            "speaker": "Customer",
+            "start_char": 72,
+            "end_char": 248
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "I know it's past due. That's why I'm calling. I need an extension and your stupid automated system wouldn't let me process one because it said I already had one earlier this year.",
+            "speaker": "Customer",
+            "start_char": 472,
+            "end_char": 651
+          },
+          "speaker": "Customer",
+          "score": -0.8,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "Policy? I don't care about your ridiculous policies. People have emergencies. I had unexpected medical bills and I simply don't have the full amount",
+            "speaker": "Customer",
+            "start_char": 759,
+            "end_char": 907
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 40.0
+        },
+        {
+          "quote": {
+            "text": "I don't want a payment plan. I want an extension. I get paid in two weeks on the 15th and I can pay the whole balance then. Why is that so hard for you people to understand?",
+            "speaker": "Customer",
+            "start_char": 1391,
+            "end_char": 1564
+          },
+          "speaker": "Customer",
+          "score": -0.8,
+          "timestamp_sec": 56.0
+        },
+        {
+          "quote": {
+            "text": "I don't have 25%. I have $0 until the 15th. How many times do I have to spell that out for you? Do you speak English?",
+            "speaker": "Customer",
+            "start_char": 1928,
+            "end_char": 2045
+          },
+          "speaker": "Customer",
+          "score": -1.0,
+          "timestamp_sec": 72.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  },
+  {
+    "id": "87cc3b13-a80a-4380-8f3a-85895169ffec",
+    "call_id": "call_0142_en",
+    "language": "en",
+    "summary": "The customer called to request a payment extension to prevent his power from being shut off today. The agent verified the account and explained that an extension was already granted last quarter, preventing a new automatic extension. When the customer demanded to speak to a manager, the agent agreed to transfer him.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "I can certainly transfer you to a supervisor to discuss further options, Mr. Davis.",
+          "speaker": "Agent",
+          "start_char": 1189,
+          "end_char": 1272
+        },
+        "promised_by": "Agent",
+        "description": "Transfer the customer to a supervisor to discuss further options.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "Thank you for calling Metro Utilities. My name is Sarah. How can I help you today?",
+          "speaker": "Agent",
+          "start_char": 7,
+          "end_char": 89
+        },
+        "criterion": "professionalism",
+        "score": 0.9,
+        "justification": "The agent remained polite and calm throughout the customer's frustration."
+      },
+      {
+        "evidence": {
+          "text": "I understand you are concerned about your service, and I'd be happy to check your account for extension options.",
+          "speaker": "Agent",
+          "start_char": 234,
+          "end_char": 346
+        },
+        "criterion": "empathy",
+        "score": 0.7,
+        "justification": "The agent acknowledged the customer's concern and attempted to reassure him."
+      },
+      {
+        "evidence": {
+          "text": "I do show that an extension was already granted on this account last quarter, which unfortunately prevents the system from automatically applying another one.",
+          "speaker": "Agent",
+          "start_char": 856,
+          "end_char": 1014
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 0.6,
+        "justification": "The agent could not grant the extension due to system limitations, requiring an escalation to a supervisor."
+      },
+      {
+        "evidence": {
+          "text": "Thank you for calling Metro Utilities. My name is Sarah. How can I help you today?",
+          "speaker": "Agent",
+          "start_char": 7,
+          "end_char": 89
+        },
+        "criterion": "communication_clarity",
+        "score": 0.9,
+        "justification": "The agent spoke clearly, identified herself and the company, and explained policies well."
+      },
+      {
+        "evidence": {
+          "text": "Please hold while I connect you.",
+          "speaker": "Agent",
+          "start_char": 1273,
+          "end_char": 1305
+        },
+        "criterion": "call_closure",
+        "score": 0.7,
+        "justification": "The call did not end with a full resolution as the customer was being transferred to a supervisor, but the agent properly announced the transfer."
+      },
+      {
+        "evidence": {
+          "text": "May I have your account number and name, please?",
+          "speaker": "Agent",
+          "start_char": 347,
+          "end_char": 395
+        },
+        "criterion": "accuracy_of_information",
+        "score": 0.8,
+        "justification": "The agent accurately accessed the account details and correctly identified the policy regarding previous payment extensions."
+      },
+      {
+        "evidence": {
+          "text": "I can certainly transfer you to a supervisor to discuss further options, Mr. Davis.",
+          "speaker": "Agent",
+          "start_char": 1189,
+          "end_char": 1272
+        },
+        "criterion": "procedure_adherence",
+        "score": 1.0,
+        "justification": "The agent followed the identity verification procedure and properly handled the escalation request."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "I am calling because my power is about to be shut off today, and this is completely ridiculous.",
+            "speaker": "Customer",
+            "start_char": 84,
+            "end_char": 179
+          },
+          "speaker": "Customer",
+          "score": -0.8,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "It's 4589-2130, Robert Davis. And don't just tell me no, because I've been a customer for 10 years, and I've never missed a payment until this month.",
+            "speaker": "Customer",
+            "start_char": 254,
+            "end_char": 403
+          },
+          "speaker": "Customer",
+          "score": -0.6,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "I don't need you to look. I need you to grant it.",
+            "speaker": "Customer",
+            "start_char": 472,
+            "end_char": 521
+          },
+          "speaker": "Customer",
+          "score": -0.7,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "Are you kidding me? You're going to shut off my electricity over a policy when I'm telling you I can pay next week?",
+            "speaker": "Customer",
+            "start_char": 817,
+            "end_char": 932
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 24.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  },
+  {
+    "id": "582cdf6f-1822-4c79-9f1e-982f14417473",
+    "call_id": "call_0146_en",
+    "language": "en",
+    "summary": "The customer called to complain about a rude representative named Kevin who hung up on them. The agent apologized, documented the complaint, and then assisted the customer with investigating a disputed $40 data overage charge.",
+    "commitments": [
+      {
+        "evidence": {
+          "text": "It will be reviewed by the customer relations manager today.",
+          "speaker": "Agent",
+          "start_char": 2207,
+          "end_char": 2267
+        },
+        "promised_by": "Agent",
+        "description": "Have the formal complaint reviewed by the customer relations manager today.",
+        "deadline": null
+      },
+      {
+        "evidence": {
+          "text": "Let me pull up your usage logs for last month.",
+          "speaker": "Agent",
+          "start_char": 2566,
+          "end_char": 2612
+        },
+        "promised_by": "Agent",
+        "description": "Pull up the customer's usage logs for last month.",
+        "deadline": null
+      },
+      {
+        "evidence": {
+          "text": "Let's see what we can do about waiving that charge for you today.",
+          "speaker": "Agent",
+          "start_char": 2855,
+          "end_char": 2920
+        },
+        "promised_by": "Agent",
+        "description": "Look into waiving the $40 data overage charge.",
+        "deadline": null
+      }
+    ],
+    "compliance_flags": [],
+    "rubric_scores": [
+      {
+        "evidence": {
+          "text": "I am very sorry to hear that you had a negative experience.",
+          "speaker": "Agent",
+          "start_char": 265,
+          "end_char": 324
+        },
+        "criterion": "professionalism",
+        "score": 0.9,
+        "justification": "The agent maintained a calm, polite, and professional demeanor throughout the entire call despite the customer's initial anger."
+      },
+      {
+        "evidence": {
+          "text": "I completely understand your frustration, and I can certainly get a supervisor on the line for you if you'd like.",
+          "speaker": "Agent",
+          "start_char": 1406,
+          "end_char": 1519
+        },
+        "criterion": "empathy",
+        "score": 0.9,
+        "justification": "The agent repeatedly validated the customer's feelings, apologized for the poor treatment, and took personal ownership of the situation."
+      },
+      {
+        "evidence": {
+          "text": "Let's see what we can do about waiving that charge for you today.",
+          "speaker": "Agent",
+          "start_char": 2855,
+          "end_char": 2920
+        },
+        "criterion": "resolution_effectiveness",
+        "score": 0.8,
+        "justification": "The agent successfully de-escalated the customer, logged the complaint, and transitioned to resolving the billing issue."
+      },
+      {
+        "evidence": {
+          "text": "I am documenting this interaction right now to report it directly to management for review and coaching.",
+          "speaker": "Agent",
+          "start_char": 1859,
+          "end_char": 1963
+        },
+        "criterion": "communication_clarity",
+        "score": 0.9,
+        "justification": "The agent communicated clearly, asked appropriate follow-up questions, and explained the next steps explicitly."
+      },
+      {
+        "evidence": {
+          "text": "Let me pull up your usage logs for last month.",
+          "speaker": "Agent",
+          "start_char": 2566,
+          "end_char": 2612
+        },
+        "criterion": "call_closure",
+        "score": 0.5,
+        "justification": "The transcript cuts off during the resolution phase before the call was properly closed."
+      },
+      {
+        "evidence": {
+          "text": "It is noted, and I have flagged your account with a formal complaint regarding that call.",
+          "speaker": "Agent",
+          "start_char": 2117,
+          "end_char": 2206
+        },
+        "criterion": "accuracy_of_information",
+        "score": 0.9,
+        "justification": "Provided accurate process information regarding how the complaint would be logged and escalated."
+      },
+      {
+        "evidence": {
+          "text": "Can you please tell me what happened?",
+          "speaker": "Agent",
+          "start_char": 325,
+          "end_char": 362
+        },
+        "criterion": "procedure_adherence",
+        "score": 0.9,
+        "justification": "Followed proper procedure by gathering details about the previous bad experience, logging the complaint, and offering to check usage logs."
+      }
+    ],
+    "sentiment_trajectory": {
+      "points": [
+        {
+          "quote": {
+            "text": "Look, I am calling because I am absolutely furious about the way I was treated by one of your representatives about 20 minutes ago.",
+            "speaker": "Customer",
+            "start_char": 71,
+            "end_char": 202
+          },
+          "speaker": "Customer",
+          "score": -0.8,
+          "timestamp_sec": 0.0
+        },
+        {
+          "quote": {
+            "text": "What happened is your agent was completely rude, condescending, and outright disrespectful to me just because I asked a simple question about my bill.",
+            "speaker": "Customer",
+            "start_char": 237,
+            "end_char": 387
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 8.0
+        },
+        {
+          "quote": {
+            "text": "He said his name was Kevin, or at least that's what he mumbled before he basically yelled over me and then hung up the phone in my ear.",
+            "speaker": "Customer",
+            "start_char": 472,
+            "end_char": 607
+          },
+          "speaker": "Customer",
+          "score": -0.9,
+          "timestamp_sec": 16.0
+        },
+        {
+          "quote": {
+            "text": "Good, because I've been with this company for eight years, and I have never, ever been treated with such disrespect.",
+            "speaker": "Customer",
+            "start_char": 820,
+            "end_char": 936
+          },
+          "speaker": "Customer",
+          "score": -0.7,
+          "timestamp_sec": 24.0
+        },
+        {
+          "quote": {
+            "text": "Fine. I appreciate you actually listening to me, unlike the last guy.",
+            "speaker": "Customer",
+            "start_char": 1452,
+            "end_char": 1521
+          },
+          "speaker": "Customer",
+          "score": -0.2,
+          "timestamp_sec": 32.0
+        }
+      ]
+    },
+    "confidence": 1.0,
+    "requires_human_review": false
+  }
+]

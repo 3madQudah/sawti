@@ -174,6 +174,36 @@ class _LaxExtractionProposal(BaseModel):
     sentiment_trajectory: _LaxSentimentTrajectory = Field(default_factory=_LaxSentimentTrajectory)
 
 
+def _build_system_prompt(retrieved_rules: list[str] | None) -> str:
+    """Fold retrieved memory rules into the extraction system prompt, if any were given.
+
+    Role: this is where the phase 2 "marked, tested absence" (see the module
+    docstring history / `docs/08-ROADMAP.md`) gets filled in — `extract`
+    itself never calls `sawti.memory.store.MemoryStore.retrieve()`; a caller
+    (the graph invocation, or `sawti.eval.experiments.five_batch`'s
+    memory-on arm) retrieves and passes rule text in via
+    `AgentState["retrieved_rules"]`. No key, or an empty list, reproduces
+    the exact phase 2 prompt — the no-memory control arm relies on this.
+
+    Args:
+        retrieved_rules: Rule text, best match first, or `None`/empty.
+
+    Returns:
+        `EXTRACTION_SYSTEM_PROMPT`, with an appended block of guidance when
+        `retrieved_rules` is non-empty.
+    """
+    if not retrieved_rules:
+        return EXTRACTION_SYSTEM_PROMPT
+
+    rules_block = "\n".join(f"- {rule}" for rule in retrieved_rules)
+    return (
+        f"{EXTRACTION_SYSTEM_PROMPT}\n\n"
+        "GUIDANCE FROM PAST QA CORRECTIONS — apply whichever of these are "
+        "relevant to this call; ignore any that are not:\n"
+        f"{rules_block}"
+    )
+
+
 async def extract(state: AgentState) -> dict[str, Any]:
     """Extract candidate claims, commitments, and sentiment points from the transcript.
 
@@ -183,11 +213,11 @@ async def extract(state: AgentState) -> dict[str, Any]:
     redacts `transcript` itself rather than silently sending raw text to a
     cloud model.
 
-    Memory-rule retrieval is deliberately absent. `sawti.memory.store` is phase 4
-    and raises `NotImplementedError` today; wiring a call to it now would either
-    crash the graph or need a stub that pretends rules exist. The extraction
-    prompt is a plain analyst prompt until phase 4 gives it something real to
-    inject.
+    Memory-rule retrieval itself happens outside this node — see
+    `_build_system_prompt`. `extract` only folds `state["retrieved_rules"]`
+    into the prompt if the caller already retrieved some; it never calls
+    `sawti.memory.store` itself, so this node has no dependency on whether a
+    store exists or is populated.
 
     A provider failure is recorded in `error` rather than raised: an exception
     would abort the run, while an `error` routes through `route_after_confidence`
@@ -208,11 +238,13 @@ async def extract(state: AgentState) -> dict[str, Any]:
         # PII redaction before any text reaches a model — not negotiable.
         redacted = redact(source).redacted_text
 
+    system_prompt = _build_system_prompt(state.get("retrieved_rules"))
+
     try:
         lax = await get_llm_provider().structured_complete(
             redacted,
             response_model=_LaxExtractionProposal,
-            system=EXTRACTION_SYSTEM_PROMPT,
+            system=system_prompt,
         )
         # Back to the strict contract before anything else sees it.
         proposal = ExtractionProposal.model_validate(lax.model_dump())
