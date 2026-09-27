@@ -489,14 +489,73 @@ validating the fine-tuning *mechanism* end-to-end, not as evidence of
 real-world learning capacity — 18 training examples is a small-sample proof
 of mechanism, not a scaled result.
 
-#### Steps 3-4: pending
+#### Steps 3-4: run on Colab 2026-09-27 (T4)
 
-`scripts/train_qlora.py` (step 3) and `scripts/check_forgetting.py` (step
-4) are written and unit-tested (`tests/scripts/test_train_qlora.py`,
-`tests/scripts/test_check_forgetting.py`) but **have never run** — both
-need CUDA, which this dev machine does not have. `notebooks/
-qlora_train.ipynb` is the execution path (Colab, T4 minimum). Once run,
-this section should be replaced with: the per-step train/eval loss from
-`data/finetune/train_log.csv`, and the forgetting-check flags from
-`data/finetune/forgetting_eval.json` — real numbers, not the runtime
-estimate currently in `docs/09-DECISIONS.md`.
+Real numbers, from `data/finetune/train_log.csv` and
+`data/finetune/forgetting_eval.json`, both now checked into this repo. The
+trained LoRA adapter itself is not (it's on Google Drive at
+`sawti-phase5/` — see `notebooks/qlora_train.ipynb` — and is a build
+artifact, not a result record, the same distinction `data/finetune/
+_diff_cache/` draws).
+
+**Training** — 3 epochs over the 18-example train set (batch size 1,
+gradient accumulation 4, so 5 optimizer steps/epoch, 15 total, matching
+`_warmup_steps()`'s own step-count math):
+
+| Step | Epoch | Train loss |
+| ---: | ---: | ---: |
+| 1 | 0.222 | 2.1449 |
+| 2 | 0.444 | 2.3660 |
+| 3 | 0.667 | 2.4276 |
+| 4 | 0.889 | 2.1048 |
+| 5 | 1.000 | 2.0978 |
+| 6 | 1.222 | 2.0233 |
+| 7 | 1.444 | 1.7504 |
+| 8 | 1.667 | 1.9545 |
+| 9 | 1.889 | 1.8562 |
+| 10 | 2.000 | 1.3269 |
+| 11 | 2.222 | 1.6273 |
+| 12 | 2.444 | 1.5460 |
+| 13 | 2.667 | 1.7049 |
+| 14 | 2.889 | 1.9141 |
+| 15 | 3.000 | 1.4161 |
+
+Noisy step to step (an 18-example set gives each step's loss high
+variance), but the per-epoch eval numbers show a clear, monotonic trend:
+
+| Epoch | Eval loss | Eval mean token accuracy |
+| ---: | ---: | ---: |
+| 1 | 1.9185 | 0.6018 |
+| 2 | 1.7573 | 0.6314 |
+| 3 | 1.7259 | 0.6356 |
+
+Overall `train_loss` (trainer's own weighted average) **1.8840**,
+`train_runtime` **1588.27s (~26m28s)** on a T4. This is the actual
+`trainer.train()` wall-clock alone — separate from, and much larger than,
+`scripts/train_qlora.py`'s own pre-run *estimate* of "well under a minute
+of GPU compute" for training, which assumed a T4 would move through an 8B
+model's forward/backward pass much faster than it did in practice
+(~106s/step). See `docs/09-DECISIONS.md`'s 2026-09-27 entry for the
+correction.
+
+**Catastrophic-forgetting check** — 7/7 generic prompts checked, **0
+flagged** (verified directly against `data/finetune/forgetting_eval.json`,
+now checked into the repo alongside `train_log.csv`, not just a console
+summary). Base and tuned response lengths are comparable on every prompt
+(e.g. 778 vs. 881 chars on the capital-of-France prompt, 948 vs. 938 on
+the Romeo-and-Juliet summary) — no length-collapse or empty-response
+regression on any of the 7, and reading the full text confirms the same:
+near-identical reasoning traces (both models work through the same
+`<think>` steps: breaking `17 × 23` into `17×20 + 17×3`, second-guessing
+haiku line count against the "two-line" instruction, converging on Paris
+via the same landmarks) and the same recalled facts throughout.
+
+#### Caveat
+
+Every training/val example remains synthetic (see the dataset-build round
+above and `docs/09-DECISIONS.md`, 2026-09-25) — this result validates that
+QLoRA training runs correctly end to end and does not visibly damage
+general instruction-following on 7 generic prompts. It is not evidence
+that the fine-tuned model is better at call analysis than the base model;
+no held-out-call comparison (the 15 calls reserved in
+`held_out_call_ids.json`) has been scored yet.

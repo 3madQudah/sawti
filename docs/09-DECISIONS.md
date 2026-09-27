@@ -1722,3 +1722,72 @@ substitute for the real Colab run.
   by default, and `trl`'s 0.9.x-era API is what broke `SFTTrainer`'s
   signature in the first place; there was no "safe old combination" left
   to fall back to once `transformers` had moved this far.
+
+---
+
+## 2026-09-27 — Real Colab run: training completed, forgetting check clean, runtime estimate was wrong
+
+**Status:** accepted. Supersedes the runtime estimate in the 2026-09-25
+"Phase 5 base model checkpoint and QLoRA hyperparameters" entry above —
+that entry is left as-is (historical record of what was estimated before
+anything ran); this entry states what was actually measured.
+
+`scripts/train_qlora.py` and `scripts/check_forgetting.py` both ran for
+real on Colab (T4), reported by the user, cross-checked here against the
+raw `train_log.csv` before being written into `eval_results.md`. Full
+numbers there; summarized:
+
+- **Training completed**: 3 epochs, 15 optimizer steps (18 train examples
+  ÷ effective batch 4, matching `_warmup_steps()`'s own arithmetic exactly
+  — a useful authenticity check on the pasted log, not just a report of
+  what it says). Eval loss fell monotonically every epoch (1.9185 →
+  1.7573 → 1.7259) and eval mean token accuracy rose (0.6018 → 0.6314 →
+  0.6356, with visibly diminishing returns by epoch 3) — the training
+  mechanism produced a real, if small and noisy, learning signal on 18
+  examples.
+- **Forgetting check clean**: 7/7 generic prompts, 0 flagged, and
+  qualitatively near-identical base/tuned responses (matching reasoning
+  traces, same recalled facts) per the user's report — not just a bare
+  flag count.
+
+### The runtime estimate was wrong, corrected here rather than left standing
+
+The prior entry estimated training itself would take "well under a minute
+of GPU compute," with the ~10-15 minute total dominated by download/
+quantization. Measured: `train_runtime` was **1588.27s (~26m28s)** for
+just the 15 optimizer steps — roughly 106s/step. A T4 moving an 8B
+parameter model through a full forward/backward pass, even 4-bit
+quantized, is simply slower per step than the estimate assumed; the
+estimate was a calculation from published QLoRA VRAM *capacity* figures,
+which say nothing about T4 *throughput*. Stated plainly since a future
+reader relying on the old estimate to plan Colab session time would be
+badly off: total wall-clock (download + quantize + train + eval + save)
+should be assumed to be 30-45+ minutes on a T4, not 10-15.
+
+### A scope gap, found while writing this up — not fixed here
+
+The original Phase 5 step-3 scope (this project's own task instructions,
+before any of Phase 5's code existed) asked for two things from the
+held-out 15 `ar` calls: run both base and QLoRA-tuned extraction against
+them and **report the call-analysis accuracy delta**, using the same
+per-language methodology as Phases 1/2/4. That script was never written.
+Only two things exist: `scripts/train_qlora.py` (the training run) and
+`scripts/check_forgetting.py` (generic-prompt forgetting check, always a
+distinct thing from the held-out-calls accuracy comparison). `docs/
+08-ROADMAP.md`'s Phase 5 "done when" — written after the fact, once
+already narrowed to what had actually been scaffolded — only requires
+train/val loss and the forgetting check, silently dropping the
+held-out-calls accuracy delta the original scope asked for. That
+mismatch is being surfaced, not corrected, in this entry: the held-out
+15 calls remain unused for the purpose they were reserved for. Whether
+QLoRA fine-tuning actually improves `ar` call-analysis accuracy — the
+actual point of Phase 5 — is still unmeasured.
+
+### What was decided about that gap, for now
+
+Nothing — flagged to the user rather than silently building a new eval
+script (which needs another Colab GPU session to run) or silently
+declaring Phase 5 done without it. `docs/08-ROADMAP.md`'s Phase 5 status
+is left at 🟡 rather than promoted to ✅ for this reason, with the
+checklist updated to show what actually ran and to name the missing
+held-out-calls comparison explicitly.

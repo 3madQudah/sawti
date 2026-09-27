@@ -168,26 +168,34 @@ retrieval at inference time. Started 2026-09-25.
       agent-output-vs-ground-truth diff, never a real QA reviewer's
       judgment. See `docs/09-DECISIONS.md` and `eval_results.md`'s
       2026-09-25 entry.
-- [x] QLoRA training script written and unit-tested
-      (`scripts/train_qlora.py`, `notebooks/qlora_train.ipynb`) — **never
-      run.** CUDA-only; this dev environment has none. Hyperparameters
-      (4-bit NF4, LoRA r=16/α=32 over every linear layer) are the QLoRA
-      paper's documented defaults, not tuned against this dataset. See
-      `docs/09-DECISIONS.md`.
-- [x] Catastrophic-forgetting scaffold written and unit-tested
-      (`scripts/check_forgetting.py`) — **never run**, same CUDA
-      constraint. A handful of generic prompts, base vs. tuned, checked for
-      a large regression (empty or drastically shorter output) — not a
-      full eval suite.
-- [ ] Actual Colab training run: train/val loss and the forgetting-check
-      result recorded in `eval_results.md`, replacing the runtime estimate
-      currently in `docs/09-DECISIONS.md`.
+- [x] QLoRA training script written, unit-tested, and **run for real on
+      Colab (T4), 2026-09-27**: 3 epochs, eval loss 1.9185 → 1.7573 →
+      1.7259, eval mean token accuracy 0.6018 → 0.6314 → 0.6356,
+      `train_runtime` 1588.27s. Hyperparameters (4-bit NF4, LoRA r=16/α=32
+      over every linear layer) are the QLoRA paper's documented defaults,
+      not tuned against this dataset. See `docs/09-DECISIONS.md` and
+      `eval_results.md`.
+- [x] Catastrophic-forgetting check written, unit-tested, and **run for
+      real on Colab, 2026-09-27**: 7/7 generic prompts, 0 flagged, base and
+      tuned responses near-identical. Not a full eval suite — a handful of
+      prompts checked for a large regression only.
+- [ ] **Held-out-calls accuracy delta — not built, not run.** The original
+      scope for this phase (before any of its code existed) asked for the
+      15 held-out `ar` calls to be scored, base vs. tuned extraction, with
+      the same per-language accuracy methodology as Phases 1/2/4 — the
+      actual measure of whether fine-tuning helps `ar` call analysis. That
+      script does not exist yet; the forgetting check above is a different,
+      narrower thing (generic prompts, not call transcripts). See
+      `docs/09-DECISIONS.md`'s 2026-09-27 entry.
 
 **Done when:** the QLoRA adapter trains end to end on Colab, its train/val
-loss is recorded, and the forgetting check shows no large regression on
-generic prompts. Read the result as validating the fine-tuning *mechanism*,
-not as a scaled result — 18 training examples, all synthetic. See
-`docs/09-DECISIONS.md`.
+loss is recorded, the forgetting check shows no large regression on
+generic prompts, **and** the held-out 15 calls' accuracy delta (base vs.
+tuned) is measured and recorded — the first two are done; the third is
+not. Read the eventual result as validating the fine-tuning *mechanism* and
+(once measured) its effect on `ar` accuracy — 18 training examples, all
+synthetic, so even a positive delta is a small-sample signal, not a scaled
+result. See `docs/09-DECISIONS.md`.
 
 ---
 
