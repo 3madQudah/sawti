@@ -2027,3 +2027,76 @@ ordering ever regressed.
   Would have turned this run's silent failure into a loud one on the
   *next* Colab attempt, but the next attempt would still fail — the actual
   data gap is the thing to fix, not just its symptom.
+
+---
+
+## 2026-09-27 — `eval_held_out_calls.py` compared mismatched denominators; first real run's numbers discarded
+
+**Status:** accepted. The Colab run this entry is about did not produce a
+number recorded anywhere — deliberately, per the decision below.
+
+With the transcript-availability bug fixed (previous entry), a real Colab
+run of `scripts/eval_held_out_calls.py` completed: `N calls scored:
+ar=10` (5 of 15 excluded — extraction failed on the base model, the tuned
+model, or both, varying by call), Accuracy base 0.693/tuned 0.671 (Δ
+-0.022), Rubric agreement 0.893/0.878 (Δ -0.014), Grounding precision
+0.808/0.885 (Δ +0.076), Unsupported claim rate 0.231/0.122 (Δ -0.110). The
+user also reported the tuned model failed structured-output validation
+(missing required fields) noticeably more often than the base model.
+
+### The bug, found while preparing to write these numbers up
+
+`run()` computed `base_metrics` from `base_predictions` (every call that
+succeeded on the base pass) and `tuned_metrics` from `tuned_predictions`
+(every call that succeeded on the tuned pass) — two different lists
+whenever a call failed on only one side, which per the user's own report
+it did. `counts["ar"] = 10` (the *intersection* size) was computed
+correctly and reported correctly; the metric *values* above it were each
+computed over their own, more permissive success list, not that same
+10-call set. A "delta" between two numbers with different, unstated
+denominators does not mean what it looks like it means.
+
+### What was checked, not assumed
+
+Reverted the fix, ran `tests/scripts/test_eval_held_out_calls.py::
+test_compare_scores_base_and_tuned_over_the_same_intersection`, watched it
+fail with `0.9167 != 1.0` — the exact value hand-calculated for the
+bug's effect on the test's constructed scenario — then restored the fix
+and watched the same test pass. The regression test is real, not a
+tautology that would pass either way.
+
+### What was decided
+
+**The reported numbers above are not written into `eval_results.md`, and
+`docs/08-ROADMAP.md`'s Phase 5 held-out-accuracy checklist item stays
+unchecked**, pending a corrected re-run — the user's own call, offered a
+choice between recording these numbers as explicitly-preliminary or
+waiting for a clean run, and chose to wait. What *is* usable from this run
+without a re-run: the qualitative finding that the tuned model produced
+more structured-output failures than the base model, since that
+observation doesn't depend on which denominator the accuracy numbers used
+— worth confirming again on the next run, but not itself invalidated by
+this bug.
+
+### What changed in the script for the corrected re-run
+
+- `run()`'s comparison logic moved into `_compare()`, a pure function (no
+  CUDA) with the property under test above: both metric computations
+  restricted to `scored_ids`, the intersection of calls that succeeded on
+  *both* models.
+- `held_out_eval.json` now includes an `outcomes` list — one row per
+  held-out call, `base`/`tuned` each `"ok"` or `"failed"` with the error
+  if failed. This is also the fix for the user's separate ask ("read the
+  full raw `held_out_eval.json` for the per-call detail") — the file
+  genuinely did not contain it before this entry; console log lines were
+  the only record, and those weren't captured anywhere persistent.
+
+### Rejected alternatives
+
+- **Write up the numbers with a denominator-mismatch caveat instead of
+  waiting.** Offered to the user as an explicit option; declined in favor
+  of a clean re-run.
+- **Try to reconstruct the correct 10-call numbers from the aggregate
+  `held_out_eval.json` that exists.** Not possible — that file has no
+  per-call predictions or outcomes, only the (mismatched) aggregate
+  metrics and the intersection count. Nothing to reconstruct from.

@@ -15,6 +15,8 @@ from pathlib import Path
 
 import pytest
 from eval_held_out_calls import (
+    _build_outcomes,
+    _compare,
     _extract_all,
     _metrics_for,
     load_held_out_call_ids,
@@ -105,11 +107,12 @@ def test_extract_all_returns_one_call_analysis_per_successful_call(tmp_path: Pat
         }
     )
 
-    predictions = _extract_all(
+    predictions, failures = _extract_all(
         ["call_0000_ar", "call_0001_ar"], synthetic_dir=synthetic_dir, provider=provider
     )
 
     assert {p.call_id for p in predictions} == {"call_0000_ar", "call_0001_ar"}
+    assert failures == []
 
 
 def test_extract_all_skips_a_missing_transcript(tmp_path: Path) -> None:
@@ -117,11 +120,12 @@ def test_extract_all_skips_a_missing_transcript(tmp_path: Path) -> None:
     _write_transcript(synthetic_dir, "call_0000_ar", "we will refund you today")
     provider = _StubProvider({"call_0000_ar": _response(quote_text="we will refund you today")})
 
-    predictions = _extract_all(
+    predictions, failures = _extract_all(
         ["call_0000_ar", "call_missing_ar"], synthetic_dir=synthetic_dir, provider=provider
     )
 
     assert [p.call_id for p in predictions] == ["call_0000_ar"]
+    assert failures == [("call_missing_ar", "transcript file missing")]
 
 
 def test_extract_all_skips_a_call_whose_extraction_raises(tmp_path: Path) -> None:
@@ -135,11 +139,14 @@ def test_extract_all_skips_a_call_whose_extraction_raises(tmp_path: Path) -> Non
         }
     )
 
-    predictions = _extract_all(
+    predictions, failures = _extract_all(
         ["call_0000_ar", "call_0001_ar"], synthetic_dir=synthetic_dir, provider=provider
     )
 
     assert [p.call_id for p in predictions] == ["call_0000_ar"]
+    assert len(failures) == 1
+    assert failures[0][0] == "call_0001_ar"
+    assert "model exploded" in failures[0][1]
 
 
 # --- render_comparison --------------------------------------------------------
@@ -235,6 +242,90 @@ def test_verify_transcripts_exist_raises_when_directory_does_not_exist(tmp_path:
     """The exact 2026-09-27 failure mode: a fresh clone with an empty (gitignored) data/synthetic/."""
     with pytest.raises(FileNotFoundError, match="call_0000_ar"):
         verify_transcripts_exist(["call_0000_ar"], synthetic_dir=tmp_path / "synthetic")
+
+
+# --- _build_outcomes ----------------------------------------------------------
+
+
+def test_build_outcomes_covers_every_call_with_ok_or_failed() -> None:
+    outcomes = _build_outcomes(
+        ["a", "b", "c"],
+        base_failures=[("b", "base broke")],
+        tuned_failures=[("c", "tuned broke")],
+    )
+
+    by_id = {row["call_id"]: row for row in outcomes}
+    assert by_id["a"] == {
+        "call_id": "a",
+        "base": "ok",
+        "base_error": None,
+        "tuned": "ok",
+        "tuned_error": None,
+    }
+    assert by_id["b"]["base"] == "failed"
+    assert by_id["b"]["base_error"] == "base broke"
+    assert by_id["b"]["tuned"] == "ok"
+    assert by_id["c"]["tuned"] == "failed"
+    assert by_id["c"]["tuned_error"] == "tuned broke"
+
+
+# --- _compare: the 2026-09-27 "mismatched denominators" bug -----------------
+
+
+def _flagged_analysis(call_id: str) -> CallAnalysis:
+    """A minimal analysis carrying one compliance flag, unlike `_minimal_analysis`."""
+    from sawti.schemas import ComplianceFlag, Quote, Severity
+
+    analysis = _minimal_analysis(call_id)
+    quote = Quote(text="violation", speaker="Agent", start_char=0, end_char=len("violation"))
+    flag = ComplianceFlag(evidence=quote, rule_id="test_rule", severity=Severity.LOW, description="x")
+    return analysis.model_copy(update={"compliance_flags": [flag]})
+
+
+def test_compare_scores_base_and_tuned_over_the_same_intersection(tmp_path: Path) -> None:
+    """Regression test for the 2026-09-27 bug: base/tuned metrics must share one denominator.
+
+    Reference has no compliance flags for any of the three calls, and
+    `call_a`/`call_b` match perfectly on both models, so a correctly
+    intersection-restricted accuracy is exactly 1.0 for both sides. `call_c`
+    only succeeded on the base pass and invents a compliance flag the
+    reference doesn't have (one of `accuracy_by_category`'s four
+    components scores 0.0 for it) — if `_compare` (pre-fix) fed each
+    side's own full success list into the metrics instead of the shared
+    {a, b} intersection, base's accuracy would come out below 1.0.
+    """
+    synthetic_dir = tmp_path / "synthetic"
+    for call_id in ("call_a_ar", "call_b_ar", "call_c_ar"):
+        _write_transcript(synthetic_dir, call_id, "hello")
+
+    reference = [_minimal_analysis(cid) for cid in ("call_a_ar", "call_b_ar", "call_c_ar")]
+    base_predictions = [
+        _minimal_analysis("call_a_ar"),
+        _minimal_analysis("call_b_ar"),
+        _flagged_analysis("call_c_ar"),  # base-only success, and an accuracy outlier
+    ]
+    tuned_predictions = [_minimal_analysis("call_a_ar"), _minimal_analysis("call_b_ar")]
+    tuned_failures = [("call_c_ar", "extraction failed")]
+
+    result = _compare(
+        all_call_ids=["call_a_ar", "call_b_ar", "call_c_ar"],
+        reference=reference,
+        base_predictions=base_predictions,
+        base_failures=[],
+        tuned_predictions=tuned_predictions,
+        tuned_failures=tuned_failures,
+        synthetic_dir=synthetic_dir,
+    )
+
+    assert result["scored_ids"] == ["call_a_ar", "call_b_ar"]
+    assert result["counts"]["ar"] == 2
+    # The outlier (call_c) must not have dragged base's accuracy down.
+    assert result["base_metrics"]["Accuracy"]["ar"] == pytest.approx(1.0)
+    assert result["tuned_metrics"]["Accuracy"]["ar"] == pytest.approx(1.0)
+
+    outcomes_by_id = {row["call_id"]: row for row in result["outcomes"]}
+    assert outcomes_by_id["call_c_ar"]["base"] == "ok"
+    assert outcomes_by_id["call_c_ar"]["tuned"] == "failed"
 
 
 # --- run(): CUDA-only paths need real peft/bitsandbytes; skip cleanly here --

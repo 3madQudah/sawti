@@ -80,7 +80,7 @@ def _extract_all(
     *,
     synthetic_dir: Path,
     provider: Any,
-) -> list[CallAnalysis]:
+) -> tuple[list[CallAnalysis], list[tuple[str, str]]]:
     """Run `run_plain_extraction` over every one of `call_ids`, with `provider` injected.
 
     `provider` replaces `get_llm_provider()`'s configured result for the
@@ -89,26 +89,36 @@ def _extract_all(
     provider instead of a test stub.
 
     A missing transcript or a failed extraction is logged and the call is
-    skipped, matching `sawti.eval.runner.run_eval`'s own convention: excluded
-    from every metric, never silently zero-filled. `run_plain_extraction`'s
+    skipped, matching `sawti.eval.runner.run_eval`'s own `failures: list[
+    tuple[str, str]]` convention (call_id, reason) — excluded from every
+    metric, never silently zero-filled, and returned rather than only
+    logged so `run()` can report *which* calls failed and record it in
+    `held_out_eval.json`, not just a bare count. `run_plain_extraction`'s
     own retry budget is 0 here — `LocalHFProvider.structured_complete`
     already retries internally with sampling; retrying again on top would
     just re-run that same internal retry loop from scratch.
+
+    Returns:
+        `(predictions, failures)` — every call_id in `call_ids` accounted
+        for in exactly one of the two.
     """
     predictions: list[CallAnalysis] = []
+    failures: list[tuple[str, str]] = []
     with patch("sawti.eval.plain_extraction.get_llm_provider", lambda: provider):
         for index, call_id in enumerate(call_ids, start=1):
             transcript_path = synthetic_dir / f"{call_id}.txt"
             if not transcript_path.is_file():
                 logger.error("[%d/%d] %s: transcript missing, skipping", index, len(call_ids), call_id)
+                failures.append((call_id, "transcript file missing"))
                 continue
             try:
                 predictions.append(run_plain_extraction(transcript_path, max_retries=0))
             except Exception as exc:
                 logger.error("[%d/%d] %s: extraction failed: %r", index, len(call_ids), call_id, exc)
+                failures.append((call_id, repr(exc)))
                 continue
             logger.info("[%d/%d] %s: extracted", index, len(call_ids), call_id)
-    return predictions
+    return predictions, failures
 
 
 def _metrics_for(
@@ -183,6 +193,89 @@ def render_comparison(base_metrics: Metrics, tuned_metrics: Metrics, *, counts: 
     return "\n".join(lines)
 
 
+def _build_outcomes(
+    call_ids: list[str],
+    *,
+    base_failures: list[tuple[str, str]],
+    tuned_failures: list[tuple[str, str]],
+) -> list[dict[str, str | None]]:
+    """One row per held-out call: whether each model succeeded, and why not if it didn't.
+
+    The per-call detail `held_out_eval.json` didn't have before 2026-09-27
+    — added specifically so a run's failure pattern (which calls, which
+    side, what error) is in the file itself, not only in console output
+    that may not have been captured.
+    """
+    base_failure_reasons = dict(base_failures)
+    tuned_failure_reasons = dict(tuned_failures)
+    return [
+        {
+            "call_id": call_id,
+            "base": "failed" if call_id in base_failure_reasons else "ok",
+            "base_error": base_failure_reasons.get(call_id),
+            "tuned": "failed" if call_id in tuned_failure_reasons else "ok",
+            "tuned_error": tuned_failure_reasons.get(call_id),
+        }
+        for call_id in call_ids
+    ]
+
+
+def _compare(
+    *,
+    all_call_ids: list[str],
+    reference: list[CallAnalysis],
+    base_predictions: list[CallAnalysis],
+    base_failures: list[tuple[str, str]],
+    tuned_predictions: list[CallAnalysis],
+    tuned_failures: list[tuple[str, str]],
+    synthetic_dir: Path,
+) -> dict[str, Any]:
+    """Turn two extraction runs into the comparable result `run()` writes out.
+
+    Pure Python — no model, no CUDA — so the one property that actually
+    matters here (`base_metrics`/`tuned_metrics` computed over the *same*
+    call set) has a real, fast, no-GPU-needed regression test
+    (`tests/scripts/test_eval_held_out_calls.py`), not just a code review.
+
+    Both metric computations are restricted to `scored_ids` — the calls
+    that succeeded on *both* models — deliberately: a "delta" between two
+    numbers computed over different denominators doesn't mean what it
+    looks like it means. A real bug, found 2026-09-27 writing up the first
+    real run's numbers: `base_metrics` and `tuned_metrics` were each
+    computed over their own full success list, which can (and did) differ
+    in membership whenever a call failed on only one side. See
+    `docs/09-DECISIONS.md`.
+    """
+    scored_ids = {p.call_id for p in base_predictions} & {p.call_id for p in tuned_predictions}
+    base_scored = [p for p in base_predictions if p.call_id in scored_ids]
+    tuned_scored = [p for p in tuned_predictions if p.call_id in scored_ids]
+
+    counts: dict[Language, int] = {}
+    for record in reference:
+        if record.call_id in scored_ids:
+            counts[record.language] = counts.get(record.language, 0) + 1
+
+    base_metrics = _metrics_for(base_scored, reference, synthetic_dir=synthetic_dir)
+    tuned_metrics = _metrics_for(tuned_scored, reference, synthetic_dir=synthetic_dir)
+    comparison = render_comparison(base_metrics, tuned_metrics, counts=counts)
+    outcomes = _build_outcomes(all_call_ids, base_failures=base_failures, tuned_failures=tuned_failures)
+
+    def _serialize(metrics: Metrics) -> dict[str, dict[str, float]]:
+        return {
+            name: {language.value: value for language, value in scores.items()}
+            for name, scores in metrics.items()
+        }
+
+    return {
+        "base_metrics": _serialize(base_metrics),
+        "tuned_metrics": _serialize(tuned_metrics),
+        "counts": {language.value: count for language, count in counts.items()},
+        "comparison_table": comparison,
+        "outcomes": outcomes,
+        "scored_ids": sorted(scored_ids),
+    }
+
+
 def run(
     *,
     base_model: str,
@@ -232,34 +325,36 @@ def run(
     base_provider = LocalHFProvider(base_model_obj, base_tokenizer)
     tuned_provider = LocalHFProvider(tuned_model_obj, tuned_tokenizer)
 
-    base_predictions = _extract_all(all_call_ids, synthetic_dir=synthetic_dir, provider=base_provider)
-    tuned_predictions = _extract_all(all_call_ids, synthetic_dir=synthetic_dir, provider=tuned_provider)
+    base_predictions, base_failures = _extract_all(
+        all_call_ids, synthetic_dir=synthetic_dir, provider=base_provider
+    )
+    tuned_predictions, tuned_failures = _extract_all(
+        all_call_ids, synthetic_dir=synthetic_dir, provider=tuned_provider
+    )
 
-    scored_ids = {p.call_id for p in base_predictions} & {p.call_id for p in tuned_predictions}
-    counts: dict[Language, int] = {}
-    for record in reference:
-        if record.call_id in scored_ids:
-            counts[record.language] = counts.get(record.language, 0) + 1
+    result = _compare(
+        all_call_ids=all_call_ids,
+        reference=reference,
+        base_predictions=base_predictions,
+        base_failures=base_failures,
+        tuned_predictions=tuned_predictions,
+        tuned_failures=tuned_failures,
+        synthetic_dir=synthetic_dir,
+    )
 
-    base_metrics = _metrics_for(base_predictions, reference, synthetic_dir=synthetic_dir)
-    tuned_metrics = _metrics_for(tuned_predictions, reference, synthetic_dir=synthetic_dir)
-    comparison = render_comparison(base_metrics, tuned_metrics, counts=counts)
-
-    def _serialize(metrics: Metrics) -> dict[str, dict[str, float]]:
-        return {
-            name: {language.value: value for language, value in scores.items()}
-            for name, scores in metrics.items()
-        }
-
-    result = {
-        "base_metrics": _serialize(base_metrics),
-        "tuned_metrics": _serialize(tuned_metrics),
-        "counts": {language.value: count for language, count in counts.items()},
-        "comparison_table": comparison,
-    }
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(comparison)
+    print(result["comparison_table"])
+    if base_failures or tuned_failures:
+        logger.warning(
+            "%d/%d calls scored on both models (%d base-side failure(s), %d "
+            "tuned-side failure(s) — see 'outcomes' in %s for which and why)",
+            len(result["scored_ids"]),
+            len(all_call_ids),
+            len(base_failures),
+            len(tuned_failures),
+            output_path,
+        )
     return result
 
 

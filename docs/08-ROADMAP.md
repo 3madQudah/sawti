@@ -179,15 +179,17 @@ retrieval at inference time. Started 2026-09-25.
       real on Colab, 2026-09-27**: 7/7 generic prompts, 0 flagged, base and
       tuned responses near-identical. Not a full eval suite — a handful of
       prompts checked for a large regression only.
-- [ ] **Held-out-calls accuracy delta — built and unit-tested
-      (`scripts/eval_held_out_calls.py`, `src/sawti/llm/local_hf_provider.py`),
-      not yet run.** Scores the 15 held-out `ar` calls, base vs. tuned
-      extraction, through the exact `sawti.eval.metrics` functions Phases
-      1/2/4 use — the actual measure of whether fine-tuning helps `ar` call
-      analysis, distinct from the forgetting check above (generic prompts,
-      not call transcripts). Needs another Colab GPU session
-      (`notebooks/qlora_train.ipynb`, section 9). See `docs/09-DECISIONS.md`'s
-      2026-09-27 entries.
+- [ ] **Held-out-calls accuracy delta — run once (2026-09-27), numbers
+      discarded: a bug meant base/tuned metrics were computed over
+      different, unstated denominators, not the same 10-call intersection
+      `N calls scored: ar=10` reported.** Fixed and covered by a
+      regression test; needs a clean re-run. Scores the 15 held-out `ar`
+      calls, base vs. tuned extraction, through the exact
+      `sawti.eval.metrics` functions Phases 1/2/4 use — the actual measure
+      of whether fine-tuning helps `ar` call analysis, distinct from the
+      forgetting check above (generic prompts, not call transcripts).
+      Needs another Colab GPU session (`notebooks/qlora_train.ipynb`,
+      section 9). See `docs/09-DECISIONS.md`'s 2026-09-27 entries.
 
 **Done when:** the QLoRA adapter trains end to end on Colab, its train/val
 loss is recorded, the forgetting check shows no large regression on
