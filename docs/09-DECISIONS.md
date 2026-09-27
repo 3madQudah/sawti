@@ -1946,3 +1946,84 @@ here would repeat the exact mistake just corrected two entries above.
 - **Give `LocalHFProvider` its own bespoke scoring instead of reusing
   `sawti.eval.metrics`.** Rejected — explicitly what the user asked not to
   do; the whole point is comparability with Phases 1/2/4's numbers.
+
+---
+
+## 2026-09-27 — `scripts/eval_held_out_calls.py` scored zero calls on Colab: transcripts never shipped
+
+**Status:** accepted.
+
+A real Colab run of `scripts/eval_held_out_calls.py` completed without a
+traceback but every held-out call logged "transcript missing, skipping",
+for both the base and tuned pass — `N calls scored: 0`, every metric cell
+in the rendered table a bare `—`. The script's own *logic* was correct;
+the data it needs never reached Colab.
+
+### Root cause, confirmed rather than guessed
+
+`.gitignore` has ignored `data/synthetic/*` (with only `.gitkeep` tracked)
+since long before this phase — `git ls-tree -r origin/main --name-only |
+grep '^data/synthetic/'` returns exactly one file. Every script this
+session wrote before now happened not to need it directly:
+`scripts/build_finetune_dataset.py` reads these files on *this* machine
+(where the full 150-call corpus already exists locally) and embeds the
+transcript text directly into `data/finetune/train.jsonl`/`val.jsonl`;
+`scripts/train_qlora.py` only ever reads that JSONL; `scripts/
+check_forgetting.py` needs no transcripts at all (generic prompts). `scripts/
+eval_held_out_calls.py` is the first script that needs `data/synthetic/`
+*on Colab* — a fresh `git clone` there gets an empty directory, since
+these files were never committed anywhere.
+
+### What was checked, not assumed
+
+- `git ls-tree -r origin/main --name-only | grep '^data/synthetic/'` —
+  confirmed exactly one file (`.gitkeep`) tracked, before writing any fix.
+- Confirmed all 15 `held_out_call_ids.json` `ar` transcripts exist on this
+  machine (`data/synthetic/call_00NN_ar.txt`, ~1-5 KB each).
+- After adding the `.gitignore` exceptions, re-ran `git status` on
+  `data/synthetic/` to confirm all 15 now show as trackable, not ignored.
+
+### What was decided
+
+Tracked the 15 specific transcript files `eval_held_out_calls.py` needs,
+via `.gitignore` negation exceptions (`!data/synthetic/call_00NN_ar.txt`)
+— the same allow-list idiom already used for `data/asr_transcripts`'s
+result JSON, not a new pattern. Deliberately **not** un-ignoring all of
+`data/synthetic/*`: that would commit the full 150-call corpus (untracked
+so far for a reason not examined here) for the sake of the 15 this one
+script needs.
+
+**A note on "regenerable," found while writing this up:** `data/synthetic/`'s
+gitignore comment calls it "generated/regenerable, not committed" — true in
+that a generation script exists, but re-running it would not reproduce
+this *exact* text (LLM generation, not deterministic), and
+`data/ground_truth/*.json`'s quotes are matched against this exact text.
+"Regenerable" is doing more work in that comment than is actually true;
+not fixed here (out of scope for this bug), but worth flagging so a future
+reader doesn't try to solve a missing-transcripts problem by re-running
+generation instead of restoring the file.
+
+### What was added to prevent a silent repeat
+
+`verify_transcripts_exist()` in `scripts/eval_held_out_calls.py`: a
+preflight check, run before any model loads, that raises
+`FileNotFoundError` naming every missing transcript if the run cannot
+possibly score anything. Per the user's explicit ask — "ideally with a
+check that confirms transcripts ARE found before you call it done" — this
+turns "succeeds, measures nothing" into a loud failure before ~10+ minutes
+of GPU time are spent on a run that was always going to produce empty
+cells. Regression test (`test_run_raises_before_loading_any_model_when_a_
+transcript_is_missing`) patches `build_model_and_tokenizer_pair` to raise
+if it's ever reached, so the test itself would fail loudly if this
+ordering ever regressed.
+
+### Rejected alternatives
+
+- **Move the transcripts into `data/finetune/` instead of un-ignoring them
+  in place.** Rejected — they're the same files
+  `data/ground_truth/*.json`'s quotes were matched against; duplicating
+  them risks the copy silently drifting from the original.
+- **Only add the preflight check, without fixing the missing files.**
+  Would have turned this run's silent failure into a loud one on the
+  *next* Colab attempt, but the next attempt would still fail — the actual
+  data gap is the thing to fix, not just its symptom.

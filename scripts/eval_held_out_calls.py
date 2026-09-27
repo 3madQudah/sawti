@@ -124,6 +124,36 @@ def _metrics_for(
     }
 
 
+def verify_transcripts_exist(call_ids: list[str], *, synthetic_dir: Path) -> None:
+    """Fail fast, before any model loads, if a held-out transcript isn't on disk.
+
+    2026-09-27: a real Colab run completed without a traceback but scored
+    zero calls — `data/synthetic/` is gitignored (regenerable, per
+    `.gitignore`), so a fresh `git clone` had none of these files, and
+    `_extract_all`'s per-call "transcript missing, skipping" ended up
+    skipping all 15 silently. That failure mode — succeeds, measures
+    nothing — is worse than a loud one, since a script that emits a clean
+    results table full of `—` looks superficially like a lower-signal
+    result rather than a data problem. This check turns it into a hard
+    failure before ~10+ minutes of model loading/quantization are spent
+    on a run that cannot produce anything.
+
+    Raises:
+        FileNotFoundError: Naming every missing transcript, not just the first.
+    """
+    missing = [call_id for call_id in call_ids if not (synthetic_dir / f"{call_id}.txt").is_file()]
+    if missing:
+        message = (
+            f"{len(missing)}/{len(call_ids)} held-out transcript(s) missing from "
+            f"{synthetic_dir}: {missing}. If this is a fresh Colab clone, these "
+            "specific files must be tracked in git — see .gitignore's "
+            "data/synthetic allow-list, 2026-09-27 — not regenerated (regeneration "
+            "would not reproduce the exact text data/ground_truth's quotes are "
+            "matched against)."
+        )
+        raise FileNotFoundError(message)
+
+
 def _fmt(value: float | None) -> str:
     return f"{value:.3f}" if value is not None else "—"
 
@@ -173,6 +203,8 @@ def run(
         ValueError: A held-out call_id has no matching record in
             `ground_truth_dir` — the corpus and the held-out file have
             drifted apart.
+        FileNotFoundError: A held-out transcript is missing from
+            `synthetic_dir` — see `verify_transcripts_exist`.
     """
     from check_forgetting import build_model_and_tokenizer_pair
 
@@ -188,6 +220,11 @@ def run(
     if missing:
         message = f"held-out call_ids missing from {ground_truth_dir}: {sorted(missing)}"
         raise ValueError(message)
+
+    # Fail fast — before spending 10+ minutes loading and quantizing two
+    # copies of an 8B model — if this run cannot possibly score anything.
+    verify_transcripts_exist(all_call_ids, synthetic_dir=synthetic_dir)
+    logger.info("verified all %d held-out transcript(s) present in %s", len(all_call_ids), synthetic_dir)
 
     (base_model_obj, base_tokenizer), (tuned_model_obj, tuned_tokenizer) = build_model_and_tokenizer_pair(
         base_model, adapter_dir

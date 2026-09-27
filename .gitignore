@@ -31,6 +31,31 @@ data/asr_transcripts/*
 # data/ground_truth/*.json is hand-labeled human work — irreplaceable,
 # tracked in git (unlike audio/synthetic, it cannot be regenerated).
 
+# The 15 ar transcripts scripts/eval_held_out_calls.py needs are tracked
+# explicitly, the same allow-list idiom as data/asr_transcripts above.
+# "Regenerable" is true of data/synthetic/* in general (a generation script
+# exists) but not exactly reproducible — re-running it would not recreate
+# this specific text, and data/ground_truth/*.json's quotes are matched
+# against exactly this text. A Colab clone (git clone, not a copy of this
+# machine's working tree) needs these files physically present, not
+# regenerated. See docs/09-DECISIONS.md, 2026-09-27. Update this list if
+# held_out_call_ids.json ever gains en/mixed entries.
+!data/synthetic/call_0014_ar.txt
+!data/synthetic/call_0017_ar.txt
+!data/synthetic/call_0031_ar.txt
+!data/synthetic/call_0048_ar.txt
+!data/synthetic/call_0053_ar.txt
+!data/synthetic/call_0057_ar.txt
+!data/synthetic/call_0069_ar.txt
+!data/synthetic/call_0075_ar.txt
+!data/synthetic/call_0088_ar.txt
+!data/synthetic/call_0094_ar.txt
+!data/synthetic/call_0100_ar.txt
+!data/synthetic/call_0112_ar.txt
+!data/synthetic/call_0118_ar.txt
+!data/synthetic/call_0122_ar.txt
+!data/synthetic/call_0129_ar.txt
+
 # Phase 4 five-batch experiment resume state — transient, deleted by a
 # successful run, and meaningless outside the machine/DB it was written on.
 data/five_batch_checkpoint.json

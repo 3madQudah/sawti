@@ -19,6 +19,7 @@ from eval_held_out_calls import (
     _metrics_for,
     load_held_out_call_ids,
     render_comparison,
+    verify_transcripts_exist,
 )
 
 from sawti.data.ground_truth import RUBRIC_CRITERIA
@@ -211,6 +212,31 @@ def test_metrics_for_reuses_the_shared_accuracy_methodology(tmp_path: Path) -> N
     assert metrics["Accuracy"][Language.AR] == pytest.approx(1.0)
 
 
+# --- verify_transcripts_exist: the 2026-09-27 "scored zero calls" bug -------
+
+
+def test_verify_transcripts_exist_passes_when_every_transcript_is_present(tmp_path: Path) -> None:
+    synthetic_dir = tmp_path / "synthetic"
+    _write_transcript(synthetic_dir, "call_0000_ar", "hello")
+    _write_transcript(synthetic_dir, "call_0001_ar", "hello")
+
+    verify_transcripts_exist(["call_0000_ar", "call_0001_ar"], synthetic_dir=synthetic_dir)
+
+
+def test_verify_transcripts_exist_raises_naming_every_missing_call(tmp_path: Path) -> None:
+    synthetic_dir = tmp_path / "synthetic"
+    _write_transcript(synthetic_dir, "call_0000_ar", "hello")
+
+    with pytest.raises(FileNotFoundError, match="call_0001_ar"):
+        verify_transcripts_exist(["call_0000_ar", "call_0001_ar"], synthetic_dir=synthetic_dir)
+
+
+def test_verify_transcripts_exist_raises_when_directory_does_not_exist(tmp_path: Path) -> None:
+    """The exact 2026-09-27 failure mode: a fresh clone with an empty (gitignored) data/synthetic/."""
+    with pytest.raises(FileNotFoundError, match="call_0000_ar"):
+        verify_transcripts_exist(["call_0000_ar"], synthetic_dir=tmp_path / "synthetic")
+
+
 # --- run(): CUDA-only paths need real peft/bitsandbytes; skip cleanly here --
 
 
@@ -241,6 +267,53 @@ def test_run_raises_on_a_held_out_id_missing_from_ground_truth(tmp_path: Path) -
     )
 
     with pytest.raises(ValueError, match="call_nowhere_ar"):
+        run(
+            base_model="unused",
+            adapter_dir=tmp_path / "adapter",
+            held_out_path=held_out_path,
+            ground_truth_dir=ground_truth_dir,
+            synthetic_dir=tmp_path / "synthetic",
+            output_path=tmp_path / "out.json",
+        )
+
+
+def test_run_raises_before_loading_any_model_when_a_transcript_is_missing(tmp_path: Path) -> None:
+    """The 2026-09-27 regression test: ground truth matches, but the transcript file doesn't exist.
+
+    Must fail with `FileNotFoundError` from `verify_transcripts_exist`
+    *before* `check_forgetting.build_model_and_tokenizer_pair` is ever
+    reached — patched to raise if called, so this test would fail loudly
+    (not hang, not need CUDA) if the ordering ever regresses.
+    """
+    from unittest.mock import patch
+
+    from eval_held_out_calls import run
+
+    held_out_path = tmp_path / "held_out_call_ids.json"
+    held_out_path.write_text(json.dumps({"ar": ["call_0000_ar"]}), encoding="utf-8")
+
+    ground_truth_dir = tmp_path / "ground_truth"
+    ground_truth_dir.mkdir()
+    truth = CallAnalysis(
+        call_id="call_0000_ar",
+        language=Language.AR,
+        summary="s",
+        confidence=0.9,
+        requires_human_review=False,
+    )
+    (ground_truth_dir / "call_0000_ar.json").write_text(
+        json.dumps({**truth.model_dump(mode="json"), "_provenance": {"human_reviewed": False}}),
+        encoding="utf-8",
+    )
+    # synthetic_dir deliberately left empty/nonexistent — no transcript written.
+
+    def _must_not_be_called(*args, **kwargs):
+        raise AssertionError("build_model_and_tokenizer_pair must not run when a transcript is missing")
+
+    with (
+        patch("check_forgetting.build_model_and_tokenizer_pair", _must_not_be_called),
+        pytest.raises(FileNotFoundError, match="call_0000_ar"),
+    ):
         run(
             base_model="unused",
             adapter_dir=tmp_path / "adapter",
