@@ -179,14 +179,15 @@ retrieval at inference time. Started 2026-09-25.
       real on Colab, 2026-09-27**: 7/7 generic prompts, 0 flagged, base and
       tuned responses near-identical. Not a full eval suite — a handful of
       prompts checked for a large regression only.
-- [ ] **Held-out-calls accuracy delta — not built, not run.** The original
-      scope for this phase (before any of its code existed) asked for the
-      15 held-out `ar` calls to be scored, base vs. tuned extraction, with
-      the same per-language accuracy methodology as Phases 1/2/4 — the
-      actual measure of whether fine-tuning helps `ar` call analysis. That
-      script does not exist yet; the forgetting check above is a different,
-      narrower thing (generic prompts, not call transcripts). See
-      `docs/09-DECISIONS.md`'s 2026-09-27 entry.
+- [ ] **Held-out-calls accuracy delta — built and unit-tested
+      (`scripts/eval_held_out_calls.py`, `src/sawti/llm/local_hf_provider.py`),
+      not yet run.** Scores the 15 held-out `ar` calls, base vs. tuned
+      extraction, through the exact `sawti.eval.metrics` functions Phases
+      1/2/4 use — the actual measure of whether fine-tuning helps `ar` call
+      analysis, distinct from the forgetting check above (generic prompts,
+      not call transcripts). Needs another Colab GPU session
+      (`notebooks/qlora_train.ipynb`, section 9). See `docs/09-DECISIONS.md`'s
+      2026-09-27 entries.
 
 **Done when:** the QLoRA adapter trains end to end on Colab, its train/val
 loss is recorded, the forgetting check shows no large regression on
@@ -205,15 +206,29 @@ Everything needed to run this as a real deployed system rather than a
 collection of eval scripts: FastAPI service, Postgres persistence, Celery
 workers, the review API that lets a human resume an interrupted run,
 containerization, Postgres-backed LangGraph checkpointing, and observability
-via Langfuse.
+via Langfuse — **plus how it's actually served and reviewed by a person**:
+`sawti.llm.vllm_provider` self-hosted serving as an alternative to the
+cloud provider (the `LLMProvider` abstraction already exists for exactly
+this swap — see `README.md`), a QA review dashboard (React, RTL/LTR — the
+human-facing surface the review API above has no UI for yet), and a
+measured comparison of the two serving modes: accuracy, cost per 1000
+calls, latency, and data egress, cloud vs. self-hosted. Folded into this
+phase rather than split into a separate one — vLLM serving and the review
+dashboard are both "how this runs as a deployed system," the same question
+the rest of the phase already answers, and the comparison table is this
+phase's own done-when measurement once both serving modes exist. See
+`docs/09-DECISIONS.md`, 2026-09-27.
 
 **Carried debt this phase must clear:** the graph's checkpointer is
 process-local `MemorySaver` — a review queue that evaporates on restart.
 Tracked in `docs/09-DECISIONS.md`.
 
 **Done when:** a call can be submitted over HTTP, analyzed asynchronously,
-escalated, reviewed by a human, and resumed — with the paused state surviving
-a process restart — all running in containers with Langfuse observability.
+escalated, reviewed by a human through the dashboard, and resumed — with
+the paused state surviving a process restart — all running in containers
+with Langfuse observability, **and** a comparison table exists showing
+cloud vs. self-hosted (vLLM) across accuracy, cost per 1000 calls,
+latency, and data egress.
 
 ---
 

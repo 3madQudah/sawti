@@ -41,6 +41,13 @@ data/five_batch_checkpoint.json
 # MANIFEST.json are.
 data/finetune/_diff_cache/
 
+# Phase 5 trained LoRA adapter (scripts/train_qlora.py) — ~900 MB including
+# checkpoint-*/ subdirectories, backed up to Google Drive instead (see
+# notebooks/qlora_train.ipynb). A build artifact, not a result record — the
+# same distinction as _diff_cache/ above; train_log.csv, forgetting_eval.json
+# and held_out_eval.json (the actual measurements) are tracked normally.
+data/finetune/qlora_adapter/
+
 # Test / build artifacts
 .pytest_cache/
 .ruff_cache/

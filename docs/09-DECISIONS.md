@@ -1791,3 +1791,158 @@ declaring Phase 5 done without it. `docs/08-ROADMAP.md`'s Phase 5 status
 is left at 🟡 rather than promoted to ✅ for this reason, with the
 checklist updated to show what actually ran and to name the missing
 held-out-calls comparison explicitly.
+
+---
+
+## 2026-09-27 — vLLM serving, the QA dashboard, and the cloud-vs-self-hosted comparison folded into Phase 6
+
+**Status:** accepted.
+
+The user maintains a separate tracking document outside this repo (not
+`docs/08-ROADMAP.md`, not committed here) whose own "Phase 5 —
+Specialization and deployment" bundles fine-tuning together with vLLM
+self-hosted serving, a QA review dashboard (React, RTL/LTR), and a
+done-when of a measured cloud-vs-self-hosted comparison table (accuracy,
+cost/1000 calls, latency, data egress). That external doc predates this
+file's more detailed phase breakdown and was never updated to match —
+confirmed by the user, not assumed. `docs/08-ROADMAP.md` is the
+authoritative roadmap for this codebase going forward; the external doc is
+retired as a source of phase status.
+
+Checked before deciding where the non-fine-tuning items belong: none of
+vLLM serving, the review dashboard, or the comparison table appeared
+anywhere in `docs/08-ROADMAP.md` before this entry — Phase 6 ("Deployment
+and service") covered the backend service layer (FastAPI, Postgres,
+Celery, the review *API*) but named no frontend, no self-hosted serving
+mode, and no comparison deliverable.
+
+### What was decided
+
+Folded all three into **Phase 6**, not a new Phase 7:
+
+- **vLLM self-hosted serving** — this is a deployment/serving-mode
+  question, and `sawti.llm.vllm_provider`'s `LLMProvider` abstraction
+  already exists specifically to make this swap (`README.md`: "Anthropic /
+  vLLM, swappable by config") — it's an existing phase-1 stub, not new
+  scope, just never previously named as a roadmap deliverable.
+- **The QA review dashboard** — Phase 6 already commits to "the review API
+  that lets a human resume an interrupted run"; an API with no UI for the
+  human on the other end of it is an incomplete answer to that same need,
+  not a separate concern.
+- **The cloud-vs-self-hosted comparison table** — this is Phase 6's own
+  done-when measurement once both serving modes exist, not a standalone
+  deliverable that needs its own phase.
+
+### Rejected alternatives
+
+- **A new Phase 7** for vLLM/dashboard/comparison. Rejected — all three
+  are answers to the same question Phase 6 already exists to answer ("how
+  does this actually run as a deployed system"), and splitting them out
+  would separate closely coupled work (the dashboard needs the review API
+  Phase 6 already commits to; the comparison table needs vLLM serving,
+  also now in Phase 6) across two phases for no organizational benefit.
+- **Leave them untracked in `docs/08-ROADMAP.md`, rely on the external
+  doc.** Rejected per the user's own instruction — the external doc is
+  being retired as a source of phase status specifically because it drifted
+  out of sync once; leaving these three items to live only there would
+  reproduce the exact problem that caused this reconciliation.
+
+---
+
+## 2026-09-27 — Held-out-calls accuracy comparison: design and how it reuses the existing methodology
+
+**Status:** accepted, not yet run (needs another Colab GPU session).
+
+Builds the piece the previous entry flagged as missing: `scripts/
+eval_held_out_calls.py` scores the 15 held-out `ar` calls, base Qwen3-8B
+vs. QLoRA-tuned, through the *exact same* `sawti.eval.metrics` functions
+Phases 1/2/4 use (`accuracy_by_category`, `rubric_agreement_by_category`,
+`grounding_precision_by_category`, `unsupported_claim_rate_by_category`) —
+per the user's explicit instruction, not a new metric implementation.
+
+### The design problem this had to solve
+
+Both models need to produce a full `CallAnalysis` from a bare transcript —
+a different task from what the LoRA adapter was trained on (narrow
+field-correction pairs: transcript + wrong field → corrected field, see
+`scripts/train_qlora.py`'s docstring). Getting a *comparable* `CallAnalysis`
+out of a raw local `transformers` model, scoreable by the existing metrics,
+needed a real extraction path — reusing one already in the codebase, not
+inventing a new one.
+
+### What was checked before choosing which existing path to reuse
+
+- `sawti.eval.plain_extraction.run_plain_extraction` (Phase 1's baseline)
+  already separates "how to get a `CallAnalysis`" from "which
+  `LLMProvider` answers it" — `tests/eval/test_plain_extraction.py`
+  already monkeypatches `sawti.eval.plain_extraction.get_llm_provider` to
+  inject a stub provider for testing. That is the exact seam this script
+  needed; using it required zero changes to `plain_extraction.py` itself,
+  just a real `LLMProvider` implementation to inject instead of a test
+  stub.
+- Considered the full LangGraph pipeline (`extract_via_graph`, the Phase
+  2/4 path with the `ground`/`score`/`compliance` nodes) instead. Rejected
+  for this script: its `extract` node imports `get_llm_provider` at module
+  scope and calls it fresh per call with no injection point, so using it
+  here would mean either modifying a Phase 2 core node or threading a
+  provider through `AgentState` — a bigger, riskier change for a Phase 5
+  eval script than the plain-extraction path already offered for free.
+  Phase 1's own results table already reports all four
+  `sawti.eval.metrics` functions from the plain-extraction path, so nothing
+  about "the existing per-language accuracy methodology" requires the
+  grounding gate specifically.
+
+### What was built
+
+- `src/sawti/llm/local_hf_provider.py` — `LocalHFProvider(LLMProvider)`,
+  wrapping an already-loaded `transformers` model (optionally
+  PEFT-wrapped). Unlike Gemini's native JSON-mode, a local model has no
+  guaranteed-structured output: `structured_complete()` prompts for JSON
+  explicitly and retries with sampling (a failed *greedy* attempt would
+  just fail identically again) before raising `LocalHFProviderError`.
+- `scripts/eval_held_out_calls.py` — loads the held-out call_ids, loads
+  base+tuned models (`check_forgetting.build_model_and_tokenizer_pair`,
+  reused rather than duplicated a third time), runs both through
+  `run_plain_extraction` via the injection point above, and renders a
+  base/tuned/delta table per metric per language, in the same style as
+  the five-batch experiment's memory-vs-control table.
+
+### What was verified without CUDA, and how
+
+- Every pure-Python path (held-out-id loading, the extraction loop against
+  a fake provider, delta-table rendering) is unit-tested for real —
+  `tests/llm/test_local_hf_provider.py`, `tests/scripts/
+  test_eval_held_out_calls.py`.
+- **The full pipeline, end to end, on CPU**: `LocalHFProvider` wrapping a
+  real tiny Qwen2-architecture model, driving the real
+  `run_plain_extraction`, scored by the real `accuracy_by_category`. Two
+  cases: the tiny model's actual (random) weights produce ungrounded
+  gibberish, and the retry-then-raise path fails cleanly with
+  `LocalHFProviderError`, not a crash; a scripted response returning valid
+  JSON flows all the way through to a real `CallAnalysis` and a real
+  accuracy score. Both behaved exactly as designed.
+- Not verified: the real 8B model actually producing valid JSON reliably
+  enough to be usable (a random-weight tiny model obviously cannot, and
+  this is not testable without CUDA), and actual runtime.
+
+### Runtime: stated as unmeasured, deliberately, after the last one was wrong
+
+The previous entry's training-runtime estimate ("well under a minute of
+GPU compute") turned out to undershoot the real 1588s by roughly two
+orders of magnitude. No runtime estimate is given for this script beyond
+"expect it to take a while" — up to `DEFAULT_MAX_NEW_TOKENS=2048`
+generated tokens per call, up to 4 attempts each if the model doesn't
+produce valid JSON immediately, × 15 calls × 2 models. Making up a number
+here would repeat the exact mistake just corrected two entries above.
+
+### Rejected alternatives
+
+- **Wire a new `local_hf` option into `Settings.llm_provider`/
+  `get_llm_provider()`.** Rejected — that factory constructs a fresh
+  provider on every call, which is fine for thin API clients but would
+  reload an 8B model from scratch for every one of the 15 calls. The
+  `get_llm_provider` *function* is monkeypatched instead, matching how the
+  test suite already does it, with the model loaded once outside the loop.
+- **Give `LocalHFProvider` its own bespoke scoring instead of reusing
+  `sawti.eval.metrics`.** Rejected — explicitly what the user asked not to
+  do; the whole point is comparability with Phases 1/2/4's numbers.
