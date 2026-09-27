@@ -1569,3 +1569,156 @@ still runs 3.12.
   Rejected: fragile (extra setup steps in `notebooks/qlora_train.ipynb`
   that Colab's default runtime doesn't need) to work around a constraint
   that, per the verification above, does not actually need to exist.
+
+---
+
+## 2026-09-25 — `finetune` extra pins were incompatible; re-pinned, rewired trl's API, unverified on real Colab GPU
+
+**Status:** accepted, explicitly not yet confirmed by a real Colab run.
+
+The relaxed-`requires-python` fix (previous entry) got past the install
+step, but the actual Colab run of `scripts/train_qlora.py` failed at
+import time:
+
+```
+ImportError: cannot import name 'PreTrainedModel' from 'transformers'
+  (raised from peft/tuners/lora/gptq.py -> peft/tuners/lora/layer.py ->
+  peft/tuners/tuners_utils.py, which does `from transformers import
+  PreTrainedModel`)
+```
+
+### Root cause, confirmed rather than guessed
+
+The `finetune` extra pinned `peft>=0.11,<0.12` and `trl>=0.9,<0.10` — both
+from mid-2024 — but never pinned `transformers` at all. `transformers` is
+also a transitive dependency of this project's base `sentence-transformers`
+requirement, and nothing constrains it to an upper bound there either, so
+it floats to whatever's current: `uv pip install --dry-run` against a
+Colab-shaped platform (`--python-platform x86_64-manylinux_2_28`) resolved
+`transformers==5.17.0`, entirely unconstrained by the ancient `peft`/`trl`
+pins declaring only a loose `transformers>=4.31.0` floor. `peft==0.11.1`'s
+internal LoRA tuner code was never built against a `transformers` that new;
+the dependency graph "resolved" (every constraint technically satisfied)
+but the actual runtime import broke. This is the same failure shape as the
+prior loose-range-pins problem, just one layer further into the tree.
+
+### What was checked, not assumed
+
+- Reproduced the exact failing import chain locally (`peft.tuners.lora.gptq`
+  → `peft.tuners.lora.layer` → `peft.tuners.tuners_utils`'s `from
+  transformers import PreTrainedModel`) against the old pins —
+  confirmed it does **not** fail on this Mac with `peft==0.11.1` +
+  `transformers==4.57.6` in isolation, which is exactly why this bug only
+  showed up once the *rest* of the graph pulled `transformers` further
+  than that combination was ever tested against.
+- Queried PyPI directly for real `requires_dist` metadata (not
+  changelogs/guesses) for `trl`, `bitsandbytes`, and current release
+  numbers for `peft`/`accelerate`/`datasets`/`transformers`.
+- Installed the candidate set — `peft==0.21.0`, `trl==1.14.0`,
+  `accelerate==1.15.0`, `bitsandbytes==0.50.2`, `datasets==5.0.1`,
+  `transformers==4.57.6` (pinned exactly, not left floating) — for real,
+  locally, and confirmed the exact previously-failing import chain now
+  succeeds.
+- Introspected `trl.SFTTrainer`/`SFTConfig`'s actual current signatures
+  (`inspect.signature`, not documentation) rather than assuming the old
+  0.9.x API still applied across a 0.9→1.14 jump. It does not — see below.
+- **Ran the real `scripts/train_qlora.py` code** (`build_lora_config()`,
+  `build_datasets()`, the new `_warmup_steps()`, `_csv_logger_callback()`,
+  the rewritten `SFTConfig`/`SFTTrainer` call) end to end on CPU against a
+  tiny real Qwen2-architecture model (`yujiepan/qwen2-tiny-random`) and
+  this project's actual `data/finetune/train.jsonl`/`val.jsonl` — LoRA
+  applied to the real target module names, a full training epoch ran, loss
+  logged to CSV, adapter saved. This is not the real 8B model and not
+  4-bit-quantized (no `bitsandbytes` on this Mac), but it is every other
+  line of `train()`'s logic exercised for real, not mocked.
+- Downloaded the real `Qwen/Qwen3-8B` tokenizer (no CUDA needed for that)
+  and confirmed `render_text()` produces the expected chat-template output
+  and that the longest of the 22 current training/val examples renders to
+  1838 tokens — comfortably under `MAX_LENGTH` (3072).
+
+### What changed in `scripts/train_qlora.py` to match the new API
+
+trl 0.9→1.14 moved `max_seq_length`/`dataset_text_field` off `SFTTrainer`'s
+constructor and onto a new `trl.SFTConfig` (which extends
+`TrainingArguments`) — passing them directly to `SFTTrainer` now raises an
+unexpected-keyword error, not a silent no-op. `tokenizer=` was renamed
+`processing_class=`. Separately, this version of `transformers.
+TrainingArguments` (which `SFTConfig` extends) dropped `warmup_ratio`
+entirely — only `warmup_steps` remains. `_warmup_steps()` now converts the
+QLoRA-paper `WARMUP_RATIO` convention into a step count from the actual
+training-set size; for 18 examples over 3 epochs at this script's batch
+size, that works out to 0 warmup steps — stated plainly rather than hidden,
+since it's a real (if minor) consequence of the dataset being this small.
+
+### What was decided about the pins
+
+Exact (`==`) for every package in the extra, including `transformers`
+(previously unpinned) — see the `pyproject.toml` comment for the full
+reasoning. Not bleeding-edge-latest for its own sake: the versions chosen
+are simply "verified to interoperate," which happened to be each package's
+current release at verification time.
+
+### Clean-environment import check (2026-09-27, requested explicitly)
+
+The verification above installed the pinned set *alongside* this
+project's own base dependencies (so `transformers` came from whatever
+`sentence-transformers` resolved), which leaves open the question of
+whether the `finetune` extra's six pins are self-consistent on their own,
+independent of that. Checked in a brand-new venv with nothing else
+installed — the exact versions in `pyproject.toml`'s `finetune` group, and
+nothing else:
+
+```
+$ uv venv /tmp/sawti-clean-verify --python 3.12
+$ uv pip install --python /tmp/sawti-clean-verify/bin/python \
+    "transformers==4.57.6" "peft==0.21.0" "accelerate==1.15.0" \
+    "trl==1.14.0" "datasets==5.0.1"
+$ /tmp/sawti-clean-verify/bin/python -c "from peft import prepare_model_for_kbit_training"
+$ echo $?
+0
+```
+
+Succeeds cleanly — pure Python import resolution, no GPU needed, exactly
+as the check was meant to prove: the pin set is self-consistent, not just
+"happens to work when `sentence-transformers` supplies a compatible
+`transformers`."
+
+**A correction to the previous entry's aside, found while doing this:**
+that entry says `bitsandbytes` "ships no macOS wheels at all" — true for
+the *old* pin, `bitsandbytes==0.43.3`, and left as-is there since that
+entry is a historical record of that version's behavior. It is no longer
+true for the *new* pin: `bitsandbytes==0.50.2` installed and imported
+cleanly in the same clean venv above. This does not change anything
+material — `bitsandbytes`'s 4-bit NF4 *quantization kernels* still need a
+real GPU, only the package's importability on macOS changed — but it's
+worth stating precisely rather than let a now-inaccurate aside stand
+uncorrected in a place a future reader might generalize from.
+
+Full six-package chain, same clean venv, also confirmed clean: `from peft
+import prepare_model_for_kbit_training, LoraConfig, PeftModel`, `from
+peft.tuners.tuners_utils import BaseTuner`, `import
+peft.tuners.lora.gptq`, `from trl import SFTTrainer, SFTConfig`, `import
+bitsandbytes, accelerate, datasets, transformers` — every one, reporting
+back exactly the six pinned version numbers above.
+
+### What is still not verified, stated plainly
+
+No CUDA was available in this session. `bitsandbytes` importing cleanly on
+macOS is not the same claim as its 4-bit quantization kernels working —
+those still need a real GPU and remain untested. The real 8B checkpoint
+and an actual GPU training step have never run either. This may take more
+than one round trip to fully confirm — the CPU dry-run and clean-import
+checks above are the strongest verification possible without a GPU, not a
+substitute for the real Colab run.
+
+### Rejected alternatives
+
+- **Bump only `peft`/`trl` and leave `transformers` unpinned.** Rejected —
+  this is exactly the bug: an unpinned `transformers` is what let the
+  graph drift past what any fixed `peft`/`trl` pair was tested against.
+  Nothing stops it from drifting again.
+- **Pin everything to the oldest mutually-compatible versions instead of
+  current ones.** No particular benefit here — old versions are not safer
+  by default, and `trl`'s 0.9.x-era API is what broke `SFTTrainer`'s
+  signature in the first place; there was no "safe old combination" left
+  to fall back to once `transformers` had moved this far.

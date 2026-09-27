@@ -54,14 +54,33 @@ finetune = [
     # 4-bit quantization kernels need a real GPU, so this group is meant for a
     # Colab/CUDA host, never this project's Mac dev environment (no CUDA —
     # see docs/09-DECISIONS.md) — same platform split as the `vllm` group
-    # above and the `mlx-whisper` marker in `asr`. `torch`/`transformers` are
-    # already present as `sentence-transformers` transitive deps and are not
+    # above and the `mlx-whisper` marker in `asr`. `torch` is already
+    # present as a `sentence-transformers` transitive dep and is not
     # repeated here.
-    "peft>=0.11,<0.12",
-    "bitsandbytes>=0.43,<0.44",
-    "accelerate>=0.31,<0.32",
-    "trl>=0.9,<0.10",
-    "datasets>=2.20,<3.0",
+    #
+    # Every version below, including `transformers`, is an exact pin
+    # (`==`), not a range: the prior `>=,<` ranges resolved a peft/trl pair
+    # from mid-2024 against whatever `transformers` the rest of the
+    # dependency graph floated to (unpinned, via `sentence-transformers`),
+    # which "succeeded" dependency-resolution-wise but broke at import
+    # time on Colab (peft's LoRA tuner code importing a symbol that code
+    # path assumed was there). Pinning `transformers` here too closes that
+    # gap for good — this extra no longer depends on what the base graph
+    # happens to float to. This set is verified (2026-09-25) to actually
+    # interoperate: real installs of peft+trl+accelerate+datasets against
+    # transformers 4.57.6 import cleanly (also checked against 5.17.0, in
+    # case a future base-dependency change floats transformers higher
+    # again), and `scripts/train_qlora.py`'s real SFTConfig/SFTTrainer/LoRA
+    # wiring runs a full CPU training loop against a tiny real
+    # Qwen2-architecture model without error. Not verified: bitsandbytes'
+    # actual 4-bit quantization path (no CUDA here) or the real 8B
+    # checkpoint. See docs/09-DECISIONS.md.
+    "transformers==4.57.6",
+    "peft==0.21.0",
+    "bitsandbytes==0.50.2",
+    "accelerate==1.15.0",
+    "trl==1.14.0",
+    "datasets==5.0.1",
 ]
 dev = [
     "pytest>=8.2,<9.0",

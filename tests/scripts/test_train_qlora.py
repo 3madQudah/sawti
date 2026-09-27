@@ -18,9 +18,13 @@ from pathlib import Path
 
 import pytest
 from train_qlora import (
+    GRADIENT_ACCUMULATION_STEPS,
     LORA_ALPHA,
     LORA_R,
     LORA_TARGET_MODULES,
+    PER_DEVICE_TRAIN_BATCH_SIZE,
+    WARMUP_RATIO,
+    _warmup_steps,
     load_jsonl,
     render_text,
     to_chat_messages,
@@ -117,6 +121,30 @@ def test_lora_hyperparameters_follow_qlora_paper_convention() -> None:
         "up_proj",
         "down_proj",
     }
+
+
+def test_warmup_steps_is_pure_arithmetic_no_heavy_imports() -> None:
+    """The pinned transformers version dropped `warmup_ratio` from TrainingArguments.
+
+    `_warmup_steps()` converts `WARMUP_RATIO` into a step count from the
+    actual dataset size instead — see module docstring.
+    """
+    steps_per_epoch = -(-18 // (PER_DEVICE_TRAIN_BATCH_SIZE * GRADIENT_ACCUMULATION_STEPS))
+    total_steps = steps_per_epoch * 3
+    expected = round(total_steps * WARMUP_RATIO)
+
+    assert _warmup_steps(18, num_train_epochs=3) == expected
+
+
+def test_warmup_steps_scales_with_dataset_size_and_epochs() -> None:
+    small = _warmup_steps(18, num_train_epochs=3)
+    larger = _warmup_steps(1800, num_train_epochs=3)
+
+    assert larger > small
+
+
+def test_warmup_steps_is_never_negative_for_an_empty_dataset() -> None:
+    assert _warmup_steps(0, num_train_epochs=3) == 0
 
 
 def test_build_datasets_needs_the_datasets_package(tmp_path: Path) -> None:

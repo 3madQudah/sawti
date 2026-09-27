@@ -6,6 +6,18 @@ is aarch64, `docker-compose.yml` has no GPU service; see
 docs/09-DECISIONS.md), and `bitsandbytes`'s 4-bit quantization kernels need a
 real GPU. Install the extra first: `uv pip install -e ".[finetune]"`.
 
+`peft`/`trl`/`accelerate`/`bitsandbytes`/`datasets` in the `finetune` extra
+are pinned to a version set verified (2026-09-25) to actually interoperate —
+the prior pins resolved without conflict but broke at import time
+(`peft`'s LoRA tuner code doing `from transformers import PreTrainedModel`
+failed against a `transformers` far newer than that `peft`/`trl` pair had
+ever been built against). This module's own `trl`/`peft` calls
+(`SFTConfig` instead of passing `max_seq_length`/`dataset_text_field`
+straight to `SFTTrainer`, `processing_class` instead of `tokenizer`, no
+`warmup_ratio` field) match the *current* pinned versions' actual API,
+verified against real installs of them — not the older API this script
+originally shipped with. See docs/09-DECISIONS.md.
+
 What this trains on: `data/finetune/train.jsonl` / `val.jsonl`, built by
 `scripts/build_finetune_dataset.py`. **Every example there is synthetic** —
 manufactured by diffing an agent output against an LLM-generated reference
@@ -95,10 +107,16 @@ PER_DEVICE_TRAIN_BATCH_SIZE = 1
 GRADIENT_ACCUMULATION_STEPS = 4
 LEARNING_RATE = 2e-4
 LR_SCHEDULER_TYPE = "cosine"
+# The pinned transformers version's TrainingArguments (which trl.SFTConfig
+# extends) dropped `warmup_ratio` — only `warmup_steps` remains. Kept as a
+# ratio here, matching the QLoRA paper's own convention, and converted to a
+# step count in `train()` once the actual dataset size is known — see
+# `_warmup_steps()`.
 WARMUP_RATIO = 0.03
-# Covers the longest observed training example (~4.9K chars => well under
-# 2K tokens for a BPE-style tokenizer) with headroom.
-MAX_SEQ_LENGTH = 3072
+# Real tokenizer measurement (2026-09-25, Qwen/Qwen3-8B): the longest of the
+# 22 current training/val examples renders to 1838 tokens. Comfortable
+# headroom, not a tight fit.
+MAX_LENGTH = 3072
 
 
 class ChatTemplateTokenizer(Protocol):
@@ -210,6 +228,19 @@ def build_lora_config() -> Any:
     )
 
 
+def _warmup_steps(dataset_size: int, *, num_train_epochs: int) -> int:
+    """Convert `WARMUP_RATIO` into a step count for this run's actual dataset size.
+
+    `transformers.TrainingArguments` (which `trl.SFTConfig` extends, in the
+    pinned version) no longer has a `warmup_ratio` field — only
+    `warmup_steps`. Pure arithmetic, no heavy imports, so it's testable
+    without CUDA.
+    """
+    steps_per_epoch = -(-dataset_size // (PER_DEVICE_TRAIN_BATCH_SIZE * GRADIENT_ACCUMULATION_STEPS))
+    total_steps = steps_per_epoch * num_train_epochs
+    return round(total_steps * WARMUP_RATIO)
+
+
 def _csv_logger_callback(log_path: Path) -> Any:
     """A `transformers.TrainerCallback` that appends every log event to `log_path` as CSV.
 
@@ -256,38 +287,37 @@ def train(
     fail on import, only on an actual call to `train()`/`main()`.
     """
     from peft import prepare_model_for_kbit_training
-    from transformers import TrainingArguments
-    from trl import SFTTrainer
+    from trl import SFTConfig, SFTTrainer
 
     model, tokenizer = build_model_and_tokenizer(base_model)
     model = prepare_model_for_kbit_training(model)
     lora_config = build_lora_config()
     train_dataset, val_dataset = build_datasets(train_path, val_path, tokenizer)
 
-    training_args = TrainingArguments(
+    sft_config = SFTConfig(
         output_dir=str(output_dir),
         num_train_epochs=num_train_epochs,
         per_device_train_batch_size=PER_DEVICE_TRAIN_BATCH_SIZE,
         gradient_accumulation_steps=GRADIENT_ACCUMULATION_STEPS,
         learning_rate=LEARNING_RATE,
         lr_scheduler_type=LR_SCHEDULER_TYPE,
-        warmup_ratio=WARMUP_RATIO,
+        warmup_steps=_warmup_steps(len(train_dataset), num_train_epochs=num_train_epochs),
         eval_strategy="epoch",
         save_strategy="epoch",
         logging_steps=1,
         bf16=True,
         report_to=[],
+        dataset_text_field="text",
+        max_length=MAX_LENGTH,
     )
 
     trainer = SFTTrainer(
         model=model,
-        args=training_args,
+        args=sft_config,
         train_dataset=train_dataset,
         eval_dataset=val_dataset,
         peft_config=lora_config,
-        tokenizer=tokenizer,
-        dataset_text_field="text",
-        max_seq_length=MAX_SEQ_LENGTH,
+        processing_class=tokenizer,
         callbacks=[_csv_logger_callback(log_path)],
     )
 
