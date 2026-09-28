@@ -1,0 +1,34 @@
+{
+  "base_metrics": {
+    "Accuracy": {
+      "ar": 0.6925660581224033
+    },
+    "Rubric agreement": {
+      "ar": 0.8928571428571429
+    },
+    "Grounding precision": {
+      "ar": 0.8081395348837209
+    },
+    "Unsupported claim rate": {
+      "ar": 0.23148148148148148
+    }
+  },
+  "tuned_metrics": {
+    "Accuracy": {
+      "ar": 0.6708005871953482
+    },
+    "Rubric agreement": {
+      "ar": 0.878373015873016
+    },
+    "Grounding precision": {
+      "ar": 0.8846153846153846
+    },
+    "Unsupported claim rate": {
+      "ar": 0.12195121951219512
+    }
+  },
+  "counts": {
+    "ar": 10
+  },
+  "comparison_table": "N calls scored: ar=`10`\n\n**Accuracy**\n| Language | Base | Tuned | Δ (tuned − base) |\n| --- | --- | --- | --- |\n| ar | 0.693 | 0.671 | -0.022 |\n\n**Rubric agreement**\n| Language | Base | Tuned | Δ (tuned − base) |\n| --- | --- | --- | --- |\n| ar | 0.893 | 0.878 | -0.014 |\n\n**Grounding precision**\n| Language | Base | Tuned | Δ (tuned − base) |\n| --- | --- | --- | --- |\n| ar | 0.808 | 0.885 | +0.076 |\n\n**Unsupported claim rate**\n| Language | Base | Tuned | Δ (tuned − base) |\n| --- | --- | --- | --- |\n| ar | 0.231 | 0.122 | -0.110 |\n"
+}

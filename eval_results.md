@@ -559,3 +559,47 @@ general instruction-following on 7 generic prompts. It is not evidence
 that the fine-tuned model is better at call analysis than the base model;
 no held-out-call comparison (the 15 calls reserved in
 `held_out_call_ids.json`) has been scored yet.
+
+#### Held-out-calls accuracy comparison: run on Colab 2026-09-27 — **PRELIMINARY, UNCORRECTED**
+
+> **These numbers were measured before a denominator-mismatch bug in
+> `scripts/eval_held_out_calls.py` was found and fixed (see
+> `docs/09-DECISIONS.md`, 2026-09-27, "`eval_held_out_calls.py` compared
+> mismatched denominators"). `base_metrics` and `tuned_metrics` below were
+> each computed from that model's own full extraction-success list, not
+> necessarily the same 10 calls — `N calls scored: ar=10` is the
+> *intersection* size, correctly reported, but the metric values above it
+> may each reflect a different, larger set. Read the deltas below as
+> indicative, not validated. A corrected re-run (using the already-fixed
+> `_compare()`, which restricts both sides to the shared intersection) is
+> still needed before this checklist item can be marked done — see
+> `docs/08-ROADMAP.md`.**
+
+N calls scored: `ar=10` (5 of the 15 held-out calls excluded — extraction
+failed on the base model, the tuned model, or both, varying by call).
+
+| Metric | Base | Tuned | Δ (tuned − base) |
+| --- | --- | --- | --- |
+| Accuracy | 0.693 | 0.671 | -0.022 |
+| Rubric agreement | 0.893 | 0.878 | -0.014 |
+| Grounding precision | 0.808 | 0.885 | +0.076 |
+| Unsupported claim rate | 0.231 | 0.122 | -0.110 |
+
+**Qualitative finding, independent of the denominator bug**: the tuned
+model failed structured-output validation (`LocalHFProvider.
+structured_complete`'s JSON-schema parse/validation, missing required
+fields such as `rubric_scores`, `sentiment_points`, `confidence`) more
+often than the base model across multiple retries on several calls — part
+of why only 10/15 calls were scored on both sides. This observation
+doesn't depend on which denominator the accuracy numbers used, so it
+survives the bug; whether it replicates on a clean re-run is still open.
+
+#### Caveat
+
+**Preliminary and uncorrected, stated as plainly as possible**: the four
+deltas above are not a validated same-10-calls comparison — see the
+warning block above this table. Do not cite the specific delta values
+(-0.022, -0.014, +0.076, -0.110) as a measured effect of fine-tuning until
+a corrected re-run replaces this section. The higher tuned-model
+structured-output failure rate is the one finding from this run that can
+be read with more confidence, independent of the bug.

@@ -2196,3 +2196,27 @@ likely mid-troubleshooting and needs the other two in view too.
   a maintainer to keep two lists in sync is a smaller, more honest
   liability than a parsing step that could itself fail before any of the
   real install has happened.
+
+---
+
+## 2026-09-28 — Reconsidered: the pre-fix held-out numbers are recorded after all, as preliminary
+
+**Status:** accepted. Supersedes the "not written into `eval_results.md`"
+decision in the 2026-09-27 "mismatched denominators" entry above — that
+entry is left as-is, a correct record of what was decided at the time;
+this one records that the user reconsidered the next day.
+
+Offered the same two options as before (wait for a clean re-run, or record
+the pre-fix numbers as explicitly preliminary) a second time; the user
+chose the latter this time. Recorded in `eval_results.md` under "Held-out-
+calls accuracy comparison: run on Colab 2026-09-27 — PRELIMINARY,
+UNCORRECTED," with the denominator-mismatch caveat stated before the
+numbers, not after, and the qualitative finding (tuned model's higher
+structured-output failure rate) called out as the one part of this run
+that survives the bug, since it doesn't depend on which denominator the
+accuracy metrics used.
+
+`docs/08-ROADMAP.md`'s Phase 5 held-out-accuracy checklist item stays
+unchecked — recording the numbers as preliminary is not the same as
+validating them, and a clean re-run (the already-fixed `_compare()`) is
+still what closes this item out.
