@@ -2100,3 +2100,99 @@ this bug.
   `held_out_eval.json` that exists.** Not possible — that file has no
   per-call predictions or outcomes, only the (mismatched) aggregate
   metrics and the intersection count. Nothing to reconstruct from.
+
+---
+
+## 2026-09-28 — Three recurring Colab operational issues, fixed in the notebook
+
+**Status:** accepted.
+
+Three problems recurred across the Colab sessions run for this phase —
+"recurred" meaning the user hit each more than once, independently of
+which script was running — recorded here so the notebook, not tribal
+memory, is what prevents them next time.
+
+### 1. Fresh-runtime `transformers`/`peft` mismatch (recurred 3+ times)
+
+**Symptom:** `ImportError: cannot import name 'BloomPreTrainedModel'` (or a
+similar missing name) from inside `peft`/`transformers`, immediately after
+`pip install -e ".[finetune]"` reported success. The same shape of failure
+as the 2026-09-25 pins entry above, but with a different specific cause:
+that entry fixed the *version pins themselves* being mutually
+incompatible; this one is about Colab's runtime not actually picking up
+the fixed pins. A fresh Colab runtime ships pre-baked `transformers`/`peft`
+versions in its base image, and `pip install -e ".[finetune]"` — an
+ordinary, non-forced install — does not reliably upgrade a package Colab
+already has importable, even when `pyproject.toml`'s pin is newer.
+
+**Fix:** `notebooks/qlora_train.ipynb`'s install cell now runs a second,
+explicit step after the editable install —
+`pip install -q --upgrade --force-reinstall` naming all six `finetune`
+packages at their exact `pyproject.toml` pins. `--force-reinstall` is the
+part that matters: it doesn't just check whether *a* version satisfying
+the pin is present, it reinstalls regardless. The pins are duplicated
+in the notebook rather than derived from `pyproject.toml` at runtime — a
+markdown comment in both the cell and the preceding markdown cell says
+they must be kept in sync, since Colab has no Python environment yet at
+that point to read the file with.
+
+### 2. Never reinstall `torch`/`torchvision` on Colab
+
+**Symptom, from trying to fix issue 1 by hand:** reinstalling
+`torch`/`torchvision` alongside the other packages pulled in a CPU-only
+`torchvision==0.26.0+cpu` while `torch` stayed on its GPU build, producing
+`RuntimeError: operator torchvision::nms does not exist` — a failure with
+no mention of CPU/GPU or versions in it at all, easy to mistake for an
+unrelated bug.
+
+**Root cause:** Colab ships `torch` and `torchvision` as a matched,
+GPU-compatible pair baked into its image. Plain PyPI has no way to know
+which paired build Colab is running and will happily install whatever its
+own resolver picks — which is not guaranteed to be GPU-linked, and not
+guaranteed to match the *other* package's build even if it is.
+
+**Fix:** the `finetune` extra's force-reinstall (issue 1) explicitly
+excludes `torch`/`torchvision`, with a comment saying not to add them, and
+the install section's markdown cell states the rule in bold, ahead of the
+cell that could tempt someone to "just reinstall everything." If a
+torch/torchvision problem is ever suspected, the fix is a fresh runtime,
+not a reinstall — which is also the boundary issue 3 below draws.
+
+### 3. "Restart session" vs. "Disconnect and delete runtime"
+
+**Symptom:** repeatedly deleting and recreating the Colab runtime to
+"start clean" after an import error, until `Cannot connect to GPU backend
+due to usage limits` — the free-tier GPU quota exhausted from the
+delete/reconnect cycling itself, not from actual training time.
+
+**Fix:** a new markdown cell right after the install cell states plainly
+that an import error after a successful (force-reinstalled) package
+install needs only **Runtime → Restart session** — which re-imports the
+already-installed packages without releasing the current GPU allocation —
+never "Disconnect and delete runtime," which allocates an entirely new
+GPU and is the operation that actually costs quota. "Disconnect and
+delete runtime" is reserved explicitly for a genuine torch/torchvision
+problem (issue 2), the one case a session restart cannot fix because the
+broken package is still on disk either way.
+
+### What was decided about where these three live
+
+All three in one entry, in the notebook itself, not three separate fixes
+scattered across cells — they're all instances of the same underlying
+shape ("a Colab runtime's starting state doesn't match what this project
+needs, and the naive fix makes it worse"), and a reader hitting one is
+likely mid-troubleshooting and needs the other two in view too.
+
+### Rejected alternatives
+
+- **A `%%capture`-wrapped `pip check` step that just warns instead of
+  force-reinstalling.** Rejected — the whole problem is that a passive
+  check ("is *a* satisfying version present") is what let this recur;
+  force-reinstalling is the only fix that doesn't depend on Colab's
+  pre-baked state being close enough to not matter.
+- **Deriving the force-reinstall pins from `pyproject.toml` at runtime**
+  (e.g. parsing it with `tomllib` before `pip` is guaranteed installed).
+  Rejected as more moving parts than the problem needs; a comment telling
+  a maintainer to keep two lists in sync is a smaller, more honest
+  liability than a parsing step that could itself fail before any of the
+  real install has happened.
