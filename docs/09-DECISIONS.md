@@ -2220,3 +2220,92 @@ accuracy metrics used.
 unchecked — recording the numbers as preliminary is not the same as
 validating them, and a clean re-run (the already-fixed `_compare()`) is
 still what closes this item out.
+
+---
+
+## 2026-10-02 — Three manual per-session Colab fixes made permanent in the notebook
+
+**Status:** accepted. Extends the 2026-09-28 "Three recurring Colab
+operational issues" entry (left as-is); one point below **refines** a rule
+that entry stated, flagged explicitly rather than quietly contradicted.
+
+Each of these was being re-done by hand at the start of every fresh Colab
+session. Baked into `notebooks/qlora_train.ipynb` so they stop being
+rediscovered.
+
+### 1. The real clone URL replaces the `<owner>/<repo>` placeholder
+
+The "3. Get the repo" cell shipped with a literal `https://github.com/
+<owner>/<repo>.git` and a comment telling the reader to substitute it.
+Every fresh open of the notebook from GitHub meant editing that cell
+before anything could run. Now `https://github.com/3madQudah/sawti.git`.
+Nothing to decide here beyond "a placeholder in a notebook whose only job
+is to run in one known repo was never doing anything useful."
+
+### 2. `pip uninstall -y torchvision` after the force-reinstall — refines the 2026-09-28 "never touch torchvision" rule
+
+The 2026-09-28 entry's rule was "never *reinstall* `torch` or
+`torchvision`," and the notebook's markdown said the fix for any
+torch/torchvision problem is a fresh runtime. This is a narrower,
+deliberate exception, not a reversal: **uninstalling** `torchvision` is
+now a standing last step of the install cell; reinstalling it, and
+touching `torch` in any way, is still forbidden.
+
+Why it's safe: checked before writing this — no file under `src/`,
+`scripts/`, `tests/`, or `pyproject.toml` references `torchvision`, and it
+isn't installed in this project's own dev venv, where the full suite
+(593 tests) runs without it. This project is text-only.
+
+Why it's needed (as observed on Colab by the user, not independently
+reproduced here — there is no Colab access from this session): an
+installed-but-mismatched `torchvision` makes `transformers`' import-time
+availability check raise `RuntimeError: operator torchvision::nms does not
+exist`, which then surfaces as a misleading `ModuleNotFoundError:
+BloomPreTrainedModel`. With `torchvision` absent, that check just skips
+it. Uninstalling removes the failure at its source instead of trying to
+repair the version match, which the 2026-09-28 entry already showed is
+fragile. The notebook's markdown was updated to state the exception
+alongside the rule, so the two don't contradict each other on the page.
+
+### 3. Restore the adapter from Drive before the scripts that load it
+
+`data/finetune/qlora_adapter/` is gitignored (~900 MB with its
+`checkpoint-*` dirs), so a fresh clone on a fresh VM never has it — the
+only copy is what section 7 saved to Drive. `scripts/check_forgetting.py`
+and `scripts/eval_held_out_calls.py` both load the adapter from disk and
+fail without it. A new cell restores it, placed directly before section
+9.
+
+Deliberately not the bare `!cp -r "$DRIVE_OUTPUT_DIR/qlora_adapter"
+data/finetune/` that was suggested — tested the replacement locally on
+four cases (fresh restore, idempotent re-run, missing Drive adapter,
+incomplete Drive copy) instead:
+
+- **No nesting on re-run.** `cp -r src dst/` into an already-existing
+  `data/finetune/qlora_adapter/` (e.g. training ran in this same session)
+  silently creates `qlora_adapter/qlora_adapter/` instead of failing or
+  overwriting. The cell does nothing if `adapter_config.json` and
+  `adapter_model.safetensors` are already present.
+- **Skips `checkpoint-*/`.** ~800 MB of optimizer state that
+  `PeftModel.from_pretrained` doesn't read; copying it just slows a fresh
+  VM's startup.
+- **Fails loudly.** `FileNotFoundError` if Drive has no adapter,
+  `AssertionError` if the copy is incomplete — the same posture as
+  `verify_transcripts_exist()` (2026-09-27): a run that can't possibly
+  work should say so before ~10 minutes of model loading, not after.
+
+The cell sits after section 8 in notebook order, so on a fresh VM that
+skips section 5, section 8 would still hit a missing adapter first; the
+cell's markdown says to run it before section 8 in that case. Not moved
+above section 8 because the request was specifically to place it before
+section 9.
+
+### Rejected alternatives
+
+- **Keep warning against touching `torchvision` at all, and make "fresh
+  runtime" the only fix.** That is exactly the recurring cost this entry
+  removes, and a fresh runtime is the operation that burns GPU quota
+  (2026-09-28, issue 3).
+- **Add `torchvision` to the force-reinstall list instead of uninstalling
+  it.** Reintroduces the CPU/GPU mismatch the 2026-09-28 entry exists to
+  prevent.
