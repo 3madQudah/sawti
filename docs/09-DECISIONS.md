@@ -2309,3 +2309,63 @@ section 9.
 - **Add `torchvision` to the force-reinstall list instead of uninstalling
   it.** Reintroduces the CPU/GPU mismatch the 2026-09-28 entry exists to
   prevent.
+
+---
+
+## 2026-10-02 — `--no-deps` added to the force-reinstall
+
+**Status:** accepted. Follows up the entry above, which flagged this as an
+unverified suspicion; this entry is the measurement.
+
+`notebooks/qlora_train.ipynb`'s force-reinstall of the six `finetune`
+packages is now `pip install -q --upgrade --force-reinstall --no-deps ...`.
+
+### Why: `--force-reinstall` reinstalls dependencies too, including torch
+
+Measured, not assumed, in a fresh `pip`-seeded venv (pip 26.2.1, Python
+3.12, macOS arm64) after `pip install -e ".[finetune]"`: re-running the
+force-reinstall *without* `--no-deps` printed `Successfully installed` for
+**50 packages, including `torch-2.14.1`**, `numpy`, `huggingface-hub`,
+`tokenizers` and `safetensors` — none of which were asked for. On Colab,
+reinstalling `torch` from PyPI replaces Colab's matched GPU build with
+whatever PyPI serves, which is a plausible mechanism for the
+`torchvision::nms does not exist` mismatch in the 2026-09-28 entry: the
+step meant to fix an import error was itself swapping `torch` out from
+under the preinstalled `torchvision`.
+
+What was *not* reproduced: in the scratch venv PyPI served the same
+`torch` version already installed, so nothing visibly broke. The Colab
+failure itself (a different preinstalled `torch` being replaced) can't be
+reproduced from this session, so "plausible mechanism," not "confirmed
+cause." The measured part is only that `torch` does get reinstalled.
+
+### Why dropping the dependency reinstall is safe
+
+The editable install on the preceding line already resolves dependencies;
+the force-reinstall only exists to make the six packages sit at their exact
+pins. Verified in the same venv, in order — editable install,
+`--no-deps` force-reinstall, `pip uninstall -y torchvision`:
+
+- `pip check` → "No broken requirements found" after both the editable
+  install and after the full sequence.
+- Diffing `pip freeze` for the six packages plus `torch`, `huggingface-hub`
+  and `tokenizers` before vs. after the `--no-deps` step: **identical** —
+  the step changed nothing it wasn't supposed to touch.
+
+### What this does not fix
+
+The first command is still an ordinary resolving install. If a pinned
+package ever declares a `torch` requirement Colab's preinstalled build
+doesn't satisfy, *that* step can replace `torch` too; `--no-deps` on the
+second line doesn't reach it. Not observed so far, and not something to
+pre-empt without evidence, but it is the remaining way `torch` could still
+change during this cell. The torchvision uninstall stays as the backstop
+for the symptom.
+
+### Rejected alternatives
+
+- **Drop the force-reinstall entirely now that the pins are exact.**
+  The original reason for it (Colab's preloaded `transformers`/`peft` not
+  being displaced) was reported as recurring, and nothing here proves
+  the editable install alone suffices on a real Colab image. Untestable
+  from here; `--no-deps` removes the harm without removing the safety net.
