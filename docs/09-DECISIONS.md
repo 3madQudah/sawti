@@ -2369,3 +2369,123 @@ for the symptom.
   being displaced) was reported as recurring, and nothing here proves
   the editable install alone suffices on a real Colab image. Untestable
   from here; `--no-deps` removes the harm without removing the safety net.
+
+---
+
+## 2026-10-02 — `BloomPreTrainedModel` ImportError: not a pin incompatibility; pins unchanged, import smoke test added
+
+**Status:** accepted. The hypothesis this entry started from was tested and
+refuted; recorded as such so it isn't re-derived.
+
+### The report, and the hypothesis it implied
+
+On a fresh Colab runtime, after the notebook's install cell ran cleanly,
+`scripts/eval_held_out_calls.py` failed with `ImportError: cannot import
+name 'BloomPreTrainedModel' from 'transformers'`, via `check_forgetting.
+build_model_and_tokenizer_pair` → `from peft import PeftModel` →
+`peft/utils/constants.py`. The reading was that `peft==0.21.0` hard-depends
+on a legacy class `transformers==4.57.6` no longer exports, i.e. that the
+two exact pins are incompatible.
+
+### What was tested
+
+In a fresh `pip`-seeded venv (Python 3.12, macOS), running the notebook's
+exact install sequence with the exact `pyproject.toml` pins — `pip install
+-e ".[finetune]"`, then `pip install --upgrade --force-reinstall --no-deps`
+of the six pins — then the failing chain:
+
+- `pip check`: clean.
+- `from transformers import BloomPreTrainedModel`: **works** — 4.57.6 does
+  export it.
+- `from peft import PeftModel`, `prepare_model_for_kbit_training`,
+  `LoraConfig`, and `peft.utils.constants` (the failing chain's last hop):
+  **all work.**
+- `from transformers import AutoModelForCausalLM, AutoTokenizer,
+  BitsAndBytesConfig`, `from trl import SFTConfig, SFTTrainer`: work.
+- `check_forgetting`, `eval_held_out_calls`, `train_qlora` all import.
+
+**The pins are compatible.** The reported failure does not reproduce from
+them alone, so no alternative `peft`/`transformers` combination was tried:
+there was no incompatibility to route around, and swapping a verified pair
+for an untested one would add risk for no evidence.
+
+### What does reproduce it
+
+Same pins, same venv, plus one extra package: `torchvision==0.19.0`
+installed against `torch 2.14.1` (a torchvision built for a different
+torch — the kind of mismatch a PyPI reinstall of one half of Colab's
+matched pair leaves behind). Result, through the identical chain:
+`ImportError: cannot import name 'BloomPreTrainedModel' from
+'transformers' (.../transformers/__init__.py)`. Byte-for-byte the reported
+message.
+
+The mechanism: `transformers`' lazy `__init__` imports the model module
+when a name is requested; importing `modeling_bloom` ends up importing
+`torchvision` (seen in the traceback; the exact intermediate hop wasn't
+traced), which raises `RuntimeError: operator torchvision::nms does not exist`; the lazy
+loader catches it and re-raises as a missing-name error (`ModuleNotFound
+Error: Could not import module 'BloomPreTrainedModel'`, surfacing from
+`from peft import ...` as the `ImportError` above). The name it blames is
+whichever class happened to be requested first — Bloom only because,
+per the reported traceback, `peft/utils/constants.py` asks for it early
+(peft's source wasn't re-read here). Importing
+`transformers.models.bloom.modeling_bloom` *directly* skips the lazy loader
+and prints the true `RuntimeError`. After `pip uninstall -y torchvision`,
+the full chain passes again with the same pins.
+
+This is the same failure the 2026-09-28 and 2026-10-02 entries already
+describe, seen from a different import path — the error text alone is
+misleading enough that it was read, again, as a version problem.
+
+### What was changed
+
+**Pins: nothing.** `pyproject.toml`'s `finetune` extra and the notebook's
+force-reinstall line still agree exactly (re-checked), and neither moved.
+
+**Notebook: one new cell** directly after the install cell — an import
+smoke test that runs, in a fresh process, the imports the downstream
+scripts execute, with the Bloom module imported first and directly so a
+failure shows its real cause instead of the misleading one. It raises with
+instructions to read the last traceback line and to `pip uninstall` (never
+reinstall) a mismatched optional package. Tested locally in both states:
+passes on the clean venv; with the broken `torchvision` injected it raises
+and prints `operator torchvision::nms does not exist`.
+
+### What the previous fixes did and did not verify
+
+Stated plainly, since the lesson is the point: the 2026-10-02 `--no-deps`
+change was verified at the *install* level (`pip check`, a `pip freeze`
+diff) — which cannot see an import-time failure caused by an optional
+package. The 2026-09-25 pin work did run real imports, but in a clean venv,
+which by construction lacks the packages Colab's base image ships
+(`torchvision` among them). Both were necessary and neither was sufficient.
+
+**Rule going forward: a dependency fix to this notebook is not verified
+until the downstream scripts' imports have actually been run — and a clean
+local venv is not the same environment as a Colab runtime.** The smoke cell
+is that check on the real runtime; an install cell that "succeeds" is not
+evidence the imports work.
+
+### Unresolved, honestly
+
+The notebook already had `pip uninstall -y torchvision` (committed earlier
+today) when this failure was reported on Colab, so on its face the fix
+should have prevented it. Why it still occurred is **not established** —
+there is no Colab access from here. Untested candidates: a copy of the
+notebook that predates the uninstall line; `torchvision` reinstalled by
+something after the uninstall; or a *different* mismatched optional
+package (e.g. `torchaudio`) failing the same way. The smoke cell will
+discriminate — its last traceback line names the real culprit. Worth
+sending back if it fails: that line, the install cell's output (was
+"Successfully uninstalled torchvision" printed, or "Skipping ... not
+installed"?), and `!pip list | grep -iE "torchvision|torchaudio|timm"`.
+
+### Rejected alternatives
+
+- **Bump `peft` or change `transformers` to find a "compatible"
+  combination.** Rejected: the current pair was tested compatible; there
+  was nothing to fix, and each candidate would have needed the same
+  end-to-end verification to be worth more than a guess.
+- **Document the root cause as "peft hard-depends on a legacy transformers
+  class."** Rejected: it's false for these pins (tested), and writing it
+  into the log would send the next reader straight back to re-pinning.
