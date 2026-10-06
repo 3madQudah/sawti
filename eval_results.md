@@ -562,6 +562,11 @@ no held-out-call comparison (the 15 calls reserved in
 
 #### Held-out-calls accuracy comparison: run on Colab 2026-09-27 — **PRELIMINARY, UNCORRECTED**
 
+> **Superseded** by the corrected re-run on 2026-10-06 (next round below).
+> This section is kept as the historical record; its raw JSON is in git at
+> `git show ee12ea6:data/finetune/held_out_eval.json` (the working-tree file
+> now holds the 2026-10-06 result).
+
 > **These numbers were measured before a denominator-mismatch bug in
 > `scripts/eval_held_out_calls.py` was found and fixed (see
 > `docs/09-DECISIONS.md`, 2026-09-27, "`eval_held_out_calls.py` compared
@@ -603,3 +608,112 @@ warning block above this table. Do not cite the specific delta values
 a corrected re-run replaces this section. The higher tuned-model
 structured-output failure rate is the one finding from this run that can
 be read with more confidence, independent of the bug.
+
+## Round: 2026-10-06 — phase 5 step 4, held-out-calls accuracy (base vs. QLoRA-tuned), corrected re-run
+
+- Script: `scripts/eval_held_out_calls.py` with the fixed `_compare()` — both
+  models scored on the **same** intersection of calls (supersedes the
+  2026-09-27 preliminary round above)
+- Base model: Qwen3-8B, 4-bit (bitsandbytes), greedy first attempt, up to 3
+  sampled retries on JSON/schema failure (`LocalHFProvider`)
+- Tuned model: same base + `data/finetune/qlora_adapter` (restored from Drive)
+- Held-out set: 15 `ar` calls (`data/finetune/held_out_call_ids.json`), never
+  trained or validated on
+- Ground truth: `data/ground_truth` (LLM-generated reference labels,
+  `human_reviewed: false`) — unchanged from every prior round
+- Hardware: Colab free tier, T4 16 GB; both models resident on GPU
+  (13.0–13.7 GB GPU RAM, no CPU offload)
+- Raw result: `data/finetune/held_out_eval.json`
+
+N calls scored: `ar=10` (shared successes; 4 base-side failures, 2
+tuned-side failures — per-call outcomes in the JSON's `outcomes`).
+
+| Metric (ar, n=10) | Base | Tuned | Δ (tuned − base) |
+| --- | --- | --- | --- |
+| Accuracy | 0.640 | 0.652 | +0.012 |
+| Rubric agreement | 0.873 | 0.899 | +0.026 |
+| Grounding precision | 0.899 | 0.907 | +0.008 |
+| Unsupported claim rate (lower is better) | 0.132 | 0.086 | −0.046 |
+
+`en` and `mixed`: not measured — the held-out set is `ar` only by design.
+
+### Extraction outcomes (all 15 calls)
+
+| | Base | Tuned |
+| --- | --- | --- |
+| Extracted | 11/15 | 13/15 |
+| Terminal failures | 4 — all `SentimentTrajectory` not chronological (`call_0088`, `0118`, `0122`, `0129`) | 2 — both `SentimentTrajectory` not chronological (`call_0088`, `0100`) |
+| Calls needing ≥1 retry that then succeeded | 2 (`0100`, `0112`) | 5 (`0031`, `0048`, `0053`, `0094`, `0118`) |
+| Retryable failed attempts (JSON/schema) | 2 | 13 |
+| …of which: training-format fragment (`{'call_id': <invented>, …'procedure_adherence': x}`, `rubric_scores`/`sentiment_points`/`confidence` missing) | 0 | 11 |
+| …of which: echoed the JSON schema itself (`$defs`) instead of data | 0 | 1 |
+| …of which: malformed JSON syntax | 1 | 1 |
+| …of which: missing `sentiment_points` only | 1 | 0 |
+
+Per-call outcome disagreements: tuned succeeded where base failed on
+`call_0118`, `call_0122`, `call_0129`; base succeeded where tuned failed on
+`call_0100`; both failed on `call_0088`.
+
+**Source of the attempt counts**: transcribed from the Colab cell log, not
+machine-recorded — `held_out_eval.json` stores only each call's final
+outcome. Treat the retry rows as careful hand counts, not instrumented data.
+
+### Latency (T4, from the cell's elapsed timer — approximate)
+
+| Stage | Time |
+| --- | --- |
+| Download Qwen3-8B (5 shards, ~16 GB) | ~3 min |
+| Load + 4-bit quantize, two copies | ~2.3 min |
+| Base, 15 calls incl. retries | ~70 min (~4.6 min/call) |
+| Tuned, 15 calls incl. retries | ~104 min (~6.9 min/call) |
+| Whole cell | ~3 h 0 min |
+| Compute cost | $0 (Colab free tier) |
+
+The tuned model's higher per-call time is retries, not slower generation.
+
+### Finding
+
+1. **No regression on the shared calls; all four deltas point the right
+   way, but none is shown to be a real effect.** n=10, a single run,
+   18 synthetic training examples, LLM-generated references, no
+   confidence intervals. A one-call swing moves these metrics by more than
+   the observed deltas. Report as "no measurable degradation", not
+   "fine-tuning improved accuracy".
+2. **Fine-tuning shifted the model's default output format toward its
+   training target.** Every training example's output is a *single
+   corrected field* (16/18 `commitments`, 1 `compliance_flags`, 1
+   `rubric_scores[procedure_adherence]`); this eval asks for a *full*
+   `PlainAnalysis`. The tuned model's greedy first attempt repeatedly
+   emitted a fragment shaped like the training targets (invented
+   `call_id`, a lone `procedure_adherence` score) — 11 of its 13 retryable
+   failures. Sampled retries usually recovered the full schema. This
+   replicates the 2026-09-27 qualitative finding (higher tuned-side
+   structured-output failure rate) and supplies a mechanism for it: a
+   train/eval task mismatch, not general damage to the model.
+3. **Self-reported confidence is not a usable signal here.** Fragment
+   outputs missing required fields came with `confidence` 0.95–0.98.
+   Routing must keep depending on schema validation and grounding
+   verification, not on the model's own confidence.
+4. **The one terminal failure mode for both models is chronological
+   ordering of sentiment points**, which `LocalHFProvider`'s retry loop
+   never sees (it is raised later, in `CallAnalysis` assembly). Once the
+   tuned model produced a full schema it hit this less often (2 vs. 4).
+
+### Caveats
+
+1. **Sample size.** 10 scored calls, one language, one run. Not
+   significance-tested.
+2. **The 2026-09-27 preliminary numbers are not a valid comparison point**
+   for direction of effect — they used mismatched denominators, so the
+   difference in sign between that run and this one says nothing either
+   way.
+3. **Reference labels remain LLM-generated**, not human-reviewed.
+4. **Attempt counts are hand-transcribed** from the log (see above).
+
+### How the next step would be measured (not done — deadline)
+
+Rebuild the fine-tuning targets as full, corrected `PlainAnalysis`
+objects (so train and eval tasks match), retrain, and re-run this exact
+script on the same 15 calls. Success criterion: tuned retryable-failure
+count ≤ base's (2), with no metric regressing on the shared calls; record
+per-call attempt counts in the JSON rather than by hand.

@@ -151,7 +151,7 @@ memory off, per language.
 
 ---
 
-## Phase 5 — Fine-tuning (QLoRA) 🟡
+## Phase 5 — Fine-tuning (QLoRA) ✅
 
 Distills the Phase 4 finding — reviewer corrections clearly and
 consistently help `ar` extraction, per the five-batch done-when result —
@@ -179,26 +179,24 @@ retrieval at inference time. Started 2026-09-25.
       real on Colab, 2026-09-27**: 7/7 generic prompts, 0 flagged, base and
       tuned responses near-identical. Not a full eval suite — a handful of
       prompts checked for a large regression only.
-- [ ] **Held-out-calls accuracy delta — run once (2026-09-27), numbers
-      recorded as preliminary/uncorrected in `eval_results.md`, not yet
-      valid.** A bug meant base/tuned metrics were computed over
-      different, unstated denominators, not necessarily the same 10-call
-      intersection `N calls scored: ar=10` reported. Fixed and covered by
-      a regression test — **a clean re-run is still needed** before this
-      item can be checked off. Scores the 15 held-out `ar` calls, base vs.
-      tuned extraction, through the exact `sawti.eval.metrics` functions
-      Phases 1/2/4 use — the actual measure of whether fine-tuning helps
-      `ar` call analysis, distinct from the forgetting check above
-      (generic prompts, not call transcripts). Needs another Colab GPU
-      session (`notebooks/qlora_train.ipynb`, section 9). See
-      `docs/09-DECISIONS.md`'s 2026-09-27 entries.
+- [x] **Held-out-calls accuracy delta — measured 2026-10-06** (corrected
+      re-run, both models on the same 10-call intersection; supersedes the
+      2026-09-27 preliminary numbers). `ar`, n=10: accuracy 0.640 → 0.652,
+      rubric agreement 0.873 → 0.899, grounding precision 0.899 → 0.907,
+      unsupported-claim rate 0.132 → 0.086. Extraction success 11/15 →
+      13/15. Read as **no measurable degradation**, not an improvement —
+      n=10, one run, synthetic training data. Main finding is qualitative:
+      the tuned model drifts toward the training targets' single-field
+      output shape (train/eval task mismatch), recovering via sampled
+      retries. See `eval_results.md` (2026-10-06 round) and
+      `docs/09-DECISIONS.md` (2026-10-06 entries).
 
 **Done when:** the QLoRA adapter trains end to end on Colab, its train/val
 loss is recorded, the forgetting check shows no large regression on
 generic prompts, **and** the held-out 15 calls' accuracy delta (base vs.
-tuned) is measured and recorded — the first two are done; the third is
-not. Read the eventual result as validating the fine-tuning *mechanism* and
-(once measured) its effect on `ar` accuracy — 18 training examples, all
+tuned) is measured and recorded — all three done (2026-10-06). The
+result validates the fine-tuning *mechanism*; its effect on `ar` accuracy
+is within noise at this sample size — 18 training examples, all
 synthetic, so even a positive delta is a small-sample signal, not a scaled
 result. See `docs/09-DECISIONS.md`.
 

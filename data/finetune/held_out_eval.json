@@ -1,34 +1,153 @@
 {
   "base_metrics": {
     "Accuracy": {
-      "ar": 0.6925660581224033
+      "ar": 0.6402559246309246
     },
     "Rubric agreement": {
-      "ar": 0.8928571428571429
+      "ar": 0.8728571428571428
     },
     "Grounding precision": {
-      "ar": 0.8081395348837209
+      "ar": 0.8992805755395683
     },
     "Unsupported claim rate": {
-      "ar": 0.23148148148148148
+      "ar": 0.13186813186813187
     }
   },
   "tuned_metrics": {
     "Accuracy": {
-      "ar": 0.6708005871953482
+      "ar": 0.651808038157448
     },
     "Rubric agreement": {
-      "ar": 0.878373015873016
+      "ar": 0.8988809523809523
     },
     "Grounding precision": {
-      "ar": 0.8846153846153846
+      "ar": 0.9074074074074074
     },
     "Unsupported claim rate": {
-      "ar": 0.12195121951219512
+      "ar": 0.08571428571428572
     }
   },
   "counts": {
     "ar": 10
   },
-  "comparison_table": "N calls scored: ar=`10`\n\n**Accuracy**\n| Language | Base | Tuned | Δ (tuned − base) |\n| --- | --- | --- | --- |\n| ar | 0.693 | 0.671 | -0.022 |\n\n**Rubric agreement**\n| Language | Base | Tuned | Δ (tuned − base) |\n| --- | --- | --- | --- |\n| ar | 0.893 | 0.878 | -0.014 |\n\n**Grounding precision**\n| Language | Base | Tuned | Δ (tuned − base) |\n| --- | --- | --- | --- |\n| ar | 0.808 | 0.885 | +0.076 |\n\n**Unsupported claim rate**\n| Language | Base | Tuned | Δ (tuned − base) |\n| --- | --- | --- | --- |\n| ar | 0.231 | 0.122 | -0.110 |\n"
+  "comparison_table": "N calls scored: ar=`10`\n\n**Accuracy**\n| Language | Base | Tuned | Δ (tuned − base) |\n| --- | --- | --- | --- |\n| ar | 0.640 | 0.652 | +0.012 |\n\n**Rubric agreement**\n| Language | Base | Tuned | Δ (tuned − base) |\n| --- | --- | --- | --- |\n| ar | 0.873 | 0.899 | +0.026 |\n\n**Grounding precision**\n| Language | Base | Tuned | Δ (tuned − base) |\n| --- | --- | --- | --- |\n| ar | 0.899 | 0.907 | +0.008 |\n\n**Unsupported claim rate**\n| Language | Base | Tuned | Δ (tuned − base) |\n| --- | --- | --- | --- |\n| ar | 0.132 | 0.086 | -0.046 |\n",
+  "outcomes": [
+    {
+      "call_id": "call_0014_ar",
+      "base": "ok",
+      "base_error": null,
+      "tuned": "ok",
+      "tuned_error": null
+    },
+    {
+      "call_id": "call_0017_ar",
+      "base": "ok",
+      "base_error": null,
+      "tuned": "ok",
+      "tuned_error": null
+    },
+    {
+      "call_id": "call_0031_ar",
+      "base": "ok",
+      "base_error": null,
+      "tuned": "ok",
+      "tuned_error": null
+    },
+    {
+      "call_id": "call_0048_ar",
+      "base": "ok",
+      "base_error": null,
+      "tuned": "ok",
+      "tuned_error": null
+    },
+    {
+      "call_id": "call_0053_ar",
+      "base": "ok",
+      "base_error": null,
+      "tuned": "ok",
+      "tuned_error": null
+    },
+    {
+      "call_id": "call_0057_ar",
+      "base": "ok",
+      "base_error": null,
+      "tuned": "ok",
+      "tuned_error": null
+    },
+    {
+      "call_id": "call_0069_ar",
+      "base": "ok",
+      "base_error": null,
+      "tuned": "ok",
+      "tuned_error": null
+    },
+    {
+      "call_id": "call_0075_ar",
+      "base": "ok",
+      "base_error": null,
+      "tuned": "ok",
+      "tuned_error": null
+    },
+    {
+      "call_id": "call_0088_ar",
+      "base": "failed",
+      "base_error": "1 validation error for SentimentTrajectory\npoints\n  Value error, SentimentTrajectory.points must be chronologically ordered [type=value_error, input_value=[SentimentPoint(quote=Quo....7, timestamp_sec=85.4)], input_type=list]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+      "tuned": "failed",
+      "tuned_error": "1 validation error for SentimentTrajectory\npoints\n  Value error, SentimentTrajectory.points must be chronologically ordered [type=value_error, input_value=[SentimentPoint(quote=Quo....4, timestamp_sec=32.1)], input_type=list]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error"
+    },
+    {
+      "call_id": "call_0094_ar",
+      "base": "ok",
+      "base_error": null,
+      "tuned": "ok",
+      "tuned_error": null
+    },
+    {
+      "call_id": "call_0100_ar",
+      "base": "ok",
+      "base_error": null,
+      "tuned": "failed",
+      "tuned_error": "1 validation error for SentimentTrajectory\npoints\n  Value error, SentimentTrajectory.points must be chronologically ordered [type=value_error, input_value=[SentimentPoint(quote=Quo....7, timestamp_sec=55.0)], input_type=list]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error"
+    },
+    {
+      "call_id": "call_0112_ar",
+      "base": "ok",
+      "base_error": null,
+      "tuned": "ok",
+      "tuned_error": null
+    },
+    {
+      "call_id": "call_0118_ar",
+      "base": "failed",
+      "base_error": "1 validation error for SentimentTrajectory\npoints\n  Value error, SentimentTrajectory.points must be chronologically ordered [type=value_error, input_value=[SentimentPoint(quote=Quo....6, timestamp_sec=67.4)], input_type=list]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+      "tuned": "ok",
+      "tuned_error": null
+    },
+    {
+      "call_id": "call_0122_ar",
+      "base": "failed",
+      "base_error": "1 validation error for SentimentTrajectory\npoints\n  Value error, SentimentTrajectory.points must be chronologically ordered [type=value_error, input_value=[SentimentPoint(quote=Quo...55, timestamp_sec=62.7)], input_type=list]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+      "tuned": "ok",
+      "tuned_error": null
+    },
+    {
+      "call_id": "call_0129_ar",
+      "base": "failed",
+      "base_error": "1 validation error for SentimentTrajectory\npoints\n  Value error, SentimentTrajectory.points must be chronologically ordered [type=value_error, input_value=[SentimentPoint(quote=Quo...0.6, timestamp_sec=4.5)], input_type=list]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+      "tuned": "ok",
+      "tuned_error": null
+    }
+  ],
+  "scored_ids": [
+    "call_0014_ar",
+    "call_0017_ar",
+    "call_0031_ar",
+    "call_0048_ar",
+    "call_0053_ar",
+    "call_0057_ar",
+    "call_0069_ar",
+    "call_0075_ar",
+    "call_0094_ar",
+    "call_0112_ar"
+  ]
 }

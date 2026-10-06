@@ -2489,3 +2489,90 @@ installed"?), and `!pip list | grep -iE "torchvision|torchaudio|timm"`.
 - **Document the root cause as "peft hard-depends on a legacy transformers
   class."** Rejected: it's false for these pins (tested), and writing it
   into the log would send the next reader straight back to re-pinning.
+
+## 2026-10-06 — `numpy<2.0` pin relaxed to `<3`: it broke Colab on Python 3.13
+
+**Status:** accepted.
+
+### What happened
+
+Colab's runtime is now Python 3.13 with numpy 2.x preinstalled. The
+notebook's `pip install -e ".[finetune]"` honoured `pyproject.toml`'s
+`numpy>=1.26,<2.0`, and numpy 1.26.4 has no cp313 wheel — so pip built it
+**from source** (most of the install cell's ~8 minutes) and downgraded
+numpy underneath Colab's base image. The import smoke cell then failed:
+`transformers` (via `image_transforms`) imports the preinstalled
+TensorFlow, which imports JAX, which needs numpy 2:
+`AttributeError: module 'numpy.dtypes' has no attribute 'StringDType'`.
+
+Same shape as the torchvision entries above: a preinstalled package this
+project never uses, broken by a version mismatch, surfacing as an import
+error far from its cause. The smoke cell caught it before any GPU time was
+spent.
+
+### Fix
+
+- Session fix on Colab: `pip install --no-deps --force-reinstall
+  "numpy>=2.0,<2.4"`; smoke cell then passed and the held-out eval ran.
+- Permanent fix: `numpy>=1.26,<3`. No reason for the `<2.0` cap was ever
+  recorded, and project code uses only `np` array basics
+  (`memory/store.py`, `memory/consolidate.py`).
+- `uv lock` re-run. The lockfile was **already stale before this change**
+  (`uv lock --check` failed on the old pyproject — the `finetune` extra had
+  been added without relocking), so the lock diff also adds
+  peft/trl/bitsandbytes and bumps `datasets`. numpy stays locked at 1.26.4
+  locally (uv keeps a still-valid locked version); the relaxed bound only
+  stops pip downgrading an existing numpy 2.
+
+### Verified
+
+Fresh py3.12 venv from the new lock: 549 passed, 27 skipped, 51
+failed/errored — **all 51 are `psycopg.OperationalError` (no Postgres in
+that environment)**. Same venv with numpy 2.3.5 force-installed: identical
+counts. `ruff check .` clean. Not yet verified: a fresh Colab install
+cell with the new pin (expected: no numpy reinstall, much shorter cell).
+
+## 2026-10-06 — Held-out eval findings: format drift from a train/eval task mismatch; retry scope
+
+**Status:** recorded; fix deferred (Phase 6 deadline). Numbers in
+`eval_results.md`, 2026-10-06 round.
+
+### Format drift
+
+Every fine-tuning example targets a *single corrected field* (16/18
+`commitments`, 1 `compliance_flags`, 1 `rubric_scores[procedure_adherence]`).
+The held-out eval asks for a *full* `PlainAnalysis`. The tuned model's
+greedy first attempt repeatedly produced a fragment shaped like the
+training targets — invented `call_id` ('unknown', 'call_123456', …), a
+lone `procedure_adherence` score, required fields missing — 11 of its 13
+retryable failed attempts (base: 0 of 2). Once it echoed the JSON schema
+itself. Sampled retries mostly recovered the full schema.
+
+This is the mechanism behind the 2026-09-27 "tuned model fails structured
+output more often" observation: the adapter learned the training task's
+output shape, which is not the eval task's. It is not evidence of general
+damage (forgetting check was clean) or of improvement (n=10 deltas are
+within noise).
+
+**Deferred fix, and how it would be measured:** build targets as full,
+corrected `PlainAnalysis` objects; retrain; re-run
+`eval_held_out_calls.py` on the same 15 calls. Pass: tuned retryable
+failures ≤ base's, no regression on shared-call metrics, per-call attempt
+counts recorded in the JSON (they are hand-counted from the log this time).
+
+### Self-reported confidence
+
+Fragment outputs carried `confidence` 0.95–0.98 while missing required
+fields. Confirms the existing design: routing depends on schema validation
+and grounding, never on the model's own confidence.
+
+### Retry scope — left unchanged on purpose
+
+`LocalHFProvider` retries only JSON-parse / `response_model` validation
+failures. `SentimentTrajectory` chronological-order errors are raised
+later, in `_to_call_analysis`, so they fail the call on the first
+occurrence — the only terminal failure mode for both models (base 4,
+tuned 2). Not changed: extending retries now would make this run
+incomparable with Phase 1's baseline and with itself. If revisited,
+measure on base and tuned together: terminal-failure count and added
+per-call latency, per language category.
