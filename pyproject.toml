@@ -23,7 +23,7 @@ dependencies = [
     "openai>=1.35,<2.0",
     "google-genai>=1.0,<2.0",
     "langfuse>=2.36,<3.0",
-    "numpy>=1.26,<2.0",
+    "numpy>=1.26,<3",
     # Phase 4 rule memory (sawti.memory.store): local, multilingual sentence
     # embeddings for top-k rule retrieval — no embedding provider is
     # configured anywhere in sawti.config, and this needs no new infra
