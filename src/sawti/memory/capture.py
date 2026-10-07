@@ -12,7 +12,8 @@ from sqlalchemy.orm import Session
 
 from sawti.db.models import Agent, Call, CallAnalysisRecord, ReviewerAction
 from sawti.db.session import get_session
-from sawti.schemas import CallAnalysis, Correction
+from sawti.privacy.redaction import redact
+from sawti.schemas import CallAnalysis, CallStatus, Correction
 
 
 def get_or_create_placeholder_agent(session: Session, *, external_id: str, name: str) -> uuid.UUID:
@@ -63,17 +64,24 @@ def persist_analysis_record(
             `original` a `Correction` will be captured against.
         agent_id: id of the `Agent` the new `Call` row attaches to (see
             `get_or_create_placeholder_agent`).
-        transcript: The call's transcript text, stored on the `Call` row.
+        transcript: The call's transcript text. Redacted before it is stored:
+            `Call` only ever holds `redacted_transcript` (phase 6.1). That is
+            also the text `analysis`'s quotes were grounded against, since
+            `extract` redacts before the model sees anything.
     """
     now = datetime.now(UTC)
     call_row_id = uuid.uuid4()
+    redaction = redact(transcript)
     session.add(
         Call(
             id=call_row_id,
             agent_id=agent_id,
-            transcript=transcript,
+            redacted_transcript=redaction.redacted_text,
+            pii_redacted_count=redaction.redaction_count,
             language=analysis.language.value,
             occurred_at=now,
+            # Persisted directly, never queued through the service.
+            status=CallStatus.COMPLETED,
         )
     )
     session.add(
@@ -95,6 +103,8 @@ def capture_correction(
     error_location: str,
     reviewer_id: str,
     note: str | None = None,
+    session: Session | None = None,
+    review_submission_id: uuid.UUID | None = None,
 ) -> Correction:
     """Build a `Correction` record capturing a reviewer's edit and its full context.
 
@@ -110,6 +120,12 @@ def capture_correction(
         error_location: Field path or artifact id of what was wrong.
         reviewer_id: Identity of the QA reviewer making the correction.
         note: Optional free-text explanation from the reviewer.
+        session: An open session to write into, whose owner commits — so a
+            caller recording several corrections plus their submission
+            (`POST /reviews/{call_id}/corrections`) gets one atomic unit.
+            Omitted: a session of its own, committed before returning.
+        review_submission_id: The `ReviewSubmission` this correction came
+            from, when it came through the review API.
 
     Returns:
         A validated `Correction` record, ready for induction.
@@ -136,15 +152,18 @@ def capture_correction(
         timestamp=datetime.now(UTC),
     )
 
-    with get_session() as session:
-        session.add(
-            ReviewerAction(
-                id=correction.id,
-                call_analysis_id=original.id,
-                reviewer_id=reviewer_id,
-                payload=correction.model_dump(mode="json"),
-                created_at=correction.timestamp,
-            )
-        )
+    action = ReviewerAction(
+        id=correction.id,
+        call_analysis_id=original.id,
+        reviewer_id=reviewer_id,
+        payload=correction.model_dump(mode="json"),
+        created_at=correction.timestamp,
+        review_submission_id=review_submission_id,
+    )
+    if session is not None:
+        session.add(action)
+    else:
+        with get_session() as own_session:
+            own_session.add(action)
 
     return correction

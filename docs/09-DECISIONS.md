@@ -293,7 +293,10 @@ notion of model self-certainty. Folding those in is future work.
 
 ## 2026-09-22 — MemorySaver checkpointer; Postgres deferred to phase 5
 
-**Status:** accepted, with the limitation stated.
+**Status:** ~~accepted, with the limitation stated.~~ **Cleared 2026-10-06**
+(Phase 6.1): `sawti.db.checkpointer` provides a Postgres saver and a
+cross-process restart test passes. `MemorySaver` remains `build_graph()`'s
+default for tests and eval only. See the 2026-10-06 entries.
 
 `build_graph()` defaults to LangGraph's in-process `MemorySaver`.
 
@@ -2576,3 +2579,571 @@ tuned 2). Not changed: extending retries now would make this run
 incomparable with Phase 1's baseline and with itself. If revisited,
 measure on base and tuned together: terminal-failure count and added
 per-call latency, per language category.
+
+---
+
+## 2026-10-06 — Phase 6 service: three decisions made before any code
+
+**Status:** accepted. Decided by the user ahead of 6.1/6.2, recorded here
+first so the code can cite them.
+
+### 1. Redaction at the API boundary; the raw transcript is never stored
+
+`POST /calls` redacts the transcript (`sawti.privacy.redaction.redact`)
+immediately. Only the redacted text is stored (`Call.redacted_transcript`),
+and only `redacted_transcript` is put into graph state — the raw
+`transcript` key never enters state, because the Postgres checkpointer
+persists the *full* state, so anything in state is on disk. `extract`
+already accepts `redacted_transcript` (it only redacts when that key is
+absent) and `ground` computes offsets against it, so every quote offset the
+dashboard renders indexes into exactly the stored text.
+
+**The cost, stated:** the raw text is not recoverable. A redaction miss
+(the redactor is regex-only — no names, no addresses; see 2026-09-22) is
+also permanent: the stored text cannot be re-redacted better later from
+the original, and a false-positive redaction cannot be undone. The
+`pii_redacted_count` column records how many spans were replaced — the
+count only, never the values.
+
+`sawti.memory.capture.persist_analysis_record` (the phase 4/5 scripts' path
+into `calls`) now redacts too, so the column means the same thing whichever
+path wrote it. That is also the text those analyses were grounded against,
+since `extract` redacts before the model sees anything.
+
+### 2. Transcript-only input in 6.2; ASR stays a batch script
+
+No audio upload endpoint. `mlx-whisper` needs Metal, which Docker on macOS
+cannot reach, so in-container ASR would mean CPU `openai-whisper` — the
+~0.1x-realtime path the 2026-09-22 Whisper entry already rejected. ASR
+stays `make transcribe`, outside the service; its output is a transcript,
+which is what `POST /calls` takes.
+
+### 3. Reviewer identity through one dependency — and it is not real auth
+
+Every route that needs a reviewer takes it from one FastAPI dependency,
+`get_current_reviewer()`. For now it reads `X-Reviewer-Id` and checks a
+shared `X-API-Key` against settings. No route reads either header itself,
+so swapping this for OIDC in 6.4 changes one function.
+
+**Stated plainly: this is not authentication.** The reviewer id is
+self-asserted, and the shared key will be visible in the browser bundle as
+soon as the 6.4 dashboard exists. It keeps casual callers out of a local
+deployment and gives `ReviewerAction.reviewer_id` a value; it does not
+establish who anyone is.
+
+---
+
+## 2026-10-06 — Durable checkpointer: `langgraph-checkpoint-postgres==2.0.21`, not the newest 2.x
+
+**Status:** accepted. Clears the 2026-09-22 MemorySaver debt.
+
+### The compatibility check
+
+`langgraph` is pinned `<0.3` (installed: 0.2.76, with
+`langgraph-checkpoint` 2.1.2). No `langgraph-checkpoint-postgres` release
+depends on `langgraph` itself — every 2.x only requires
+`langgraph-checkpoint<3` and psycopg 3 — so by pip metadata all of
+2.0.0–2.0.25 "fit", and the resolver happily picked 2.0.25. Metadata was
+not the whole story:
+
+- From **2.0.22** (2025-07) the saver targets langgraph ≥ 0.5's checkpoint
+  format: pending `Send` packets moved out of the checkpoint's
+  `pending_sends` field into a `TASKS` channel, and loaded checkpoints no
+  longer carry `pending_sends`. langgraph 0.2.76's Pregel loop still reads
+  `checkpoint["pending_sends"]`.
+- 2.0.25 says so itself: importing it emits `DeprecationWarning: You're
+  using incompatible versions of langgraph and checkpoint-postgres`
+  (guard: langgraph `< 0.5`).
+- Measured, not inferred: a two-item `Send` fan-out paused before its
+  workers and resumed from Postgres **crashes on 2.0.25** (`TypeError:
+  Object of type Send is not JSON serializable`) and **passes on 2.0.21**.
+
+**2.0.21** (2025-04) is the last release built for langgraph 0.2's format,
+and needs `langgraph-checkpoint>=2.0.21,<3` — satisfied by the locked
+2.1.2, so nothing else moves. psycopg 3.3.5 (already locked) satisfies its
+`psycopg>=3.2,<4`; `psycopg-pool` 3.3.3 comes in transitively. langgraph
+was **not** bumped.
+
+The analysis graph does not use `Send`, so 2.0.25 would have passed the
+restart test. That is exactly why the `Send` round-trip stays in
+`tests/db/test_checkpointer.py`: it is the test that fails if a future
+bump of either package reintroduces the mismatch.
+
+### Shape
+
+`sawti.db.checkpointer.postgres_checkpointer()` is an async context
+manager yielding an `AsyncPostgresSaver` after `setup()`. Async because
+every node is `async` and the graph runs under `ainvoke`. `setup()` runs on
+every open — it is idempotent and cheap next to an LLM call. The saver's
+four tables live in the application database but are owned and versioned
+by the library; Alembic is told to ignore them
+(`sawti.db.models.alembic_include_object`), and downgrading the app schema
+leaves them alone. `build_graph()` still defaults to `MemorySaver` for
+tests and eval; the service passes the Postgres saver explicitly.
+
+**Open for 6.2:** `setup()` is not safe against two processes running it
+for the first time concurrently (both insert the same migration version).
+The `migrate` one-shot should run it once before workers start.
+
+### Rejected alternatives
+
+- **Bump langgraph to ≥ 0.5 and take the newest saver.** Out of scope by
+  instruction, and it would move the graph runtime under every phase 2–5
+  result recorded so far.
+- **Take 2.0.25 because our graph has no `Send`.** Works today, and leaves
+  a known-incompatible pair in place whose failure only shows up the day
+  someone adds a fan-out.
+
+---
+
+## 2026-10-06 — Schema owned by Alembic; review-screen fields are columns, not payload keys
+
+**Status:** accepted.
+
+### Alembic
+
+`alembic.ini` at the repo root; migrations inside the package
+(`script_location = sawti.db:migrations`) so an installed `sawti` — the 6.2
+`migrate` container — carries them. `env.py` reads `DATABASE_URL` from
+`sawti.config` unless a caller sets `sqlalchemy.url` (the tests do). One
+initial revision, `0001`, creates the phase 1 tables with the phase 6
+changes folded in: `calls.transcript` → `redacted_transcript`;
+`calls.status`, `queued_at` / `started_at` / `finished_at` (timestamptz,
+nullable), `pii_redacted_count`; a unique constraint on
+`call_analyses.call_id`; and the review-screen columns below.
+
+`calls.status` is a VARCHAR + CHECK over `sawti.schemas.CallStatus`, not a
+native Postgres ENUM: adding a value later is a constraint swap rather than
+`ALTER TYPE`, and downgrade has no type object to drop. `CallStatus` is the
+service lifecycle (`queued`, `processing`, `awaiting_review`, `reviewed`,
+`completed`, `failed`) and is kept separate from the graph's `ReviewStatus`
+literal; its docstring holds the mapping. Note `failed` has no graph
+equivalent: a graph-level `error` routes to `escalate`, i.e. to
+`awaiting_review`. `failed` means the task itself gave up.
+
+### Review-screen fields: columns
+
+The review screen needs, beyond `CallAnalysis`: `grounding_coverage`, the
+threshold used for this run, an `escalation_reason`, the claims `ground`
+rejected (with their attempted quotes), and the ids of the memory rules
+retrieved. **Columns on `call_analyses`**, not extra keys in `payload`:
+
+- `payload` stays exactly `CallAnalysis.model_dump(mode="json")`, so
+  `CallAnalysis.model_validate(payload)` round-trips with nothing to strip.
+  Mixing service context into it would make that column mean two things.
+- The queue screen lists and filters on `grounding_coverage` /
+  `escalation_reason`; plain columns need no JSONB operators.
+- The two list-shaped fields (`rejected_claims`, `retrieved_rule_ids`) are
+  JSONB *columns* — the same "it's a list, store it as JSON" choice
+  `payload` already makes, without a child table nobody queries into.
+
+`grounding_coverage`, `confidence_threshold` and `escalation_reason` are
+nullable: the phase 4/5 scripts persist bare analyses through
+`persist_analysis_record`, which has none of that context, and inventing it
+(e.g. coverage = confidence) would be a fabrication.
+
+### The test suite gets its own database
+
+DB-backed tests used to write into whatever `DATABASE_URL` named — on this
+machine, the dev database that also holds the phase 4/5 experiment data —
+and built schema with `create_all()`. `tests/conftest.py` now points the
+suite at `<dev db>_test`, dropped, recreated and migrated to `head` once per
+run; migration tests use their own database again, since `downgrade base`
+would wipe the shared one. The existing `create_all()` fixtures are left in
+place: on an Alembic-built schema they are no-ops.
+
+### Not done: the existing dev database
+
+The dev database (`sawti` on :5433) was built by `create_all()` and holds
+103 phase 4 calls/analyses/corrections in the old shape (a raw
+`transcript` column, no `status`). It was **not** touched. `0001` cannot
+be applied to it (its tables exist), and `alembic stamp 0001` would be a
+lie (the columns differ). Until it is resolved, the phase 4/5 scripts that
+read it (`build_finetune_dataset.py`, `five_batch`) will fail against it
+with a missing-column error. Options are listed in the 6.1 report; this is
+the user's call.
+
+---
+
+## 2026-10-06 — MemorySaver debt cleared
+
+**Status:** the 2026-09-22 "MemorySaver checkpointer; Postgres deferred"
+entry is **resolved**. Done-when evidence:
+`tests/db/test_checkpointer.py::test_interrupted_run_resumes_after_a_process_restart`
+runs a low-confidence call to the `escalate` interrupt in a separate
+process that then exits, builds a fresh graph on a new Postgres connection
+in the test process, resumes the same `thread_id` with
+`Command(resume=...)`, and asserts the run finishes `human_reviewed` with
+its pre-restart grounding state intact.
+
+---
+
+## 2026-10-07 — Dev database converted in place to revision 0001
+
+**Status:** done. Backup first: `data/backups/sawti-pre-0001-20261006-200755.dump`
+(`pg_dump -Fc`, 397,283 bytes; test-restored, row counts matched: 3 agents,
+103 calls, 103 analyses, 103 corrections). `data/backups/` is gitignored —
+that file holds the **raw, unredacted** transcripts and is the only copy of
+them left.
+
+`scripts/convert_dev_db_to_0001.py` (tests:
+`tests/scripts/test_convert_dev_db_to_0001.py`) reshapes the `create_all()`
+database to exactly 0001 in one transaction and stamps only if every check is
+clean:
+
+- **Transcripts:** 103 redacted into `redacted_transcript`; 12 calls had
+  PII (12 spans). Raw column dropped. Existing rows get status `completed`.
+- **Payload quotes:** 7 quotes inside `reviewer_actions` payloads contained
+  raw phone numbers — sentiment quotes in the `corrected` side, which comes
+  from ground truth authored against the raw transcripts. Redacted and
+  re-anchored to the redacted transcript. Without this, raw PII would have
+  survived inside the JSON after the transcripts were cleaned. This rewrites
+  7 synthetic corrected quotes in the audit record; accepted.
+- **Drift check:** 0 differences against the models (`alembic check` agrees).
+- **Quote check:** 4,286 quotes; 0 broken by the conversion; 0 with PII left;
+  4 pre-existing exceptions (below). 1,124 quotes have stale offsets — the
+  text is verbatim but the stored offsets do not point at it — mostly model
+  sentiment offsets that were never correct (see below), plus ground-truth
+  offsets shifted by redaction. Informational: nothing downstream trusts
+  stored offsets (`ground` and the metrics locate text themselves).
+- **Memory rules:** 0 redacted, because **no rule store is persisted
+  anywhere** — see the last section.
+
+### The 4 pre-existing exceptions are sentiment points, not claims
+
+| Row | Path | Call |
+|---|---|---|
+| `call_analyses` `92fc7036-c097-4f38-9ec4-3cf56a4db512` | `sentiment_trajectory.points[2].quote` | `call_0028_ar` |
+| `reviewer_actions` `7e8e237b-0a25-4aa5-9a9c-dfa5a54abeec` | `original.sentiment_trajectory.points[2].quote` | `call_0028_ar` |
+| `call_analyses` `ae0c26d9-e1c6-4900-a3ca-0dcb8853431e` | `sentiment_trajectory.points[1].quote` | `call_0073_mixed` |
+| `reviewer_actions` `66c22641-6e40-4a3a-8da0-38d8739c00ab` | `original.sentiment_trajectory.points[1].quote` | `call_0073_mixed` |
+
+Two distinct quotes, each stored twice (the analysis and its correction's
+`original`). How they were persisted: **`ground` never checks sentiment
+points**, by design — `SentimentPoint` is not a `Claim`, so `_CLAIM_KEYS`
+excludes it (2026-09-22 grounding entry). They were stored *after* `ground`
+ran; `ground` simply does not look at them. It is not a normalization
+difference: both fail even after NFKC and whitespace folding. They are model
+paraphrases — one dropped the quotation marks around «أسرع وقت», the other
+wrote حاليأ for حالياً. Every one of the 2,734 claim quotes (commitments,
+flags, rubric scores) in these rows is verbatim; the gate held.
+
+**Phase 4 numbers affected by these 4: none.** `unsupported_claim_rate`
+counts claims only. `grounding_precision` does pool sentiment quotes, and it
+checks them against the transcript, so it already counted these as
+ungrounded — correctly.
+
+### A real measurement issue found alongside: metrics check the raw text, `ground` checks the redacted text
+
+`ground` verifies quotes against the redacted transcript (what the model
+saw). `grounding_precision_by_category` and
+`unsupported_claim_rate_by_category` verify against the raw files in
+`data/synthetic/`. A quote that legitimately contains a redaction
+placeholder (`[PHONE]` …) passes the gate but scores as ungrounded /
+unsupported in the metrics. In the 103 stored analyses: 10 such quotes, all
+`mixed` (8 sentiment, 2 claims). Effect: phase 2 and phase 4 `grounding_precision`
+and `unsupported_claim_rate` are biased slightly **pessimistic**, for calls
+with PII only, and in phase 4 equally on both arms — so the memory-on vs
+control delta (the done-when comparison) is essentially unaffected; the
+absolute values for `mixed` are a little worse than the truth. Not fixed
+now (it must not block 6.2); the fix is for the metrics to check against
+`redact(raw)`, then re-run the affected tables.
+
+### `build_finetune_dataset.py` now reads redacted text
+
+It reads `calls.redacted_transcript`; there is no raw column any more. The
+existing phase 5 dataset and adapter are unchanged — see the next entry.
+
+---
+
+## 2026-10-07 — Known issue for 6.3: the phase 5 adapter was trained on raw text, the service serves redacted text
+
+**Status:** open; resolve in 6.3, before the cloud vs self-hosted comparison.
+Not retrained (by decision).
+
+The QLoRA adapter (`data/finetune/qlora_adapter/`) was trained on **raw**
+transcripts: `scripts/train_qlora.py` puts `record["transcript"]` in the
+prompt, and `train.jsonl` was built from the then-raw `calls.transcript`
+and the raw `data/synthetic/` files. No training record contains a redaction
+placeholder. Two of the 18 training records contain a PII-shaped span in
+their transcript: line 7 (`call_0107_ar`) and line 8 (`call_0137_ar`), both
+`phase1_2_diff` / `commitments`, one span each. Validation (4 records): none.
+
+The service redacts at the boundary (2026-10-06, decision 1), so in 6.3 the
+adapter will see `[PHONE]`, `[NATIONAL_ID]` etc., which it never saw in
+training. That is a train/serve mismatch on top of the format drift recorded
+2026-10-06, and it would bias the comparison against self-hosted. Before the
+comparison: either rebuild the dataset from redacted text and retrain, or
+measure the mismatch's effect directly (same held-out calls, raw vs
+redacted input, per language category). Note also that the training data
+itself held raw PII (synthetic, but the pattern matters for real data).
+
+---
+
+## 2026-10-07 — No persisted memory-rule store exists
+
+**Status:** finding; resolved in 6.2 (see that entry).
+
+`MemoryRule` has `rule_text` and `source_correction_ids` only — no examples,
+no quotes. `MemoryStore` is in-process, and the only place rules were ever
+written down was the five-batch run's resume file
+(`data/five_batch_checkpoint.json`), which is deleted on success and is not
+on disk. So there were no rules to scan or redact (count: 0), and the rule
+texts quoted in these docs contain no PII-shaped spans. Because rules are
+injected into prompts, any future rule store must hold redacted text only.
+
+---
+
+## 2026-10-07 — Phase 6.2: the async service — decisions and what they cost
+
+**Status:** accepted. Done-when met: `tests/e2e/test_service_e2e.py` passes
+against the containers (`make e2e`), and the numbers are in
+`eval_results.md` (2026-10-07 round).
+
+### Review submissions: `Correction` unchanged, plus a `review_submissions` table
+
+Asked and decided (user, 2026-10-07): `sawti.schemas.Correction` cannot
+represent per-claim verdicts — `confirm` has no `error_location`, and
+`correct` carries free text, not a structured replacement claim. So
+`Correction` stays as it is, and:
+
+- each `reject` → one `Correction`, `error_location` = claim id,
+  `corrected` = `original` minus that claim;
+- each `correct` → one `Correction`, `corrected` = `original` unchanged,
+  the reviewer's text in `note` (the honest representation; induction reads
+  notes);
+- `confirm` → no `Correction`;
+- the whole submission, every verdict, lives in `review_submissions`
+  (migration 0002), one per analysis; `reviewer_actions.review_submission_id`
+  links each `Correction` back. Phase 4/5 code reading `ReviewerAction`
+  keeps working.
+
+Claim ids are `"<list>[<index>]"` (e.g. `commitments[0]`), the
+`error_location` path style, stable because a stored analysis is never
+rewritten. A submission is rejected (422) unless its claim ids are exactly
+the call's grounded claims. The submission, its corrections and their
+`ReviewerAction` rows commit as one unit (`capture_correction` gained an
+optional `session`), under a row lock on the call, before the resume is
+queued; a second submission is 409.
+
+### `memory_rules` table — and what still does not write to it
+
+There was no persisted rule store (2026-10-07 entry above), and the review
+screen must resolve `retrieved_rule_ids` to text in the API process, which
+never holds a `MemoryStore`. So migration 0002 adds `memory_rules`. The
+worker rebuilds its in-process store from the active rows — only when that
+set changes — and retrieves top-k against the redacted transcript, folding
+the text into `extract`'s prompt exactly as phase 4's memory-on arm does.
+
+**Open:** nothing in the service writes rules yet. Reviews capture
+`Correction`s, but induction (`sawti.memory.induction`) is not wired into
+the review flow — the spec did not ask for it, and it is an LLM call per
+correction with its own consolidation/conflict policy. Until it is, the
+table is empty and retrieval returns nothing (the phase 2 behavior). Any
+writer must store redacted text only: rules go into prompts.
+
+### Retries: transient errors leave the graph; everything else stays in it
+
+`extract` used to turn every provider exception into `error` → `escalate`.
+A 429 would therefore have put a call in front of a human because the
+provider said "try again". Now `sawti.llm.provider.is_transient_provider_error`
+(429, 408, 5xx, timeouts, connection/transport errors, by `.code` /
+`.status_code`) is the single classification point: `extract` re-raises
+transient errors and keeps recording everything else in `error`. The
+Celery task puts the call back to `queued` and retries with
+`backoff * 2**attempt` (capped); the idempotency guard therefore stays a
+plain `queued → processing` claim (`UPDATE … WHERE status='queued'`), and
+`calls.attempts` counts claims — the source of the retry rate. After
+`SAWTI_TASK_MAX_RETRIES` the call is `failed`. A non-provider crash is not
+retried: it is `failed` at once. Eval callers are unaffected: their retry
+loops already retried on any exception.
+
+A run whose `extract` failed non-transiently still gets a `CallAnalysisRecord`
+(no claims, confidence 0, human review required, summary
+`NO_ANALYSIS_SUMMARY`), because that call goes to a reviewer and the screen
+needs something to show; the error is the `escalation_reason`.
+
+### The API never runs — or imports — the graph
+
+Routes only touch the database and call `.delay()`. `sawti.api.tasks`
+imports the graph, the checkpointer and the memory store inside the task
+bodies, so importing the app pulls in none of them
+(`tests/api/test_main.py` checks it in a fresh interpreter). That is what
+lets the api image drop torch: it installs `uv export --prune
+sentence-transformers`, i.e. the locked set minus sentence-transformers and
+everything only it needs. No pyproject or lock change. Both images install
+exactly `uv.lock`'s versions.
+
+### Turns, offsets, per-turn language
+
+Turns come from `sawti.data.transcript_parser.parse_transcript` (the one
+parser); offsets are derived from each turn's source line in the API layer,
+so the parser and the audio manifest it feeds are unchanged. A transcript
+with an unprefixed line is rejected at `POST /calls` (422) rather than
+guessed — the parser's own rule. Consequence: the 10 phase 1 synthetic calls
+with the known prefix defect cannot be submitted (their hand repairs are keyed
+by synthetic call id, which a service call does not have). Per-turn language
+is by script (Arabic only → ar, both → mixed, else en; redaction placeholders
+ignored) — enough to pick text direction, not language identification.
+
+### Identity on each route
+
+`POST /calls`: API key only (an ingestion caller is not a reviewer).
+`GET /calls/{id}`, `GET /reviews`, `POST /reviews/{id}/corrections`:
+`get_current_reviewer()`. `/health`: open. An unset **or empty**
+`SAWTI_API_KEY` makes every protected route 503 — empty counts as unset so
+an empty header can never match it.
+
+### A fake provider in `src/`
+
+`SAWTI_LLM_PROVIDER=fake` (`sawti.llm.fake_provider`) is deterministic and
+offline. It exists so the container e2e is reproducible (every call escalates
+by construction) and so throughput is measured on this system rather than on
+the Gemini free tier's 15 requests/minute. Numbers measured with it are
+labelled as such. Rejected: monkeypatching inside containers (no seam), or
+measuring only with Gemini (the quota, not the system, would be the result).
+
+### Containers
+
+One Dockerfile, targets `api` and `worker`; compose gains `migrate`
+(one-shot: `alembic upgrade head`, then the checkpointer's `setup()` once —
+it is not safe for several first-time callers at once), `api` and `worker`
+under the `service` profile, so `make up` still starts only Postgres + Redis.
+Workers: `--concurrency=1`, `acks_late`, prefetch 1 — one task in flight per
+container, redelivery on worker loss made safe by the guard. The worker image
+bakes in the embedding model and runs with `HF_HUB_OFFLINE=1`.
+`SAWTI_SERVICE_DB` picks the stack's database; `measure_service.py` uses a
+scratch one. (The one e2e run wrote one synthetic call into the dev DB.)
+
+### Known limitations, not fixed
+
+- **No reaper.** A call whose message is lost after the `POST` (Redis
+  flushed, say) stays `queued` forever. An enqueue that *fails* is handled
+  (503, call marked `failed`).
+- **`failed` calls have no analysis record**, and nothing re-submits them.
+- **Celery eager mode** is what the route tests use; the real broker path is
+  covered only by the e2e and the measurement runs.
+
+---
+
+## 2026-10-07 — Closing 6.2: the memory loop, sentiment grounding, the metric fix, the reaper
+
+**Status:** accepted. Requested by the user before closing 6.2.
+
+### `correct` verdicts are structured now — otherwise induction learns nothing
+
+The first 6.2 version mapped `correct` to a `Correction` whose `corrected`
+equalled `original`, with the reviewer's text in `note`. Induction renders the
+field at `error_location` for both sides, so it saw no difference. Now a
+`correct` verdict must carry `changes` — structured replacement values for the
+claim's editable fields (commitment: `description`, `promised_by`, `deadline`;
+flag: `rule_id`, `severity`, `description`; rubric: `score`, `justification`;
+the evidence quote is never editable) — and the route rejects (422) a change
+to a field the kind does not have, or one that leaves the claim unchanged.
+**API contract change:** `ClaimVerdict.correction: str` became
+`changes: ClaimChanges` plus an optional `note` on any verdict.
+
+`error_location` is now in induction's vocabulary, not the claim id:
+reject → `commitments` / `compliance_flags` / `rubric_scores[<criterion>]`;
+correct → `commitments[i]` / `compliance_flags[i]` (new paths, rendering that
+one item in full) / `rubric_scores[<criterion>]` or
+`rubric_scores[<criterion>].justification` (new). The phase 4 paths and their
+renderings are unchanged, so the backfill over phase 4 corrections sees
+exactly what phase 4 did. Tested per kind: `corrected != original` and the
+rendered field differs between them (`tests/api/test_views.py`).
+
+### The memory loop, durable
+
+`sawti.memory.persistence.induce_and_store` is phase 4's loop against the
+database — `induce_rule` → `insert_rule` (similarity-narrowed LLM conflict
+check) → persist → `consolidate` → sync (merged rules inserted, merged-away
+rules retired) — used by both the service and the backfill.
+
+- `POST /reviews/{call_id}/corrections` queues `induce_rules_task` when the
+  review produced corrections; `analyze_call_task` retrieves from
+  `memory_rules` (the store is rebuilt when the active set changes).
+- `reviewer_actions.induced_at` / `induction_outcome` (migration 0003): each
+  correction is induced at most once, committed together with its rule, so a
+  redelivery is a no-op and an interrupted run resumes.
+- A Postgres advisory lock serializes runs, so two reviews never conflict-check
+  against a store missing the other's rule.
+- A candidate that contradicts an existing rule is **not** stored (phase 4's
+  `insert_rule` policy: neither rule silently wins); the correction is marked
+  `conflict` and the case logged for a human. There is still no screen for
+  these — open.
+- Rule text is redacted before storage; rules are injected into prompts.
+- `GET /memory/rules` (reviewer-protected, read-only) lists active rules; the
+  container e2e uses it to know when the asynchronous induction is done.
+
+Integration test (`tests/api/test_memory_loop.py`): a review with a `correct`
+verdict → one rule persisted from that correction → a new, similar call
+retrieves that rule's id over an unrelated stored rule with `top_k = 1`. The
+container e2e repeats the loop with the real embedding model.
+
+**Incident while writing it.** The first version of that test patched the
+provider only in `extract`; induction and the conflict check resolve
+`get_llm_provider` in their own modules, so one run called the real Gemini
+API — about four requests, carrying synthetic test text. Fixed twice over:
+the `llm` fixture now patches every LLM caller in the service, and the
+service tests set `SAWTI_LLM_PROVIDER=fake` so an unpatched path gets the
+offline fake.
+
+### Sentiment points are grounded — chosen over hiding them
+
+Option picked: ground them. Non-verbatim sentiment quotes are dropped into
+`rejected_sentiment_points`; survivors are re-anchored to computed offsets.
+Rejected: "stop exposing their quotes in `CallDetail`" — `CallDetail` never
+exposed sentiment, so that option fixes nothing; the paraphrases were in the
+stored payloads and checkpoints, where 6.4 or any later consumer would show
+them. Grounding fixes them at the source. Sentiment drops do **not** count
+toward `grounding_coverage`, so routing — a statement about claims — is
+unchanged. Drop counts on the 103 stored analyses: ar 1/142, en 0/96,
+mixed 1/281 (`eval_results.md`, 2026-10-07).
+
+### Grounding metrics check the redacted text
+
+`grounding_precision_by_category` and `unsupported_claim_rate_by_category`
+now redact each transcript before checking, matching `ground`.
+`transcript_view="raw"` reproduces the old behavior and exists only for the
+side-by-side. Decided with the user: no phase 2 / phase 4 re-runs (Gemini
+free tier, 500 requests/day). The 103 stored phase 4 analyses are re-scored
+both ways at zero LLM cost (mixed unsupported claim rate 0.0039 → 0.000);
+phase 2's numbers, whose predictions were not saved, carry an exact bias bound
+and a "pre-fix metric" mark in place.
+
+### Reaper
+
+`reap_stuck_calls`, every `SAWTI_REAPER_INTERVAL_SECONDS` via a new `beat`
+service (one instance, never scaled): re-enqueues `queued` calls with no
+message for `reaper_queued_timeout_seconds`, puts `processing` calls older
+than `reaper_processing_timeout_seconds` back to `queued` and re-enqueues
+them, and fails those already claimed `task_max_retries + 1` times. It keys on
+a new `calls.enqueued_at` (migration 0004, set on every enqueue) rather than
+`queued_at`, so a healthy backlog is not re-sent every minute. Duplicates are
+safe: only one message passes the analysis guard. Both timeouts default to
+15 min — above one attempt (provider timeout 120 s) and the longest backoff
+(300 s).
+
+### Smaller items
+
+- **Unset `SAWTI_API_KEY`:** tested truly unset (no env var, no `.env`), not
+  just empty: every protected route — the review queue, call detail,
+  submitting a review, submitting a call — answers 503; `/health` stays open.
+- **Reviewer agreement** (`sawti.eval.metrics.reviewer_agreement_by_category`,
+  `scripts/reviewer_agreement.py`): claim-level (confirmed / judged) and
+  call-level (all-confirm reviews / reviews), per language, escalated calls
+  only. The dev database has **0** review submissions — no human review has
+  happened yet — so the recorded rate is n = 0, not a number.
+- **e2e on a scratch database:** `make e2e` recreates `sawti_e2e`, points the
+  stack at it, and restores the dev database afterwards, pass or fail. The two
+  synthetic e2e calls written to the dev database earlier (with their
+  corrections and checkpoint threads) were deleted after a `pg_dump`
+  (`data/backups/sawti-pre-backfill-20261007-104235.dump`).
+
+### Backfill status (end of 2026-10-07)
+
+81 of the 103 stored corrections induced (71 rules stored, 10 conflicts),
+then the daily Gemini cap stopped it, cleanly, as designed. 22 pending;
+consolidation runs when a pass completes. Resume with
+`uv run python scripts/induce_rules_from_corrections.py` after the quota
+resets. Per-language counts: `eval_results.md`, 2026-10-07 backfill round.

@@ -221,9 +221,21 @@ the rest of the phase already answers, and the comparison table is this
 phase's own done-when measurement once both serving modes exist. See
 `docs/09-DECISIONS.md`, 2026-09-27.
 
-**Carried debt this phase must clear:** the graph's checkpointer is
-process-local `MemorySaver` — a review queue that evaporates on restart.
+**Carried debt this phase must clear:** ~~the graph's checkpointer is
+process-local `MemorySaver` — a review queue that evaporates on restart.~~
+✅ **Cleared in 6.1 (2026-10-06):** Postgres checkpointer
+(`sawti.db.checkpointer`, `langgraph-checkpoint-postgres==2.0.21`); a run
+interrupted for review in one process is resumed and finished by another.
 Tracked in `docs/09-DECISIONS.md`.
+
+**Progress:**
+- ✅ 6.1 — persistence and durable human-in-the-loop: Alembic schema,
+  session factory, Postgres checkpointer, restart test.
+- ✅ 6.2 — async service in containers (2026-10-07): FastAPI review API,
+  Celery worker with retries and an idempotency guard, `api` / `worker` /
+  `migrate` containers; e2e passes over HTTP in containers; latency,
+  throughput, retry/failure rates, image sizes and cold start recorded per
+  language in `eval_results.md`.
 
 **Done when:** a call can be submitted over HTTP, analyzed asynchronously,
 escalated, reviewed by a human through the dashboard, and resumed — with

@@ -1,0 +1,21 @@
+# Build context for the api/worker images: source, lockfile, alembic.ini only.
+# Secrets and data must never reach an image layer.
+.env
+.env.*
+!.env.example
+data/
+notebooks/
+.git/
+.venv/
+.venv-linux/
+.claude/
+**/__pycache__/
+**/*.pyc
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+pytest-cache-files-*/
+sawti_snapshot.tar.gz
+tests/
+scripts/
+docs/

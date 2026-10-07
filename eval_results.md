@@ -71,6 +71,31 @@ blended number across `ar` / `en` / `mixed`.
 | Grounding precision | 0.990 | 1.000 | 0.986 |
 | Unsupported claim rate | 0.000 | 0.000 | 0.004 |
 
+> **Pre-fix metric (added 2026-10-07; numbers above unchanged).** Grounding
+> precision and unsupported claim rate in this round checked quotes against
+> the *raw* transcript, while `ground` verifies against the *redacted* one the
+> model saw, so a legitimately grounded quote containing a placeholder
+> (`[PHONE]` …) scored as unsupported. The bias only makes these two metrics
+> look worse. This round's predictions were not saved, so it cannot be
+> re-scored; the exact bound instead:
+>
+> - **Unsupported claim rate:** `ar` 0.000 and `en` 0.000 are exact (nothing
+>   to over-count). `mixed` 0.004 is exactly **2 of 513** emitted claims
+>   (523 proposed − 10 rejected; 2/513 = 0.0039, and no other count rounds to
+>   0.004). The fixed value is in **[0.000, 0.004]**: at most 2 claims, all
+>   `mixed`. Re-scoring the phase 4 analyses that were saved (round below,
+>   2026-10-07) moved `mixed` from 0.0039 to exactly 0.000.
+> - **Grounding precision:** `en` 1.000 is exact. `ar` 0.990 and `mixed`
+>   0.986 are lower bounds: true values in [0.990, 1.000] and [0.986, 1.000].
+>   This metric also counts sentiment-point quotes, whose model paraphrases
+>   are a second cause of shortfall, and per-quote counts were not recorded,
+>   so the placeholder share cannot be separated out. Only calls whose
+>   transcript contains PII can be affected: ar 9/60, en 1/30, mixed 12/60.
+>   In the re-scored phase 4 sample the whole shift was `mixed`; `ar` did not
+>   move.
+>
+> 6.3 produces fresh evals with the fixed metric.
+
 ### Phase 1 → Phase 2 comparison
 
 Both rounds above ran on 2026-09-22, over the same 150-call reference set, with
@@ -408,6 +433,7 @@ Memory trend: **rising** (0.853 → 0.874). Control trend: **rising** (0.839 →
 - Rubric agreement (first batch → last batch): memory 0.938 → 0.946, control 0.910 → 0.939
 - Grounding precision (first batch → last batch): memory 0.994 → 0.988, control 0.994 → 0.976
 - Unsupported claim rate (first batch → last batch): memory 0.000 → 0.009, control 0.000 → 0.010
+- *(Pre-fix metric — grounding precision and unsupported claim rate here checked the raw transcript. The stored subset of this run's analyses is re-scored with the fixed metric in the 2026-10-07 round below: `mixed` unsupported claim rate 0.0039 → 0.000.)*
 
 ### Memory pipeline activity
 
@@ -717,3 +743,237 @@ objects (so train and eval tasks match), retrain, and re-run this exact
 script on the same 15 calls. Success criterion: tuned retryable-failure
 count ≤ base's (2), with no metric regressing on the shared calls; record
 per-call attempt counts in the JSON rather than by hand.
+
+---
+
+## Round: 2026-10-07 — phase 6.2, the service in containers: latency, throughput, retries, cold start
+
+Measured with `scripts/measure_service.py` against the full compose stack
+(`migrate` → `api` + N × `worker`, Postgres, Redis) on Docker Desktop,
+Apple M1 8 GB host, Docker VM 8 vCPU / 3.8 GiB, `linux/arm64` images.
+Raw per-call results: `data/service_measurements/20261007T100929_gemini.json`
+and `data/service_measurements/20261007T102541_fake.json`.
+
+**How to read these.** Each run is a **burst**: every call is submitted at
+once, ar/en/mixed interleaved, and the run ends when all are terminal. Queue
+wait therefore measures a call's position in a backlog, not idle latency.
+Processing time is one task's own duration (claim → record written). p50/p95
+use linear interpolation; with n = 3 or 20 per cell, p95 sits close to the
+max. Each worker runs one task at a time (`--concurrency=1`).
+
+Two providers, for two different questions:
+
+- **`gemini`** (the real provider, `gemini-flash-lite-latest`, free tier) —
+  1 worker, 3 calls per language. What a real call costs. Not scaled up:
+  the free tier's 15 requests/min would cap throughput at ~15 calls/min no
+  matter how many workers, which measures Google's quota, not this system.
+- **`fake`** (`sawti.llm.fake_provider`, offline, deterministic) with a
+  simulated **5.0 s** model latency — matched to Gemini's measured ~5 s
+  processing p50 — at 1, 2 and 4 workers, 20 calls per language. What the
+  system itself adds and how it scales. Every fake call escalates by
+  construction (2 of 3 claims grounded), so these runs also exercise the
+  checkpoint write of an interrupted run on every call.
+
+### Real provider (gemini), 1 worker, n = 3 per language
+
+| Language | Queue wait p50 / p95 (s) | Processing p50 / p95 (s) | Retry rate | Failure rate | Outcomes |
+|---|---|---|---|---|---|
+| ar    | 16.6 / 31.1 | 5.76 / 5.94 | 0 / 3 | 0 / 3 | 3 completed |
+| en    | 22.6 / 35.9 | 5.12 / 5.85 | 0 / 3 | 0 / 3 | 3 completed |
+| mixed | 27.6 / 41.0 | 5.19 / 5.26 | 0 / 3 | 0 / 3 | 3 completed |
+
+Throughput: 11.25 calls/min (9 calls in 48.0 s). The queue-wait gradient
+ar < en < mixed is submission order within the interleaved burst (each
+language's k-th call is submitted one and two slots after ar's), not a
+language effect. All 9 auto-passed (no escalation) — a small sample, not a
+grounding result.
+
+### System capacity (fake provider, 5.0 s simulated latency), n = 20 per language per run
+
+| Workers | Language | Queue wait p50 / p95 (s) | Processing p50 / p95 (s) | Retry rate | Failure rate |
+|---|---|---|---|---|---|
+| 1 | ar    | 145.5 / 276.7 | 5.08 / 5.19 | 0 | 0 |
+| 1 | en    | 150.7 / 281.8 | 5.08 / 5.19 | 0 | 0 |
+| 1 | mixed | 155.9 / 286.8 | 5.08 / 5.13 | 0 | 0 |
+| 2 | ar    |  71.7 / 137.9 | 5.09 / 5.17 | 0 | 0 |
+| 2 | en    |  74.2 / 138.2 | 5.08 / 5.18 | 0 | 0 |
+| 2 | mixed |  76.7 / 143.1 | 5.08 / 5.12 | 0 | 0 |
+| 4 | ar    |  39.2 /  72.3 | 5.12 / 5.88 | 0 | 0 |
+| 4 | en    |  41.8 /  72.3 | 5.12 / 5.23 | 0 | 0 |
+| 4 | mixed |  44.3 /  77.2 | 5.12 / 5.24 | 0 | 0 |
+
+| Workers | Throughput (calls/min) | Ideal at 5.08 s/call | Efficiency | Wall time (60 calls) |
+|---|---|---|---|---|
+| 1 | 11.72 | 11.8 | 99% | 307.1 s |
+| 2 | 23.42 | 23.6 | 99% | 153.7 s |
+| 4 | 42.90 | 47.2 | 91% | 83.9 s |
+
+**Overhead per task: ~0.08 s** above the simulated model latency (processing
+p50 5.08 s vs 5.00 s): DB claim, memory-rule lookup, graph run on the
+Postgres checkpointer (including the interrupt write), record insert. At 4
+workers p50 rises to 5.12 s and one ar p95 to 5.88 s — contention on the
+shared 3.8 GiB / 8 vCPU VM, which is also where the 9% efficiency loss goes.
+
+### Retries and failures
+
+0 retries and 0 failures across all 189 calls. That is an honest result for
+these runs and **not** evidence the retry path works under load: the fake
+provider never errors, and the 9 real calls hit no 429. The retry path is
+covered by tests (`tests/api/test_tasks.py`: a 429 re-queues and the retry
+finishes; retries exhausted ends `failed`; a non-transient error escalates
+instead of retrying), not by this measurement.
+
+### Images and cold start
+
+| Image | Uncompressed (`docker images`) | Compressed content (`docker image inspect .Size`) |
+|---|---|---|
+| `sawti-api`    | 932 MB | 197 MB |
+| `sawti-worker` | 3.9 GB | 1.03 GB |
+
+The api image carries no torch / transformers / sentence-transformers
+(`uv export --prune sentence-transformers`). The worker image bakes in the
+`paraphrase-multilingual-MiniLM-L12-v2` weights, so cold start is a load
+from local disk.
+
+**Worker cold start** (embedding model load in `worker_process_init`, from
+the worker's own log line): **3.9 – 5.4 s** for one or two workers starting
+together (3.88, 4.22, 5.27, 5.37 in the recorded runs); **~12.0 s** each
+(12.03 – 12.09) when four start at once on the same VM. One worker measured
+~845 MiB resident with the model loaded (`docker stats`); four would be
+~3.4 GiB of the VM's 3.8 GiB by that estimate (not measured during the run)
+— no worker was OOM-killed, but four is about the ceiling on this VM.
+
+### Caveats
+
+1. **Synthetic transcripts, synthetic load.** 60 calls per language
+   category at most; the real-provider sample is 3 per language.
+2. **Fake latency is a constant.** Real model latency varies (Gemini
+   p95/p50 here ≈ 1.03 – 1.14); a constant 5.0 s hides tail effects.
+3. **`memory_rules` was empty** in every run (no rule store existed before
+   6.2), so retrieval returned immediately and the loaded embedding model
+   was never queried. Retrieval cost per call is not in these numbers.
+4. **One machine.** Workers, API, Postgres and Redis share one Docker VM.
+
+
+---
+
+## Round: 2026-10-07 — grounding metrics re-scored against the redacted text (pre-fix vs fixed)
+
+**What changed.** `grounding_precision_by_category` and
+`unsupported_claim_rate_by_category` now check quotes against the redacted
+transcript — the string the model saw and the one `ground` verifies — instead
+of the raw file. See `docs/09-DECISIONS.md`, 2026-10-07. The old numbers in
+the rounds above are **not** overwritten; they are marked "pre-fix metric".
+
+**What was re-scored.** Phase 2's and phase 4's full prediction sets were never
+saved. What *was* saved is the `original` analysis of each of the 103 stored
+corrections (`call_analyses` in the dev database): 85 from the phase 4
+five-batch run (memory arm, calls where the agent disagreed with the
+reference) and 18 from phase 4's synthetic-correction step (`synthetic-day1`).
+Scored here twice — raw vs redacted — so the two columns differ by the metric
+alone. Zero LLM calls. `scripts/rescore_stored_analyses.py`; raw output
+`data/rescore/2026-10-07_stored_phase4_analyses.json`.
+
+This is a **subset selected for disagreement**, not phase 4's population:
+read the change between the columns, not the absolute values, as the finding.
+
+### All 103 stored analyses
+
+| Language | n | Grounding precision, pre-fix → fixed | Unsupported claim rate, pre-fix → fixed |
+|---|---|---|---|
+| ar    | 27 | 0.9973 → 0.9973 | 0.0000 → 0.0000 |
+| en    | 19 | 1.0000 → 1.0000 | 0.0000 → 0.0000 |
+| mixed | 57 | 0.9861 → **0.9987** | 0.0039 → **0.0000** |
+
+### By source
+
+| Source | Language | n | Grounding precision, pre-fix → fixed | Unsupported claim rate, pre-fix → fixed |
+|---|---|---|---|---|
+| five-batch (phase 4 run) | ar    | 23 | 0.9969 → 0.9969 | 0.0000 → 0.0000 |
+| five-batch (phase 4 run) | en    | 14 | 1.0000 → 1.0000 | 0.0000 → 0.0000 |
+| five-batch (phase 4 run) | mixed | 48 | 0.9880 → 0.9985 | 0.0023 → 0.0000 |
+| synthetic-day1           | ar    |  4 | 1.0000 → 1.0000 | 0.0000 → 0.0000 |
+| synthetic-day1           | en    |  5 | 1.0000 → 1.0000 | 0.0000 → 0.0000 |
+| synthetic-day1           | mixed |  9 | 0.9760 → 1.0000 | 0.0123 → 0.0000 |
+
+**Finding.** Every unsupported claim the old metric reported in this sample
+was a redaction artifact: with the fixed metric the rate is 0.000 in all three
+categories, which is what the grounding gate guarantees by construction. The
+whole shift is `mixed` (20% of `mixed` transcripts contain PII). The residual
+precision shortfall (`ar` 0.9973, `mixed` 0.9987) is the sentiment-point
+paraphrases below, which grounding precision counts and `ground` did not
+check until today.
+
+### Sentiment points the new `ground` rule drops (same 103 analyses)
+
+As of 2026-10-07 `ground` drops sentiment points whose quote is not verbatim
+in the redacted transcript (`docs/09-DECISIONS.md`). Applied to the stored
+analyses, which predate the rule:
+
+| Language | Sentiment points | Would be dropped | Rate |
+|---|---|---|---|
+| ar    | 142 | 1 | 0.7% |
+| en    |  96 | 0 | 0.0% |
+| mixed | 281 | 1 | 0.4% |
+
+The two are the quotes recorded in the 2026-10-07 dev-database conversion
+entry (`call_0028_ar`: dropped quotation marks; `call_0073_mixed`: حاليأ for
+حالياً). Routing is unaffected: sentiment drops do not count toward grounding
+coverage.
+
+---
+
+## Round: 2026-10-07 — reviewer agreement with the agent (service reviews)
+
+`scripts/reviewer_agreement.py` over `review_submissions` in the dev database;
+definitions in `sawti.eval.metrics.reviewer_agreement_by_category`:
+**claim agreement** = confirmed claims / judged claims, **call agreement** =
+reviews confirming every claim / reviews. Escalated calls only — reviewers see
+`awaiting_review` calls, selected for low grounding coverage — so this will
+never describe the auto-passed population.
+
+| Language | Reviews | Claims judged | Claim agreement | Call agreement |
+|---|---|---|---|---|
+| ar    | 0 | 0 | — | — |
+| en    | 0 | 0 | — | — |
+| mixed | 0 | 0 | — | — |
+
+**No number yet, honestly.** No human has reviewed a call through the service:
+the only submissions ever made were the e2e's synthetic ones, which were
+deleted from the dev database (`docs/09-DECISIONS.md`, 2026-10-07), and the
+phase 4 corrections are ground-truth diffs, not per-claim verdicts, so they
+cannot be turned into an agreement rate. The metric and script are in place
+and tested; the first real rate needs the 6.4 dashboard and real reviewers.
+
+---
+
+## Round: 2026-10-07 — memory-rule backfill over the 103 stored corrections (PARTIAL: 81 / 103)
+
+`scripts/induce_rules_from_corrections.py`: the service's memory loop
+(`sawti.memory.persistence.induce_and_store` — induce → conflict check →
+store → consolidate) over every correction in the dev database, oldest
+first, Gemini `gemini-flash-lite-latest`, throttled to one request per 4.5 s.
+**Stopped by the free tier's 500-requests/day cap after 81 corrections**;
+re-running the same command after the reset resumes at correction 82.
+Counts read from the database, per language category of the corrected call.
+
+| Language | Corrections | Induced | → rule stored | → conflict (not stored) | Pending | Active rules from this language |
+|---|---|---|---|---|---|---|
+| ar    | 27 | 21 | 20 | 1 |  6 | 20 |
+| en    | 19 | 17 | 15 | 2 |  2 | 15 |
+| mixed | 57 | 43 | 36 | 7 | 14 | 36 |
+| **total** | 103 | 81 | 71 | 10 | 22 | 71 |
+
+**Not final, and not yet consolidated.** `consolidate()` runs once at the end
+of a run that finishes, so these 71 rules include near-duplicates the merge
+step will collapse (phase 4's five-batch run ended with 14 active rules from
+58 corrections after per-batch consolidation). The final count, after the
+remaining 22 corrections and consolidation, will be recorded here.
+
+**Conflicts (10)** are candidates the LLM contradiction check judged
+incompatible with an existing rule; by phase 4's `insert_rule` policy neither
+side wins automatically, so they are logged and left for a human
+(`reviewer_actions.induction_outcome = 'conflict'`). 7 of the 10 are `mixed`.
+
+One `TimeoutError` occurred and was retried once after 65 s; no other
+transient errors.

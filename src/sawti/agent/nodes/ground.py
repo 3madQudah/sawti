@@ -36,7 +36,7 @@ from typing import Any, TypeVar
 
 from sawti.agent.state import AgentState
 from sawti.quotes import UNKNOWN_SPEAKER, find_quote_matches
-from sawti.schemas import Claim, Quote
+from sawti.schemas import Claim, Quote, SentimentPoint, SentimentTrajectory
 
 logger = logging.getLogger(__name__)
 
@@ -118,6 +118,34 @@ def _partition(transcript: str, claims: list[ClaimT]) -> tuple[list[ClaimT], lis
     return kept, dropped
 
 
+def _ground_sentiment(
+    transcript: str, trajectory: SentimentTrajectory
+) -> tuple[SentimentTrajectory, list[SentimentPoint]]:
+    """Split sentiment points into (verbatim-and-re-anchored, dropped), the same rule as claims.
+
+    Phase 6.2. Before this, `ground` skipped sentiment points, and model
+    paraphrases (a dropped quotation mark, حاليأ for حالياً) were stored as
+    evidence — see docs/09-DECISIONS.md, 2026-10-07. Order is preserved, so
+    the trajectory stays chronological.
+    """
+    kept: list[SentimentPoint] = []
+    dropped: list[SentimentPoint] = []
+    for point in trajectory.points:
+        matches = find_quote_matches(transcript, point.quote.text) if point.quote.text else []
+        if not matches:
+            dropped.append(point)
+            continue
+        match = matches[0]
+        located = Quote(
+            text=point.quote.text,
+            speaker=match.speaker or point.quote.speaker or UNKNOWN_SPEAKER,
+            start_char=match.start_char,
+            end_char=match.end_char,
+        )
+        kept.append(point.model_copy(update={"quote": located}))
+    return SentimentTrajectory(points=kept), dropped
+
+
 async def ground(state: AgentState) -> dict[str, Any]:
     """Verify every extracted claim's evidence quote against the source transcript.
 
@@ -133,9 +161,14 @@ async def ground(state: AgentState) -> dict[str, Any]:
     Args:
         state: Current agent state, containing the extraction node's proposals.
 
+    Sentiment points get the same verbatim check (phase 6.2): non-verbatim
+    ones are dropped into `rejected_sentiment_points`, the rest re-anchored.
+    They do not count toward `grounding_coverage`.
+
     Returns:
-        A partial state update with the filtered and re-anchored claim lists, the
-        rejects, and `grounding_coverage` — the fraction of proposals that survived.
+        A partial state update with the filtered and re-anchored claim lists and
+        sentiment trajectory, the rejects, and `grounding_coverage` — the
+        fraction of proposed *claims* that survived.
     """
     # Offsets are defined against the text the model was shown, which is the
     # redacted transcript (see `AgentState.redacted_transcript`). Falling back to
@@ -168,6 +201,19 @@ async def ground(state: AgentState) -> dict[str, Any]:
         )
 
     update["rejected_claims"] = rejected
+
+    trajectory = state.get("sentiment_trajectory")
+    if trajectory is not None:
+        update["sentiment_trajectory"], update["rejected_sentiment_points"] = _ground_sentiment(
+            transcript, trajectory
+        )
+        if update["rejected_sentiment_points"]:
+            logger.info(
+                "ground: dropped %d/%d non-verbatim sentiment point(s) for %s",
+                len(update["rejected_sentiment_points"]),
+                len(trajectory.points),
+                state.get("call_id"),
+            )
     # A call that proposed nothing has nothing unsupported in it. Scoring that as
     # 0.0 would route every silent transcript to a human for the wrong reason;
     # vacuous truth is the honest reading, and emptiness shows up in the claim

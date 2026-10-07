@@ -18,8 +18,10 @@ from __future__ import annotations
 import re
 from collections import defaultdict
 from pathlib import Path
+from typing import Literal
 
 from sawti.agent.nodes.ground import is_grounded
+from sawti.privacy.redaction import redact
 from sawti.quotes import is_verbatim
 from sawti.schemas import CallAnalysis, Claim, Language, Quote
 
@@ -200,6 +202,21 @@ def rubric_agreement_by_category(
     return {language: _mean(scores) for language, scores in per_language.items()}
 
 
+#: Which text a grounding metric checks quotes against. "redacted" (the
+#: default since 2026-10-07) is what the model saw and what `ground` verifies
+#: against; "raw" is the pre-fix behavior, kept only so old numbers can be
+#: reproduced side by side. See docs/09-DECISIONS.md, 2026-10-07.
+TranscriptView = Literal["redacted", "raw"]
+
+
+def _load_transcript(path: Path, view: TranscriptView) -> str | None:
+    """A transcript file's text as the model saw it (redacted), or raw; None if missing."""
+    if not path.is_file():
+        return None
+    text = path.read_text(encoding="utf-8")
+    return redact(text).redacted_text if view == "redacted" else text
+
+
 def _evidence_quotes(analysis: CallAnalysis) -> list[Quote]:
     """Every quote a `CallAnalysis` stakes a claim on, in one flat list."""
     quotes: list[Quote] = [item.evidence for item in analysis.commitments]
@@ -213,6 +230,7 @@ def grounding_precision_by_category(
     predictions: list[CallAnalysis],
     *,
     transcript_dir: Path = DEFAULT_SYNTHETIC_DIR,
+    transcript_view: TranscriptView = "redacted",
 ) -> dict[Language, float]:
     """Compute the fraction of claims whose evidence verifiably quotes the transcript, per category.
 
@@ -235,6 +253,9 @@ def grounding_precision_by_category(
     Args:
         predictions: Model-produced analyses to check.
         transcript_dir: Directory holding `<call_id>.txt` transcripts.
+        transcript_view: Check against the redacted text the model saw (the
+            default) or the raw file (pre-2026-10-07 behavior; see
+            `TranscriptView`).
 
     Returns:
         A mapping from each `Language` present in the data to its grounding precision.
@@ -246,9 +267,8 @@ def grounding_precision_by_category(
 
     for prediction in predictions:
         if prediction.call_id not in transcript_cache:
-            path = transcript_dir / f"{prediction.call_id}.txt"
-            transcript_cache[prediction.call_id] = (
-                path.read_text(encoding="utf-8") if path.is_file() else None
+            transcript_cache[prediction.call_id] = _load_transcript(
+                transcript_dir / f"{prediction.call_id}.txt", transcript_view
             )
         transcript = transcript_cache[prediction.call_id]
         if transcript is None:
@@ -268,6 +288,7 @@ def unsupported_claim_rate_by_category(
     predictions: list[CallAnalysis],
     *,
     transcript_dir: Path = DEFAULT_SYNTHETIC_DIR,
+    transcript_view: TranscriptView = "redacted",
 ) -> dict[Language, float]:
     """Fraction of emitted claims whose evidence does not hold up, per category. Lower is better.
 
@@ -305,6 +326,7 @@ def unsupported_claim_rate_by_category(
     Args:
         predictions: Analyses as the pipeline emits them.
         transcript_dir: Directory holding `<call_id>.txt` transcripts.
+        transcript_view: As for `grounding_precision_by_category`.
 
     Returns:
         A mapping from each `Language` present in the data to its unsupported
@@ -317,9 +339,8 @@ def unsupported_claim_rate_by_category(
 
     for prediction in predictions:
         if prediction.call_id not in transcript_cache:
-            path = transcript_dir / f"{prediction.call_id}.txt"
-            transcript_cache[prediction.call_id] = (
-                path.read_text(encoding="utf-8") if path.is_file() else None
+            transcript_cache[prediction.call_id] = _load_transcript(
+                transcript_dir / f"{prediction.call_id}.txt", transcript_view
             )
         transcript = transcript_cache[prediction.call_id]
         if transcript is None:
@@ -569,3 +590,51 @@ def speaker_attribution_accuracy_by_category(
         per_language[language].append(speaker_attribution_accuracy(reference, hypothesis))
 
     return {language: _mean(scores) for language, scores in per_language.items()}
+
+
+# ---------------------------------------------------------------------------
+# Phase 6.2: reviewer agreement with the agent
+# ---------------------------------------------------------------------------
+
+
+def reviewer_agreement_by_category(
+    reviews: list[tuple[Language, list[str]]],
+) -> dict[Language, dict[str, float | int]]:
+    """How often QA reviewers agree with the agent's grounded claims, per language category.
+
+    Input is one entry per review submission: the call's language and the
+    verdict on each grounded claim (`"confirm"`, `"correct"`, `"reject"`).
+
+    Two rates, because they answer different questions:
+
+    * `claim_agreement` — confirmed claims / all judged claims (pooled), the
+      per-claim precision of what reaches a reviewer;
+    * `call_agreement` — reviews confirming every claim / all reviews, how
+      often an escalation turned out to need no change at all. A review of a
+      call with zero grounded claims counts as full agreement.
+
+    Escalated calls only: reviewers see `awaiting_review` calls, which were
+    selected for low grounding coverage — this is not agreement on the
+    auto-passed population and must not be read as such.
+
+    Returns:
+        Per language present: `reviews`, `claims`, the counts per verdict, and
+        both rates (0.0 when there is nothing to divide).
+    """
+    out: dict[Language, dict[str, float | int]] = {}
+    grouped: dict[Language, list[list[str]]] = defaultdict(list)
+    for language, verdicts in reviews:
+        grouped[language].append(verdicts)
+    for language, submissions in grouped.items():
+        claims = [verdict for verdicts in submissions for verdict in verdicts]
+        confirms = claims.count("confirm")
+        out[language] = {
+            "reviews": len(submissions),
+            "claims": len(claims),
+            "confirm": confirms,
+            "correct": claims.count("correct"),
+            "reject": claims.count("reject"),
+            "claim_agreement": confirms / len(claims) if claims else 0.0,
+            "call_agreement": sum(all(v == "confirm" for v in s) for s in submissions) / len(submissions),
+        }
+    return out

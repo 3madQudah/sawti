@@ -16,7 +16,7 @@ from datetime import UTC, datetime
 import pytest
 
 from sawti.db.models import Agent, Base
-from sawti.db.session import get_engine, get_session
+from sawti.db.session import get_engine, get_session, get_session_factory
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -53,3 +53,25 @@ def test_get_session_rolls_back_on_exception() -> None:
 
     with get_session() as session:
         assert session.get(Agent, agent_id) is None
+
+
+def test_get_session_factory_is_memoized_and_bound_to_the_shared_engine() -> None:
+    """One sessionmaker per process, on the same engine `get_engine()` returns."""
+    factory = get_session_factory()
+    assert factory is get_session_factory()
+    assert factory.kw["bind"] is get_engine()
+
+
+def test_rows_stay_readable_after_commit() -> None:
+    """`expire_on_commit=False`: attributes of a committed row load without a new query."""
+    agent_id = uuid.uuid4()
+    with get_session() as session:
+        agent = Agent(id=agent_id, name="post-commit-read", created_at=datetime.now(UTC))
+        session.add(agent)
+    # Outside the session now; an expired attribute would raise DetachedInstanceError.
+    assert agent.name == "post-commit-read"
+
+    with get_session() as session:
+        found = session.get(Agent, agent_id)
+        assert found is not None
+        session.delete(found)

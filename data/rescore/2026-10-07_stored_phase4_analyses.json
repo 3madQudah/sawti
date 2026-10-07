@@ -1,0 +1,100 @@
+{
+  "by_source": {
+    "five-batch-experiment": {
+      "ar": {
+        "n": 23,
+        "grounding_precision_raw": 0.9968847352024922,
+        "unsupported_claim_rate_raw": 0.0,
+        "grounding_precision_redacted": 0.9968847352024922,
+        "unsupported_claim_rate_redacted": 0.0
+      },
+      "en": {
+        "n": 14,
+        "grounding_precision_raw": 1.0,
+        "unsupported_claim_rate_raw": 0.0,
+        "grounding_precision_redacted": 1.0,
+        "unsupported_claim_rate_redacted": 0.0
+      },
+      "mixed": {
+        "n": 48,
+        "grounding_precision_raw": 0.987987987987988,
+        "unsupported_claim_rate_raw": 0.002331002331002331,
+        "grounding_precision_redacted": 0.9984984984984985,
+        "unsupported_claim_rate_redacted": 0.0
+      }
+    },
+    "synthetic-day1": {
+      "ar": {
+        "n": 4,
+        "grounding_precision_raw": 1.0,
+        "unsupported_claim_rate_raw": 0.0,
+        "grounding_precision_redacted": 1.0,
+        "unsupported_claim_rate_redacted": 0.0
+      },
+      "en": {
+        "n": 5,
+        "grounding_precision_raw": 1.0,
+        "unsupported_claim_rate_raw": 0.0,
+        "grounding_precision_redacted": 1.0,
+        "unsupported_claim_rate_redacted": 0.0
+      },
+      "mixed": {
+        "n": 9,
+        "grounding_precision_raw": 0.976,
+        "unsupported_claim_rate_raw": 0.012345679012345678,
+        "grounding_precision_redacted": 1.0,
+        "unsupported_claim_rate_redacted": 0.0
+      }
+    }
+  },
+  "all_stored": {
+    "ar": {
+      "n": 27,
+      "grounding_precision_raw": 0.9973404255319149,
+      "unsupported_claim_rate_raw": 0.0,
+      "grounding_precision_redacted": 0.9973404255319149,
+      "unsupported_claim_rate_redacted": 0.0
+    },
+    "en": {
+      "n": 19,
+      "grounding_precision_raw": 1.0,
+      "unsupported_claim_rate_raw": 0.0,
+      "grounding_precision_redacted": 1.0,
+      "unsupported_claim_rate_redacted": 0.0
+    },
+    "mixed": {
+      "n": 57,
+      "grounding_precision_raw": 0.9860935524652339,
+      "unsupported_claim_rate_raw": 0.00392156862745098,
+      "grounding_precision_redacted": 0.9987357774968394,
+      "unsupported_claim_rate_redacted": 0.0
+    }
+  },
+  "sentiment_drops": {
+    "ar": {
+      "points": 142,
+      "dropped": 1
+    },
+    "en": {
+      "points": 96
+    },
+    "mixed": {
+      "points": 281,
+      "dropped": 1
+    }
+  },
+  "phase1_transcripts_with_pii": {
+    "ar": {
+      "transcripts": 60,
+      "with_pii": 9
+    },
+    "en": {
+      "transcripts": 30,
+      "with_pii": 1
+    },
+    "mixed": {
+      "transcripts": 60,
+      "with_pii": 12
+    }
+  }
+}

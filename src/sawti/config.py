@@ -8,7 +8,7 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -33,7 +33,10 @@ class Settings(BaseSettings):
     log_level: str = Field(default="INFO", alias="SAWTI_LOG_LEVEL")
 
     # --- LLM provider ---
-    llm_provider: Literal["anthropic", "vllm", "gemini"] = Field(
+    # "fake" is `sawti.llm.fake_provider`: deterministic, no network. For the
+    # 6.2 container e2e and load measurement, so neither spends provider quota
+    # nor measures a free-tier rate limit instead of this system.
+    llm_provider: Literal["anthropic", "vllm", "gemini", "fake"] = Field(
         default="anthropic", alias="SAWTI_LLM_PROVIDER"
     )
     llm_model: str = Field(default="claude-sonnet-5", alias="SAWTI_LLM_MODEL")
@@ -59,6 +62,43 @@ class Settings(BaseSettings):
     redis_url: str = Field(default="redis://localhost:6379/0", alias="REDIS_URL")
     celery_broker_url: str = Field(default="redis://localhost:6379/0", alias="CELERY_BROKER_URL")
     celery_result_backend: str = Field(default="redis://localhost:6379/1", alias="CELERY_RESULT_BACKEND")
+
+    # --- Service (phase 6.2) ---
+    api_host: str = Field(default="127.0.0.1", alias="SAWTI_API_HOST")
+    api_port: int = Field(default=8000, alias="SAWTI_API_PORT")
+    # Shared key checked by `sawti.api.deps`. NOT authentication — see
+    # docs/09-DECISIONS.md 2026-10-06 (decision 3). Unset means every
+    # protected route refuses (fail closed), never "open".
+    api_key: SecretStr | None = Field(default=None, alias="SAWTI_API_KEY")
+    # Browser origins allowed to call the API (the 6.4 dashboard). JSON list.
+    cors_origins: list[str] = Field(default_factory=list, alias="SAWTI_CORS_ORIGINS")
+    # Celery retry policy for transient provider errors (429 / quota / 5xx).
+    # Exponential: backoff * 2**attempt, capped at backoff_max.
+    task_max_retries: int = Field(default=5, ge=0, alias="SAWTI_TASK_MAX_RETRIES")
+    task_retry_backoff_seconds: float = Field(default=10.0, ge=0.0, alias="SAWTI_TASK_RETRY_BACKOFF_SECONDS")
+    task_retry_backoff_max_seconds: float = Field(
+        default=300.0, ge=0.0, alias="SAWTI_TASK_RETRY_BACKOFF_MAX_SECONDS"
+    )
+    # Reaper (Celery beat): calls stuck `queued` (no message enqueued for this
+    # long) or `processing` (claimed this long ago, worker presumably gone).
+    # The processing timeout must exceed one task attempt (provider timeout
+    # 120 s); the queued one must exceed the longest retry backoff.
+    reaper_interval_seconds: float = Field(default=60.0, gt=0.0, alias="SAWTI_REAPER_INTERVAL_SECONDS")
+    reaper_queued_timeout_seconds: float = Field(
+        default=900.0, gt=0.0, alias="SAWTI_REAPER_QUEUED_TIMEOUT_SECONDS"
+    )
+    reaper_processing_timeout_seconds: float = Field(
+        default=900.0, gt=0.0, alias="SAWTI_REAPER_PROCESSING_TIMEOUT_SECONDS"
+    )
+    # Top-k memory rules folded into `extract`'s prompt, as in phase 4.
+    memory_top_k: int = Field(default=5, ge=0, alias="SAWTI_MEMORY_TOP_K")
+    # Load the embedding model when a worker process starts, so the first task
+    # does not pay for it and cold start is measurable on its own.
+    worker_preload_embeddings: bool = Field(default=True, alias="SAWTI_WORKER_PRELOAD_EMBEDDINGS")
+    # `fake` provider knobs: simulated model latency, and how many unsupported
+    # claims it proposes (1 -> coverage 2/3 -> escalates at the 0.7 default).
+    fake_llm_latency_seconds: float = Field(default=0.0, ge=0.0, alias="SAWTI_FAKE_LLM_LATENCY_SECONDS")
+    fake_llm_ungrounded_claims: int = Field(default=1, ge=0, alias="SAWTI_FAKE_LLM_UNGROUNDED_CLAIMS")
 
     # --- Langfuse ---
     langfuse_public_key: str | None = Field(default=None, alias="LANGFUSE_PUBLIC_KEY")

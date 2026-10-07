@@ -82,6 +82,13 @@ def _render_analysis(analysis: CallAnalysis) -> str:
 
 _COMMITMENT_DEADLINE_RE = re.compile(r"^commitments\[(\d+)\]\.deadline$")
 _RUBRIC_SCORE_RE = re.compile(r"^rubric_scores\[(.+)\]$")
+# Phase 6.2: item-level paths written by the review API
+# (`sawti.api.records.plan_corrections`) when a reviewer edits one claim's
+# fields. They render that one item in full — including its free text,
+# because the reviewer's edit *is* the free text — and nothing else.
+_COMMITMENT_ITEM_RE = re.compile(r"^commitments\[(\d+)\]$")
+_FLAG_ITEM_RE = re.compile(r"^compliance_flags\[(\d+)\]$")
+_RUBRIC_JUSTIFICATION_RE = re.compile(r"^rubric_scores\[(.+)\]\.justification$")
 
 
 def _describe_field(analysis: CallAnalysis, error_location: str) -> str:
@@ -106,6 +113,31 @@ def _describe_field(analysis: CallAnalysis, error_location: str) -> str:
     if error_location == "compliance_flags":
         flags = ", ".join(flag.rule_id for flag in analysis.compliance_flags) or "none"
         return f"flags=[{flags}]"
+
+    item_match = _COMMITMENT_ITEM_RE.match(error_location)
+    if item_match:
+        index = int(item_match.group(1))
+        if index >= len(analysis.commitments):
+            return "commitment absent"
+        c = analysis.commitments[index]
+        deadline = c.deadline.isoformat() if c.deadline else "none"
+        return f"description={c.description!r}; promised_by={c.promised_by}; deadline={deadline}"
+
+    flag_match = _FLAG_ITEM_RE.match(error_location)
+    if flag_match:
+        index = int(flag_match.group(1))
+        if index >= len(analysis.compliance_flags):
+            return "flag absent"
+        f = analysis.compliance_flags[index]
+        return f"rule_id={f.rule_id}; severity={f.severity.value}; description={f.description!r}"
+
+    justification_match = _RUBRIC_JUSTIFICATION_RE.match(error_location)
+    if justification_match:
+        criterion = justification_match.group(1)
+        found = next((s for s in analysis.rubric_scores if s.criterion == criterion), None)
+        if found is None:
+            return f"{criterion}=not scored"
+        return f"{criterion}={found.score:.2f}; justification={found.justification!r}"
 
     rubric_match = _RUBRIC_SCORE_RE.match(error_location)
     if rubric_match:

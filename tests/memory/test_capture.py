@@ -168,3 +168,26 @@ def test_persist_analysis_record_satisfies_capture_correction_fk() -> None:
             agent_row = session.query(Agent).filter_by(external_id=external_id).one_or_none()
             if agent_row is not None:
                 session.delete(agent_row)
+
+
+def test_persist_analysis_record_stores_only_the_redacted_transcript() -> None:
+    """The `Call` row holds redacted text and the redaction count — never the raw PII."""
+    external_id = f"test-placeholder-{uuid.uuid4()}"
+    original = _sample_analysis("call_test_persist_redacts", summary="Placeholder summary.")
+    raw = "Customer: my number is 0791234567 and my email is lina@example.com"
+
+    with get_session() as session:
+        agent_id = get_or_create_placeholder_agent(session, external_id=external_id, name="Test Bot")
+    with get_session() as session:
+        persist_analysis_record(session, original, agent_id=agent_id, transcript=raw)
+
+    with get_session() as session:
+        record = session.get(CallAnalysisRecord, original.id)
+        assert record is not None
+        call_row = session.get(Call, record.call_id)
+        assert call_row is not None
+        assert "0791234567" not in (call_row.redacted_transcript or "")
+        assert "lina@example.com" not in (call_row.redacted_transcript or "")
+        assert call_row.pii_redacted_count == 2
+        session.delete(record)
+        session.delete(call_row)

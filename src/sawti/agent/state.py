@@ -30,6 +30,7 @@ from sawti.schemas import (
     ComplianceFlag,
     Language,
     RubricScore,
+    SentimentPoint,
     SentimentTrajectory,
 )
 
@@ -43,6 +44,10 @@ from sawti.schemas import (
 #   auto_passed    — confidence >= threshold; the graph may return a verdict.
 #   awaiting_human — confidence < threshold; the graph interrupts (stage 4).
 #   human_reviewed — a reviewer resumed the graph and supplied corrections.
+#
+# The service's persisted lifecycle is a different, wider value:
+# `sawti.schemas.CallStatus` (`calls.status`), which also covers time spent
+# queued and infrastructure failure. Its docstring holds the mapping.
 ReviewStatus = Literal["pending", "auto_passed", "awaiting_human", "human_reviewed"]
 
 
@@ -95,6 +100,11 @@ class AgentState(TypedDict, total=False):
     # unsupported claims measurably drop versus the phase 1 baseline — is
     # directly countable from a graph run rather than inferred afterwards.
     rejected_claims: list[Claim]
+    # Sentiment points whose quote is not verbatim in `redacted_transcript`
+    # (phase 6.2). Dropped from `sentiment_trajectory` like rejected claims,
+    # but not counted in `grounding_coverage`: sentiment is an interpretation,
+    # and routing stays a statement about claims.
+    rejected_sentiment_points: list[SentimentPoint]
     # Fraction of extracted claims that survived grounding, in [0.0, 1.0].
     # Written by `ground` and consumed by `confidence` in stage 3.
     grounding_coverage: float

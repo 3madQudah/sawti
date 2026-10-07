@@ -1,3 +1,26 @@
+# Local stack. `make up` starts postgres + redis only (dev/test against them
+# from the host); `make stack` builds and starts the whole service (phase 6.2).
+
+x-sawti-env: &sawti-env
+  # Inside the network the services talk to each other by name. These
+  # override the host-oriented DATABASE_URL / REDIS urls in .env.
+  # SAWTI_SERVICE_DB picks the database the stack uses (default: the dev
+  # database). scripts/measure_service.py points it at a scratch one.
+  DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-sawti}:${POSTGRES_PASSWORD:-sawti}@postgres:5432/${SAWTI_SERVICE_DB:-sawti}
+  REDIS_URL: redis://redis:6379/0
+  CELERY_BROKER_URL: redis://redis:6379/0
+  CELERY_RESULT_BACKEND: redis://redis:6379/1
+  # Empty = unset: the API then refuses every protected route (fail closed).
+  SAWTI_API_KEY: ${SAWTI_API_KEY:-}
+  SAWTI_CORS_ORIGINS: ${SAWTI_CORS_ORIGINS:-[]}
+  # `fake` = deterministic offline provider, used by the e2e and the load
+  # measurement; `gemini` needs GEMINI_API_KEY in .env.
+  SAWTI_LLM_PROVIDER: ${SAWTI_LLM_PROVIDER:-gemini}
+  SAWTI_FAKE_LLM_LATENCY_SECONDS: ${SAWTI_FAKE_LLM_LATENCY_SECONDS:-0}
+  SAWTI_WORKER_PRELOAD_EMBEDDINGS: ${SAWTI_WORKER_PRELOAD_EMBEDDINGS:-true}
+  SAWTI_CONFIDENCE_THRESHOLD: ${SAWTI_CONFIDENCE_THRESHOLD:-0.7}
+  SAWTI_LOG_LEVEL: ${SAWTI_LOG_LEVEL:-INFO}
+
 services:
   postgres:
     image: postgres:16-alpine
@@ -26,6 +49,66 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+
+  # One-shot: schema to head, then LangGraph's checkpoint tables — once,
+  # before any worker, because the checkpointer's first-time setup() is not
+  # safe to run from several processes at once.
+  migrate:
+    build: { context: ., target: api }
+    image: sawti-api
+    profiles: ["service"]
+    env_file: [{ path: .env, required: false }]
+    environment: *sawti-env
+    command: ["sh", "-c", "alembic upgrade head && python -m sawti.db.checkpointer"]
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: "no"
+
+  api:
+    build: { context: ., target: api }
+    image: sawti-api
+    profiles: ["service"]
+    env_file: [{ path: .env, required: false }]
+    environment: *sawti-env
+    ports:
+      - "${SAWTI_API_PORT:-8000}:8000"
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  # Scale with `docker compose --profile service up -d --scale worker=N`.
+  # One task at a time per container (--concurrency=1), so N containers = N
+  # tasks in flight.
+  worker:
+    build: { context: ., target: worker }
+    image: sawti-worker
+    profiles: ["service"]
+    env_file: [{ path: .env, required: false }]
+    environment: *sawti-env
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+    restart: unless-stopped
+
+  # Celery beat: runs the reaper (`sawti.reap_stuck_calls`) on a schedule.
+  # Exactly one instance — never scale this service.
+  beat:
+    build: { context: ., target: api }
+    image: sawti-api
+    profiles: ["service"]
+    env_file: [{ path: .env, required: false }]
+    environment: *sawti-env
+    command: ["celery", "-A", "sawti.api.tasks", "beat", "--loglevel=INFO", "--schedule=/tmp/celerybeat-schedule"]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+    restart: unless-stopped
 
 volumes:
   sawti_postgres_data:

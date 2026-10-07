@@ -227,3 +227,40 @@ async def test_ground_checks_against_the_redacted_transcript_the_model_saw() -> 
 
     assert len(update["commitments"]) == 1
     assert update["grounding_coverage"] == 1.0
+
+
+# --- Sentiment points (phase 6.2) ----------------------------------------------
+
+
+async def test_ground_drops_non_verbatim_sentiment_points_and_re_anchors_the_rest() -> None:
+    from sawti.agent.nodes.ground import ground
+    from sawti.schemas import Quote, SentimentPoint, SentimentTrajectory
+
+    transcript = 'Customer: متى بترجع يعني؟ "أسرع وقت" هاي جملة!\nCustomer: Thanks a lot.\n'
+
+    def point(text: str, at: float) -> SentimentPoint:
+        return SentimentPoint(
+            quote=Quote(text=text, speaker="Customer", start_char=0, end_char=len(text)),
+            speaker="Customer",
+            score=0.0,
+            timestamp_sec=at,
+        )
+
+    paraphrase = point("متى بترجع يعني؟ أسرع وقت هاي جملة!", 0.0)  # quotation marks dropped
+    verbatim = point("Thanks a lot.", 8.0)
+    trajectory = SentimentTrajectory(points=[paraphrase, verbatim])
+    update = await ground({"redacted_transcript": transcript, "sentiment_trajectory": trajectory})
+
+    kept = update["sentiment_trajectory"].points
+    assert [p.quote.text for p in kept] == ["Thanks a lot."]
+    assert transcript[kept[0].quote.start_char : kept[0].quote.end_char] == "Thanks a lot."
+    assert update["rejected_sentiment_points"] == [paraphrase]
+    # Coverage is about claims: no claims proposed -> vacuously 1.0, sentiment drops don't move it.
+    assert update["grounding_coverage"] == 1.0
+
+
+async def test_ground_leaves_state_without_a_trajectory_alone() -> None:
+    from sawti.agent.nodes.ground import ground
+
+    update = await ground({"redacted_transcript": "Agent: hi\n"})
+    assert "sentiment_trajectory" not in update and "rejected_sentiment_points" not in update

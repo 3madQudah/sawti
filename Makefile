@@ -1,4 +1,4 @@
-.PHONY: install test lint typecheck up down fmt audio transcribe asr-eval asr-forcing
+.PHONY: install test lint typecheck up down fmt stack e2e measure audio transcribe asr-eval asr-forcing
 
 install:
 	uv sync --all-extras --dev
@@ -19,7 +19,31 @@ up:
 	docker compose up -d
 
 down:
-	docker compose down
+	docker compose --profile service down
+
+# --- Phase 6.2: the service in containers ---------------------------------
+# Whole stack: migrate (one-shot), api, worker. Provider from .env.
+stack:
+	docker compose --profile service up -d --build --wait
+
+# End-to-end over HTTP, with the deterministic fake LLM so the call escalates.
+# Runs against its own fresh database (E2E_DB), never the dev data, and puts
+# the stack back on the dev database afterwards whether or not it passed.
+E2E_DB ?= sawti_e2e
+SERVICE_CONTAINERS = migrate api worker beat
+e2e:
+	docker compose up -d --wait postgres redis
+	docker compose exec -T postgres psql -q -U sawti -d postgres \
+		-c 'DROP DATABASE IF EXISTS $(E2E_DB) WITH (FORCE)' -c 'CREATE DATABASE $(E2E_DB)'
+	SAWTI_SERVICE_DB=$(E2E_DB) SAWTI_LLM_PROVIDER=fake \
+		docker compose --profile service up -d --build --force-recreate --wait $(SERVICE_CONTAINERS)
+	uv run pytest -m integration tests/e2e -v; status=$$?; \
+		docker compose --profile service up -d --force-recreate --wait $(SERVICE_CONTAINERS); \
+		exit $$status
+
+# Latency / throughput numbers into eval_results.md (see the script's docstring).
+measure:
+	uv run python scripts/measure_service.py
 
 # --- Phase 3: audio pipeline ---------------------------------------------
 # Order matters: audio -> transcribe -> asr-eval. Each writes what the next

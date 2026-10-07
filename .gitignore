@@ -73,6 +73,10 @@ data/finetune/_diff_cache/
 # and held_out_eval.json (the actual measurements) are tracked normally.
 data/finetune/qlora_adapter/
 
+# Database backups (pg_dump). They contain call transcripts — the pre-0001
+# dev DB backup holds them *unredacted* — so they never go in git.
+data/backups/
+
 # Test / build artifacts
 .pytest_cache/
 .ruff_cache/

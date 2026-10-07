@@ -210,3 +210,13 @@ async def test_extract_injects_retrieved_rules_into_the_system_prompt(
     assert system_prompt.startswith(EXTRACTION_SYSTEM_PROMPT)
     for rule in rules:
         assert rule in system_prompt
+
+
+async def test_extract_reraises_a_transient_provider_error(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Phase 6.2: a 429 is the caller's to retry, not a reason to escalate to a human."""
+    from sawti.llm.provider import TransientProviderError
+
+    provider = _FakeProvider(error=TransientProviderError("429 RESOURCE_EXHAUSTED"))
+    monkeypatch.setattr(extract_module, "get_llm_provider", lambda: provider)
+    with pytest.raises(TransientProviderError):
+        await extract({"call_id": "c", "transcript": "Agent: hi"})

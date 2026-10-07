@@ -656,3 +656,61 @@ class TestApostropheNormalization:
     def test_arabic_text_is_unaffected(self) -> None:
         """The rule targets Latin contractions and must not touch Arabic."""
         assert normalize_for_wer("أهلاً بك، كيف حالك؟") == "اهلا بك كيف حالك"
+
+
+# --- 2026-10-07: grounding metrics check the redacted text the model saw -------
+
+
+def test_grounding_metrics_accept_a_quote_containing_a_redaction_placeholder(tmp_path) -> None:
+    """A quote verbatim in the redacted transcript is grounded; on the raw file (old behavior) it was not."""
+    from sawti.eval.metrics import grounding_precision_by_category, unsupported_claim_rate_by_category
+    from sawti.schemas import CallAnalysis, Commitment, Language, Quote
+
+    transcript_file = tmp_path / "call_9999_mixed.txt"
+    transcript_file.write_text("Agent: I will call you on 0791234567 tomorrow.\n", encoding="utf-8")
+    text = "I will call you on [NATIONAL_ID] tomorrow."
+    prediction = CallAnalysis(
+        call_id="call_9999_mixed",
+        language=Language.MIXED,
+        summary="s",
+        commitments=[
+            Commitment(
+                evidence=Quote(text=text, speaker="Agent", start_char=7, end_char=7 + len(text)),
+                promised_by="Agent",
+                description="Callback.",
+            )
+        ],
+        confidence=1.0,
+        requires_human_review=False,
+    )
+    assert unsupported_claim_rate_by_category([prediction], transcript_dir=tmp_path) == {Language.MIXED: 0.0}
+    assert grounding_precision_by_category([prediction], transcript_dir=tmp_path) == {Language.MIXED: 1.0}
+    raw = {"transcript_dir": tmp_path, "transcript_view": "raw"}
+    assert unsupported_claim_rate_by_category([prediction], **raw) == {Language.MIXED: 1.0}
+    assert grounding_precision_by_category([prediction], **raw) == {Language.MIXED: 0.0}
+
+
+def test_reviewer_agreement_is_reported_per_language_with_both_rates() -> None:
+    from sawti.eval.metrics import reviewer_agreement_by_category
+    from sawti.schemas import Language
+
+    result = reviewer_agreement_by_category(
+        [
+            (Language.AR, ["confirm", "confirm"]),
+            (Language.AR, ["confirm", "reject"]),
+            (Language.MIXED, ["correct"]),
+            (Language.EN, []),
+        ]
+    )
+    assert result[Language.AR] == {
+        "reviews": 2,
+        "claims": 4,
+        "confirm": 3,
+        "correct": 0,
+        "reject": 1,
+        "claim_agreement": 0.75,
+        "call_agreement": 0.5,
+    }
+    assert result[Language.MIXED]["claim_agreement"] == 0.0
+    assert result[Language.EN]["call_agreement"] == 1.0  # nothing to disagree with
+    assert set(result) == {Language.AR, Language.EN, Language.MIXED}

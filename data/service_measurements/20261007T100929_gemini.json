@@ -1,0 +1,69 @@
+{
+  "provider": "gemini",
+  "fake_latency_seconds": null,
+  "per_language": 3,
+  "transcripts": [
+    "call_0000_ar",
+    "call_0006_en",
+    "call_0004_mixed",
+    "call_0001_ar",
+    "call_0026_en",
+    "call_0007_mixed",
+    "call_0002_ar",
+    "call_0030_en",
+    "call_0008_mixed"
+  ],
+  "image_size_bytes": {
+    "sawti-api": 197050858,
+    "sawti-worker": 1034580368
+  },
+  "runs": [
+    {
+      "workers": 1,
+      "per_language": {
+        "ar": {
+          "n": 3,
+          "queue_wait_p50": 16.63634,
+          "queue_wait_p95": 31.1383496,
+          "processing_p50": 5.76304,
+          "processing_p95": 5.9439904,
+          "retry_rate": 0.0,
+          "failure_rate": 0.0,
+          "statuses": {
+            "completed": 3
+          }
+        },
+        "en": {
+          "n": 3,
+          "queue_wait_p50": 22.601118,
+          "queue_wait_p95": 35.9215698,
+          "processing_p50": 5.118424,
+          "processing_p95": 5.8467517,
+          "retry_rate": 0.0,
+          "failure_rate": 0.0,
+          "statuses": {
+            "completed": 3
+          }
+        },
+        "mixed": {
+          "n": 3,
+          "queue_wait_p50": 27.557572,
+          "queue_wait_p95": 41.02807,
+          "processing_p50": 5.190989,
+          "processing_p95": 5.2575611,
+          "retry_rate": 0.0,
+          "failure_rate": 0.0,
+          "statuses": {
+            "completed": 3
+          }
+        }
+      },
+      "calls": 9,
+      "wall_seconds": 47.991258,
+      "throughput_per_min": 11.252049279475024,
+      "cold_start_seconds": [
+        3.88
+      ]
+    }
+  ]
+}

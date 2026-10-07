@@ -29,6 +29,15 @@ dependencies = [
     # configured anywhere in sawti.config, and this needs no new infra
     # (no pgvector, no external embedding API). See docs/09-DECISIONS.md.
     "sentence-transformers>=3.0,<4.0",
+    # Phase 6.1 durable checkpointer (sawti.db.checkpointer). Exact pin, and
+    # deliberately not the newest 2.x: from 2.0.22 this package targets
+    # langgraph >= 0.5's checkpoint format (pending `Send`s moved into a
+    # channel) and warns at import that langgraph < 0.5 is incompatible —
+    # measured here as a crash resuming a paused `Send` fan-out. 2.0.21 is the
+    # last release built for langgraph 0.2's format. Revisit together with
+    # the langgraph pin. Guarded by tests/db/test_checkpointer.py; see
+    # docs/09-DECISIONS.md, 2026-10-06.
+    "langgraph-checkpoint-postgres==2.0.21",
 ]
 
 [project.optional-dependencies]
@@ -127,12 +136,19 @@ mypy_path = "src"
 exclude = ["notebooks", "scripts"]
 
 [[tool.mypy.overrides]]
-module = ["whisper.*", "pyannote.*", "vllm.*", "langfuse.*", "mlx_whisper.*", "edge_tts.*"]
+module = ["whisper.*", "pyannote.*", "vllm.*", "langfuse.*", "mlx_whisper.*", "edge_tts.*", "celery.*"]
 ignore_missing_imports = true
+
+# Celery ships no type information, so its `@task` decorator is untyped.
+[[tool.mypy.overrides]]
+module = ["sawti.api.tasks"]
+disallow_untyped_decorators = false
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-ra"
+# `integration` tests need the running container stack (`make e2e`).
+addopts = "-ra -m 'not integration'"
+markers = ["integration: needs the docker compose service stack running (make e2e)"]
 asyncio_mode = "auto"
 
 [tool.coverage.run]

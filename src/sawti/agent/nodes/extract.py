@@ -17,7 +17,7 @@ from pydantic import BaseModel, Field, model_validator
 
 from sawti.agent.state import AgentState
 from sawti.data.ground_truth import RUBRIC_CRITERIA
-from sawti.llm.provider import get_llm_provider
+from sawti.llm.provider import get_llm_provider, is_transient_provider_error
 from sawti.privacy.redaction import redact
 from sawti.schemas import (
     Commitment,
@@ -223,6 +223,14 @@ async def extract(state: AgentState) -> dict[str, Any]:
     would abort the run, while an `error` routes through `route_after_confidence`
     to human review, which is the behaviour the project rule demands.
 
+    The one exception (phase 6.2): a *transient* failure — rate limit, quota,
+    5xx, timeout; see `sawti.llm.provider.is_transient_provider_error` — is
+    re-raised. Escalating a call to a human because the provider said "try
+    again in a minute" wastes a reviewer; the caller retries instead (the
+    Celery task with backoff, `five_batch`'s retry loop, `run_eval`'s failure
+    accounting). Nothing is checkpointed for a node that raised, so a retry
+    re-runs `extract` from the same input.
+
     Args:
         state: Current agent state; must contain `transcript` or `redacted_transcript`.
 
@@ -249,6 +257,9 @@ async def extract(state: AgentState) -> dict[str, Any]:
         # Back to the strict contract before anything else sees it.
         proposal = ExtractionProposal.model_validate(lax.model_dump())
     except Exception as exc:
+        if is_transient_provider_error(exc):
+            logger.warning("extract: transient provider error for %s: %r", state.get("call_id"), exc)
+            raise
         logger.error("extract failed for %s: %r", state.get("call_id"), exc)
         return {"redacted_transcript": redacted, "error": f"extract: {exc!r}"}
 

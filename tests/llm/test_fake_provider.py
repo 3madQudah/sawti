@@ -1,0 +1,72 @@
+"""Tests for `sawti.llm.fake_provider` and transient-error classification in `sawti.llm.provider`.
+
+Phase 6.2.
+"""
+
+from __future__ import annotations
+
+import httpx
+import pytest
+
+from sawti.agent.nodes.ground import is_grounded
+from sawti.llm.fake_provider import FakeProvider
+from sawti.llm.provider import TransientProviderError, get_llm_provider, is_transient_provider_error
+from sawti.schemas import ExtractionProposal
+
+TRANSCRIPT = "Agent: I will call you.\nCustomer: Fine.\nAgent: Bye now.\nAgent: Third line.\n"
+
+
+async def test_fake_provider_quotes_agent_lines_verbatim_plus_unsupported_claims() -> None:
+    proposal = await FakeProvider(ungrounded_claims=2).structured_complete(
+        TRANSCRIPT, response_model=ExtractionProposal
+    )
+    grounded = [is_grounded(TRANSCRIPT, c) for c in proposal.commitments]
+    assert grounded == [True, True, False, False]
+    assert proposal.sentiment_trajectory.points[0].quote.text == "Fine."
+
+
+def test_fake_provider_is_selectable_by_config(monkeypatch: pytest.MonkeyPatch) -> None:
+    from sawti.config import get_settings
+
+    monkeypatch.setenv("SAWTI_LLM_PROVIDER", "fake")
+    get_settings.cache_clear()
+    try:
+        assert isinstance(get_llm_provider(), FakeProvider)
+    finally:
+        get_settings.cache_clear()
+
+
+class _CodeError(Exception):
+    def __init__(self, code: int) -> None:
+        super().__init__(code)
+        self.code = code
+
+
+class _StatusCodeError(Exception):
+    def __init__(self, status_code: int) -> None:
+        super().__init__(status_code)
+        self.status_code = status_code
+
+
+@pytest.mark.parametrize(
+    "exc",
+    [
+        TransientProviderError("x"),
+        TimeoutError(),
+        ConnectionResetError(),
+        httpx.ConnectError("refused"),
+        _CodeError(429),
+        _CodeError(503),
+        _StatusCodeError(429),
+    ],
+)
+def test_transient_errors_are_recognized(exc: BaseException) -> None:
+    assert is_transient_provider_error(exc)
+
+
+@pytest.mark.parametrize(
+    "exc",
+    [RuntimeError("429 in the text is not enough"), ValueError(), _CodeError(400), _StatusCodeError(401)],
+)
+def test_everything_else_is_not_transient(exc: BaseException) -> None:
+    assert not is_transient_provider_error(exc)

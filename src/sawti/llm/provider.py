@@ -24,6 +24,51 @@ _ResultT = TypeVar("_ResultT")
 DEFAULT_REQUEST_TIMEOUT_SECONDS = 120.0
 
 
+#: HTTP statuses a provider call may succeed on if simply tried again later:
+#: request timeout, rate limit / quota (429), and server-side unavailability.
+TRANSIENT_HTTP_STATUSES = frozenset({408, 429, 500, 502, 503, 504})
+
+
+class TransientProviderError(RuntimeError):
+    """A provider failure worth retrying later — raised by providers that know.
+
+    Most SDKs signal this with their own exception types instead; see
+    `is_transient_provider_error`, which recognizes those too.
+    """
+
+
+def is_transient_provider_error(exc: BaseException) -> bool:
+    """Whether `exc` is a provider failure that a later retry may succeed on.
+
+    The single classification point for phase 6.2's retry policy: transient
+    errors are retried by the Celery task with backoff; everything else goes
+    through the graph's `error` -> `escalate` path, so a human sees the call.
+
+    Recognized as transient: `TransientProviderError`, `TimeoutError`, built-in
+    connection errors, `httpx` transport errors (google-genai, openai and
+    anthropic all sit on httpx), and any exception carrying an HTTP status in
+    `TRANSIENT_HTTP_STATUSES` as `.code` (google-genai `APIError`) or
+    `.status_code` (openai / anthropic SDK errors).
+
+    Note a daily-quota 429 is classified transient too; it will exhaust the
+    retries and end `failed`, which is the honest outcome.
+    """
+    if isinstance(exc, TransientProviderError | TimeoutError | ConnectionError):
+        return True
+    try:
+        import httpx
+
+        if isinstance(exc, httpx.TransportError):
+            return True
+    except ImportError:  # pragma: no cover - httpx ships with every provider SDK here
+        pass
+    for attribute in ("code", "status_code"):
+        status = getattr(exc, attribute, None)
+        if isinstance(status, int) and status in TRANSIENT_HTTP_STATUSES:
+            return True
+    return False
+
+
 class LLMProvider(ABC):
     """Abstract base class for LLM providers.
 
@@ -122,6 +167,13 @@ def get_llm_provider() -> LLMProvider:
         from sawti.llm.anthropic_provider import AnthropicProvider
 
         return AnthropicProvider(api_key=settings.anthropic_api_key or "", model=settings.llm_model)
+    if settings.llm_provider == "fake":
+        from sawti.llm.fake_provider import FakeProvider
+
+        return FakeProvider(
+            latency_seconds=settings.fake_llm_latency_seconds,
+            ungrounded_claims=settings.fake_llm_ungrounded_claims,
+        )
     if settings.llm_provider == "vllm":
         from sawti.llm.vllm_provider import VLLMProvider
 

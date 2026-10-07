@@ -256,7 +256,7 @@ def _pg_corrections_for_language(language: Language) -> list[tuple[Correction, s
     """Every persisted `ReviewerAction` for `language`, as `(Correction, transcript_text)`."""
     with get_session() as session:
         rows = (
-            session.query(ReviewerAction, CallRow.transcript)
+            session.query(ReviewerAction, CallRow.redacted_transcript)
             .join(CallAnalysisRecord, ReviewerAction.call_analysis_id == CallAnalysisRecord.id)
             .join(CallRow, CallAnalysisRecord.call_id == CallRow.id)
             .filter(CallRow.language == language.value)

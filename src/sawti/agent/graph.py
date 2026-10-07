@@ -150,16 +150,18 @@ def build_graph(checkpointer: BaseCheckpointSaver[Any] | None = None) -> Compile
     makes the escalation branch real out of the box.
 
     `MemorySaver` is process-local: a resume only works inside the same process,
-    and everything is lost on restart. That is the correct trade for phase 2,
-    where the graph is driven by tests and the eval harness. Durable review
-    queues need a Postgres-backed saver, which depends on `sawti.db.session` —
-    still an unimplemented phase 1 stub — and is deferred to phase 6 deployment.
-    See `docs/09-DECISIONS.md`.
+    and everything is lost on restart. It stays the default because tests and
+    the eval harness want exactly that — fast, isolated, nothing to clean up.
+    The service passes a durable saver from
+    `sawti.db.checkpointer.postgres_checkpointer()` instead, so a run
+    suspended for review survives a restart and can be resumed by another
+    process. See `docs/09-DECISIONS.md` (2026-09-22, cleared 2026-10-06).
 
     Args:
         checkpointer: Where interrupted runs are persisted. Defaults to an
-            in-process `MemorySaver`. Pass an explicit saver to share state
-            across processes, or to isolate threads between tests.
+            in-process `MemorySaver`. Pass the Postgres saver for anything
+            that must outlive the process, or an explicit saver to isolate
+            threads between tests.
 
     Returns:
         The compiled graph, ready to `.ainvoke()` or `.astream()`. Because it is

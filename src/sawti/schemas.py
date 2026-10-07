@@ -35,6 +35,32 @@ class Language(str, Enum):
     MIXED = "mixed"
 
 
+class CallStatus(str, Enum):
+    """Where a call sits in the *service* lifecycle — the `calls.status` column.
+
+    Deliberately separate from `sawti.agent.state.ReviewStatus`, which is graph
+    bookkeeping inside one run. This one also covers what happens around the
+    graph (waiting in the queue, infrastructure failure). The mapping:
+
+        queued          — no graph run yet; no checkpoint thread exists.
+        processing      — the graph is running (ReviewStatus "pending").
+        awaiting_review — the graph is suspended in `escalate`
+                          (ReviewStatus "awaiting_human").
+        reviewed        — a reviewer resumed it (ReviewStatus "human_reviewed").
+        completed       — auto-passed, no human needed (ReviewStatus "auto_passed").
+        failed          — the task gave up after retries. No graph equivalent:
+                          a graph-level `error` routes to `escalate`, i.e. to
+                          `awaiting_review`, never here.
+    """
+
+    QUEUED = "queued"
+    PROCESSING = "processing"
+    AWAITING_REVIEW = "awaiting_review"
+    REVIEWED = "reviewed"
+    COMPLETED = "completed"
+    FAILED = "failed"
+
+
 class Severity(str, Enum):
     """Severity of a compliance violation."""
 
