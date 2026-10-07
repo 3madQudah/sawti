@@ -6,8 +6,10 @@ Phase 0: foundational abstraction; concrete providers are phase 1.
 from __future__ import annotations
 
 import asyncio
+import contextlib
 from abc import ABC, abstractmethod
-from collections.abc import Coroutine
+from collections.abc import Coroutine, Iterator
+from contextvars import ContextVar
 from typing import Any, TypeVar
 
 from pydantic import BaseModel
@@ -46,7 +48,8 @@ def is_transient_provider_error(exc: BaseException) -> bool:
 
     Recognized as transient: `TransientProviderError`, `TimeoutError`, built-in
     connection errors, `httpx` transport errors (google-genai, openai and
-    anthropic all sit on httpx), and any exception carrying an HTTP status in
+    anthropic all sit on httpx), the `openai` client's own connection /
+    timeout errors (the vLLM provider), and any exception carrying an HTTP status in
     `TRANSIENT_HTTP_STATUSES` as `.code` (google-genai `APIError`) or
     `.status_code` (openai / anthropic SDK errors).
 
@@ -61,6 +64,13 @@ def is_transient_provider_error(exc: BaseException) -> bool:
         if isinstance(exc, httpx.TransportError):
             return True
     except ImportError:  # pragma: no cover - httpx ships with every provider SDK here
+        pass
+    try:
+        import openai  # the vLLM provider's client wraps httpx errors in its own types
+
+        if isinstance(exc, openai.APIConnectionError):  # includes APITimeoutError
+            return True
+    except ImportError:  # pragma: no cover - openai is a base dependency
         pass
     for attribute in ("code", "status_code"):
         status = getattr(exc, attribute, None)
@@ -148,16 +158,52 @@ def run_with_timeout(
     return asyncio.run(_await())
 
 
+#: A provider to use instead of the configured one, for the duration of
+#: `provider_override()` — the benchmark's injection point (phase 6.3).
+_override: ContextVar[LLMProvider | None] = ContextVar("sawti_provider_override", default=None)
+
+
+@contextlib.contextmanager
+def provider_override(provider: LLMProvider) -> Iterator[None]:
+    """Make `get_llm_provider()` return `provider` inside the block, in this context only.
+
+    A context variable rather than patching a module attribute, so concurrent
+    graph runs in one event loop each see the provider their own task set,
+    and nothing leaks once the block exits. The provider is returned as given
+    — the caller decides whether to wrap it for tracing.
+    """
+    token = _override.set(provider)
+    try:
+        yield
+    finally:
+        _override.reset(token)
+
+
 def get_llm_provider() -> LLMProvider:
     """Return the LLM provider configured via `sawti.config.Settings.llm_provider`.
 
+    Since phase 6.3 the provider comes wrapped in
+    `sawti.observability.tracing.TracedProvider`, so every LLM call made
+    through this function is a Langfuse generation when tracing is configured
+    (and a transparent pass-through when it is not).
+
     Returns:
-        A concrete `LLMProvider` instance selected purely by config.
+        A concrete `LLMProvider` instance selected purely by config, traced.
 
     Raises:
         NotImplementedError: If `llm_provider` is set to a provider whose
             concrete class has not been implemented yet.
     """
+    override = _override.get()
+    if override is not None:
+        return override
+    from sawti.observability.tracing import TracedProvider
+
+    return TracedProvider(_build_provider(), provider_name=get_settings().llm_provider)
+
+
+def _build_provider() -> LLMProvider:
+    """The configured concrete provider, unwrapped. See `get_llm_provider`."""
     settings = get_settings()
     if settings.llm_provider == "gemini":
         from sawti.llm.gemini_provider import GeminiProvider

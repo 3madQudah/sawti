@@ -30,7 +30,7 @@ stack:
 # Runs against its own fresh database (E2E_DB), never the dev data, and puts
 # the stack back on the dev database afterwards whether or not it passed.
 E2E_DB ?= sawti_e2e
-SERVICE_CONTAINERS = migrate api worker beat
+SERVICE_CONTAINERS = migrate api worker beat langfuse
 e2e:
 	docker compose up -d --wait postgres redis
 	docker compose exec -T postgres psql -q -U sawti -d postgres \

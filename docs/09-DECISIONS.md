@@ -3262,3 +3262,225 @@ Its memory-on results could therefore have been affected — most plausibly
 understating memory (vaguer rules), though that direction is inferred, not
 measured. Not re-run (quota decision, 2026-10-07); a corrected memory-vs-
 control measurement belongs in 6.3, with complete linkage.
+
+---
+
+## 2026-10-07 — Phase 5's held-out eval ran Qwen3 in thinking mode (no `enable_thinking=False`)
+
+**Status:** recorded. Phase 5's numbers stay as they are (already marked
+preliminary in `eval_results.md`); the 6.3 run, with thinking disabled, is
+the corrected measurement.
+
+### What happened
+
+Qwen3's chat template enables "thinking" unless `enable_thinking=False` is
+passed to `apply_chat_template`. `sawti.llm.local_hf_provider.LocalHFProvider._generate`
+(used by `scripts/eval_held_out_calls.py`) and `scripts/check_forgetting.py`
+both call `apply_chat_template(messages, tokenize=False, add_generation_prompt=True)`
+without it.
+
+Evidence: all 7 stored responses in `data/finetune/forgetting_eval.json`
+(base and tuned) begin with `<think>\nOkay, the user…` — the same call
+pattern, the same session, the same checkpoint. The held-out eval saved no raw
+outputs, so thinking mode is **inferred** for that run from the identical code
+path, not observed in its own output.
+
+Training, by contrast, rendered every target through the same template with
+`add_generation_prompt=False`, which wraps the final assistant turn as
+`<think>\n\n</think>\n\n<content>` — the *non-thinking* format. So Phase 5
+evaluated the adapter in a different prompt format from the one it was
+trained in.
+
+### Could it explain (a) the ~5 min/call latency?
+
+**Plausibly a large part of it.** Every generation first produced free-form
+reasoning, then the JSON, inside `DEFAULT_MAX_NEW_TOKENS = 2048`. Reasoning
+tokens add decode time directly (4-bit HF decode on a T4 runs at single-digit
+tokens/s), and when reasoning ate the budget the JSON was truncated, failed
+to parse, and triggered a *sampled retry* — another full generation. Phase 5
+reported ~4.6 min/call base and ~6.9 min/call tuned "incl. retries". Not
+measured: how many of those tokens were reasoning. The 6.3 HF baseline runs
+the same provider with thinking off on the same hardware class, so the
+difference will be measured, not inferred.
+
+### Could it explain (b) the tuned model's higher structured-output failure rate?
+
+**Possibly a contributor, not the established mechanism.** Two ways it could
+act: reasoning text containing braces corrupts `_extract_json`'s
+first-`{`-to-last-`}` extraction, and truncation from long reasoning. Both
+affect base and tuned alike, though. What differs between them — the tuned
+model emitting fragments shaped like its training targets (invented
+`call_id`, a lone rubric score; 2026-10-06 entry) — is explained by the
+train/eval *task* mismatch, and the prompt-format mismatch (thinking on at
+eval, off in training) plausibly worsens it, since the tuned model was asked
+to continue a prompt format it never saw. The two causes are not separable
+from the saved Phase 5 data.
+
+### What 6.3 does
+
+Every Qwen3 arm passes `enable_thinking=False` — vLLM via
+`chat_template_kwargs`, the HF baseline via a new `LocalHFProvider`
+`chat_template_kwargs` option (default unchanged, so Phase 5's code path is
+reproducible as it ran). That matches the adapter's training format. Latency,
+tokens out and schema-valid rate are recorded per call, so (a) and (b) are
+measured in the corrected setup. The task mismatch (fragment-shaped training
+targets) is unchanged by this and remains open.
+
+---
+
+## 2026-10-07 — Phase 6.3 stage A: vLLM version, Langfuse, the benchmark, the memory re-run
+
+**Status:** stage A built; the Kaggle run (stage B) is pending. Hard
+constraint from the user: everything free — no paid GPU, API tier or SaaS.
+
+### vLLM `0.18.1` for Qwen3-8B on the T4
+
+The old pin (`vllm>=0.5,<0.6`) cannot load Qwen3 (support arrived in 0.8.5).
+The question was a version supporting **both** Qwen3 and the T4 (sm_75,
+fp16 only, no bf16, no FlashAttention). Evidence, checked 2026-10-07:
+
+- vLLM's install docs: "compute capability 7.5 or higher (e.g., T4, …)".
+- V0 (whose xformers backend was the classic T4 path) was removed in 0.11;
+  V1 needs a non-FlashAttention backend on sm_75.
+- `kaggle-vllm/kaggle-vllm` validated **vLLM 0.18.1 on Kaggle 2× T4,
+  FP16, TP=2** (CUDA 12.8, PyTorch 2.10, CPython 3.12): vLLM selects
+  `TRITON_ATTN`; validated defaults `dtype=float16`, `enforce_eager=True`,
+  `disable_custom_all_reduce=True`. (Validated with Qwen2.5, not Qwen3.)
+- ZeroHost-vLLM-v2 reports TP=2 "just works" on Kaggle T4s with vLLM 0.30
+  (an AWQ model, not fp16).
+- vLLM 0.15.1 crashes on T4 (CUTLASS DSL rejects sm_75; microsoft/fara#57) —
+  a reminder that "supported" is version-specific.
+
+Chosen: **0.18.1**, the only version with a documented fp16 TP=2 run on this
+exact hardware, with its validated flags. **Not verified anywhere: LoRA
+(`--enable-lora`) and structured output on a T4, and Qwen3 specifically on a
+T4** — that is what the notebook's first cell checks before anything else
+runs. Fallback if it fails: 0.30.0 (one variable in that cell).
+
+The `vllm` extra is **removed** from `pyproject.toml`: the provider talks to
+`vllm serve` over HTTP with the `openai` client (a base dependency) and never
+imports vLLM; a current vLLM pin would fight the locked torch 2.4. vLLM is
+installed only on the serving host (the notebook, in its own venv).
+
+### `sawti.llm.vllm_provider`
+
+OpenAI-compatible client. Guided decoding through the standard
+`response_format: json_schema` field (stable across vLLM versions, unlike its
+own `guided_json` → `structured_outputs` renames), against the same schema
+Gemini gets; the output is still validated by the response model, so a
+grammar-valid but constraint-violating answer counts as schema-invalid. LoRA
+on/off is the `model` name (adapter's `--lora-modules` name vs base). Qwen3
+thinking off via `chat_template_kwargs` (2026-10-07 thinking entry). Tests
+mock at the HTTP level (`httpx.MockTransport`) and check the request body
+the server would receive.
+
+### Langfuse v2, self-hosted
+
+`langfuse/langfuse:2` (2.95.11) in compose, its own `langfuse` database on the
+shared Postgres (created by the `migrate` one-shot, `sawti.db.bootstrap`),
+headless-initialized with the project keys from `.env`. v2 because v3 needs
+ClickHouse, MinIO and Redis. The SDK's default host is now
+`http://localhost:3000` — never Langfuse Cloud, a third party.
+
+What is traced (`sawti.observability.tracing`): one trace per graph run
+(`analyze_call`, `resume_call`, benchmark runs), session = call id; a span
+per node (name, duration, call_id, language, a numeric summary of what it
+wrote — never transcript text); a generation per LLM call via
+`TracedProvider`, which `get_llm_provider()` now always returns: provider,
+model, latency, tokens in/out, call_id, language, prompt and output. Token
+counts come from a new per-call usage capture (`sawti.llm.usage`, a
+context variable, so 16 concurrent calls never mix counts). **PII:** every
+string in every payload is re-redacted before the client sees it, and the
+client is built with the same function as its `mask`. Tests: a fake client
+records every payload while known PII goes through the real service
+pipeline; the container e2e then queries the **real** server's API and
+asserts the e2e call's phone number appears nowhere (its placeholder does).
+Tracing is off unless both keys are set; the test suite blanks them.
+
+**Memory cost, measured** (`docker stats`, 3.83 GiB Docker VM): Langfuse
+133–190 MiB idle, **247 MiB peak** under a 4-worker burst. Whole stack with
+4 workers + Langfuse: 2.68 GiB idle, **2.74 GiB peak**. It fits; the
+4-worker setup is not pushed over the VM limit.
+
+### The benchmark harness
+
+`sawti.eval.serving_benchmark` runs each call through the service's own graph
+with the provider injected through a new context-scoped
+`provider_override()`, and the final state through the service's
+`analysis_from_state`. Per call: latency (end to end and LLM-only), tokens,
+schema-valid / schema-invalid / error, transcript and request bytes sent,
+the prediction. JSONL checkpoint, appended and fsynced per call; resume skips
+done calls; Gemini's daily cap stops a run cleanly; a time budget stops new
+calls on Kaggle. Scoring calls the existing `sawti.eval.metrics` functions.
+
+Call set (decided with the user): 15 per language — the Phase 5 held-out ar
+set, plus seeded samples of 15 en and 15 mixed calls (unseen by the ar-only
+adapter, and outside its training language).
+
+Kaggle: `scripts/build_kaggle_bundles.py` builds three private datasets
+(adapter 87 MB; 45 redacted transcripts; `src/sawti` + pinned client
+requirements). The notebook runs vLLM and the client in separate venvs (no
+conflicts with Kaggle's preinstalled packages). The client side needs 9
+packages, verified in a clean venv. `HF_TOKEN` comes from Kaggle Secrets.
+
+### Cost and egress methods
+
+Cost is **priced as if paid; actual spend is $0.** Gemini: the paid standard
+tier price of the model the calls actually resolved to —
+`gemini-3.5-flash-lite`, $0.30 / 1M input, $2.50 / 1M output
+(ai.google.dev pricing, last updated 2026-10-07). Self-hosted: an equivalent
+2×T4 rental, $0.845/h (Google Cloud T4 at $0.42/GPU-h all-in, via
+getdeploying.com, updated 2026-10-07 — a secondary source; Google's own
+page did not render for verification) × GPU time per 1000 calls at the best
+concurrency, allocated per language by output tokens; sensitivity at $1.11/h
+(cheapest listed 2×T4). Egress: measured bytes of transcript text per call.
+In this benchmark Kaggle *is* a third party (Google); zero egress applies to
+running the same server on your own hardware, not to this run.
+
+### A5: the corrected memory comparison
+
+All 150 calls, memory off vs on with the 35 complete-linkage rules (frozen
+into `data/memory_comparison/rules_snapshot.json`), **leave-one-out**
+retrieval (no rule learned from the call's own correction; verified 0
+leaks in a dry run), two repeats of both arms (~600 requests, ~1.3 days of
+one key), 4 calls in flight (accuracy does not depend on concurrency).
+Recorded per run: provider, configured model, and a 12-hex SHA-256
+fingerprint of the API key — never the key.
+
+**Model drift, stated:** `gemini-flash-lite-latest` now resolves to
+`gemini-3.5-flash-lite`; Phase 4 ran on whatever the alias meant on
+2026-09-25 (not recorded then). The off-vs-on comparison within this run is
+internally valid; its comparison with Phase 4's numbers crosses a model
+change.
+
+### Two bugs found while building it
+
+- **Usage swallowed by nested captures.** The tracer's capture inside the
+  benchmark's kept the tokens to itself; the first 3 real Gemini records had
+  no token counts. Fixed (an inner capture forwards to the outer one),
+  tested, those 3 records discarded and re-run.
+- **`run()` in the memory runner referenced an undefined `concurrency`**;
+  caught by the linter before the run reached it. Fixed; a test now
+  executes `run()` end to end.
+
+### Free-tier Gemini latency is not the paid tier's
+
+The first real calls took 80–145 s (one diagnostic: 1,587 output tokens in
+145 s, no thinking tokens), later ones 7–24 s, against ~5 s in the 6.2
+measurement the same morning. The free tier's latency is variable and is
+what the cloud arm measures; it is reported as such, not as paid-tier
+performance.
+
+### A6: the adapter's raw-text training vs redacted serving
+
+Placeholders after redaction in the comparison set: **ar 1/15, en 1/15,
+mixed 1/15** (corpus-wide: ar 9/60, en 1/30, mixed 12/60). One call per
+language cannot separate a placeholder effect from noise, so this benchmark
+cannot measure it. **Recommendation: do not retrain for redaction alone.**
+Fold it into the retrain the task mismatch already needs (2026-10-06:
+targets as full corrected analyses): build that dataset from
+`calls.redacted_transcript` and retrain once. Measure it with this same
+notebook and call set: per language, schema-valid rate ≥ the current
+adapter's and the base model's, no accuracy regression, plus a targeted
+check on placeholder-bearing calls drawn from the 22 such calls in the
+corpus (enough to see a difference, unlike 1 per language).

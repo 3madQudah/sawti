@@ -1,0 +1,64 @@
+{
+  "_meta": {
+    "per_language": 15,
+    "seed": 20261007,
+    "ar": "Phase 5 held-out set (data/finetune/held_out_call_ids.json)",
+    "en_mixed": "seeded sample; unseen by the ar-only Phase 5 adapter, and outside its training language",
+    "calls_with_redaction_placeholders": {
+      "ar": 1,
+      "en": 1,
+      "mixed": 1
+    }
+  },
+  "ar": [
+    "call_0014_ar",
+    "call_0017_ar",
+    "call_0031_ar",
+    "call_0048_ar",
+    "call_0053_ar",
+    "call_0057_ar",
+    "call_0069_ar",
+    "call_0075_ar",
+    "call_0088_ar",
+    "call_0094_ar",
+    "call_0100_ar",
+    "call_0112_ar",
+    "call_0118_ar",
+    "call_0122_ar",
+    "call_0129_ar"
+  ],
+  "en": [
+    "call_0030_en",
+    "call_0034_en",
+    "call_0038_en",
+    "call_0062_en",
+    "call_0063_en",
+    "call_0064_en",
+    "call_0070_en",
+    "call_0098_en",
+    "call_0101_en",
+    "call_0102_en",
+    "call_0116_en",
+    "call_0117_en",
+    "call_0126_en",
+    "call_0133_en",
+    "call_0142_en"
+  ],
+  "mixed": [
+    "call_0003_mixed",
+    "call_0016_mixed",
+    "call_0021_mixed",
+    "call_0022_mixed",
+    "call_0027_mixed",
+    "call_0043_mixed",
+    "call_0059_mixed",
+    "call_0076_mixed",
+    "call_0084_mixed",
+    "call_0099_mixed",
+    "call_0109_mixed",
+    "call_0113_mixed",
+    "call_0140_mixed",
+    "call_0143_mixed",
+    "call_0144_mixed"
+  ]
+}

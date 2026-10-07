@@ -12,6 +12,7 @@ from google import genai
 from google.genai import types
 
 from sawti.llm.provider import LLMProvider, ResponseModelT
+from sawti.llm.usage import record_usage
 
 
 class GeminiProvider(LLMProvider):
@@ -27,6 +28,20 @@ class GeminiProvider(LLMProvider):
         self._client = genai.Client(api_key=api_key)
         self._model = model
 
+    @property
+    def model_name(self) -> str:
+        """The configured model id (an alias like `gemini-flash-lite-latest` resolves server-side)."""
+        return self._model
+
+    def _record(self, response: Any) -> None:
+        """Report token usage, and the concrete model version the alias resolved to (phase 6.3)."""
+        meta = getattr(response, "usage_metadata", None)
+        record_usage(
+            getattr(meta, "prompt_token_count", None),
+            getattr(meta, "candidates_token_count", None),
+            model=getattr(response, "model_version", None) or self._model,
+        )
+
     async def complete(self, prompt: str, *, system: str | None = None, **kwargs: Any) -> str:
         """See `LLMProvider.complete`."""
         config = (
@@ -37,6 +52,7 @@ class GeminiProvider(LLMProvider):
             contents=prompt,
             config=config,
         )
+        self._record(response)
         return response.text or ""
 
     async def structured_complete(
@@ -68,5 +84,6 @@ class GeminiProvider(LLMProvider):
             contents=prompt,
             config=config,
         )
+        self._record(response)
         data = json.loads(response.text or "{}")
         return response_model.model_validate(data)

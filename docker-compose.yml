@@ -20,6 +20,10 @@ x-sawti-env: &sawti-env
   SAWTI_WORKER_PRELOAD_EMBEDDINGS: ${SAWTI_WORKER_PRELOAD_EMBEDDINGS:-true}
   SAWTI_CONFIDENCE_THRESHOLD: ${SAWTI_CONFIDENCE_THRESHOLD:-0.7}
   SAWTI_LOG_LEVEL: ${SAWTI_LOG_LEVEL:-INFO}
+  # Self-hosted tracing (phase 6.3). Keys come from .env; empty = tracing off.
+  LANGFUSE_HOST: http://langfuse:3000
+  LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY:-}
+  LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY:-}
 
 services:
   postgres:
@@ -50,7 +54,8 @@ services:
       timeout: 5s
       retries: 10
 
-  # One-shot: schema to head, then LangGraph's checkpoint tables — once,
+  # One-shot: create the `langfuse` database if missing, schema to head, then
+  # LangGraph's checkpoint tables — once,
   # before any worker, because the checkpointer's first-time setup() is not
   # safe to run from several processes at once.
   migrate:
@@ -59,7 +64,10 @@ services:
     profiles: ["service"]
     env_file: [{ path: .env, required: false }]
     environment: *sawti-env
-    command: ["sh", "-c", "alembic upgrade head && python -m sawti.db.checkpointer"]
+    command:
+      - sh
+      - -c
+      - python -m sawti.db.bootstrap langfuse && alembic upgrade head && python -m sawti.db.checkpointer
     depends_on:
       postgres: { condition: service_healthy }
     restart: "no"
@@ -94,6 +102,45 @@ services:
     depends_on:
       migrate: { condition: service_completed_successfully }
       redis: { condition: service_healthy }
+    restart: unless-stopped
+
+  # Langfuse v2, self-hosted (phase 6.3). v2, not v3: it needs only Postgres
+  # (its own `langfuse` database on the shared server), where v3 adds
+  # ClickHouse, MinIO and Redis — too much for the 3.8 GiB Docker VM next to
+  # the workers. Never Langfuse Cloud: traces carry (redacted) transcripts.
+  # UI at http://localhost:3000, login LANGFUSE_INIT_USER_EMAIL / _PASSWORD.
+  langfuse:
+    image: langfuse/langfuse:2
+    profiles: ["service"]
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-sawti}:${POSTGRES_PASSWORD:-sawti}@postgres:5432/langfuse
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: ${LANGFUSE_NEXTAUTH_SECRET:-}
+      SALT: ${LANGFUSE_SALT:-}
+      ENCRYPTION_KEY: ${LANGFUSE_ENCRYPTION_KEY:-}
+      TELEMETRY_ENABLED: "false"
+      AUTH_DISABLE_SIGNUP: "true"
+      # Next.js binds to the container hostname by default; listen on all
+      # interfaces so the in-container healthcheck can reach 127.0.0.1.
+      HOSTNAME: 0.0.0.0
+      LANGFUSE_INIT_ORG_ID: sawti
+      LANGFUSE_INIT_ORG_NAME: Sawti
+      LANGFUSE_INIT_PROJECT_ID: sawti
+      LANGFUSE_INIT_PROJECT_NAME: sawti
+      LANGFUSE_INIT_PROJECT_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY:-}
+      LANGFUSE_INIT_PROJECT_SECRET_KEY: ${LANGFUSE_SECRET_KEY:-}
+      LANGFUSE_INIT_USER_EMAIL: ${LANGFUSE_INIT_USER_EMAIL:-admin@sawti.local}
+      LANGFUSE_INIT_USER_NAME: admin
+      LANGFUSE_INIT_USER_PASSWORD: ${LANGFUSE_INIT_USER_PASSWORD:-}
+    ports:
+      - "3000:3000"
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/public/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
     restart: unless-stopped
 
   # Celery beat: runs the reaper (`sawti.reap_stuck_calls`) on a schedule.

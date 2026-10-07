@@ -1,0 +1,93 @@
+{
+  "provider": "fake",
+  "fake_latency_seconds": 2.0,
+  "per_language": 10,
+  "transcripts": [
+    "call_0000_ar",
+    "call_0006_en",
+    "call_0004_mixed",
+    "call_0001_ar",
+    "call_0026_en",
+    "call_0007_mixed",
+    "call_0002_ar",
+    "call_0030_en",
+    "call_0008_mixed",
+    "call_0005_ar",
+    "call_0034_en",
+    "call_0013_mixed",
+    "call_0009_ar",
+    "call_0038_en",
+    "call_0015_mixed",
+    "call_0010_ar",
+    "call_0046_en",
+    "call_0016_mixed",
+    "call_0012_ar",
+    "call_0056_en",
+    "call_0020_mixed",
+    "call_0014_ar",
+    "call_0062_en",
+    "call_0021_mixed",
+    "call_0017_ar",
+    "call_0063_en",
+    "call_0022_mixed",
+    "call_0018_ar",
+    "call_0065_en",
+    "call_0027_mixed"
+  ],
+  "image_size_bytes": {
+    "sawti-api": 197170822,
+    "sawti-worker": 1034700547
+  },
+  "runs": [
+    {
+      "workers": 4,
+      "per_language": {
+        "ar": {
+          "n": 10,
+          "queue_wait_p50": 9.5146385,
+          "queue_wait_p95": 17.4510714,
+          "processing_p50": 2.723875,
+          "processing_p95": 3.8221732999999998,
+          "retry_rate": 0.0,
+          "failure_rate": 0.0,
+          "statuses": {
+            "awaiting_review": 10
+          }
+        },
+        "en": {
+          "n": 10,
+          "queue_wait_p50": 10.850392,
+          "queue_wait_p95": 18.877996949999996,
+          "processing_p50": 2.7019615000000003,
+          "processing_p95": 3.7480592999999995,
+          "retry_rate": 0.0,
+          "failure_rate": 0.0,
+          "statuses": {
+            "awaiting_review": 10
+          }
+        },
+        "mixed": {
+          "n": 10,
+          "queue_wait_p50": 10.859849,
+          "queue_wait_p95": 18.872072649999996,
+          "processing_p50": 2.723953,
+          "processing_p95": 3.6977393,
+          "retry_rate": 0.0,
+          "failure_rate": 0.0,
+          "statuses": {
+            "awaiting_review": 10
+          }
+        }
+      },
+      "calls": 30,
+      "wall_seconds": 24.174709,
+      "throughput_per_min": 74.45798003194164,
+      "cold_start_seconds": [
+        10.91,
+        11.24,
+        10.87,
+        10.9
+      ]
+    }
+  ]
+}

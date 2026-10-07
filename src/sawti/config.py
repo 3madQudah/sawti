@@ -103,7 +103,11 @@ class Settings(BaseSettings):
     # --- Langfuse ---
     langfuse_public_key: str | None = Field(default=None, alias="LANGFUSE_PUBLIC_KEY")
     langfuse_secret_key: str | None = Field(default=None, alias="LANGFUSE_SECRET_KEY")
-    langfuse_host: str = Field(default="https://cloud.langfuse.com", alias="LANGFUSE_HOST")
+    # Self-hosted only (phase 6.3): the default is the local v2 server from
+    # docker-compose.yml, never Langfuse Cloud — traces carry (redacted)
+    # transcript text, and Cloud would be a third party. Tracing is off unless
+    # both keys are set.
+    langfuse_host: str = Field(default="http://localhost:3000", alias="LANGFUSE_HOST")
 
     # --- ASR ---
     # "large-v3-turbo" rather than "large-v3": on the 8 GB M1 this project is

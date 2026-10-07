@@ -58,7 +58,7 @@ from sawti.schemas import Language
 MEASURE_DB = "sawti_service_measure"
 SYNTHETIC_DIR = Path("data/synthetic")
 RESULTS_DIR = Path("data/service_measurements")
-SERVICES = ("migrate", "api", "worker", "beat")
+SERVICES = ("migrate", "api", "worker", "beat", "langfuse")
 TERMINAL = {"awaiting_review", "completed", "failed", "reviewed"}
 _COLD_START = re.compile(r"embedding model loaded in ([0-9.]+)s")
 

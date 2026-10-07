@@ -29,6 +29,7 @@ import logging
 from typing import Any
 
 from sawti.llm.provider import LLMProvider, ResponseModelT
+from sawti.llm.usage import record_usage
 
 logger = logging.getLogger(__name__)
 
@@ -81,6 +82,7 @@ class LocalHFProvider(LLMProvider):
         *,
         max_new_tokens: int = DEFAULT_MAX_NEW_TOKENS,
         max_retries: int = 3,
+        chat_template_kwargs: dict[str, Any] | None = None,
     ) -> None:
         """Initialize the provider.
 
@@ -90,16 +92,30 @@ class LocalHFProvider(LLMProvider):
             max_new_tokens: Generation budget per call.
             max_retries: Extra `structured_complete` attempts (with sampling)
                 after an initial greedy one that fails to parse/validate.
+            chat_template_kwargs: Extra arguments for `apply_chat_template`.
+                Phase 6.3 passes `{"enable_thinking": False}` for Qwen3, which
+                matches the adapter's training format; the default (None)
+                reproduces Phase 5 exactly, which ran in thinking mode — see
+                docs/09-DECISIONS.md, 2026-10-07.
         """
         self._model = model
         self._tokenizer = tokenizer
         self._max_new_tokens = max_new_tokens
         self._max_retries = max_retries
+        self._chat_template_kwargs = dict(chat_template_kwargs or {})
+
+    @property
+    def model_name(self) -> str:
+        """The loaded checkpoint's name, for traces and benchmark records."""
+        config = getattr(self._model, "config", None)
+        return str(getattr(config, "_name_or_path", None) or type(self._model).__name__)
 
     def _generate(self, messages: list[dict[str, str]], *, do_sample: bool, temperature: float = 0.7) -> str:
         import torch
 
-        text = self._tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+        text = self._tokenizer.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True, **self._chat_template_kwargs
+        )
         inputs = self._tokenizer(text, return_tensors="pt").to(self._model.device)
         generate_kwargs: dict[str, Any] = {"do_sample": do_sample}
         if do_sample:
@@ -109,6 +125,7 @@ class LocalHFProvider(LLMProvider):
                 **inputs, max_new_tokens=self._max_new_tokens, **generate_kwargs
             )
         generated = output_ids[0][inputs["input_ids"].shape[1] :]
+        record_usage(int(inputs["input_ids"].shape[1]), int(len(generated)), model=self.model_name)
         decoded = self._tokenizer.decode(generated, skip_special_tokens=True)
         return str(decoded).strip()
 

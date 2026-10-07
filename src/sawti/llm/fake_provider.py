@@ -28,6 +28,7 @@ import re
 from typing import Any
 
 from sawti.llm.provider import LLMProvider, ResponseModelT
+from sawti.llm.usage import record_usage
 
 _LINE = re.compile(r"^(Agent|Customer):[ \t]*(.+?)[ \t]*$", re.MULTILINE)
 
@@ -61,9 +62,11 @@ class FakeProvider(LLMProvider):
         await asyncio.sleep(self._latency)
         fields = response_model.model_fields
         if "contradicts" in fields:  # sawti.memory.conflict: never a contradiction
+            self._report(prompt, "false")
             return response_model.model_validate({"contradicts": False, "reasoning": "fake provider"})
         if "rule_text" in fields:  # sawti.memory.induction / consolidate: a rule quoting its input
             flat = " ".join(prompt.split()) or "a correction"
+            self._report(prompt, flat[:400])
             return response_model.model_validate({"rule_text": f"Fake rule learned from: {flat[:400]}"})
         commitments: list[dict[str, Any]] = []
         points: list[dict[str, Any]] = []
@@ -85,10 +88,17 @@ class FakeProvider(LLMProvider):
                     "description": "An unsupported promise.",
                 }
             )
-        return response_model.model_validate(
+        result = response_model.model_validate(
             {
                 "summary": "Deterministic fake analysis (no model was called).",
                 "commitments": commitments,
                 "sentiment_trajectory": {"points": points},
             }
         )
+        self._report(prompt, result.model_dump_json())
+        return result
+
+    @staticmethod
+    def _report(prompt: str, output: str) -> None:
+        """Usage for tracing: whitespace-separated *word* counts — there is no model, so no tokens."""
+        record_usage(len(prompt.split()), len(output.split()), model="fake")

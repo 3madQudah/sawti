@@ -16,6 +16,7 @@ Environment: `SAWTI_E2E_BASE_URL` (default http://localhost:8000) and
 
 from __future__ import annotations
 
+import json
 import os
 import time
 from typing import Any
@@ -70,6 +71,44 @@ def _wait_for_rule(client: httpx.Client, timeout: float = 120.0) -> dict[str, An
     raise AssertionError("no memory rule was induced from the review")
 
 
+LANGFUSE_URL = os.environ.get("SAWTI_E2E_LANGFUSE_URL", "http://localhost:3000")
+NODES = {"extract", "ground", "score", "compliance", "assess_confidence", "escalate"}
+
+
+def _langfuse_keys() -> tuple[str, str] | None:
+    """The stack's Langfuse keys, from `.env` — the suite's conftest blanks them in os.environ
+    (tracing off for unit tests), so `Settings()` would report tracing as off here."""
+    from dotenv import dotenv_values
+
+    values = dotenv_values(".env")
+    public, secret = values.get("LANGFUSE_PUBLIC_KEY"), values.get("LANGFUSE_SECRET_KEY")
+    return (public, secret) if public and secret else None
+
+
+def _langfuse_observations(session_id: str, timeout: float = 90.0) -> list[dict[str, Any]]:
+    """Every observation of every trace in `session_id`, from the self-hosted Langfuse API.
+
+    Ingestion is asynchronous, so poll until the analysis trace's node spans
+    and its LLM generation have all arrived.
+    """
+    auth = _langfuse_keys()
+    assert auth is not None
+    deadline = time.monotonic() + timeout
+    observations: list[dict[str, Any]] = []
+    with httpx.Client(base_url=LANGFUSE_URL, auth=auth, timeout=10.0) as lf:
+        while time.monotonic() < deadline:
+            traces = lf.get("/api/public/traces", params={"sessionId": session_id}).json()["data"]
+            observations = []
+            for trace in traces:
+                page = lf.get("/api/public/observations", params={"traceId": trace["id"], "limit": 100})
+                observations.extend(page.json()["data"])
+            names = {o["name"] for o in observations}
+            if {f"node:{n}" for n in NODES} <= names and any(o["type"] == "GENERATION" for o in observations):
+                return observations
+            time.sleep(2.0)
+    raise AssertionError(f"traces for {session_id} incomplete: {sorted({o['name'] for o in observations})}")
+
+
 def _submit(client: httpx.Client, transcript: str, language: str) -> str:
     response = client.post(
         "/calls",
@@ -114,6 +153,16 @@ def test_submit_escalate_review_resume_then_a_similar_call_uses_the_learned_rule
         accepted = _review(client, call_id, verdicts)
         assert accepted.status_code == 202, accepted.text
         assert accepted.json()["corrections_recorded"] == 1  # the `correct` verdict
+
+        # Observability: the real self-hosted Langfuse got every node and the
+        # LLM call for this call, and none of its PII.
+        if _langfuse_keys() is not None:
+            observations = _langfuse_observations(call_id)
+            assert "0795551234" not in json.dumps(observations, ensure_ascii=False)
+            [generation] = [o for o in observations if o["type"] == "GENERATION"]
+            assert generation["metadata"]["call_id"] == call_id
+            assert generation["metadata"]["language"] == "mixed"
+            assert generation["usage"]["input"] and generation["usage"]["output"] is not None
 
         reviewed = _wait_for(client, call_id, "reviewed")
         assert reviewed["review"]["verdicts"][0]["verdict"] == "correct"

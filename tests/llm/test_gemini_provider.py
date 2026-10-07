@@ -66,3 +66,20 @@ async def test_structured_complete_raises_on_schema_violation() -> None:
 
     with pytest.raises(ValidationError):
         await provider.structured_complete("describe a widget", response_model=_Widget)
+
+
+async def test_usage_and_the_resolved_model_version_are_reported() -> None:
+    """Phase 6.3: token counts and the concrete model behind the alias reach `capture_usage`."""
+    from types import SimpleNamespace
+
+    from sawti.llm.usage import capture_usage
+
+    provider, fake_client = _provider_with_mock_client(json.dumps({"name": "w", "count": 1}))
+    response = fake_client.aio.models.generate_content.return_value
+    response.usage_metadata = SimpleNamespace(prompt_token_count=812, candidates_token_count=95)
+    response.model_version = "gemini-2.5-flash-lite-preview-09-2025"
+    with capture_usage() as usage:
+        await provider.structured_complete("x", response_model=_Widget)
+    assert [(u.prompt_tokens, u.completion_tokens, u.model) for u in usage] == [
+        (812, 95, "gemini-2.5-flash-lite-preview-09-2025")
+    ]

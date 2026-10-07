@@ -1178,3 +1178,26 @@ which would *weaken* memory, so phase 4's memory − control deltas are more
 likely understated than inflated — but that is an inference, not a
 measurement, and the replay uses re-induced rule text, not phase 4's. A
 corrected measurement of memory's effect belongs in 6.3.
+
+---
+
+## Round: 2026-10-07 — phase 6.3: memory cost of self-hosted Langfuse v2
+
+`docker stats` on the compose stack, Docker VM 8 vCPU / 3.83 GiB, Apple M1
+host. Langfuse `langfuse/langfuse:2` (2.95.11), its own database on the
+shared Postgres. Peak = highest sample (every 3 s) during a 4-worker burst of
+30 fake-provider calls (2.0 s simulated latency), each traced to Langfuse.
+
+| | Idle | Peak under a 4-worker burst |
+|---|---|---|
+| Langfuse container | 133–190 MiB | **247 MiB** |
+| Each worker (embedding model loaded) | 588–657 MiB | 794 MiB |
+| Whole stack, 1 worker + Langfuse | 1.11 GiB | — |
+| Whole stack, **4 workers + Langfuse** | **2.68 GiB** | **2.74 GiB** |
+
+**It fits:** with Langfuse added, the 4-worker stack peaks at 2.74 of 3.83
+GiB, with no container OOM-killed — Langfuse costs about 0.13–0.25 GiB, not
+enough to push the 4-worker setup over the VM limit. (Langfuse's own
+production guidance is 3 GB RAM; that is for a shared multi-user server, and
+was not needed here.) Peak whole-stack figure is the highest single
+snapshot, not the sum of per-container peaks.

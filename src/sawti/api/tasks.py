@@ -198,7 +198,13 @@ def analyze(call_id: str) -> CallStatus:
         "retrieved_rules": [rule.rule_text for rule in rules],
     }
     threshold = get_settings().confidence_threshold
-    values, interrupted = asyncio.run(_run_graph(call_id, state))
+    from sawti.observability import tracing
+
+    try:
+        with tracing.call_trace(call_id, language.value, name="analyze_call"):
+            values, interrupted = asyncio.run(_run_graph(call_id, state))
+    finally:
+        tracing.flush()
 
     analysis = analysis_from_state(values, call_id=call_id, language=language)
     final = CallStatus.AWAITING_REVIEW if interrupted else CallStatus.COMPLETED
@@ -301,13 +307,20 @@ def resume_call_task(self: Task, call_id: str) -> str:
         )
         if call is None or call.status != CallStatus.AWAITING_REVIEW or submission is None:
             return "skipped"
+        language = call.language
         payload = {
             "submission_id": str(submission.id),
             "reviewer_id": submission.reviewer_id,
             **submission.verdicts,
         }
 
-    values = asyncio.run(_resume_graph(call_id, payload))
+    from sawti.observability import tracing
+
+    try:
+        with tracing.call_trace(call_id, language, name="resume_call"):
+            values = asyncio.run(_resume_graph(call_id, payload))
+    finally:
+        tracing.flush()
     if values.get("review_status") != "human_reviewed":
         raise RuntimeError(f"resume_call {call_id}: graph did not finish as human_reviewed")
     _set_status(call_id, CallStatus.REVIEWED, expected=CallStatus.AWAITING_REVIEW)

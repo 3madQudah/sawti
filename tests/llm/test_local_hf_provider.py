@@ -153,3 +153,47 @@ async def test_complete_returns_generated_text() -> None:
     result = await provider.complete("what is it?")
 
     assert result == "the answer"
+
+
+def test_chat_template_kwargs_reach_the_template_and_usage_is_reported() -> None:
+    """Phase 6.3: `enable_thinking=False` is passed through; default None reproduces Phase 5."""
+    import sys
+    import types
+
+    from sawti.llm.usage import capture_usage
+
+    class _Ids(list):
+        @property
+        def shape(self) -> tuple[int, int]:
+            return (1, len(self[0]))
+
+    class _Tokenizer:
+        def __init__(self) -> None:
+            self.kwargs: dict[str, object] = {}
+
+        def apply_chat_template(self, messages: object, **kwargs: object) -> str:
+            self.kwargs = kwargs
+            return "prompt"
+
+        def __call__(self, text: str, return_tensors: str) -> object:
+            ids = _Ids([[1, 2, 3, 4]])
+            return types.SimpleNamespace(to=lambda device: {"input_ids": ids})
+
+        def decode(self, ids: object, skip_special_tokens: bool) -> str:
+            return "hello"
+
+    class _Model:
+        device = "cpu"
+        config = types.SimpleNamespace(_name_or_path="Qwen/Qwen3-8B")
+
+        def generate(self, **kwargs: object) -> list[list[int]]:
+            return [[1, 2, 3, 4, 9, 9]]
+
+    fake_torch = types.SimpleNamespace(no_grad=lambda: __import__("contextlib").nullcontext())
+    sys.modules.setdefault("torch", fake_torch)  # type: ignore[arg-type]
+    tokenizer = _Tokenizer()
+    provider = LocalHFProvider(_Model(), tokenizer, chat_template_kwargs={"enable_thinking": False})
+    with capture_usage() as usage:
+        assert provider._generate([{"role": "user", "content": "hi"}], do_sample=False) == "hello"
+    assert tokenizer.kwargs == {"tokenize": False, "add_generation_prompt": True, "enable_thinking": False}
+    assert [(u.prompt_tokens, u.completion_tokens, u.model) for u in usage] == [(4, 2, "Qwen/Qwen3-8B")]

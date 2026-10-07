@@ -55,9 +55,12 @@ tts = [
     # Chosen for its ar-JO (Jordanian) voice pair; see docs/09-DECISIONS.md.
     "edge-tts>=6.1,<8.0",
 ]
-vllm = [
-    "vllm>=0.5,<0.6",
-]
+# No `vllm` extra (removed phase 6.3): `sawti.llm.vllm_provider` talks to
+# `vllm serve` over its OpenAI-compatible HTTP API with the `openai` client (a
+# base dependency), so nothing here imports vLLM. vLLM itself is installed only
+# on the serving host — the Kaggle notebook pins `vllm==0.18.1` (the old
+# `<0.6` pin could not load Qwen3, and a current pin would fight the locked
+# torch). See docs/09-DECISIONS.md, 2026-10-07.
 finetune = [
     # Phase 5 QLoRA training (scripts/train_qlora.py). CUDA-only: bitsandbytes'
     # 4-bit quantization kernels need a real GPU, so this group is meant for a

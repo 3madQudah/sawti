@@ -1,0 +1,301 @@
+{
+  "active_rules": 35,
+  "consolidation": "complete-linkage, cosine >= 0.7",
+  "rules": [
+    {
+      "id": "c92d8110-8503-48f2-8e0c-14be38e15402",
+      "text": "Extract all distinct promises or actions agreed upon by either party throughout the entire dialogue to ensure a complete count of commitments.",
+      "source_call_ids": [
+        "call_0016_mixed"
+      ]
+    },
+    {
+      "id": "26037da6-2f92-4fa5-a9b4-c78d53b3be8b",
+      "text": "Assign the 'none' compliance flag when no resolution confirmation issues are present in the interaction.",
+      "source_call_ids": [
+        "call_0022_mixed"
+      ]
+    },
+    {
+      "id": "a2cafb62-2995-4f63-90d1-b0d8090791bb",
+      "text": "Do not trigger politeness failure compliance flags when agents maintain appropriate professional etiquette throughout the interaction.",
+      "source_call_ids": [
+        "call_0081_en"
+      ]
+    },
+    {
+      "id": "dc6f6f57-687a-4a4c-8488-29a25f711345",
+      "text": "Do not identify general statements of policy or conversational closing remarks as actionable customer commitments.",
+      "source_call_ids": [
+        "call_0018_ar"
+      ]
+    },
+    {
+      "id": "b526a685-f283-43af-af3a-17e9194edd2b",
+      "text": "Ensure that tentative or conversational agreements without explicit follow-up actions by either party are not classified as formal commitments.",
+      "source_call_ids": [
+        "call_0040_ar"
+      ]
+    },
+    {
+      "id": "05f118c5-2ef3-4e09-b1e6-d46c4c6e2471",
+      "text": "Verify that distinct action items discussed are truly independent commitments before counting them multiple times.",
+      "source_call_ids": [
+        "call_0072_en"
+      ]
+    },
+    {
+      "id": "c7c7bf20-9c98-4ffb-a911-c85c46145df9",
+      "text": "Apply compliance flags strictly based on direct evidence from the interaction, ensuring flags like ignoring explicit requests are only triggered when customer demands are unequivocally disregarded.",
+      "source_call_ids": [
+        "call_0038_en"
+      ]
+    },
+    {
+      "id": "15b2903e-f59e-4e33-a0dd-772181481d07",
+      "text": "Flag interactions as containing third-party blame whenever representatives deflect responsibility or attribute faults to external entities, systems, or other departments.",
+      "source_call_ids": [
+        "call_0076_mixed"
+      ]
+    },
+    {
+      "id": "845e4e7f-e6e2-4e27-b7af-d4e56db20e4a",
+      "text": "Accurately identify and flag any instances of inappropriate language used during the interaction.",
+      "source_call_ids": [
+        "call_0090_mixed"
+      ]
+    },
+    {
+      "id": "3bebec81-859d-4054-84e8-a639e178fa8d",
+      "text": "Exclude automatically generated system messages or placeholders from being classified as valid commitments.",
+      "source_call_ids": [
+        "call_0095_mixed"
+      ]
+    },
+    {
+      "id": "d15b3fbc-8f0a-4c0e-a072-05e6ea4fc34f",
+      "text": "Apply the missing identity verification compliance flag only when the agent genuinely fails to perform the mandatory security validation process before discussing account details.",
+      "source_call_ids": [
+        "call_0000_ar",
+        "call_0017_ar",
+        "call_0110_mixed"
+      ]
+    },
+    {
+      "id": "db2a3364-790c-469d-8df0-5600ae09f6cf",
+      "text": "Do not extract casual mentions, conditional statements, implied intentions, or conversational acknowledgments as concrete commitments unless an explicit promise of future action is made.",
+      "source_call_ids": [
+        "call_0004_mixed",
+        "call_0018_ar"
+      ]
+    },
+    {
+      "id": "251ad237-9544-4a57-9607-9e3061f8fd4b",
+      "text": "Carefully audit the entire dialogue to ensure every explicit promise, next step, or obligation made by either party is captured as a distinct commitment, preventing any undercounting or missed secondary pledges.",
+      "source_call_ids": [
+        "call_0008_mixed",
+        "call_0010_ar",
+        "call_0016_mixed",
+        "call_0041_mixed",
+        "call_0044_ar",
+        "call_0080_en",
+        "call_0092_ar",
+        "call_0146_en"
+      ]
+    },
+    {
+      "id": "b0b65d92-6a8f-41ec-a9d4-9c3bc4290f94",
+      "text": "Verify the precise timing of identity verification against the strict call-flow criteria, and do not flag it as late if it was completed within the acceptable timeframe.",
+      "source_call_ids": [
+        "call_0015_mixed"
+      ]
+    },
+    {
+      "id": "db0966f2-6236-42c8-bdb7-5242305a316c",
+      "text": "Do not trigger compliance flags unless the specific violation or requirement is explicitly demonstrated and verified in the interaction, avoiding false positives.",
+      "source_call_ids": [
+        "call_0017_ar"
+      ]
+    },
+    {
+      "id": "b73fd301-63b6-4c73-b80a-0d69b378690e",
+      "text": "Ensure all commitments made by the agent during the conversation are comprehensively identified and counted without omission.",
+      "source_call_ids": [
+        "call_0033_mixed"
+      ]
+    },
+    {
+      "id": "f09f021d-e6eb-47f6-8eb2-1a9d636db40d",
+      "text": "Verify that agent name disclosure and procedure adherence are strictly evaluated against the actual audio transcript and established guidelines before assigning non-compliance flags.",
+      "source_call_ids": [
+        "call_0035_mixed",
+        "call_0134_ar"
+      ]
+    },
+    {
+      "id": "417ea8a2-6e2e-41a6-979d-76a3c1370e0c",
+      "text": "Accurately identify and extract only explicit, verified commitments made during the interaction, ensuring the count matches the ground truth precisely without overcounting, undercounting, or including conditional suggestions and implied actions.",
+      "source_call_ids": [
+        "call_0038_en",
+        "call_0070_en",
+        "call_0072_en",
+        "call_0080_en",
+        "call_0130_ar"
+      ]
+    },
+    {
+      "id": "d597c1df-3c17-4d69-9885-d38d32dfce0d",
+      "text": "Classify statements as commitments only when they represent explicit, binding promises or actionable obligations made by the speaker, excluding general expressions of empathy, conversational filler, conditional suggestions, or prospective actions lacking a firm agreement.",
+      "source_call_ids": [
+        "call_0040_ar",
+        "call_0098_en",
+        "call_0145_mixed",
+        "call_0148_mixed"
+      ]
+    },
+    {
+      "id": "db4f9e3e-5b05-46a6-9509-002ce471bd18",
+      "text": "Ensure compliance and identity verification flags are applied strictly based on explicit, verified transcript evidence, preventing any unsupported or automatically generated flags from being recorded without ground-truth validation.",
+      "source_call_ids": [
+        "call_0021_mixed",
+        "call_0042_mixed",
+        "call_0049_mixed",
+        "call_0113_mixed"
+      ]
+    },
+    {
+      "id": "1ce8fe26-d15f-4e01-9b46-ffed54215b0c",
+      "text": "Utilize the specific compliance flag 'refusing_manager_escalation' instead of a generalized refusal flag whenever a request to speak with a manager is denied.",
+      "source_call_ids": [
+        "call_0046_en"
+      ]
+    },
+    {
+      "id": "939a316b-811d-4f94-8e84-b916cee74ea4",
+      "text": "Detect and flag instances where the agent fails to properly identify themselves and the company, or fails to perform required customer identity verification according to protocol.",
+      "source_call_ids": [
+        "call_0004_mixed",
+        "call_0118_ar"
+      ]
+    },
+    {
+      "id": "b3f6a492-1b1a-4827-a6e6-c51d60d9397e",
+      "text": "Carefully audit transcripts to ensure all explicit promises, next steps, or future actions made by the agent are captured as commitments.",
+      "source_call_ids": [
+        "call_0008_mixed",
+        "call_0056_en"
+      ]
+    },
+    {
+      "id": "de284cb0-4f74-4c3a-ab23-f141705a571b",
+      "text": "Ensure compliance flags accurately reflect the conversation without falsely triggering penalties for missing identity verification, company identification, or customer verification when the required protocols and procedures are met correctly.",
+      "source_call_ids": [
+        "call_0015_mixed",
+        "call_0022_mixed",
+        "call_0127_mixed"
+      ]
+    },
+    {
+      "id": "924acaa6-f2b0-4940-a291-8dcca457465d",
+      "text": "Verify that every identified commitment corresponds to a distinct, explicit and actionable promise made by the agent during the interaction, avoiding duplication, double-counting or over-counting multiple references to the same single action.",
+      "source_call_ids": [
+        "call_0028_ar",
+        "call_0078_ar",
+        "call_0101_en",
+        "call_0122_ar",
+        "call_0132_ar"
+      ]
+    },
+    {
+      "id": "7c500eaa-3481-43b3-80d3-c9c328d7708d",
+      "text": "Ensure all commitments, promises, agreements, and action items made by agents are comprehensively identified, counted, and captured as distinct next steps, regardless of their size or whether they are explicit, implicit, or multiple within a single interaction.",
+      "source_call_ids": [
+        "call_0051_ar",
+        "call_0100_ar",
+        "call_0105_ar",
+        "call_0121_en"
+      ]
+    },
+    {
+      "id": "948b818b-a4d7-4435-b958-5f0fdbc0916a",
+      "text": "Ensure all commitments made by either party throughout the entire conversation are captured and extracted without omission, leaving no promise or agreement overlooked.",
+      "source_call_ids": [
+        "call_0033_mixed",
+        "call_0051_ar",
+        "call_0141_mixed"
+      ]
+    },
+    {
+      "id": "23c93978-8638-402f-ba09-b175c2bb1122",
+      "text": "Do not trigger compliance flags for self-identification or company affiliation violations when the agent properly states their name and introduces the company during the interaction.",
+      "source_call_ids": [
+        "call_0035_mixed",
+        "call_0073_mixed"
+      ]
+    },
+    {
+      "id": "b4feeedc-881d-4ae5-9ba9-76538b60e437",
+      "text": "Ensure agent identification flags are only triggered when the agent genuinely fails to provide their name or identifier according to standard greeting protocols.",
+      "source_call_ids": [
+        "call_0036_mixed"
+      ]
+    },
+    {
+      "id": "dfd9efee-0fb4-409b-829c-d1c3cba2db5f",
+      "text": "Ensure all agent commitments, promises, follow-up actions, and next steps made throughout the entire conversation are comprehensively captured without omitting any secondary, later-stage, or implicit promises.",
+      "source_call_ids": [
+        "call_0054_mixed",
+        "call_0060_ar",
+        "call_0071_mixed",
+        "call_0074_mixed",
+        "call_0080_en",
+        "call_0091_mixed",
+        "call_0129_ar",
+        "call_0143_mixed"
+      ]
+    },
+    {
+      "id": "607ecc77-4ae3-4622-8402-043d356d74a3",
+      "text": "Strictly evaluate procedural adherence and compliance flags to accurately reflect whether mandatory steps and agent identification were successfully completed, avoiding false positives by ensuring scores reflect total compliance.",
+      "source_call_ids": [
+        "call_0067_mixed",
+        "call_0076_mixed",
+        "call_0123_mixed"
+      ]
+    },
+    {
+      "id": "758168d8-8cb0-4157-88cf-7deac4e8777c",
+      "text": "Accurately identify and flag any instances where mandatory customer verification steps were omitted during the interaction.",
+      "source_call_ids": [
+        "call_0077_mixed"
+      ]
+    },
+    {
+      "id": "fcd85017-b79d-41d5-9223-75a6f0e5214b",
+      "text": "Use the exact standardized nomenclature and precise terminology defined in the system guidelines for compliance flags rather than alternate, generic, or paraphrased labels.",
+      "source_call_ids": [
+        "call_0004_mixed",
+        "call_0099_mixed"
+      ]
+    },
+    {
+      "id": "eef94075-0997-41e5-9096-0ccf5dbb9792",
+      "text": "Verify each commitment independently against the transcript to ensure only explicitly agreed-upon action items are counted, preventing overcounting or duplication.",
+      "source_call_ids": [
+        "call_0021_mixed",
+        "call_0052_ar",
+        "call_0087_mixed",
+        "call_0138_mixed"
+      ]
+    },
+    {
+      "id": "c9d3c7ac-e5ba-4c7e-9eca-2ee73476cf2d",
+      "text": "Count only explicit, verifiable, and mutually agreed-upon action items made during the conversation as commitments, excluding vague statements, tentative intentions, or misunderstandings.",
+      "source_call_ids": [
+        "call_0043_mixed",
+        "call_0079_ar",
+        "call_0082_mixed"
+      ]
+    }
+  ]
+}

@@ -11,6 +11,7 @@ import pytest
 from sawti.agent.nodes.ground import is_grounded
 from sawti.llm.fake_provider import FakeProvider
 from sawti.llm.provider import TransientProviderError, get_llm_provider, is_transient_provider_error
+from sawti.observability.tracing import TracedProvider
 from sawti.schemas import ExtractionProposal
 
 TRANSCRIPT = "Agent: I will call you.\nCustomer: Fine.\nAgent: Bye now.\nAgent: Third line.\n"
@@ -31,7 +32,9 @@ def test_fake_provider_is_selectable_by_config(monkeypatch: pytest.MonkeyPatch) 
     monkeypatch.setenv("SAWTI_LLM_PROVIDER", "fake")
     get_settings.cache_clear()
     try:
-        assert isinstance(get_llm_provider(), FakeProvider)
+        provider = get_llm_provider()
+        assert isinstance(provider, TracedProvider)  # phase 6.3: every provider comes traced
+        assert isinstance(provider.inner, FakeProvider)
     finally:
         get_settings.cache_clear()
 
@@ -70,3 +73,18 @@ def test_transient_errors_are_recognized(exc: BaseException) -> None:
 )
 def test_everything_else_is_not_transient(exc: BaseException) -> None:
     assert not is_transient_provider_error(exc)
+
+
+async def test_provider_override_is_scoped_to_its_context() -> None:
+    """Phase 6.3: the benchmark's injection point; concurrent tasks each see their own override."""
+    import asyncio
+
+    from sawti.llm.provider import provider_override
+
+    async def which(tag: int) -> int:
+        with provider_override(FakeProvider(ungrounded_claims=tag)):
+            await asyncio.sleep(0.01 * (3 - tag))
+            return get_llm_provider()._ungrounded  # type: ignore[attr-defined]
+
+    assert await asyncio.gather(*(which(t) for t in range(3))) == [0, 1, 2]
+    assert isinstance(get_llm_provider(), TracedProvider)  # back to the configured provider

@@ -38,6 +38,10 @@ TEST_DATABASE_NAME = f"{_DEV_URL.database}_test"
 TEST_DATABASE_URL = _DEV_URL.set(database=TEST_DATABASE_NAME).render_as_string(hide_password=False)
 
 os.environ["DATABASE_URL"] = TEST_DATABASE_URL
+# Phase 6.3: tracing stays off in the suite even when .env carries Langfuse
+# keys for the local stack — tests use a fake client where they test tracing.
+os.environ["LANGFUSE_PUBLIC_KEY"] = ""
+os.environ["LANGFUSE_SECRET_KEY"] = ""
 for _cached in (get_settings, get_engine, get_session_factory):
     _cached.cache_clear()
 

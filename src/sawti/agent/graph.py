@@ -31,6 +31,7 @@ from sawti.agent.nodes.extract import extract
 from sawti.agent.nodes.ground import ground
 from sawti.agent.nodes.score import score
 from sawti.agent.state import AgentState
+from sawti.observability.tracing import traced_node
 
 # Node names are constants because two places have to agree on them: the
 # `add_node` calls and the conditional-edge mapping. A typo in a string literal
@@ -170,7 +171,10 @@ def build_graph(checkpointer: BaseCheckpointSaver[Any] | None = None) -> Compile
     graph: StateGraph = StateGraph(AgentState)
 
     for node_name in (*PIPELINE, NODE_ESCALATE):
-        graph.add_node(node_name, NODE_IMPLEMENTATIONS.get(node_name) or _passthrough(node_name))
+        # Every node is a Langfuse span when tracing is on (phase 6.3); a no-op wrapper otherwise.
+        graph.add_node(
+            node_name, traced_node(node_name, NODE_IMPLEMENTATIONS.get(node_name) or _passthrough(node_name))
+        )
 
     # The linear spine: START into the first node, then each node to the next.
     graph.add_edge(START, PIPELINE[0])
