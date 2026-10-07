@@ -111,3 +111,40 @@ def test_consolidate_leaves_retired_rules_untouched_and_unclustered(
     assert active in result
     assert retired in result
     assert provider.prompts == []  # nothing to merge: only one active rule
+
+
+# --- Complete linkage (2026-10-07) -----------------------------------------------
+
+from sawti.memory.consolidate import _cluster_indices  # noqa: E402
+
+
+def _unit(angle_degrees: float) -> np.ndarray:
+    radians = np.radians(angle_degrees)
+    return np.array([np.cos(radians), np.sin(radians)])
+
+
+def test_a_chain_does_not_become_one_cluster() -> None:
+    """A~B and B~C clear the threshold, A~C does not: A and C must not share a cluster.
+
+    Single linkage (the pre-fix behavior) put all three together. At 40 degrees
+    apart, cos = 0.77 >= 0.7; A to C is 80 degrees, cos = 0.17.
+    """
+    a, b, c = _unit(0), _unit(40), _unit(80)
+    assert float(a @ b) >= 0.7 and float(b @ c) >= 0.7 and float(a @ c) < 0.7
+    clusters = _cluster_indices([a, b, c], 0.7)
+    assert not any({0, 2} <= set(cluster) for cluster in clusters)
+    assert sorted(len(cluster) for cluster in clusters) == [1, 2]
+
+
+def test_every_pair_inside_every_cluster_clears_the_threshold() -> None:
+    """The defining property, on a long chain where single linkage would make one cluster."""
+    embeddings = [_unit(10 * i) for i in range(12)]
+    for cluster in _cluster_indices(embeddings, 0.9):
+        for i in cluster:
+            for j in cluster:
+                assert float(embeddings[i] @ embeddings[j]) >= 0.9 - 1e-9
+
+
+def test_near_duplicates_still_merge_and_isolated_rules_stay_alone() -> None:
+    embeddings = [_unit(0), _unit(5), _unit(10), _unit(90)]
+    assert _cluster_indices(embeddings, 0.7) == [[0, 1, 2], [3]]

@@ -26,10 +26,11 @@ is a cheap guarantee that nothing PII-shaped rides along.
 
 from __future__ import annotations
 
+import contextlib
 import logging
 import uuid
 from collections import Counter
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 
@@ -64,6 +65,22 @@ class InductionReport:
     conflicts: Counter[str] = field(default_factory=Counter)
     merged_away: int = 0
     active_rules_after: int = 0
+
+
+@contextlib.contextmanager
+def memory_write_lock() -> Iterator[None]:
+    """Hold the Postgres advisory lock that serializes every writer of `memory_rules`.
+
+    Induction (`induce_and_store`) and maintenance such as
+    `scripts/reconsolidate_memory_rules.py` both take it, so a review's
+    induction never runs against a store that is being re-clustered.
+    """
+    with get_engine().connect() as lock_conn:
+        lock_conn.execute(sa.text("SELECT pg_advisory_lock(:k)"), {"k": _INDUCTION_LOCK_KEY})
+        try:
+            yield
+        finally:
+            lock_conn.execute(sa.text("SELECT pg_advisory_unlock(:k)"), {"k": _INDUCTION_LOCK_KEY})
 
 
 def to_memory_rule(row: MemoryRuleRecord) -> MemoryRule:
@@ -151,43 +168,37 @@ def induce_and_store(
         handled before the error is already committed.
     """
     report = InductionReport()
-    with get_engine().connect() as lock_conn:
-        lock_conn.execute(sa.text("SELECT pg_advisory_lock(:k)"), {"k": _INDUCTION_LOCK_KEY})
-        try:
+    with memory_write_lock():
+        with get_session() as session:
+            pending = pending_corrections(session, submission_id=submission_id)
+            store = MemoryStore(embed=embed)
+            store.replace_all(load_active_rules(session))
+        for correction in pending:
+            language = correction.original.language.value
+            candidate = induce_rule([correction])
+            candidate = candidate.model_copy(update={"rule_text": redact(candidate.rule_text).redacted_text})
+            outcome = insert_rule(store, candidate, embed=embed)
             with get_session() as session:
-                pending = pending_corrections(session, submission_id=submission_id)
-                store = MemoryStore(embed=embed)
-                store.replace_all(load_active_rules(session))
-            for correction in pending:
-                language = correction.original.language.value
-                candidate = induce_rule([correction])
-                candidate = candidate.model_copy(
-                    update={"rule_text": redact(candidate.rule_text).redacted_text}
+                if outcome.inserted:
+                    session.add(_to_row(candidate))
+                status = OUTCOME_INSERTED if outcome.inserted else OUTCOME_CONFLICT
+                _mark_induced(session, correction.id, status)
+            report.processed[language] += 1
+            (report.inserted if outcome.inserted else report.conflicts)[language] += 1
+            if not outcome.inserted:
+                logger.warning(
+                    "induction: rule from correction %s conflicts with %s; not stored (needs a human)",
+                    correction.id,
+                    [str(rule.id) for rule in outcome.conflicts],
                 )
-                outcome = insert_rule(store, candidate, embed=embed)
-                with get_session() as session:
-                    if outcome.inserted:
-                        session.add(_to_row(candidate))
-                    status = OUTCOME_INSERTED if outcome.inserted else OUTCOME_CONFLICT
-                    _mark_induced(session, correction.id, status)
-                report.processed[language] += 1
-                (report.inserted if outcome.inserted else report.conflicts)[language] += 1
-                if not outcome.inserted:
-                    logger.warning(
-                        "induction: rule from correction %s conflicts with %s; not stored (needs a human)",
-                        correction.id,
-                        [str(rule.id) for rule in outcome.conflicts],
-                    )
-                if on_correction is not None:
-                    on_correction(correction, status)
+            if on_correction is not None:
+                on_correction(correction, status)
 
-            if pending:
-                before = store.all_active_rules()
-                after = consolidate(before, embed=embed)
-                with get_session() as session:
-                    report.merged_away = _sync_consolidation(session, before, after)
+        if pending:
+            before = store.all_active_rules()
+            after = consolidate(before, embed=embed)
             with get_session() as session:
-                report.active_rules_after = session.query(MemoryRuleRecord).filter_by(retired=False).count()
-        finally:
-            lock_conn.execute(sa.text("SELECT pg_advisory_unlock(:k)"), {"k": _INDUCTION_LOCK_KEY})
+                report.merged_away = _sync_consolidation(session, before, after)
+        with get_session() as session:
+            report.active_rules_after = session.query(MemoryRuleRecord).filter_by(retired=False).count()
     return report

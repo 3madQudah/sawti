@@ -977,3 +977,204 @@ side wins automatically, so they are logged and left for a human
 
 One `TimeoutError` occurred and was retried once after 65 s; no other
 transient errors.
+
+---
+
+## Round: 2026-10-07 — memory-rule backfill, FINAL (103 / 103) — **PRE-FIX** (single-linkage consolidation, superseded)
+
+> **Pre-fix.** The 9-rule result below came from single-linkage consolidation,
+> since found to be a correctness bug and fixed the same day. Kept as recorded;
+> the post-fix result is the "complete-linkage re-consolidation" round below.
+
+Completes the partial round above. The last 22 corrections were run by the
+user on a **different Gemini API key / Google Cloud project** (the first
+key's 500/day cap was spent); same model alias, same script, same code.
+Report: `data/memory_backfill/2026-10-07_final_report.json`
+(`scripts/induce_rules_from_corrections.py --report-only`).
+
+### Corrections
+
+| Language | Corrections | → rule stored | → conflict (not stored) |
+|---|---|---|---|
+| ar    | 27 | 26 | 1 |
+| en    | 19 | 17 | 2 |
+| mixed | 57 | 49 | 8 |
+| **total** | **103** | **92** | **11** |
+
+### Rule rows — how 92 inserted becomes 9 active
+
+| | Rows |
+|---|---|
+| inserted by induction (one per `inserted` correction) | 92 |
+| created by consolidation (merges, ≥ 2 sources each) | 3 |
+| retired by consolidation (merged away) | 86 |
+| **active** = 92 + 3 − 86 | **9** |
+
+`92 − 86 = 6` misses the 3 rows consolidation itself creates: each merged
+cluster becomes a *new* rule and every member is retired (all 86 retired rows
+are members of the 3 merged rules; none is orphaned).
+
+### Per language — why 3 + 3 + 6 = 12, not 9
+
+A rule counts once for each language among its source corrections. Exact
+split of the 9 active rules by language set: `ar` 1, `en` 2, `mixed` 4,
+`ar+mixed` 1, `ar+en+mixed` 1 — the two multi-language rules contribute
+3 extra memberships (12 − 9).
+
+| Language | Active rules drawing on it |
+|---|---|
+| ar    | 3 |
+| en    | 3 |
+| mixed | 6 |
+
+### The 9 active rules
+
+| # | Rule text | Source corrections (ar / en / mixed) |
+|---|---|---|
+| 1 | Carefully audit the entire dialogue to comprehensively capture and count every distinct, explicit commitment and promise made by the agent or customer without omission or duplication, while strictly applying compliance flags only when procedural violations are explicitly verified. | **81** (24 / 13 / 44) |
+| 2 | Utilize the specific compliance flag 'refusing_manager_escalation' instead of any generalized refusal flag whenever a request for a manager is denied. | 3 (0 / 3 / 0) |
+| 3 | Verify that agent procedure adherence and name disclosure rules are strictly evaluated against established guidelines and actual audio transcripts before assigning non-compliance flags. | 2 (1 / 0 / 1) |
+| 4 | Assign the 'none' compliance flag when no resolution confirmation issues are present in the interaction. | 1 (mixed) |
+| 5 | Do not trigger politeness failure compliance flags when agents maintain appropriate professional etiquette throughout the interaction. | 1 (en) |
+| 6 | Do not identify general statements of policy or conversational closing remarks as actionable customer commitments. | 1 (ar) |
+| 7 | Flag interactions as containing third-party blame whenever representatives deflect responsibility or attribute faults to external entities, systems, or other departments. | 1 (mixed) |
+| 8 | Accurately identify and flag any instances of inappropriate language used during the interaction. | 1 (mixed) |
+| 9 | Exclude automatically generated system messages or placeholders from being classified as valid commitments. | 1 (mixed) |
+
+### Over-merging: rule 1 is a chaining artifact, and it lost specific detail
+
+Consolidation is **single-linkage** clustering at cosine **≥ 0.7**
+(`sawti.memory.consolidate.DEFAULT_SIMILARITY_THRESHOLD`): connected
+components of the "similar" graph, so A ~ B and B ~ C merges A with C however
+far apart they are. Measured with the real embedding model on each merged
+rule's members:
+
+| Rule | Members | Member–member cosine: min / median / share ≥ 0.7 | Member → merged text: min / median |
+|---|---|---|---|
+| 1 | 81 | 0.07 / 0.50 / **13%** | 0.34 / 0.60 |
+| 2 |  3 | 0.78 / 0.79 / 100% | 0.87 / 0.90 |
+| 3 |  2 | 0.70 / 0.70 / 100% | 0.83 / 0.89 |
+
+- **Rule 2 is a clean merge**: three phrasings of one principle, and the
+  merged text keeps the specific flag name.
+- **Rule 3 is borderline**: exactly at the threshold, and it joins two
+  different checks (procedure-adherence scoring, a rubric item, and
+  name-disclosure flagging). Both survive in the text, but as one vague
+  instruction.
+- **Rule 1 is over-merged.** 87% of its member pairs are *below* the
+  threshold; the cluster spans two topics (53 commitment corrections, 27
+  compliance-flag, 1 rubric) and all three languages. The merged text keeps
+  two generic themes (count explicit commitments; flag only verified
+  violations) and drops the specifics 33 of its 81 members carried. Examples
+  of retired members whose content is not in it:
+  - "Do not flag identity verification as late if it was completed within the acceptable timeframe."
+  - "Do not trigger compliance flags for identity verification failure unless the customer genuinely fails to pass the mandatory authentication steps."
+  - "Ensure agent identification flags are only raised when the agent genuinely fails to provide their name or identifier according to standard greeting protocols." (cosine 0.34 to the merged text)
+  - "Ensure that casual mentions of future actions or conditional statements without explicit intent to follow through are not classified as formal commitments."
+
+  Retrieval returns top-5, so in practice every call now gets rule 1 plus
+  four near-singletons, and identity-verification or agent-identification
+  guidance is gone from the store.
+
+**Why phase 4 did not show this:** it consolidated *per batch*, over at most
+~15 active rules at a time; the backfill consolidated 92 rules in one pass,
+giving single-linkage enough points to chain through. Nothing is lost
+irreversibly — the 86 retired rows are intact, so the set can be
+re-consolidated (see `docs/09-DECISIONS.md`, 2026-10-07, for the proposed fix,
+not yet applied).
+
+### Not the rule set phase 4 measured
+
+Phase 4's memory-on results (2026-09-25 round) were measured with rules
+induced **inside that run** — an in-process store built from that run's own
+58 corrections, consolidated per batch, ending at 14 active rules, never
+persisted. These 9 rules come from a different process and different input:
+all 103 stored corrections — 85 `five-batch-experiment` rows (27 more than
+the 58 the recorded run reports capturing; most likely persisted by the
+interrupted attempts earlier on 2026-09-25, recorded as incidents 1–3 in
+`docs/09-DECISIONS.md`, but not verified row by row) plus phase 4's 18
+`synthetic-day1` corrections — induced again with the service pipeline,
+consolidated once, with the last 22 on a different API project. Phase 4's numbers say nothing
+about how *these* rules perform; that is a 6.3 measurement.
+
+
+---
+
+## Round: 2026-10-07 — memory rules re-consolidated with complete linkage (POST-FIX)
+
+**The bug.** `consolidate()` clustered with single linkage (connected components
+of the cosine ≥ 0.7 graph). Chains merge rules that are not similar: the
+backfill's one pass turned 92 rules into 9, one of which absorbed 81 —
+memory was effectively one generic rule. **The fix:** complete linkage — every
+pair inside a cluster ≥ 0.7, same threshold, same embedder
+(`sawti.memory.consolidate._cluster_indices`; `docs/09-DECISIONS.md`,
+2026-10-07). **Re-run:** the 86 retired originals un-retired, the 3
+single-linkage merges retired, the 92 single-correction rules re-clustered and
+merged (25 Gemini calls for merge text, zero for clustering)
+(`scripts/reconsolidate_memory_rules.py`). Results:
+`data/memory_backfill/2026-10-07_reconsolidation_result.json`; plan with
+every cluster's members: `..._reconsolidation_plan.json`.
+
+### Before / after
+
+| | Pre-fix (single linkage) | Post-fix (complete linkage) |
+|---|---|---|
+| Active rules | 9 | **35** |
+| Cluster sizes (size × count) | 81×1, 3×1, 2×1, 1×6 | 8×2, 5×2, 4×4, 3×6, 2×11, 1×10 |
+| Largest cluster | 81 | 8 |
+| Lowest min-pairwise cosine in any cluster | **0.068** | **0.700** |
+| Multi-member clusters with min pairwise < 0.7 | 1 (the 81) | 0 |
+
+Min pairwise cosine per multi-member cluster, post-fix (sizes 8, 8, 5, 5, 4, 4,
+4, 4, 3 ×6, 2 ×11): 0.759, 0.779, 0.731, 0.757, 0.720, 0.738, 0.788, 0.759,
+0.745, 0.779, 0.793, 0.807, 0.724, 0.778, 0.806, 0.751, 0.805, 0.921, 0.700,
+0.714, 0.925, 0.825, 0.868, 0.771, 0.895 — all ≥ 0.70 by construction.
+
+### Active rules per language (a rule counts once per language among its source corrections)
+
+| Language | Pre-fix | Post-fix |
+|---|---|---|
+| ar    | 3 | 16 |
+| en    | 3 | 11 |
+| mixed | 6 | 25 |
+
+Exact post-fix split by language set: ar 3, en 4, mixed 14, ar+en 3,
+ar+mixed 7, en+mixed 1, ar+en+mixed 3 (35). Row accounting: 120 rows =
+92 induced + 28 created by consolidation (3 old merges + 25 new), 85 retired
+(82 merged originals + the 3 old merges), 35 active.
+
+### Is specific detail kept now?
+
+Spot-checked the two largest clusters (8 each): both are eight phrasings of
+"capture every commitment, including secondary ones", and the merged text
+says exactly that. Guidance the 81-rule merge had erased is back as its own
+rules, e.g. "Apply the missing identity verification compliance flag only
+when the agent genuinely fails to perform the mandatory security validation
+process…". Remaining imperfection, stated: those two 8-clusters are close to
+each other but not merged (some cross pairs < 0.7) — redundancy, not loss.
+
+### Phase 4 — could its results have been affected?
+
+Phase 4 consolidated per batch and persisted neither rules nor clusters, so its
+max cluster size is unknown. Two pieces of evidence that it chained too:
+its own counts (batch 2: up to 15 candidate rules → 6 active), and a replay of
+its batch sizes with the backfill's re-induced rules and real embeddings
+(`scripts/simulate_phase4_consolidation.py`, zero LLM calls;
+`data/memory_backfill/2026-10-07_phase4_consolidation_replay.json`):
+
+| Batch | Single linkage: max cluster / active after | Complete linkage: max cluster / active after | Phase 4 recorded active after |
+|---|---|---|---|
+| 1 | 3 / 5   | 2 / 6  | 7 |
+| 2 | 6 / 8   | 3 / 11 | 6 |
+| 3 | **13** / 6 | 4 / 15 | 10 |
+| 4 | 5 / 9   | 4 / 16 | 10 |
+| 5 | **10** / 11 | 4 / 18 | 14 |
+
+The single-linkage replay tracks phase 4's recorded active counts roughly
+(same scale, somewhat lower), so phase 4's memory-on arm very likely ran with
+chained merges of 10+ rules from batch 3 on. **Yes, its results could have
+been affected.** Likely direction: over-merged rules carry vaguer guidance,
+which would *weaken* memory, so phase 4's memory − control deltas are more
+likely understated than inflated — but that is an inference, not a
+measurement, and the replay uses re-induced rule text, not phase 4's. A
+corrected measurement of memory's effect belongs in 6.3.

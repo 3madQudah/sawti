@@ -68,24 +68,64 @@ class _Throttled(LLMProvider):
 
 
 def report() -> dict[str, Any]:
-    """Outcomes and rules per language, from the database."""
+    """Outcomes, rule-row accounting and the active rules, from the database.
+
+    Two things the raw counts do not say on their own, so the JSON says them:
+
+    * `rule_rows` reconciles the table: every row is either inserted by
+      induction (one per `inserted` correction, one source each) or created by
+      consolidation (a merge, two or more sources); merged-away rows are
+      retired, so active = inserted + created - retired.
+    * `active_rules_per_language` counts a rule once for *each* language among
+      its source corrections, so a rule merged from ar and mixed corrections
+      counts in both and the per-language figures can sum to more than
+      `active_rules`. `active_rules_by_language_set` gives the exact split.
+    """
     with get_session() as session:
         actions = session.query(ReviewerAction).all()
         language_of = {str(a.id): a.payload["original"]["language"] for a in actions}
         outcomes: dict[str, Counter[str]] = defaultdict(Counter)
         for action in actions:
             outcomes[language_of[str(action.id)]][action.induction_outcome or "pending"] += 1
-        rules = session.query(MemoryRuleRecord).filter_by(retired=False).all()
-        retired = session.query(MemoryRuleRecord).filter_by(retired=True).count()
-        rules_per_language: Counter[str] = Counter()
-        for rule in rules:
-            for language in {language_of.get(str(i)) for i in rule.source_correction_ids} - {None}:
-                rules_per_language[language] += 1
+        rows = session.query(MemoryRuleRecord).order_by(MemoryRuleRecord.created_at).all()
+
+    active = [row for row in rows if not row.retired]
+    inserted = sum(c["inserted"] for c in outcomes.values())
+    rules_per_language: Counter[str] = Counter()
+    by_language_set: Counter[str] = Counter()
+    detail = []
+    for rule in sorted(active, key=lambda r: -len(r.source_correction_ids)):
+        sources = [str(i) for i in rule.source_correction_ids]
+        per_language = Counter(language_of[i] for i in sources if i in language_of)
+        for language in per_language:
+            rules_per_language[language] += 1
+        by_language_set["+".join(sorted(per_language))] += 1
+        detail.append(
+            {
+                "id": str(rule.id),
+                "text": rule.rule_text,
+                "source_corrections": len(sources),
+                "source_corrections_per_language": dict(sorted(per_language.items())),
+            }
+        )
     return {
         "corrections": {lang: dict(c) for lang, c in sorted(outcomes.items())},
-        "active_rules": len(rules),
+        "rule_rows": {
+            "total": len(rows),
+            "inserted_by_induction": inserted,
+            "created_by_consolidation": len(rows) - inserted,
+            "retired_by_consolidation": len(rows) - len(active),
+            "active": len(active),
+            "check": "active = inserted_by_induction + created_by_consolidation - retired_by_consolidation",
+        },
+        "active_rules": len(active),
         "active_rules_per_language": dict(sorted(rules_per_language.items())),
-        "retired_rules": retired,
+        "active_rules_per_language_note": (
+            "a rule counts once per language among its source corrections; "
+            "rules spanning languages make these sum to more than active_rules"
+        ),
+        "active_rules_by_language_set": dict(sorted(by_language_set.items())),
+        "active_rules_detail": detail,
     }
 
 

@@ -3147,3 +3147,118 @@ then the daily Gemini cap stopped it, cleanly, as designed. 22 pending;
 consolidation runs when a pass completes. Resume with
 `uv run python scripts/induce_rules_from_corrections.py` after the quota
 resets. Per-language counts: `eval_results.md`, 2026-10-07 backfill round.
+
+---
+
+## 2026-10-07 — Backfill finished: 9 active rules, one of them an over-merge
+
+**Status:** recorded. The fix below was **applied the same day** — see the
+next entry ("single-linkage consolidation was a correctness bug").
+
+### Final counts
+
+All 103 stored corrections induced: 92 rules stored, 11 conflicts (not
+stored; left for a human by `insert_rule`'s policy). One consolidation pass
+over the 92 then merged 3 clusters (89 members → 3 new rules), retiring 86
+rows: 95 rows total, 9 active. Per language of the source corrections:
+ar 26 stored / 1 conflict, en 17 / 2, mixed 49 / 8; active rules drawing on
+each language ar 3, en 3, mixed 6 — overlapping, because two rules are
+merged from corrections in several languages (the report JSON now says so and
+gives the exact split). Details and the 9 rule texts: `eval_results.md`,
+2026-10-07 final backfill round.
+
+**Provenance, stated:** the first 81 corrections ran on the original Gemini
+key; the last 22 were run by the user on a **different API key / Google Cloud
+project** after the first key's daily cap. Same model alias, same code.
+
+**Not phase 4's rule set.** Phase 4's memory-on numbers were measured with
+rules induced in-process during that run (58 corrections, consolidated per
+batch, 14 active at the end, never persisted). These 9 come from 103
+corrections (including the 18 `synthetic-day1` ones, and 27 more
+five-batch rows than that run reported — most likely from its interrupted
+earlier attempts, not verified), one consolidation pass, two API projects.
+Phase 4's results are not evidence about these rules.
+
+### Over-merge, and why
+
+`consolidate()` is single-linkage at cosine ≥ 0.7. Single linkage chains: in
+one pass over 92 rules, one connected component absorbed 81 of them, across
+commitments, compliance flags and a rubric item, in all three languages —
+87% of its member pairs are *below* 0.7 (min 0.07). Its merged text keeps two
+generic themes and drops specific guidance (identity-verification timing and
+authentication, agent identification at greeting, conditional statements
+not being commitments). Phase 4 never showed this because it consolidated
+per batch over at most ~15 rules. The service consolidates over the *whole*
+store after every review, so the same chaining will recur as the store grows.
+
+### Proposed fix (applied 2026-10-07, see next entry)
+
+1. **Complete-linkage** (a cluster's every pair ≥ threshold) instead of
+   single-linkage, so no rule can join a cluster it is not similar to as a
+   whole. Same threshold, same embedder; one function in
+   `sawti.memory.consolidate`. Optionally, only cluster rules whose source
+   corrections share a topic (`sawti.memory.diff.topic_for`).
+2. **Re-consolidate the existing store**, reversibly: un-retire the 86
+   members, retire the 3 merged rules, run consolidation with the fix
+   (a few LLM merge calls). The 86 retired rows are intact, so nothing has
+   been lost yet.
+3. A test that pins it: three rules A ~ B ~ C with A and C dissimilar must
+   not end up in one cluster.
+
+Changing the clustering also changes what phase 4's code would do on a re-run,
+so this is a decision, not a bug fix applied in passing.
+
+
+---
+
+## 2026-10-07 — Single-linkage consolidation was a correctness bug; fixed with complete linkage
+
+**Status:** fixed and re-run. Decided by the user: a correctness bug in the
+memory loop, not polish — one rule absorbing 81 of 92 meant memory was
+effectively one generic rule.
+
+### Bug
+
+`sawti.memory.consolidate._cluster_indices` was single linkage: connected
+components of the cosine ≥ 0.7 graph. Any chain A ~ B ~ C merged A with C. On
+the backfill's 92 rules this produced an 81-member cluster whose member pairs
+were 87% below threshold (min 0.068), spanning commitments, compliance flags
+and rubric corrections in all three languages; the LLM-written merge kept two
+generic themes and dropped the rest.
+
+### Fix
+
+Complete linkage, agglomerative: repeatedly merge the two clusters whose
+worst cross pair is most similar while it is ≥ threshold (Lance–Williams
+update, deterministic ties). Every pair in every cluster is ≥ 0.7. Threshold
+and embedder unchanged — the 0.7 calibration (2026-09-22) was a *pairwise*
+judgment, which complete linkage now honors for the whole cluster. Tests:
+the A~B, B~C ≥ 0.7, A~C < 0.7 chain must not form one cluster; every pair
+inside every cluster clears the threshold; near-duplicates still merge.
+The service's per-review consolidation uses the same function, so the
+chaining cannot recur as the store grows.
+
+### Re-run of the existing store
+
+`scripts/reconsolidate_memory_rules.py`, after a `pg_dump`
+(`data/backups/sawti-pre-reconsolidation-20261007-120636.dump`): the 86
+retired originals un-retired, the 3 single-linkage merges retired, the 92
+single-correction rules re-clustered (plan saved before any LLM call), and
+each multi-member cluster merged and committed on its own (resumable; 25
+Gemini calls). Before → after: 9 → **35** active rules; largest cluster
+81 → 8; lowest min-pairwise cosine in any cluster 0.068 → 0.700; active rules
+per language ar 3 → 16, en 3 → 11, mixed 6 → 25 (overlapping counts, as
+before). The pre-fix 9-rule result stays recorded as "pre-fix"
+(`eval_results.md`, `data/memory_backfill/2026-10-07_final_report_PRE_FIX.json`).
+
+### Phase 4
+
+Phase 4 used the same single-linkage function per batch. Its clusters were
+never persisted; its own counts (batch 2: ≤ 15 candidates → 6 active) and a
+zero-LLM replay of its batch sizes with real embeddings
+(`scripts/simulate_phase4_consolidation.py`: single-linkage max cluster 13 at
+batch 3, 10 at batch 5; complete linkage ≤ 4) say it very likely chained too.
+Its memory-on results could therefore have been affected — most plausibly
+understating memory (vaguer rules), though that direction is inferred, not
+measured. Not re-run (quota decision, 2026-10-07); a corrected memory-vs-
+control measurement belongs in 6.3, with complete linkage.

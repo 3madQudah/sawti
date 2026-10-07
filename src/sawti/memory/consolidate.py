@@ -65,35 +65,46 @@ def _cosine_similarity(
 def _cluster_indices(
     embeddings: list[np.ndarray[Any, np.dtype[np.float64]]], threshold: float
 ) -> list[list[int]]:
-    """Single-linkage clustering: connected components of the "similarity >= threshold" graph.
+    """Complete-linkage clustering: every pair inside a cluster has similarity >= threshold.
 
-    Simple union-find over all pairs — the rule sets this operates on
-    (a store's active rules) are small enough that O(n^2) pairwise
-    comparison is not a concern.
+    Agglomerative: start from singletons and repeatedly merge the two clusters
+    whose *least* similar cross pair is most similar, while that value is still
+    >= threshold. A cluster's link to another is therefore its worst pair,
+    updated on each merge as the minimum of the two merged clusters' links
+    (Lance-Williams for complete linkage). Ties break on the lowest indices,
+    so the result is deterministic.
+
+    Was single-linkage (connected components of the "similarity >= threshold"
+    graph) until 2026-10-07. That chains: A ~ B and B ~ C put A with C however
+    dissimilar they are, and one pass over 92 rules collapsed 81 of them —
+    87% of whose pairs were below the threshold — into one generic rule. See
+    docs/09-DECISIONS.md, 2026-10-07. O(n^3) in the number of rules, fine at
+    the store sizes this runs on (tens to low hundreds).
     """
     n = len(embeddings)
-    parent = list(range(n))
-
-    def find(index: int) -> int:
-        while parent[index] != index:
-            parent[index] = parent[parent[index]]
-            index = parent[index]
-        return index
-
-    def union(a: int, b: int) -> None:
-        root_a, root_b = find(a), find(b)
-        if root_a != root_b:
-            parent[root_a] = root_b
-
-    for i in range(n):
-        for j in range(i + 1, n):
-            if _cosine_similarity(embeddings[i], embeddings[j]) >= threshold:
-                union(i, j)
-
-    clusters: dict[int, list[int]] = {}
-    for i in range(n):
-        clusters.setdefault(find(i), []).append(i)
-    return list(clusters.values())
+    clusters: dict[int, list[int]] = {i: [i] for i in range(n)}
+    link: dict[tuple[int, int], float] = {
+        (i, j): _cosine_similarity(embeddings[i], embeddings[j]) for i in range(n) for j in range(i + 1, n)
+    }
+    while True:
+        best: tuple[float, int, int] | None = None
+        for (a, b), value in link.items():
+            if value < threshold:
+                continue
+            if best is None or value > best[0] or (value == best[0] and (a, b) < best[1:]):
+                best = (value, a, b)
+        if best is None:
+            break
+        _, keep, gone = best
+        clusters[keep].extend(clusters.pop(gone))
+        for other in clusters:
+            if other == keep:
+                continue
+            with_keep = link.pop((min(keep, other), max(keep, other)))
+            with_gone = link.pop((min(gone, other), max(gone, other)))
+            link[(min(keep, other), max(keep, other))] = min(with_keep, with_gone)
+        del link[(keep, gone)]
+    return [sorted(members) for _, members in sorted(clusters.items())]
 
 
 def _dedupe_preserving_order(ids: list[UUID]) -> list[UUID]:

@@ -1,0 +1,115 @@
+{
+  "corrections": {
+    "ar": {
+      "inserted": 26,
+      "conflict": 1
+    },
+    "en": {
+      "inserted": 17,
+      "conflict": 2
+    },
+    "mixed": {
+      "inserted": 49,
+      "conflict": 8
+    }
+  },
+  "rule_rows": {
+    "total": 95,
+    "inserted_by_induction": 92,
+    "created_by_consolidation": 3,
+    "retired_by_consolidation": 86,
+    "active": 9,
+    "check": "active = inserted_by_induction + created_by_consolidation - retired_by_consolidation"
+  },
+  "active_rules": 9,
+  "active_rules_per_language": {
+    "ar": 3,
+    "en": 3,
+    "mixed": 6
+  },
+  "active_rules_per_language_note": "a rule counts once per language among its source corrections; rules spanning languages make these sum to more than active_rules",
+  "active_rules_by_language_set": {
+    "ar": 1,
+    "ar+en+mixed": 1,
+    "ar+mixed": 1,
+    "en": 2,
+    "mixed": 4
+  },
+  "active_rules_detail": [
+    {
+      "id": "e5564bdc-9f22-4b33-9e4c-11dddbb62098",
+      "text": "Carefully audit the entire dialogue to comprehensively capture and count every distinct, explicit commitment and promise made by the agent or customer without omission or duplication, while strictly applying compliance flags only when procedural violations are explicitly verified.",
+      "source_corrections": 81,
+      "source_corrections_per_language": {
+        "ar": 24,
+        "en": 13,
+        "mixed": 44
+      }
+    },
+    {
+      "id": "30357d2b-9f4f-474e-9f91-5333be867e24",
+      "text": "Utilize the specific compliance flag 'refusing_manager_escalation' instead of any generalized refusal flag whenever a request for a manager is denied.",
+      "source_corrections": 3,
+      "source_corrections_per_language": {
+        "en": 3
+      }
+    },
+    {
+      "id": "63cd4fd5-3213-49a0-8356-f8ec5264ac71",
+      "text": "Verify that agent procedure adherence and name disclosure rules are strictly evaluated against established guidelines and actual audio transcripts before assigning non-compliance flags.",
+      "source_corrections": 2,
+      "source_corrections_per_language": {
+        "ar": 1,
+        "mixed": 1
+      }
+    },
+    {
+      "id": "26037da6-2f92-4fa5-a9b4-c78d53b3be8b",
+      "text": "Assign the 'none' compliance flag when no resolution confirmation issues are present in the interaction.",
+      "source_corrections": 1,
+      "source_corrections_per_language": {
+        "mixed": 1
+      }
+    },
+    {
+      "id": "a2cafb62-2995-4f63-90d1-b0d8090791bb",
+      "text": "Do not trigger politeness failure compliance flags when agents maintain appropriate professional etiquette throughout the interaction.",
+      "source_corrections": 1,
+      "source_corrections_per_language": {
+        "en": 1
+      }
+    },
+    {
+      "id": "dc6f6f57-687a-4a4c-8488-29a25f711345",
+      "text": "Do not identify general statements of policy or conversational closing remarks as actionable customer commitments.",
+      "source_corrections": 1,
+      "source_corrections_per_language": {
+        "ar": 1
+      }
+    },
+    {
+      "id": "15b2903e-f59e-4e33-a0dd-772181481d07",
+      "text": "Flag interactions as containing third-party blame whenever representatives deflect responsibility or attribute faults to external entities, systems, or other departments.",
+      "source_corrections": 1,
+      "source_corrections_per_language": {
+        "mixed": 1
+      }
+    },
+    {
+      "id": "845e4e7f-e6e2-4e27-b7af-d4e56db20e4a",
+      "text": "Accurately identify and flag any instances of inappropriate language used during the interaction.",
+      "source_corrections": 1,
+      "source_corrections_per_language": {
+        "mixed": 1
+      }
+    },
+    {
+      "id": "3bebec81-859d-4054-84e8-a639e178fa8d",
+      "text": "Exclude automatically generated system messages or placeholders from being classified as valid commitments.",
+      "source_corrections": 1,
+      "source_corrections_per_language": {
+        "mixed": 1
+      }
+    }
+  ]
+}

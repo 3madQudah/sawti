@@ -1,0 +1,64 @@
+{
+  "threshold": 0.7,
+  "phase4_recorded_active_after": [
+    7,
+    6,
+    10,
+    10,
+    14
+  ],
+  "single_linkage": [
+    {
+      "consolidated": 8,
+      "max_cluster": 3,
+      "active_after": 5
+    },
+    {
+      "consolidated": 13,
+      "max_cluster": 6,
+      "active_after": 8
+    },
+    {
+      "consolidated": 22,
+      "max_cluster": 13,
+      "active_after": 6
+    },
+    {
+      "consolidated": 16,
+      "max_cluster": 5,
+      "active_after": 9
+    },
+    {
+      "consolidated": 23,
+      "max_cluster": 10,
+      "active_after": 11
+    }
+  ],
+  "complete_linkage": [
+    {
+      "consolidated": 8,
+      "max_cluster": 2,
+      "active_after": 6
+    },
+    {
+      "consolidated": 14,
+      "max_cluster": 3,
+      "active_after": 11
+    },
+    {
+      "consolidated": 25,
+      "max_cluster": 4,
+      "active_after": 15
+    },
+    {
+      "consolidated": 25,
+      "max_cluster": 4,
+      "active_after": 16
+    },
+    {
+      "consolidated": 30,
+      "max_cluster": 4,
+      "active_after": 18
+    }
+  ]
+}
