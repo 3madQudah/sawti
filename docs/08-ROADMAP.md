@@ -236,11 +236,14 @@ Tracked in `docs/09-DECISIONS.md`.
   `migrate` containers; e2e passes over HTTP in containers; latency,
   throughput, retry/failure rates, image sizes and cold start recorded per
   language in `eval_results.md`.
-- 🟨 6.3 — observability and cloud vs self-hosted comparison: stage A built
-  (self-hosted Langfuse v2 tracing every node and LLM call, no raw PII;
-  vLLM provider; Kaggle T4×2 benchmark notebook; Gemini cloud arm and
-  assembler; corrected memory comparison running). Stage B (the Kaggle run
-  and the comparison table) pending.
+- ✅ 6.3 — observability and cloud vs self-hosted comparison:
+  ✅ self-hosted Langfuse v2 tracing every node and LLM call, no raw PII;
+  ✅ cloud vs self-hosted table per language (free Kaggle T4×2, vLLM 0.18.1,
+  Gemini free tier; every number's method, n and hardware stated —
+  `eval_results.md`, 2026-10-10); ✅ corrected memory comparison (600/600): memory helps in every
+  language; vs Phase 4 the hypothesis is confirmed for mixed, inconclusive
+  for en, contradicted for ar (`eval_results.md`, 2026-10-10) Proposed follow-up:
+  a `disable_any_whitespace` Kaggle run.
 
 **Done when:** a call can be submitted over HTTP, analyzed asynchronously,
 escalated, reviewed by a human through the dashboard, and resumed — with
