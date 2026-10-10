@@ -79,6 +79,9 @@ class CallRecord(BaseModel):
     completion_tokens: int | None = None
     model: str | None = None
     llm_requests: int = 0
+    #: One per provider request, as reported ("stop" / "length" / "MAX_TOKENS" ...). Added
+    #: after the first Kaggle run, whose records lack it.
+    finish_reasons: list[str] = Field(default_factory=list)
     outcome: Outcome
     error: str | None = None
     transcript_bytes_sent: int = Field(0, description="UTF-8 bytes of transcript text in the request.")
@@ -255,6 +258,7 @@ async def run_call(
         completion_tokens=used.completion_tokens,
         model=used.model or getattr(provider, "model_name", None),
         llm_requests=len(usages),
+        finish_reasons=[u.finish_reason for u in usages if u.finish_reason],
         outcome=outcome,
         error=(measuring.failure_text or str(error))[:1000] if error else None,
         transcript_bytes_sent=measuring.transcript_bytes,
@@ -310,8 +314,13 @@ async def run_arm(
     retry_wait_s: float = 65.0,
     note: dict[str, str] | None = None,
     deadline_epoch: float | None = None,
+    call_timeout_s: float | None = None,
 ) -> list[CallRecord]:
     """Run every not-yet-recorded call of `calls` for (arm, repeat), `concurrency` at a time.
+
+    `call_timeout_s`: a call still running after this long is abandoned and
+    retried (a hung request, or one stretched by host sleep — the Gemini
+    arm's first run recorded a 2.7 h "latency" that way).
 
     `deadline_epoch` (Unix time): no new call starts after it — calls already
     running finish — so a GPU session stays inside its time budget. Calls
@@ -343,20 +352,26 @@ async def run_arm(
                 if quota is not None:
                     return
                 try:
-                    record = await run_call(
-                        provider,
-                        call,
-                        arm=arm,
-                        concurrency=concurrency,
-                        repeat=repeat,
-                        rules_for=rules_for,
-                        limiter=limiter,
+                    record = await asyncio.wait_for(
+                        run_call(
+                            provider,
+                            call,
+                            arm=arm,
+                            concurrency=concurrency,
+                            repeat=repeat,
+                            rules_for=rules_for,
+                            limiter=limiter,
+                        ),
+                        timeout=call_timeout_s,
                     )
                 except QuotaExhaustedError as exc:
                     quota = exc
                     return
                 except Exception as exc:
-                    if is_transient_provider_error(exc) and attempt < max_transient_retries:
+                    # A request hung past `call_timeout_s` (e.g. across host sleep) is retried, not waited on.
+                    if (is_transient_provider_error(exc) or isinstance(exc, TimeoutError)) and (
+                        attempt < max_transient_retries
+                    ):
                         logger.warning(
                             "%s %s: transient %r, retry in %.0fs", arm, call.call_id, exc, retry_wait_s
                         )

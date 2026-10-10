@@ -96,3 +96,74 @@ async def test_run_executes_both_arms_and_both_repeats(tmp_path, monkeypatch: py
     assert all("r-callback" not in r.retrieved_rule_ids for r in on if r.call_id == "call_0001_ar")
     assert all(not r.retrieved_rule_ids for r in records if r.arm == "memory_off")
     assert {s.note["provider"] for s in segments} == {"fake"}
+
+
+def _fake_records(deltas: dict[tuple[int, str], bool]) -> tuple[list[Any], list[Any]]:
+    """Two calls per (repeat, arm); `deltas[(repeat, arm)]` decides whether the prediction matches truth."""
+    from datetime import UTC, datetime
+
+    from sawti.eval.serving_benchmark import CallRecord
+    from sawti.schemas import CallAnalysis, Language
+
+    truth = [
+        CallAnalysis(
+            call_id=c,
+            language=Language.AR,
+            summary="Refund promised.",
+            confidence=1.0,
+            requires_human_review=False,
+        )
+        for c in ("call_a_ar", "call_b_ar")
+    ]
+    from sawti.schemas import Commitment, Quote
+
+    spurious = Commitment(
+        evidence=Quote(text="I will call", speaker="Agent", start_char=0, end_char=11),
+        promised_by="Agent",
+        description="A callback nobody promised.",
+    )
+    wrong = CallAnalysis(
+        call_id="x",
+        language=Language.AR,
+        summary="Refund promised.",
+        commitments=[spurious] * 3,
+        confidence=1.0,
+        requires_human_review=False,
+    )
+    records = []
+    for (repeat, arm), right in deltas.items():
+        for t in truth:
+            pred = (t if right else wrong.model_copy(update={"call_id": t.call_id})).model_dump(mode="json")
+            records.append(
+                CallRecord(
+                    arm=arm,
+                    repeat=repeat,
+                    concurrency=1,
+                    call_id=t.call_id,
+                    language=Language.AR,
+                    started_at=datetime.now(UTC),
+                    latency_s=1.0,
+                    outcome="ok",
+                    prediction=pred,
+                )
+            )
+    return records, truth
+
+
+def test_paired_verdict_needs_both_repeats_and_compares_against_phase_4() -> None:
+    off, on = "memory_off", "memory_on_35_loo"
+    records, truth = _fake_records({(0, off): False, (0, on): True})
+    assert memory.paired_verdict(records, truth)["ar"]["verdict"].startswith("incomplete")
+
+    records, truth = _fake_records({(0, off): False, (0, on): True, (1, off): False, (1, on): True})
+    result = memory.paired_verdict(records, truth, phase4_delta={"ar": 0.0, "en": 0.0, "mixed": 0.0})["ar"]
+    assert result["effect"] > 0 and result["noise"] == 0 and result["verdict"] == "confirms"
+    assert result["n_paired_per_repeat"] == [2, 2]
+
+    records, truth = _fake_records({(0, off): True, (0, on): False, (1, off): True, (1, on): False})
+    assert (
+        memory.paired_verdict(records, truth, phase4_delta={"ar": 0.0, "en": 0.0, "mixed": 0.0})["ar"][
+            "verdict"
+        ]
+        == "contradicts"
+    )

@@ -78,8 +78,10 @@ async def test_usage_and_the_resolved_model_version_are_reported() -> None:
     response = fake_client.aio.models.generate_content.return_value
     response.usage_metadata = SimpleNamespace(prompt_token_count=812, candidates_token_count=95)
     response.model_version = "gemini-2.5-flash-lite-preview-09-2025"
+    response.candidates = [SimpleNamespace(finish_reason=SimpleNamespace(name="MAX_TOKENS"))]
     with capture_usage() as usage:
         await provider.structured_complete("x", response_model=_Widget)
     assert [(u.prompt_tokens, u.completion_tokens, u.model) for u in usage] == [
         (812, 95, "gemini-2.5-flash-lite-preview-09-2025")
     ]
+    assert usage[0].finish_reason == "MAX_TOKENS"

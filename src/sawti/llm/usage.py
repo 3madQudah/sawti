@@ -23,18 +23,31 @@ class Usage:
     prompt_tokens: int | None = None
     completion_tokens: int | None = None
     model: str | None = None
+    #: Why generation stopped, as the provider said it ("stop", "length", "STOP", "MAX_TOKENS", ...).
+    finish_reason: str | None = None
 
 
 _capture: ContextVar[list[Usage] | None] = ContextVar("sawti_llm_usage", default=None)
 
 
 def record_usage(
-    prompt_tokens: int | None, completion_tokens: int | None, *, model: str | None = None
+    prompt_tokens: int | None,
+    completion_tokens: int | None,
+    *,
+    model: str | None = None,
+    finish_reason: str | None = None,
 ) -> None:
     """Report one request's usage to the active capture, if any. A no-op otherwise."""
     captured = _capture.get()
     if captured is not None:
-        captured.append(Usage(prompt_tokens=prompt_tokens, completion_tokens=completion_tokens, model=model))
+        captured.append(
+            Usage(
+                prompt_tokens=prompt_tokens,
+                completion_tokens=completion_tokens,
+                model=model,
+                finish_reason=finish_reason,
+            )
+        )
 
 
 @contextlib.contextmanager

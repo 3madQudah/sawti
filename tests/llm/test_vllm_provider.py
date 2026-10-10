@@ -75,6 +75,16 @@ async def test_usage_is_reported_from_the_response() -> None:
     with capture_usage() as usage:
         await provider.structured_complete("t", response_model=_Answer)
     assert [(u.prompt_tokens, u.completion_tokens, u.model) for u in usage] == [(120, 34, "sawti-qlora")]
+    assert usage[0].finish_reason == "stop"
+
+
+async def test_a_truncated_generation_reports_finish_reason_length() -> None:
+    provider, _ = _provider(
+        lambda r: httpx.Response(200, json=_completion('{"summary": "o', finish="length"))
+    )
+    with capture_usage() as usage, pytest.raises(ValidationError):
+        await provider.structured_complete("t", response_model=_Answer)
+    assert usage[0].finish_reason == "length"  # recorded before validation fails
 
 
 async def test_output_that_violates_the_schema_raises_validation_error() -> None:

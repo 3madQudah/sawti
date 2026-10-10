@@ -86,10 +86,114 @@ def test_gpu_cost_allocates_wall_time_by_output_tokens() -> None:
 
 def test_markdown_has_one_table_per_language_and_never_a_blended_row(results: tuple[Path, Path]) -> None:
     text = assemble.to_markdown(assemble.build(*results))
-    assert [line for line in text.splitlines() if line.startswith("### ")] == [
-        "### ar",
-        "### en",
-        "### mixed",
-    ]
+    headings = [line for line in text.splitlines() if line.startswith("### ")]
+    assert headings[:3] == ["### ar", "### en", "### mixed"]
+    assert "### Failures" in headings
     assert "overall" not in text.lower() and "all languages" not in text.lower()
     assert load_checkpoint(results[1])[0]
+
+
+def test_a_sleep_inflated_segment_falls_back_to_summed_latency_and_says_so() -> None:
+    from datetime import UTC, datetime, timedelta
+
+    from sawti.eval.serving_benchmark import CallRecord, Segment
+    from sawti.schemas import Language
+
+    start = datetime(2026, 10, 7, tzinfo=UTC)
+    rows = [
+        CallRecord(
+            arm="g",
+            concurrency=1,
+            call_id=f"c{i}",
+            language=Language.EN,
+            started_at=start,
+            latency_s=60.0,
+            outcome="ok",
+            completion_tokens=600,
+        )
+        for i in range(3)
+    ]
+    asleep = [
+        Segment(
+            arm="g", concurrency=1, started_at=start, finished_at=start + timedelta(days=2), calls_completed=3
+        )
+    ]
+    tp = assemble.arm_throughput(rows, asleep, "g")
+    assert tp["calls_per_min"] == 1.0 and "host sleep" in tp["method"]
+    awake = [
+        Segment(
+            arm="g",
+            concurrency=1,
+            started_at=start,
+            finished_at=start + timedelta(seconds=185),
+            calls_completed=3,
+        )
+    ]
+    assert assemble.arm_throughput(rows, awake, "g")["method"].startswith("segment wall time")
+
+
+def test_failures_report_inferred_length_and_the_base_model_on_the_same_call() -> None:
+    from datetime import UTC, datetime
+
+    from sawti.eval.serving_benchmark import CallRecord
+    from sawti.schemas import Language
+
+    now = datetime.now(UTC)
+    bad = CallRecord(
+        arm="vllm_adapter_c16",
+        concurrency=16,
+        call_id="call_0100_ar",
+        language=Language.AR,
+        started_at=now,
+        latency_s=1.0,
+        outcome="schema_invalid",
+        completion_tokens=4096,
+        error="Invalid JSON: EOF while parsing an object at line 27181 column 0",
+    )
+    base = CallRecord(
+        arm="vllm_base_c16",
+        concurrency=16,
+        call_id="call_0100_ar",
+        language=Language.AR,
+        started_at=now,
+        latency_s=1.0,
+        outcome="ok",
+        completion_tokens=3051,
+    )
+    recorded = bad.model_copy(update={"call_id": "x", "finish_reasons": ["length"]})
+    [first, second] = assemble.failure_details([bad, base, recorded])
+    assert first["finish_reason"].startswith("length (inferred") and first["json_broke_off_at_line"] == 27181
+    assert first["base_model_on_same_call"] == "ok (3051 tokens)"
+    assert second["finish_reason"] == "length" and second["base_model_on_same_call"] == "not run"
+
+
+def test_a_call_stretched_by_host_sleep_is_left_out_of_latency_and_throughput_and_named() -> None:
+    from datetime import UTC, datetime, timedelta
+
+    from sawti.eval.serving_benchmark import CallRecord, Segment
+    from sawti.schemas import Language
+
+    start = datetime(2026, 10, 7, tzinfo=UTC)
+    rows = [
+        CallRecord(
+            arm="g",
+            concurrency=1,
+            call_id=f"c{i}",
+            language=Language.EN,
+            started_at=start,
+            latency_s=30.0,
+            outcome="ok",
+            completion_tokens=300,
+        )
+        for i in range(4)
+    ]
+    rows.append(rows[0].model_copy(update={"call_id": "slept", "latency_s": 9783.0}))
+    seg = [
+        Segment(
+            arm="g", concurrency=1, started_at=start, finished_at=start + timedelta(days=2), calls_completed=5
+        )
+    ]
+    tp = assemble.arm_throughput(rows, seg, "g")
+    assert tp["excluded_as_host_sleep"] == ["slept"]
+    assert tp["calls"] == 4 and tp["calls_per_min"] == 2.0
+    assert "slept" in tp["method"]

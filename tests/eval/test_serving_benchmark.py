@@ -203,3 +203,26 @@ async def test_nothing_new_starts_after_the_deadline(tmp_path: Path) -> None:
     )
     assert records == []
     assert sb.load_checkpoint(tmp_path / "r.jsonl")[0] == []
+
+
+async def test_a_hung_call_times_out_and_is_retried(tmp_path: Path) -> None:
+    """A request that never returns (e.g. across host sleep) is abandoned after `call_timeout_s`."""
+
+    class _HangsOnce(FakeProvider):
+        calls = 0
+
+        async def structured_complete(self, prompt: str, *, response_model: Any, **kwargs: Any) -> Any:
+            type(self).calls += 1
+            if type(self).calls == 1:
+                await asyncio.sleep(30)
+            return await super().structured_complete(prompt, response_model=response_model, **kwargs)
+
+    [record] = await sb.run_arm(
+        _HangsOnce(),
+        [_call("call_0006_en")],
+        arm="a",
+        checkpoint=tmp_path / "r.jsonl",
+        call_timeout_s=0.2,
+        retry_wait_s=0,
+    )
+    assert record.outcome == "ok" and _HangsOnce.calls == 2

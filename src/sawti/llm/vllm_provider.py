@@ -102,6 +102,7 @@ class VLLMProvider(LLMProvider):
             usage.prompt_tokens if usage else None,
             usage.completion_tokens if usage else None,
             model=response.model or self._model,
+            finish_reason=response.choices[0].finish_reason if response.choices else None,
         )
         return response.choices[0].message.content or ""
 

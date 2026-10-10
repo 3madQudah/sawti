@@ -72,6 +72,7 @@ def main() -> int:
                 concurrency=1,
                 min_interval_s=args.min_interval if args.provider == "gemini" else 0.0,
                 note=provenance(args.provider),
+                call_timeout_s=600.0,  # see run_memory_comparison.py
             )
         )
     except QuotaExhaustedError:

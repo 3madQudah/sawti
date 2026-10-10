@@ -15,6 +15,16 @@ from sawti.llm.provider import LLMProvider, ResponseModelT
 from sawti.llm.usage import record_usage
 
 
+def _finish_reason(response: Any) -> str | None:
+    """The first candidate's finish reason as a plain string (`STOP`, `MAX_TOKENS`, ...), if reported."""
+    candidates = getattr(response, "candidates", None) or []
+    reason = getattr(candidates[0], "finish_reason", None) if candidates else None
+    if reason is None:
+        return None
+    name = getattr(reason, "name", None)
+    return name if isinstance(name, str) else str(reason)
+
+
 class GeminiProvider(LLMProvider):
     """LLMProvider backed by the Google Gemini API (`google-genai` SDK)."""
 
@@ -40,6 +50,7 @@ class GeminiProvider(LLMProvider):
             getattr(meta, "prompt_token_count", None),
             getattr(meta, "candidates_token_count", None),
             model=getattr(response, "model_version", None) or self._model,
+            finish_reason=_finish_reason(response),
         )
 
     async def complete(self, prompt: str, *, system: str | None = None, **kwargs: Any) -> str:

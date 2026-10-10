@@ -135,7 +135,86 @@ async def run(
                 rules_for=rules_for if arm != "memory_off" else None,
                 min_interval_s=min_interval,
                 note=note,
+                # A hung request (or one stretched by host sleep) is retried, not waited on;
+                # no successful Gemini call so far took longer than 135 s.
+                call_timeout_s=600.0,
             )
+
+
+#: Phase 4's memory - control accuracy delta per language: the mean of its five per-batch deltas
+#: (eval_results.md, 2026-09-25 round): ar (+0.015, +0.070, +0.007, +0.060, +0.129),
+#: en (-0.001, -0.075, -0.001, +0.029, +0.072), mixed (+0.013, +0.022, -0.040, +0.010, -0.005).
+PHASE4_DELTA = {"ar": 0.0562, "en": 0.0048, "mixed": 0.0000}
+
+
+def paired_verdict(
+    records: list[Any], truth: list[Any], phase4_delta: dict[str, float] = PHASE4_DELTA
+) -> dict[str, Any]:
+    """The pre-registered test of the Phase 4 hypothesis (docs/09-DECISIONS.md, 2026-10-10).
+
+    Per language and repeat, accuracy of memory on vs off over the calls valid
+    in *both* arms of that repeat (paired); effect = mean delta over repeats;
+    noise = the larger of the off arm's run-to-run change and the delta's
+    change between repeats. Verdict vs Phase 4's mean per-batch delta:
+    "confirms" if effect > phase4 + noise, "contradicts" if effect <
+    phase4 - noise, otherwise "inconclusive (within noise)".
+    """
+    from sawti.eval.metrics import accuracy_by_category
+    from sawti.schemas import CallAnalysis, Language
+
+    references = {r.call_id: r for r in truth}
+    repeats = sorted({r.repeat for r in records})
+    out: dict[str, Any] = {}
+    for language in Language:
+        deltas, off_scores = [], []
+        n_paired = []
+        for repeat in repeats:
+            arms = {
+                arm: {
+                    r.call_id: r
+                    for r in records
+                    if r.arm == arm and r.repeat == repeat and r.language == language and r.prediction
+                }
+                for arm in ARMS
+            }
+            common = sorted(set(arms["memory_off"]) & set(arms["memory_on_35_loo"]))
+            if not common:
+                continue
+            refs = [references[c] for c in common]
+            acc = {
+                arm: accuracy_by_category(
+                    [CallAnalysis.model_validate(arms[arm][c].prediction) for c in common], refs
+                )[language]
+                for arm in ARMS
+            }
+            deltas.append(acc["memory_on_35_loo"] - acc["memory_off"])
+            off_scores.append(acc["memory_off"])
+            n_paired.append(len(common))
+        if not deltas:
+            continue
+        effect = sum(deltas) / len(deltas)
+        noise = max(
+            (max(off_scores) - min(off_scores)) if len(off_scores) > 1 else 0.0,
+            (max(deltas) - min(deltas)) if len(deltas) > 1 else 0.0,
+        )
+        baseline = phase4_delta[language.value]
+        if len(deltas) < 2:
+            verdict = "incomplete (needs both repeats to estimate noise)"
+        elif effect > baseline + noise:
+            verdict = "confirms"
+        elif effect < baseline - noise:
+            verdict = "contradicts"
+        else:
+            verdict = "inconclusive (within noise)"
+        out[language.value] = {
+            "n_paired_per_repeat": n_paired,
+            "delta_per_repeat": [round(d, 4) for d in deltas],
+            "effect": round(effect, 4),
+            "noise": round(noise, 4),
+            "phase4_delta": baseline,
+            "verdict": verdict,
+        }
+    return out
 
 
 def report(checkpoint: Path = CHECKPOINT) -> dict[str, Any]:
@@ -183,7 +262,12 @@ def main() -> int:
         print(f"froze {json.loads(SNAPSHOT.read_text())['active_rules']} rules to {SNAPSHOT}")
         return 0
     if args.command == "report":
-        print(json.dumps(report(args.checkpoint), indent=2))
+        records, _ = load_checkpoint(args.checkpoint)
+        out = {
+            "by_repeat": report(args.checkpoint),
+            "verdict": paired_verdict(records, load_ground_truth(GROUND_TRUTH_DIR)),
+        }
+        print(json.dumps(out, indent=2))
         return 0
 
     provider: LLMProvider = FakeProvider() if args.provider == "fake" else get_llm_provider()
