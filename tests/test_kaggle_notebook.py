@@ -56,3 +56,40 @@ def test_the_gpu_time_estimate_is_stated_at_the_top() -> None:
     top = "".join(_cells()[0]["source"])  # type: ignore[arg-type]
     assert "Estimated GPU time" in top
     assert "T4×2" in top
+
+
+def _backend_pattern() -> re.Pattern[str]:
+    match = re.search(r're\.findall\(r"(.+?)", server_log\)', _code()[0])
+    assert match, "the feasibility cell must parse the backend from vllm_server.log"
+    return re.compile(match.group(1).replace("\\\\", "\\"))
+
+
+def test_triton_attention_is_forced_with_the_0_18_1_flag_and_flashinfer_paths_are_closed() -> None:
+    first = _code()[0]
+    assert 'ATTENTION_BACKEND = "TRITON_ATTN"' in first
+    assert '"--attention-backend", ATTENTION_BACKEND' in first
+    assert 'environ["VLLM_ATTENTION_BACKEND"]' not in first  # gone in 0.18.1: the CLI flag is the control
+    assert 'os.environ["VLLM_USE_FLASHINFER_SAMPLER"] = "0"' in first
+    assert "libcuda.so" in first and "LIBRARY_PATH" in first  # the -lcuda safety net
+
+
+def test_the_backend_assertion_reads_both_0_18_1_log_formats() -> None:
+    pattern = _backend_pattern()
+    explicit = (
+        "(EngineCore_DP0 pid=81) INFO 10-10 06:12:01 [cuda.py:257] "
+        "Using AttentionBackendEnum.TRITON_ATTN backend."
+    )
+    auto = (
+        "(Worker_TP1 pid=90) INFO 10-10 06:12:01 [cuda.py:318] Using FLASHINFER attention backend out of "
+        "potential backends: ['FLASHINFER', 'TRITON_ATTN', 'FLEX_ATTENTION']."
+    )
+    assert pattern.findall(explicit) == ["TRITON_ATTN"]
+    assert pattern.findall(auto) == ["FLASHINFER"]  # so a silent auto-pick fails the assertion
+    assert pattern.findall("INFO Using xgrammar for structured outputs") == []
+
+
+def test_the_backend_is_asserted_before_the_probe_call() -> None:
+    first = _code()[0]
+    assert first.index("assert set(chosen) == {ATTENTION_BACKEND}") < first.index(
+        "urllib.request.urlopen(req"
+    )
