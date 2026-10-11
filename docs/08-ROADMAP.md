@@ -8,6 +8,9 @@ a fixed QA rubric, and routes anything it is not confident about to a human.
 Every phase reports its results **per language category** — `ar`, `en`, `mixed` —
 never as one blended number.
 
+See also: [07-IMPLEMENTATION-PLAN.md](07-IMPLEMENTATION-PLAN.md) (phases as built, with dates),
+[11-CHECKPOINT.md](11-CHECKPOINT.md) (current state and open issues).
+
 ---
 
 ## Status note — numbering reconciled 2026-09-22

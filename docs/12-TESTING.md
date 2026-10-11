@@ -2,6 +2,9 @@
 
 How this project is tested, and what the test suite is and is not evidence of.
 
+See also: [15-CONTRIBUTING.md](15-CONTRIBUTING.md) (setup, every check command, and the
+latest results).
+
 ## Running
 
 ```bash

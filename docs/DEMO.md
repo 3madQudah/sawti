@@ -4,6 +4,9 @@ Everything runs on one machine. Nothing but the analysis call leaves it: the
 redacted transcript goes to the configured LLM provider (Gemini by default).
 Raw audio, the unredacted transcript and the database never do.
 
+See also: [14-DEPLOYMENT.md](14-DEPLOYMENT.md) (all commands and environment variables),
+[04-ARCHITECTURE.md](04-ARCHITECTURE.md), [02-PRODUCT-SPECIFICATION.md](02-PRODUCT-SPECIFICATION.md).
+
 ## What runs where
 
 | Piece | Where | Port |
