@@ -20,6 +20,7 @@ export type ClaimChanges = Schemas["ClaimChanges"];
 export type ClaimVerdict = Schemas["ClaimVerdict"];
 export type ClaimKind = GroundedClaim["kind"];
 export type Verdict = ClaimVerdict["verdict"];
+export type ConflictAction = Schemas["ConflictResolveRequest"]["action"];
 
 export const LANGUAGES: readonly Language[] = ["ar", "en", "mixed"];
 

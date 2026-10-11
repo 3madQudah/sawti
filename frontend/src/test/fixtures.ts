@@ -128,3 +128,54 @@ export function queue(now: Date): Schemas["ReviewQueueResponse"] {
   }));
   return { items, pending: { ar: 2, en: 1, mixed: 3 } };
 }
+
+// --- Memory, stats and results (New call / Memory / Results pages) -----------------------
+
+export const CONFLICT_IDS = ["e1c0a7f2-0000-4000-8000-0000000000c1", "6b2d9e14-0000-4000-8000-0000000000c2"];
+const CANDIDATE_IDS = ["9d0c1b2a-0000-4000-8000-0000000000a1", "a7e3f058-0000-4000-8000-0000000000a2"];
+export const MORE_RULE_IDS = ["3d33a4c5-8e9f-4b2c-8d1e-3f4a5b6c7d8e", "4e44b5d6-9f0a-4c3d-9e2f-4a5b6c7d8e9f"];
+
+export function memoryRules(): Schemas["MemoryRuleView"][] {
+  return [
+    { id: MORE_RULE_IDS[1]!, text: '"Later today" sets the deadline to the end of the business day.', source_corrections: 2, languages: ["en"], analyses_used: 9, created_at: "2026-10-09T10:00:00Z" },
+    { id: MORE_RULE_IDS[0]!, text: '"بكرا" sets the deadline to the next calendar day.', source_corrections: 5, languages: ["ar", "mixed"], analyses_used: 41, created_at: "2026-10-08T10:00:00Z" },
+    { id: RULE_IDS[1]!, text: "Asking only for the line number does not count as identity verification.", source_corrections: 4, languages: ["ar"], analyses_used: 37, created_at: "2026-10-07T10:00:00Z" },
+    { id: RULE_IDS[0]!, text: 'In Jordanian dialect, "بيوصلك … خلال" plus a time span is a commitment with a deadline.', source_corrections: 3, languages: ["mixed"], analyses_used: 22, created_at: "2026-10-06T10:00:00Z" },
+  ];
+}
+
+export function memoryConflicts(): Schemas["MemoryConflictView"][] {
+  return [
+    {
+      id: CONFLICT_IDS[0]!,
+      detected_at: "2026-10-11T07:40:00Z",
+      candidate_rule_id: CANDIDATE_IDS[0]!,
+      candidate_text: "Confirming the line number counts as identity verification for billing questions.",
+      conflicting: [
+        { rule_id: RULE_IDS[1]!, text: "Asking only for the line number does not count as identity verification.", active: true, similarity: 0.84, reasoning: "Opposite verdicts on the same check." },
+      ],
+      source: { correction_id: "c0e1d2f3-0000-4000-8000-0000000000b1", call_id: CALL_ID, language: "ar", reviewer_id: "qa-lina", corrected_at: "2026-10-11T07:39:00Z" },
+    },
+    {
+      id: CONFLICT_IDS[1]!,
+      detected_at: "2026-10-11T08:10:00Z",
+      candidate_rule_id: CANDIDATE_IDS[1]!,
+      candidate_text: '"بكرا" said after business hours means the next business day.',
+      conflicting: [
+        { rule_id: MORE_RULE_IDS[0]!, text: '"بكرا" sets the deadline to the next calendar day.', active: true, similarity: 0.76, reasoning: "Different deadline for the same phrase." },
+      ],
+      source: { correction_id: "c0e1d2f3-0000-4000-8000-0000000000b2", call_id: "0a6f5bd4-0000-4000-8000-000000000005", language: "mixed", reviewer_id: "qa-emad", corrected_at: "2026-10-11T08:09:00Z" },
+    },
+  ];
+}
+
+const rate = (numerator: number, n: number): Schemas["Rate"] => ({ value: n ? numerator / n : null, numerator, n });
+
+export function stats(): Schemas["StatsResponse"] {
+  return {
+    ar: { pending_reviews: 2, reviewer_agreement: rate(31, 40), active_rules: 1, pending_conflicts: 1, conflict_false_positive_rate: rate(1, 4) },
+    en: { pending_reviews: 1, reviewer_agreement: rate(9, 12), active_rules: 1, pending_conflicts: 0, conflict_false_positive_rate: rate(0, 0) },
+    mixed: { pending_reviews: 3, reviewer_agreement: rate(44, 60), active_rules: 2, pending_conflicts: 1, conflict_false_positive_rate: rate(2, 5) },
+    active_rules_distinct: 4,
+  };
+}

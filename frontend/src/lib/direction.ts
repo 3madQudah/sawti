@@ -11,3 +11,14 @@ export function turnDirection(language: Language): "rtl" | "ltr" | "auto" {
   if (language === "en") return "ltr";
   return "auto";
 }
+
+/**
+ * Direction of free text with no language tag (rule text, conflict reasoning), by which script has
+ * more letters. `dir="auto"` would follow the first strong character, so an English rule that
+ * opens with a quoted Arabic word ("بكرا" sets the deadline…) would render right to left.
+ */
+export function textDirection(text: string): "rtl" | "ltr" {
+  const arabic = text.match(/[؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/g)?.length ?? 0;
+  const latin = text.match(/[A-Za-z]/g)?.length ?? 0;
+  return arabic > latin ? "rtl" : "ltr";
+}

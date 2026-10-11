@@ -149,3 +149,14 @@ def test_results_route_is_503_when_a_file_is_missing(
 )
 def test_results_needs_a_key_and_a_reviewer(client: TestClient, sent: dict[str, str]) -> None:
     assert client.get("/results", headers=sent).status_code == 401
+
+
+def test_the_dashboard_mock_is_exactly_what_the_api_serves() -> None:
+    """`frontend/src/test/results.json` backs the Results page's tests; it must not drift from `/results`.
+
+    Regenerate after a results change: `load_results().model_dump(mode="json")`, dumped with indent=1.
+    """
+    import json
+
+    mock = json.loads((ROOT / "frontend/src/test/results.json").read_text(encoding="utf-8"))
+    assert mock == load_results().model_dump(mode="json")

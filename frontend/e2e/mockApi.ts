@@ -1,6 +1,6 @@
 import type { Page } from "@playwright/test";
 
-import { MockApi } from "../src/test/mockApi";
+import { MockApi, readBody } from "../src/test/mockApi";
 
 /** Answer every `/api/**` request in the browser from the shared in-memory mock. No backend runs. */
 export async function mockApi(page: Page): Promise<MockApi> {
@@ -8,8 +8,11 @@ export async function mockApi(page: Page): Promise<MockApi> {
   // The path must start with /api/: a glob like **/api/** also matches Vite's /src/api/*.ts modules.
   await page.route((url) => url.pathname.startsWith("/api/"), async (route) => {
     const request = route.request();
-    const body = request.postData();
-    const response = api.handle(request.method(), request.url(), await request.allHeaders(), body ? JSON.parse(body) : undefined);
+    const headers = await request.allHeaders();
+    const raw = request.postDataBuffer();
+    // Rebuild a fetch Request so JSON and multipart bodies are parsed the same way as in Vitest.
+    const body = await readBody(new Request(request.url(), { method: request.method(), headers, body: raw ?? undefined }));
+    const response = api.handle(request.method(), request.url(), headers, body);
     await route.fulfill({ status: response.status, contentType: "application/json", body: JSON.stringify(response.body) });
   });
   return api;
