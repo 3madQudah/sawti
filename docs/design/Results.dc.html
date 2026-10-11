@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sawti — Results</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F5F6F4}
+a{color:#0E6B66}a:hover{color:#094A47}
+</style>
+</helmet>
+<div style="min-height: 1180px; background: #F5F6F4; color: #15171C; font-family: 'IBM Plex Sans', 'IBM Plex Sans Arabic', system-ui, sans-serif; font-size: 14px; display: flex; flex-direction: column">
+
+  <header style="background: #15171C; color: #F5F6F4; padding: 0 32px; min-height: 60px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+    <div style="display: flex; align-items: center; gap: 28px; flex-wrap: wrap">
+      <div style="display: flex; align-items: baseline; gap: 10px">
+        <span style="font-size: 20px; font-weight: 600; letter-spacing: -0.01em">Sawti</span>
+        <span style="font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 18px; color: #9FD3CF">صوتي</span>
+      </div>
+      <nav style="display: flex; gap: 4px; flex-wrap: wrap">
+        <a href="Main.dc.html" style="color: #B9BEC6; text-decoration: none; padding: 10px 14px; border-radius: 6px">Review queue</a>
+        <a href="NewCall.dc.html" style="color: #B9BEC6; text-decoration: none; padding: 10px 14px; border-radius: 6px">New call</a>
+        <a href="Memory.dc.html" style="color: #B9BEC6; text-decoration: none; padding: 10px 14px; border-radius: 6px">Memory</a>
+        <a href="Results.dc.html" style="color: #FFFFFF; text-decoration: none; padding: 10px 14px; border-radius: 6px; background: #2A2E36; font-weight: 500">Results</a>
+      </nav>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px; color: #B9BEC6">
+      <div role="group" aria-label="Interface language" style="display: flex; background: #2A2E36; border-radius: 8px; padding: 3px; gap: 2px">
+        <button aria-pressed="true" style="min-height: 32px; min-width: 44px; padding: 0 10px; border-radius: 6px; border: none; font: inherit; font-size: 13px; font-weight: 600; background: #F5F6F4; color: #15171C">EN</button>
+        <button aria-pressed="false" style="min-height: 32px; min-width: 44px; padding: 0 10px; border-radius: 6px; border: none; font: inherit; font-size: 13px; font-weight: 600; background: transparent; color: #B9BEC6">عربي</button>
+      </div>
+      <span>Reviewer</span>
+      <span style="font-family: 'IBM Plex Mono', monospace; color: #FFFFFF; background: #2A2E36; padding: 6px 10px; border-radius: 6px">qa-emad</span>
+    </div>
+  </header>
+
+  <main style="width: 100%; max-width: 1280px; margin: 0 auto; padding: 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 28px">
+    <div style="display: flex; flex-direction: column; gap: 6px; max-width: 820px">
+      <h1 style="margin: 0; font-size: 28px; font-weight: 600">What the measurements say</h1>
+      <p style="margin: 0; color: #5B616B; line-height: 1.6">Every number here is per language, with its sample size and the hardware it ran on. Nothing is blended across languages.</p>
+    </div>
+
+    <section aria-label="Memory effect" style="background: #FFFFFF; border: 1px solid #E2E5E1; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 18px">
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; align-items: flex-end">
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <h2 style="margin: 0; font-size: 20px; font-weight: 600">Does rule memory improve accuracy?</h2>
+          <span style="color: #5B616B">Memory on minus memory off · 35 rules, leave-one-out · 2 repeats · 600 calls · verdict rule fixed before the data existed</span>
+        </div>
+        <div style="display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: #3A3F47">
+          <span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 14px; height: 10px; background: #0E6B66; border-radius: 2px"></span>Effect now</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 14px; height: 10px; background: #DADFD9; border-radius: 2px"></span>Run-to-run noise</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 3px; height: 14px; background: #B45309"></span>Phase 4 effect</span>
+        </div>
+      </div>
+
+      <sc-for list="{{mem}}" as="m" hint-placeholder-count="3">
+        <div style="display: grid; grid-template-columns: 140px minmax(0, 1fr) 150px; gap: 16px; align-items: center; padding: 10px 0; border-top: 1px solid #EEF0ED">
+          <div style="display: flex; flex-direction: column; gap: 4px">
+            <span style="{{m.chip}}">{{m.lang}}</span>
+            <span style="color: #5B616B; font-size: 12px">n = {{m.n}} per arm per repeat</span>
+          </div>
+          <div style="position: relative; height: 34px; background: #F5F6F4; border-radius: 6px">
+            <div style="{{m.noise}}"></div>
+            <div style="{{m.bar}}"></div>
+            <div style="{{m.p4}}"></div>
+            <div style="position: absolute; top: -2px; bottom: -2px; left: 14.29%; width: 1px; background: #9AA0A8"></div>
+            <span style="{{m.label}}">+{{m.delta}}</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start">
+            <span style="{{m.verdictStyle}}">{{m.verdict}}</span>
+            <span style="color: #5B616B; font-size: 12px; font-family: 'IBM Plex Mono', monospace">noise {{m.noiseV}} · P4 {{m.p4V}}</span>
+          </div>
+        </div>
+      </sc-for>
+      <div style="display: grid; grid-template-columns: 140px minmax(0, 1fr) 150px; gap: 16px">
+        <span></span>
+        <div style="position: relative; height: 16px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #5B616B">
+          <span style="position: absolute; left: 14.29%; transform: translateX(-50%)">0</span>
+          <span style="position: absolute; left: 42.86%; transform: translateX(-50%)">0.02</span>
+          <span style="position: absolute; left: 71.43%; transform: translateX(-50%)">0.04</span>
+          <span style="position: absolute; left: 100%; transform: translateX(-100%)">0.06</span>
+        </div>
+        <span></span>
+      </div>
+      <p style="margin: 0; color: #3A3F47; line-height: 1.6; max-width: 900px">Fixing rule consolidation (single- to complete-linkage) recovered a memory effect on <strong>code-switched</strong> calls that Phase 4 measured as zero. The Arabic gain in Phase 4 came mostly from one unusual batch.</p>
+    </section>
+
+    <section aria-label="Serving" style="display: flex; flex-direction: column; gap: 16px">
+      <h2 style="margin: 0; font-size: 20px; font-weight: 600">Cloud vs self-hosted serving</h2>
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+        <sc-for list="{{tiles}}" as="k" hint-placeholder-count="4">
+          <div style="background: #FFFFFF; border: 1px solid #E2E5E1; border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px">
+            <span style="font-size: 26px; font-weight: 600; letter-spacing: -0.01em">{{k.big}}</span>
+            <span style="line-height: 1.5">{{k.what}}</span>
+            <span style="color: #5B616B; font-size: 12px">{{k.how}}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="background: #FFFFFF; border: 1px solid #E2E5E1; border-radius: 10px; overflow-x: auto">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid #E2E5E1; flex-wrap: wrap">
+          <span style="font-weight: 600">Per arm, language: {{langName}}</span>
+          <div role="tablist" aria-label="Language" style="display: flex; gap: 6px">
+            <sc-for list="{{langTabs}}" as="l" hint-placeholder-count="3">
+              <button role="tab" aria-selected="{{l.on}}" onClick="{{l.pick}}" style="{{l.style}}">{{l.label}}</button>
+            </sc-for>
+          </div>
+        </div>
+        <table style="width: 100%; min-width: 980px; border-collapse: collapse">
+          <thead>
+            <tr style="color: #5B616B; font-size: 12px; letter-spacing: 0.04em">
+              <th style="padding: 12px 20px; text-align: start; font-weight: 500">ARM</th>
+              <th style="padding: 12px 20px; text-align: start; font-weight: 500">HARDWARE</th>
+              <th style="padding: 12px 20px; text-align: start; font-weight: 500">ACCURACY</th>
+              <th style="padding: 12px 20px; text-align: start; font-weight: 500">SCHEMA-VALID</th>
+              <th style="padding: 12px 20px; text-align: start; font-weight: 500">LATENCY</th>
+              <th style="padding: 12px 20px; text-align: start; font-weight: 500">COST / 1,000 CALLS</th>
+              <th style="padding: 12px 20px; text-align: start; font-weight: 500">DATA EGRESS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{arms}}" as="a" hint-placeholder-count="5">
+              <tr style="border-top: 1px solid #EEF0ED">
+                <td style="padding: 14px 20px; font-weight: 500">{{a.name}}</td>
+                <td style="padding: 14px 20px; color: #5B616B">{{a.hw}}</td>
+                <td style="padding: 14px 20px; font-family: 'IBM Plex Mono', monospace; color: #8A8F97">{{a.acc}}</td>
+                <td style="padding: 14px 20px; font-family: 'IBM Plex Mono', monospace">{{a.valid}}</td>
+                <td style="padding: 14px 20px; font-family: 'IBM Plex Mono', monospace">{{a.lat}}</td>
+                <td style="padding: 14px 20px; font-family: 'IBM Plex Mono', monospace">{{a.cost}}</td>
+                <td style="padding: 14px 20px">{{a.egress}}</td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+        <p style="margin: 0; padding: 12px 20px; color: #5B616B; font-size: 12px; line-height: 1.6; border-top: 1px solid #EEF0ED">Bracketed cells are filled from <span style="font-family: 'IBM Plex Mono', monospace">GET /results</span>. Costs are priced as if paid (actual spend $0 on free tiers). * Kaggle is itself a third party in this benchmark; zero egress applies to running the same server on your own hardware. All calls are synthetic and redacted.</p>
+      </div>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1180}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { lang: 'mixed' }; }
+  chip(lang) {
+    var base = 'display: inline-block; align-self: flex-start; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; font-family: IBM Plex Mono, monospace; ';
+    if (lang === 'ar') return base + 'background: #15171C; color: #FFFFFF;';
+    if (lang === 'mixed') return base + 'background: #CDE7E4; color: #094A47;';
+    return base + 'background: #FFFFFF; color: #15171C; box-shadow: inset 0 0 0 1px #9AA0A8;';
+  }
+  renderVals() {
+    var self = this;
+    function x(v) { return ((v + 0.01) / 0.07 * 100).toFixed(2); }
+    var zero = x(0);
+    var rows = [
+      { lang: 'ar', n: 60, d: 0.021, noise: 0.015, p4: 0.056, verdict: 'Contradicts Phase 4', vs: ['#ECEEEB', '#3A3F47'] },
+      { lang: 'en', n: 30, d: 0.022, noise: 0.035, p4: 0.005, verdict: 'Inconclusive', vs: ['#ECEEEB', '#3A3F47'] },
+      { lang: 'mixed', n: 60, d: 0.042, noise: 0.009, p4: 0.000, verdict: 'Confirms hypothesis', vs: ['#0E6B66', '#FFFFFF'] }
+    ];
+    var mem = rows.map(function (r) {
+      return {
+        lang: r.lang, n: r.n, chip: self.chip(r.lang), delta: r.d.toFixed(3),
+        noiseV: r.noise.toFixed(3), p4V: (r.p4 >= 0 ? '+' : '') + r.p4.toFixed(3), verdict: r.verdict,
+        verdictStyle: 'font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: ' + r.vs[0] + '; color: ' + r.vs[1] + ';',
+        noise: 'position: absolute; top: 4px; bottom: 4px; left: ' + zero + '%; width: ' + (x(r.noise) - zero).toFixed(2) + '%; background: #DADFD9; border-radius: 3px;',
+        bar: 'position: absolute; top: 11px; bottom: 11px; left: ' + zero + '%; width: ' + (x(r.d) - zero).toFixed(2) + '%; background: #0E6B66; border-radius: 3px;',
+        p4: 'position: absolute; top: 2px; bottom: 2px; left: ' + x(r.p4) + '%; width: 3px; margin-left: -1px; background: #B45309; border-radius: 2px;',
+        label: 'position: absolute; top: 8px; left: calc(' + x(r.d) + '% + 8px); font-family: IBM Plex Mono, monospace; font-size: 12px; font-weight: 600; color: #094A47;'
+      };
+    });
+    var tiles = [
+      { big: '~10×', what: 'throughput with 16 calls in flight vs 1, same GPU and model', how: 'vLLM + adapter · Kaggle T4×2 · n = 15 and 45' },
+      { big: '$6–7', what: 'per 1,000 calls at 16 in flight, vs $67–100 one at a time', how: 'priced as a rented 2×T4 · actual spend $0' },
+      { big: '8.1 s', what: 'Gemini median latency (p95 69.4 s)', how: 'cloud API · n = 14, one sleep-affected call excluded' },
+      { big: '3 / 45', what: 'schema failures at 16 in flight: whitespace loops under guided decoding', how: 'fix proposed as a separate measured run' }
+    ];
+    var names = { ar: 'Arabic', en: 'English', mixed: 'Code-switched' };
+    var langTabs = ['ar', 'en', 'mixed'].map(function (l) {
+      var on = self.state.lang === l;
+      return {
+        label: l, on: on, pick: function () { self.setState({ lang: l }); },
+        style: 'min-height: 36px; padding: 0 12px; border-radius: 8px; font: inherit; font-family: IBM Plex Mono, monospace; font-weight: 600; cursor: pointer; border: 1px solid ' + (on ? '#15171C' : '#D3D7D2') + '; background: ' + (on ? '#15171C' : '#FFFFFF') + '; color: ' + (on ? '#FFFFFF' : '#15171C') + ';'
+      };
+    });
+    var arms = [
+      { name: 'Gemini 3.5 flash-lite', hw: 'Cloud API', acc: '[value]', valid: '[value]', lat: 'p50 8.1 s', cost: '[priced as paid]', egress: 'Transcript → Google' },
+      { name: 'vLLM + adapter · 1 in flight', hw: 'Kaggle T4×2', acc: '[value]', valid: '14 / 15', lat: '~5 min', cost: '$67–100', egress: 'None on own hardware *' },
+      { name: 'vLLM + adapter · 16 in flight', hw: 'Kaggle T4×2', acc: '[value]', valid: '42 / 45', lat: '[value]', cost: '$6–7', egress: 'None on own hardware *' },
+      { name: 'vLLM base Qwen3-8B · 16 in flight', hw: 'Kaggle T4×2', acc: '[value]', valid: '[value]', lat: '[value]', cost: '[value]', egress: 'None on own hardware *' },
+      { name: 'HF transformers + adapter · 1', hw: 'Kaggle T4×2', acc: '[value]', valid: 'retries on 3 / 3', lat: '~9 min', cost: '[value]', egress: 'None on own hardware *' }
+    ];
+    return { mem: mem, tiles: tiles, langTabs: langTabs, langName: names[this.state.lang], arms: arms };
+  }
+}
+</script>
+</body>
+</html>

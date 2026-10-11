@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sawti — Review queue</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F5F6F4}
+a{color:#0E6B66}a:hover{color:#094A47}
+</style>
+</helmet>
+<div dir="{{dir}}" style="{{rootStyle}}">
+
+  <header style="background: #15171C; color: #F5F6F4; padding: 0 32px; min-height: 60px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+    <div style="display: flex; align-items: center; gap: 28px; flex-wrap: wrap">
+      <div style="display: flex; align-items: baseline; gap: 10px">
+        <span style="font-family: 'IBM Plex Sans', sans-serif; font-size: 20px; font-weight: 600; letter-spacing: -0.01em">Sawti</span>
+        <span style="font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 18px; color: #9FD3CF">صوتي</span>
+      </div>
+      <nav style="display: flex; gap: 4px; flex-wrap: wrap">
+        <a href="Main.dc.html" style="color: #FFFFFF; text-decoration: none; padding: 10px 14px; border-radius: 6px; background: #2A2E36; font-weight: 500">{{t.nav0}}</a>
+        <a href="NewCall.dc.html" style="color: #B9BEC6; text-decoration: none; padding: 10px 14px; border-radius: 6px">{{t.nav1}}</a>
+        <a href="Memory.dc.html" style="color: #B9BEC6; text-decoration: none; padding: 10px 14px; border-radius: 6px">{{t.nav2}}</a>
+        <a href="Results.dc.html" style="color: #B9BEC6; text-decoration: none; padding: 10px 14px; border-radius: 6px">{{t.nav3}}</a>
+      </nav>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px; color: #B9BEC6">
+      <div role="group" aria-label="Interface language" style="display: flex; background: #2A2E36; border-radius: 8px; padding: 3px; gap: 2px">
+        <button onClick="{{toEn}}" aria-pressed="{{isEn}}" style="{{enStyle}}">EN</button>
+        <button onClick="{{toAr}}" aria-pressed="{{isAr}}" style="{{arStyle}}">عربي</button>
+      </div>
+      <span>{{t.reviewer}}</span>
+      <span style="font-family: 'IBM Plex Mono', monospace; color: #FFFFFF; background: #2A2E36; padding: 6px 10px; border-radius: 6px">qa-emad</span>
+    </div>
+  </header>
+
+  <main style="width: 100%; max-width: 1280px; margin: 0 auto; padding: 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
+
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
+      <div style="display: flex; flex-direction: column; gap: 6px; max-width: 760px">
+        <h1 style="margin: 0; font-size: 28px; font-weight: 600">{{t.title}}</h1>
+        <p style="margin: 0; color: #5B616B; line-height: 1.6">{{t.subtitle}}</p>
+      </div>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap" role="group" aria-label="Filter by language">
+        <sc-for list="{{filters}}" as="f" hint-placeholder-count="4">
+          <button onClick="{{f.pick}}" style="{{f.style}}">{{f.label}} <span style="font-family: 'IBM Plex Mono', monospace; opacity: 0.75">{{f.count}}</span></button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+      <sc-for list="{{stats}}" as="s" hint-placeholder-count="3">
+        <div style="background: #FFFFFF; border: 1px solid #E2E5E1; border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px">
+          <div style="display: flex; align-items: center; justify-content: space-between">
+            <span style="{{s.chip}}">{{s.lang}}</span>
+            <span style="color: #5B616B; font-size: 13px">{{s.caption}}</span>
+          </div>
+          <div style="display: flex; align-items: baseline; gap: 8px">
+            <span style="font-size: 32px; font-weight: 600">{{s.pending}}</span>
+            <span style="color: #5B616B">{{t.pending}}</span>
+          </div>
+          <div style="color: #5B616B; font-size: 13px">{{t.oldest}} <span style="font-family: 'IBM Plex Mono', monospace; color: #15171C">{{s.oldest}}</span></div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="background: #FFFFFF; border: 1px solid #E2E5E1; border-radius: 10px; overflow-x: auto">
+      <table style="width: 100%; min-width: 880px; border-collapse: collapse; text-align: start">
+        <thead>
+          <tr style="color: #5B616B; font-size: 12px; letter-spacing: 0.04em">
+            <th style="padding: 14px 20px; font-weight: 500; border-bottom: 1px solid #E2E5E1; text-align: start">{{t.h0}}</th>
+            <th style="padding: 14px 20px; font-weight: 500; border-bottom: 1px solid #E2E5E1; text-align: start">{{t.h1}}</th>
+            <th style="padding: 14px 20px; font-weight: 500; border-bottom: 1px solid #E2E5E1; text-align: start">{{t.h2}}</th>
+            <th style="padding: 14px 20px; font-weight: 500; border-bottom: 1px solid #E2E5E1; text-align: start">{{t.h3}}</th>
+            <th style="padding: 14px 20px; font-weight: 500; border-bottom: 1px solid #E2E5E1; text-align: start">{{t.h4}}</th>
+            <th style="padding: 14px 20px; font-weight: 500; border-bottom: 1px solid #E2E5E1; text-align: start">{{t.h5}}</th>
+            <th style="padding: 14px 20px; border-bottom: 1px solid #E2E5E1"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Action</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+            <tr style="border-bottom: 1px solid #EEF0ED">
+              <td style="padding: 16px 20px; font-family: 'IBM Plex Mono', monospace; font-size: 13px" dir="ltr">{{r.id}}</td>
+              <td style="padding: 16px 20px">{{r.agent}}</td>
+              <td style="padding: 16px 20px"><span style="{{r.chip}}">{{r.lang}}</span></td>
+              <td style="padding: 16px 20px">
+                <div style="display: flex; align-items: center; gap: 10px">
+                  <div style="width: 96px; height: 6px; background: #E2E5E1; border-radius: 3px; position: relative; overflow: hidden">
+                    <div style="{{r.bar}}"></div>
+                  </div>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px">{{r.coverage}}</span>
+                </div>
+              </td>
+              <td style="padding: 16px 20px; color: #5B616B">{{r.reason}}</td>
+              <td style="padding: 16px 20px; font-family: 'IBM Plex Mono', monospace; font-size: 13px">{{r.waiting}}</td>
+              <td style="padding: 10px 20px; text-align: end">
+                <a href="Review.dc.html" style="display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border-radius: 8px; background: #0E6B66; color: #FFFFFF; text-decoration: none; font-weight: 500">{{t.review}}</a>
+              </td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="margin: 0; color: #5B616B; font-size: 13px">{{t.footer}}</p>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { lang: 'all', ui: 'en' }; }
+  chip(lang) {
+    var base = 'display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; font-family: IBM Plex Mono, monospace; ';
+    if (lang === 'ar') return base + 'background: #15171C; color: #FFFFFF;';
+    if (lang === 'mixed') return base + 'background: #CDE7E4; color: #094A47;';
+    return base + 'background: #FFFFFF; color: #15171C; box-shadow: inset 0 0 0 1px #9AA0A8;';
+  }
+  renderVals() {
+    var self = this;
+    var ar = this.state.ui === 'ar';
+    var T = {
+      en: {
+        nav0: 'Review queue', nav1: 'New call', nav2: 'Memory', nav3: 'Results', reviewer: 'Reviewer',
+        title: 'Awaiting human review',
+        subtitle: 'Calls the agent paused because grounding coverage fell below the threshold. Your review resumes the run and feeds rule memory.',
+        pending: 'pending', oldest: 'Oldest waiting',
+        h0: 'CALL', h1: 'AGENT', h2: 'LANGUAGE', h3: 'GROUNDING COVERAGE', h4: 'WHY ESCALATED', h5: 'WAITING',
+        review: 'Review',
+        footer: 'Threshold 0.70 · sample data · metrics are always shown per language, never blended.',
+        f: ['All', 'Arabic', 'English', 'Code-switched'], cap: ['Arabic', 'English', 'Code-switched']
+      },
+      ar: {
+        nav0: 'قائمة المراجعة', nav1: 'مكالمة جديدة', nav2: 'الذاكرة', nav3: 'النتائج', reviewer: 'المراجِع',
+        title: 'بانتظار المراجعة البشرية',
+        subtitle: 'مكالمات أوقفها الوكيل لأن نسبة الإسناد إلى النص أقل من الحد المطلوب. مراجعتك تستأنف التحليل وتغذّي ذاكرة القواعد.',
+        pending: 'بانتظار المراجعة', oldest: 'أقدم انتظار',
+        h0: 'المكالمة', h1: 'الموظف', h2: 'اللغة', h3: 'نسبة الإسناد', h4: 'سبب التصعيد', h5: 'مدة الانتظار',
+        review: 'مراجعة',
+        footer: 'الحد ٠٫٧٠ · بيانات تجريبية · المقاييس تُعرض لكل لغة على حدة، دون دمج.',
+        f: ['الكل', 'عربي', 'إنجليزي', 'مختلط'], cap: ['عربي', 'إنجليزي', 'مختلط']
+      }
+    };
+    var t = ar ? T.ar : T.en;
+    var all = [
+      { id: 'c-7f3a91', agent: ['Lina H.', 'لينا ح.'], lang: 'mixed', cov: 0.67, reason: ['3 of 9 claims had no verbatim evidence', '٣ من ٩ ادعاءات بلا دليل حرفي'], waiting: '1h 42m' },
+      { id: 'c-2b18e4', agent: ['Omar K.', 'عمر ك.'], lang: 'ar', cov: 0.60, reason: ['Compliance flag with weak evidence', 'مخالفة امتثال بدليل ضعيف'], waiting: '1h 05m' },
+      { id: 'c-91cc02', agent: ['Sara M.', 'سارة م.'], lang: 'en', cov: 0.65, reason: ['Commitment deadline ambiguous', 'موعد الالتزام غير واضح'], waiting: '48m' },
+      { id: 'c-4de7a0', agent: ['Lina H.', 'لينا ح.'], lang: 'ar', cov: 0.50, reason: ['Extraction returned malformed output', 'مخرجات الاستخراج غير صالحة'], waiting: '31m' },
+      { id: 'c-0a6f5b', agent: ['Yazan A.', 'يزن ع.'], lang: 'mixed', cov: 0.69, reason: ['Code-switched quote failed to match', 'اقتباس مختلط لم يطابق النص'], waiting: '22m' },
+      { id: 'c-c3e811', agent: ['Omar K.', 'عمر ك.'], lang: 'mixed', cov: 0.64, reason: ['3 of 8 claims had no verbatim evidence', '٣ من ٨ ادعاءات بلا دليل حرفي'], waiting: '9m' }
+    ];
+    var ix = ar ? 1 : 0;
+    var counts = { ar: 0, en: 0, mixed: 0 };
+    all.forEach(function (r) { counts[r.lang]++; });
+    var filters = [['all', all.length], ['ar', counts.ar], ['en', counts.en], ['mixed', counts.mixed]].map(function (f, i) {
+      var on = self.state.lang === f[0];
+      return {
+        label: t.f[i], count: f[1],
+        pick: function () { self.setState({ lang: f[0] }); },
+        style: 'min-height: 40px; padding: 0 14px; border-radius: 8px; font: inherit; font-weight: 500; cursor: pointer; border: 1px solid ' + (on ? '#15171C' : '#D3D7D2') + '; background: ' + (on ? '#15171C' : '#FFFFFF') + '; color: ' + (on ? '#FFFFFF' : '#15171C') + ';'
+      };
+    });
+    var rows = all.filter(function (r) { return self.state.lang === 'all' || r.lang === self.state.lang; }).map(function (r) {
+      return {
+        id: r.id, agent: r.agent[ix], lang: r.lang, reason: r.reason[ix], waiting: r.waiting,
+        coverage: r.cov.toFixed(2), chip: self.chip(r.lang),
+        bar: 'position: absolute; inset-inline-start: 0; top: 0; bottom: 0; width: ' + Math.round(r.cov * 100) + '%; background: ' + (r.cov < 0.6 ? '#B45309' : '#0E6B66') + ';'
+      };
+    });
+    var stats = [
+      { lang: 'ar', caption: t.cap[0], pending: counts.ar, oldest: '1h 05m' },
+      { lang: 'en', caption: t.cap[1], pending: counts.en, oldest: '48m' },
+      { lang: 'mixed', caption: t.cap[2], pending: counts.mixed, oldest: '1h 42m' }
+    ].map(function (s) { s.chip = self.chip(s.lang); return s; });
+    function tog(on) {
+      return 'min-height: 32px; min-width: 44px; padding: 0 10px; border-radius: 6px; border: none; cursor: pointer; font: inherit; font-size: 13px; font-weight: 600; background: ' + (on ? '#F5F6F4' : 'transparent') + '; color: ' + (on ? '#15171C' : '#B9BEC6') + ';';
+    }
+    return {
+      t: t, filters: filters, rows: rows, stats: stats,
+      dir: ar ? 'rtl' : 'ltr',
+      rootStyle: 'min-height: 900px; background: #F5F6F4; color: #15171C; font-family: ' + (ar ? "'IBM Plex Sans Arabic', 'IBM Plex Sans'" : "'IBM Plex Sans', 'IBM Plex Sans Arabic'") + ', system-ui, sans-serif; font-size: 14px; display: flex; flex-direction: column;',
+      isEn: !ar, isAr: ar,
+      enStyle: tog(!ar), arStyle: tog(ar),
+      toEn: function () { self.setState({ ui: 'en' }); },
+      toAr: function () { self.setState({ ui: 'ar' }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

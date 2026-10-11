@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sawti — New call</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F5F6F4}
+a{color:#0E6B66}a:hover{color:#094A47}
+</style>
+</helmet>
+<div style="min-height: 900px; background: #F5F6F4; color: #15171C; font-family: 'IBM Plex Sans', 'IBM Plex Sans Arabic', system-ui, sans-serif; font-size: 14px; display: flex; flex-direction: column">
+
+  <header style="background: #15171C; color: #F5F6F4; padding: 0 32px; min-height: 60px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+    <div style="display: flex; align-items: center; gap: 28px; flex-wrap: wrap">
+      <div style="display: flex; align-items: baseline; gap: 10px">
+        <span style="font-size: 20px; font-weight: 600; letter-spacing: -0.01em">Sawti</span>
+        <span style="font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 18px; color: #9FD3CF">صوتي</span>
+      </div>
+      <nav style="display: flex; gap: 4px; flex-wrap: wrap">
+        <a href="Main.dc.html" style="color: #B9BEC6; text-decoration: none; padding: 10px 14px; border-radius: 6px">Review queue</a>
+        <a href="NewCall.dc.html" style="color: #FFFFFF; text-decoration: none; padding: 10px 14px; border-radius: 6px; background: #2A2E36; font-weight: 500">New call</a>
+        <a href="Memory.dc.html" style="color: #B9BEC6; text-decoration: none; padding: 10px 14px; border-radius: 6px">Memory</a>
+        <a href="Results.dc.html" style="color: #B9BEC6; text-decoration: none; padding: 10px 14px; border-radius: 6px">Results</a>
+      </nav>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px; color: #B9BEC6">
+      <div role="group" aria-label="Interface language" style="display: flex; background: #2A2E36; border-radius: 8px; padding: 3px; gap: 2px">
+        <button aria-pressed="true" style="min-height: 32px; min-width: 44px; padding: 0 10px; border-radius: 6px; border: none; font: inherit; font-size: 13px; font-weight: 600; background: #F5F6F4; color: #15171C">EN</button>
+        <button aria-pressed="false" style="min-height: 32px; min-width: 44px; padding: 0 10px; border-radius: 6px; border: none; font: inherit; font-size: 13px; font-weight: 600; background: transparent; color: #B9BEC6">عربي</button>
+      </div>
+      <span>Reviewer</span>
+      <span style="font-family: 'IBM Plex Mono', monospace; color: #FFFFFF; background: #2A2E36; padding: 6px 10px; border-radius: 6px">qa-emad</span>
+    </div>
+  </header>
+
+  <main style="width: 100%; max-width: 1280px; margin: 0 auto; padding: 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <h1 style="margin: 0; font-size: 28px; font-weight: 600">Analyze a new call</h1>
+      <p style="margin: 0; color: #5B616B">Upload a recording. It is transcribed on this machine, redacted, then analyzed. Low-confidence results go to the review queue.</p>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
+
+      <section aria-label="Upload" style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+        <div style="background: #FFFFFF; border: 2px dashed #B9C9C6; border-radius: 12px; padding: 32px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0E6B66" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M7 8l5-5 5 5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>
+          <div style="font-size: 16px; font-weight: 500">Drop a call recording here</div>
+          <div style="color: #5B616B; font-size: 13px">.wav, .mp3 or .m4a · up to 50 MB</div>
+          <button style="min-height: 40px; padding: 0 16px; border-radius: 8px; border: 1px solid #C9CEC8; background: #FFFFFF; font: inherit; font-weight: 500; cursor: pointer">Browse files</button>
+        </div>
+
+        <div style="background: #FFFFFF; border: 1px solid #E2E5E1; border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap">
+            <div style="display: flex; align-items: center; gap: 12px">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5B616B" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px">call_0067_mixed.wav</span>
+              <span style="color: #5B616B; font-size: 13px">2.4 MB · 3:12 · synthetic</span>
+            </div>
+            <span style="font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: #CDE7E4; color: #094A47; font-family: 'IBM Plex Mono', monospace">mixed</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+            <label style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #3A3F47">Call language (required)
+              <select required style="font: inherit; min-height: 40px; border: 1px solid #C9CEC8; border-radius: 6px; padding: 0 8px; background: #FFFFFF">
+                <option>Code-switched</option><option>Arabic</option><option>English</option>
+              </select>
+              <span style="font-size: 12px; color: #5B616B">Sets the Whisper language. Auto-detect garbles code-switched Arabic, so it is not offered.</span>
+            </label>
+            <label style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #3A3F47">Agent
+              <select style="font: inherit; min-height: 40px; border: 1px solid #C9CEC8; border-radius: 6px; padding: 0 8px; background: #FFFFFF">
+                <option>Lina H.</option><option>Omar K.</option><option>Sara M.</option><option>Yazan A.</option>
+              </select>
+            </label>
+          </div>
+          <button onClick="{{start}}" style="{{startStyle}}">{{startLabel}}</button>
+          <p style="margin: 0; color: #5B616B; font-size: 12px; line-height: 1.6">Raw audio is deleted as soon as transcription succeeds. Only the redacted transcript is stored or sent to a model.</p>
+        </div>
+
+        <div style="background: #FFFFFF; border: 1px solid #E2E5E1; border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 4px">
+          <h2 style="margin: 0 0 8px; font-size: 16px; font-weight: 600">Pipeline</h2>
+          <sc-for list="{{steps}}" as="s" hint-placeholder-count="5">
+            <div style="display: flex; gap: 14px; align-items: flex-start; padding: 10px 0; border-top: 1px solid #EEF0ED">
+              <span style="{{s.dot}}">{{s.mark}}</span>
+              <div style="display: flex; flex-direction: column; gap: 2px; flex: 1 1 auto">
+                <span style="{{s.titleStyle}}">{{s.title}}</span>
+                <span style="color: #5B616B; font-size: 13px">{{s.detail}}</span>
+              </div>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5B616B">{{s.time}}</span>
+            </div>
+          </sc-for>
+          <sc-if value="{{done}}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 8px; background: #FBF4E8; border: 1px solid #EBD3AE; border-radius: 8px; padding: 12px 14px">
+              <span style="color: #7A3A04; font-weight: 500">Escalated: grounding coverage 0.67 is below 0.70. Waiting for a reviewer.</span>
+              <a href="Review.dc.html" style="display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border-radius: 8px; background: #0E6B66; color: #FFFFFF; text-decoration: none; font-weight: 500">Open review</a>
+            </div>
+          </sc-if>
+        </div>
+      </section>
+
+      <aside aria-label="Recent uploads" style="flex: 1 1 360px; min-width: 0; background: #FFFFFF; border: 1px solid #E2E5E1; border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 4px">
+        <h2 style="margin: 0 0 8px; font-size: 16px; font-weight: 600">Recent uploads</h2>
+        <sc-for list="{{recent}}" as="r" hint-placeholder-count="5">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0; border-top: 1px solid #EEF0ED">
+            <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px">{{r.id}}</span>
+              <span style="color: #5B616B; font-size: 12px">{{r.when}}</span>
+            </div>
+            <span style="{{r.style}}">{{r.status}}</span>
+          </div>
+        </sc-for>
+        <p style="margin: 8px 0 0; color: #5B616B; font-size: 12px">Sample data.</p>
+      </aside>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { step: 0 }; this.timer = null; }
+  componentWillUnmount() { if (this.timer) clearInterval(this.timer); }
+  renderVals() {
+    var self = this;
+    var step = this.state.step;
+    var defs = [
+      ['Uploaded', 'Stored locally until transcription', '0.4 s'],
+      ['Transcribing', 'mlx-whisper on the M1 GPU, with speaker diarization', '41 s'],
+      ['Redacting PII', '3 spans redacted · raw audio deleted', '0.2 s'],
+      ['Analyzing', 'extract → ground → score → confidence', '8.1 s'],
+      ['Routed', 'Below threshold → human review queue', '']
+    ];
+    var steps = defs.map(function (d, i) {
+      var n = i + 1;
+      var state = step >= n + 0.5 ? 'done' : (Math.ceil(step) === n && step > 0 ? 'active' : (step > n ? 'done' : 'pending'));
+      if (step > n) state = 'done';
+      if (step === n) state = 'active';
+      if (step < n) state = 'pending';
+      if (step === 5 && n === 5) state = 'done';
+      var colors = { done: ['#0E6B66', '#FFFFFF'], active: ['#B45309', '#FFFFFF'], pending: ['#E2E5E1', '#5B616B'] }[state];
+      return {
+        title: d[0], detail: d[1], time: state === 'done' ? d[2] : (state === 'active' ? '…' : ''),
+        mark: state === 'done' ? '✓' : String(n),
+        dot: 'width: 28px; height: 28px; flex: 0 0 28px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; background: ' + colors[0] + '; color: ' + colors[1] + ';',
+        titleStyle: 'font-weight: 600; color: ' + (state === 'pending' ? '#5B616B' : '#15171C') + ';'
+      };
+    });
+    var running = step > 0 && step < 5;
+    function chip(bg, fg) { return 'font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: ' + bg + '; color: ' + fg + ';'; }
+    var recent = [
+      { id: 'c-c3e811', when: '9 min ago · mixed', status: 'Awaiting review', style: chip('#FBF4E8', '#7A3A04') },
+      { id: 'c-a17d20', when: '14 min ago · en', status: 'Completed', style: chip('#E6F2F0', '#094A47') },
+      { id: 'c-0a6f5b', when: '22 min ago · mixed', status: 'Awaiting review', style: chip('#FBF4E8', '#7A3A04') },
+      { id: 'c-5b9e33', when: '27 min ago · ar', status: 'Completed', style: chip('#E6F2F0', '#094A47') },
+      { id: 'c-4de7a0', when: '31 min ago · ar', status: 'Awaiting review', style: chip('#FBF4E8', '#7A3A04') }
+    ];
+    return {
+      steps: steps, recent: recent, done: step === 5,
+      startLabel: running ? 'Processing…' : (step === 5 ? 'Run again' : 'Upload and analyze'),
+      startStyle: 'min-height: 48px; border-radius: 10px; border: none; font: inherit; font-size: 15px; font-weight: 600; cursor: ' + (running ? 'progress' : 'pointer') + '; background: ' + (running ? '#5B616B' : '#15171C') + '; color: #FFFFFF;',
+      start: function () {
+        if (running) return;
+        self.setState({ step: 1 });
+        if (self.timer) clearInterval(self.timer);
+        self.timer = setInterval(function () {
+          var s = self.state.step + 1;
+          self.setState({ step: s });
+          if (s >= 5) { clearInterval(self.timer); self.timer = null; }
+        }, 1100);
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

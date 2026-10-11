@@ -79,6 +79,16 @@
             ],
             "title": "Confidence Threshold"
           },
+          "escalation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EscalationInfo"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "escalation_reason": {
             "anyOf": [
               {
@@ -579,6 +589,60 @@
           "reasoning"
         ],
         "title": "ConflictingRuleView",
+        "type": "object"
+      },
+      "EscalationInfo": {
+        "description": "Why a call is in front of a reviewer, as numbers the dashboard translates (phase 6.4).\n\nThe structured counterpart of `escalation_reason`, which is English prose\nkept for API compatibility. The backend sends no UI text\n(docs/09-DECISIONS.md, 2026-10-10).",
+        "properties": {
+          "grounding_coverage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grounding Coverage"
+          },
+          "kind": {
+            "enum": [
+              "low_grounding",
+              "analysis_error"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "rejected_claims": {
+            "minimum": 0.0,
+            "title": "Rejected Claims",
+            "type": "integer"
+          },
+          "threshold": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Threshold"
+          },
+          "total_claims": {
+            "minimum": 0.0,
+            "title": "Total Claims",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "kind",
+          "rejected_claims",
+          "total_claims",
+          "grounding_coverage",
+          "threshold"
+        ],
+        "title": "EscalationInfo",
         "type": "object"
       },
       "GroundedClaim": {
@@ -1214,6 +1278,16 @@
             "format": "uuid",
             "title": "Call Id",
             "type": "string"
+          },
+          "escalation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EscalationInfo"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "escalation_reason": {
             "anyOf": [

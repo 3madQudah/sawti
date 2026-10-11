@@ -13,7 +13,7 @@ import sqlalchemy as sa
 from fastapi import APIRouter, HTTPException, Query, status
 
 from sawti.api.deps import CurrentReviewer, DbSession
-from sawti.api.records import InvalidVerdictError, plan_corrections
+from sawti.api.records import InvalidVerdictError, escalation_info, plan_corrections
 from sawti.api.schemas import (
     PendingCounts,
     ReviewAccepted,
@@ -65,6 +65,7 @@ def review_queue(
                 language=call.language,
                 grounding_coverage=record.grounding_coverage if record is not None else None,
                 escalation_reason=record.escalation_reason if record is not None else None,
+                escalation=escalation_info(record),
                 waiting_since=call.finished_at or call.queued_at,
             )
             for call, agent, record in rows

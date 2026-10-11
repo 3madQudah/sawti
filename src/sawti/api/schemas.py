@@ -74,6 +74,26 @@ class PendingCounts(BaseModel):
     mixed: int = Field(..., ge=0)
 
 
+class EscalationInfo(BaseModel):
+    """Why a call is in front of a reviewer, as numbers the dashboard translates (phase 6.4).
+
+    The structured counterpart of `escalation_reason`, which is English prose
+    kept for API compatibility. The backend sends no UI text
+    (docs/09-DECISIONS.md, 2026-10-10).
+    """
+
+    #: `low_grounding`: too few claims had verbatim evidence. `analysis_error`:
+    #: extraction failed, so there are no claims to judge.
+    kind: Literal["low_grounding", "analysis_error"]
+    #: Claims `ground` dropped (no verbatim evidence).
+    rejected_claims: int = Field(..., ge=0)
+    #: Claims extracted in total: grounded + rejected.
+    total_claims: int = Field(..., ge=0)
+    grounding_coverage: float | None
+    #: The threshold in force for this run.
+    threshold: float | None
+
+
 class ReviewQueueItem(BaseModel):
     """One row of the review queue table."""
 
@@ -82,6 +102,7 @@ class ReviewQueueItem(BaseModel):
     language: Language
     grounding_coverage: float | None
     escalation_reason: str | None
+    escalation: EscalationInfo | None = None
     #: When the call entered its current status — for `awaiting_review`, when
     #: the analysis finished and the graph suspended.
     waiting_since: datetime | None
@@ -185,6 +206,7 @@ class CallDetail(BaseModel):
     grounding_coverage: float | None = None
     confidence_threshold: float | None = None
     escalation_reason: str | None = None
+    escalation: EscalationInfo | None = None
     claims: list[GroundedClaim] = Field(default_factory=list)
     rejected_claims: list[RejectedClaim] = Field(default_factory=list)
     memory_rules: list[MemoryRuleUsed] = Field(default_factory=list)

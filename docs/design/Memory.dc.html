@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sawti — Memory</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F5F6F4}
+a{color:#0E6B66}a:hover{color:#094A47}
+</style>
+</helmet>
+<div style="min-height: 1000px; background: #F5F6F4; color: #15171C; font-family: 'IBM Plex Sans', 'IBM Plex Sans Arabic', system-ui, sans-serif; font-size: 14px; display: flex; flex-direction: column">
+
+  <header style="background: #15171C; color: #F5F6F4; padding: 0 32px; min-height: 60px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+    <div style="display: flex; align-items: center; gap: 28px; flex-wrap: wrap">
+      <div style="display: flex; align-items: baseline; gap: 10px">
+        <span style="font-size: 20px; font-weight: 600; letter-spacing: -0.01em">Sawti</span>
+        <span style="font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 18px; color: #9FD3CF">صوتي</span>
+      </div>
+      <nav style="display: flex; gap: 4px; flex-wrap: wrap">
+        <a href="Main.dc.html" style="color: #B9BEC6; text-decoration: none; padding: 10px 14px; border-radius: 6px">Review queue</a>
+        <a href="NewCall.dc.html" style="color: #B9BEC6; text-decoration: none; padding: 10px 14px; border-radius: 6px">New call</a>
+        <a href="Memory.dc.html" style="color: #FFFFFF; text-decoration: none; padding: 10px 14px; border-radius: 6px; background: #2A2E36; font-weight: 500">Memory</a>
+        <a href="Results.dc.html" style="color: #B9BEC6; text-decoration: none; padding: 10px 14px; border-radius: 6px">Results</a>
+      </nav>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px; color: #B9BEC6">
+      <div role="group" aria-label="Interface language" style="display: flex; background: #2A2E36; border-radius: 8px; padding: 3px; gap: 2px">
+        <button aria-pressed="true" style="min-height: 32px; min-width: 44px; padding: 0 10px; border-radius: 6px; border: none; font: inherit; font-size: 13px; font-weight: 600; background: #F5F6F4; color: #15171C">EN</button>
+        <button aria-pressed="false" style="min-height: 32px; min-width: 44px; padding: 0 10px; border-radius: 6px; border: none; font: inherit; font-size: 13px; font-weight: 600; background: transparent; color: #B9BEC6">عربي</button>
+      </div>
+      <span>Reviewer</span>
+      <span style="font-family: 'IBM Plex Mono', monospace; color: #FFFFFF; background: #2A2E36; padding: 6px 10px; border-radius: 6px">qa-emad</span>
+    </div>
+  </header>
+
+  <main style="width: 100%; max-width: 1280px; margin: 0 auto; padding: 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px">
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
+      <div style="display: flex; flex-direction: column; gap: 6px; max-width: 760px">
+        <h1 style="margin: 0; font-size: 28px; font-weight: 600">Rule memory</h1>
+        <p style="margin: 0; color: #5B616B; line-height: 1.6">Rules induced from reviewer corrections and retrieved into later analyses. When a new rule contradicts an existing one, it is held here and never applied until a person decides.</p>
+      </div>
+      <div role="tablist" aria-label="Memory views" style="display: flex; gap: 6px">
+        <button role="tab" aria-selected="{{onConf}}" onClick="{{showConf}}" style="{{confTab}}">Conflicts <span style="font-family: 'IBM Plex Mono', monospace">{{openCount}}</span></button>
+        <button role="tab" aria-selected="{{onRules}}" onClick="{{showRules}}" style="{{rulesTab}}">Active rules <span style="font-family: 'IBM Plex Mono', monospace">{{ruleCount}}</span></button>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px">
+      <sc-for list="{{langStats}}" as="s" hint-placeholder-count="3">
+        <div style="background: #FFFFFF; border: 1px solid #E2E5E1; border-radius: 10px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between">
+          <span style="{{s.chip}}">{{s.lang}}</span>
+          <span><span style="font-size: 24px; font-weight: 600">{{s.rules}}</span> <span style="color: #5B616B">active rules</span></span>
+        </div>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{onConf}}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
+        <nav aria-label="Pending conflicts" style="flex: 1 1 320px; min-width: 0; background: #FFFFFF; border: 1px solid #E2E5E1; border-radius: 10px; overflow: hidden">
+          <sc-for list="{{conflicts}}" as="c" hint-placeholder-count="8">
+            <button onClick="{{c.pick}}" style="{{c.rowStyle}}">
+              <span style="display: flex; justify-content: space-between; gap: 8px; width: 100%">
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5B616B">{{c.id}}</span>
+                <span style="{{c.chip}}">{{c.lang}}</span>
+              </span>
+              <span style="font-weight: 500; text-align: start">{{c.title}}</span>
+            </button>
+          </sc-for>
+          <sc-if value="{{allDone}}" hint-placeholder-val="{{ false }}">
+            <div style="padding: 20px; color: #094A47; font-weight: 500">All conflicts resolved.</div>
+          </sc-if>
+        </nav>
+
+        <sc-if value="{{hasSel}}" hint-placeholder-val="{{ true }}">
+          <section aria-label="Conflict detail" style="flex: 999 1 640px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+            <div style="background: #FFFFFF; border: 1px solid #E2E5E1; border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 6px">
+              <span style="font-size: 12px; font-weight: 600; color: #7A3A04; letter-spacing: 0.04em">CONFLICT {{sel.id}} · similarity {{sel.sim}} · {{sel.why}}</span>
+              <h2 style="margin: 0; font-size: 18px; font-weight: 600">{{sel.title}}</h2>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+              <article style="background: #FFFFFF; border: 1px solid #E2E5E1; border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px">
+                <span style="font-size: 12px; font-weight: 600; color: #5B616B; letter-spacing: 0.04em">EXISTING · <span style="font-family: 'IBM Plex Mono', monospace">{{sel.oldId}}</span></span>
+                <p style="margin: 0; font-size: 15px; line-height: 1.6">{{sel.oldText}}</p>
+                <span style="color: #5B616B; font-size: 13px">From {{sel.oldSources}} corrections · used in {{sel.oldUses}} analyses</span>
+              </article>
+              <article style="background: #FFFFFF; border: 2px solid #B45309; border-radius: 10px; padding: 17px 19px; display: flex; flex-direction: column; gap: 10px">
+                <span style="font-size: 12px; font-weight: 600; color: #7A3A04; letter-spacing: 0.04em">PROPOSED · held, not applied</span>
+                <p style="margin: 0; font-size: 15px; line-height: 1.6">{{sel.newText}}</p>
+                <span style="color: #5B616B; font-size: 13px">From correction on <span style="font-family: 'IBM Plex Mono', monospace">{{sel.newSource}}</span> by qa-lina</span>
+              </article>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E2E5E1; border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px">
+              <h3 style="margin: 0; font-size: 14px; font-weight: 600">Resolution</h3>
+              <div role="radiogroup" aria-label="Resolution" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px">
+                <sc-for list="{{actions}}" as="a" hint-placeholder-count="4">
+                  <button role="radio" aria-checked="{{a.on}}" onClick="{{a.pick}}" style="{{a.style}}">
+                    <span style="font-weight: 600">{{a.label}}</span>
+                    <span style="font-size: 12px; opacity: 0.8">{{a.hint}}</span>
+                  </button>
+                </sc-for>
+              </div>
+              <button onClick="{{resolve}}" style="{{resolveStyle}}">Resolve conflict</button>
+            </div>
+          </section>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{onRules}}" hint-placeholder-val="{{ false }}">
+      <div style="background: #FFFFFF; border: 1px solid #E2E5E1; border-radius: 10px; overflow-x: auto">
+        <table style="width: 100%; min-width: 760px; border-collapse: collapse">
+          <thead>
+            <tr style="color: #5B616B; font-size: 12px; letter-spacing: 0.04em">
+              <th style="padding: 14px 20px; text-align: start; font-weight: 500; border-bottom: 1px solid #E2E5E1">RULE</th>
+              <th style="padding: 14px 20px; text-align: start; font-weight: 500; border-bottom: 1px solid #E2E5E1">TEXT</th>
+              <th style="padding: 14px 20px; text-align: start; font-weight: 500; border-bottom: 1px solid #E2E5E1">LANGUAGES</th>
+              <th style="padding: 14px 20px; text-align: end; font-weight: 500; border-bottom: 1px solid #E2E5E1">SOURCES</th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{rules}}" as="r" hint-placeholder-count="8">
+              <tr style="border-bottom: 1px solid #EEF0ED">
+                <td style="padding: 14px 20px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #0E6B66">{{r.id}}</td>
+                <td style="padding: 14px 20px; line-height: 1.5">{{r.text}}</td>
+                <td style="padding: 14px 20px; font-family: 'IBM Plex Mono', monospace; font-size: 12px">{{r.langs}}</td>
+                <td style="padding: 14px 20px; text-align: end; font-family: 'IBM Plex Mono', monospace">{{r.src}}</td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table>
+        <p style="margin: 0; padding: 12px 20px; color: #5B616B; font-size: 12px">Showing 8 of 35 · sample text</p>
+      </div>
+    </sc-if>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { tab: 'conf', sel: 'K-01', action: 'keep_existing', resolved: {} }; }
+  chip(lang) {
+    var base = 'display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; font-family: IBM Plex Mono, monospace; ';
+    if (lang === 'ar') return base + 'background: #15171C; color: #FFFFFF;';
+    if (lang === 'mixed') return base + 'background: #CDE7E4; color: #094A47;';
+    return base + 'background: #FFFFFF; color: #15171C; box-shadow: inset 0 0 0 1px #9AA0A8;';
+  }
+  renderVals() {
+    var self = this;
+    var data = [
+      { id: 'K-01', lang: 'ar', title: 'Is the line number enough to verify identity?', sim: '0.84', why: 'opposite verdicts', oldId: 'R-022', oldText: 'Asking only for the line number does not count as identity verification.', oldSources: 4, oldUses: 37, newText: 'Confirming the line number counts as identity verification for billing questions.', newSource: 'call_0118_ar' },
+      { id: 'K-02', lang: 'mixed', title: 'Does "بحاول" count as a commitment?', sim: '0.79', why: 'opposite verdicts', oldId: 'R-031', oldText: '"بحاول" or "I’ll try" is not a commitment; it states no obligation.', oldSources: 3, oldUses: 22, newText: '"بحاول" followed by a time span is a commitment with a deadline.', newSource: 'call_0109_mixed' },
+      { id: 'K-03', lang: 'mixed', title: 'Deadline for "بكرا" when the call is after 6 pm', sim: '0.76', why: 'different deadline', oldId: 'R-014', oldText: '"بكرا" sets the deadline to the next calendar day.', oldSources: 5, oldUses: 41, newText: '"بكرا" said after business hours means the next business day.', newSource: 'call_0144_mixed' },
+      { id: 'K-04', lang: 'en', title: 'Hold without asking permission', sim: '0.73', why: 'opposite verdicts', oldId: 'R-009', oldText: 'Placing the customer on hold without asking is a procedure violation.', oldSources: 2, oldUses: 15, newText: 'A hold under 30 seconds without asking is not a violation.', newSource: 'call_0126_en' },
+      { id: 'K-05', lang: 'mixed', title: 'Code-switched apology as empathy', sim: '0.72', why: 'score disagreement', oldId: 'R-040', oldText: '"Sorry" alone in a code-switched turn scores empathy 3.', oldSources: 2, oldUses: 12, newText: '"معلش، sorry" scores empathy 4 when followed by action.', newSource: 'call_0143_mixed' },
+      { id: 'K-06', lang: 'mixed', title: 'Refund promise without a ticket number', sim: '0.78', why: 'opposite verdicts', oldId: 'R-017', oldText: 'A refund promise without a ticket number is still a commitment.', oldSources: 3, oldUses: 19, newText: 'A refund promise without a ticket number is a compliance flag, not a commitment.', newSource: 'call_0140_mixed' },
+      { id: 'K-07', lang: 'en', title: 'Callback "later today"', sim: '0.75', why: 'different deadline', oldId: 'R-012', oldText: '"Later today" sets the deadline to end of business day.', oldSources: 2, oldUses: 9, newText: '"Later today" has no deadline unless a time is given.', newSource: 'call_0117_en' },
+      { id: 'K-08', lang: 'mixed', title: 'Transfer counts as resolution?', sim: '0.71', why: 'score disagreement', oldId: 'R-025', oldText: 'Transferring to another team does not count as resolution.', oldSources: 2, oldUses: 14, newText: 'A warm transfer with a summary scores resolution 3.', newSource: 'call_0113_mixed' },
+      { id: 'K-09', lang: 'mixed', title: 'Offer of SMS confirmation', sim: '0.74', why: 'opposite verdicts', oldId: 'R-033', oldText: 'Offering an SMS confirmation is a commitment.', oldSources: 3, oldUses: 18, newText: 'An SMS confirmation is a commitment only if the customer asked for it.', newSource: 'call_0109_mixed' },
+      { id: 'K-10', lang: 'mixed', title: 'Data-bundle upsell during a complaint', sim: '0.70', why: 'opposite verdicts', oldId: 'R-028', oldText: 'Upselling during an unresolved complaint is a compliance flag.', oldSources: 2, oldUses: 7, newText: 'An upsell after the complaint is resolved in the same call is allowed.', newSource: 'call_0144_mixed' },
+      { id: 'K-11', lang: 'mixed', title: 'Customer name in greeting', sim: '0.72', why: 'score disagreement', oldId: 'R-005', oldText: 'Using the customer’s name raises professionalism to 4.', oldSources: 2, oldUses: 25, newText: 'Using the name only affects professionalism if identity was verified.', newSource: 'call_0112_mixed' }
+    ];
+    var open = data.filter(function (c) { return !self.state.resolved[c.id]; });
+    var sel = open.find(function (c) { return c.id === self.state.sel; }) || open[0] || null;
+    var conflicts = open.map(function (c) {
+      var on = sel && c.id === sel.id;
+      return {
+        id: c.id, title: c.title, lang: c.lang, chip: self.chip(c.lang),
+        pick: function () { self.setState({ sel: c.id, action: 'keep_existing' }); },
+        rowStyle: 'display: flex; flex-direction: column; gap: 6px; width: 100%; padding: 14px 18px; border: none; border-bottom: 1px solid #EEF0ED; border-inline-start: 3px solid ' + (on ? '#B45309' : 'transparent') + '; background: ' + (on ? '#FBF4E8' : '#FFFFFF') + '; font: inherit; color: #15171C; cursor: pointer; text-align: start;'
+      };
+    });
+    var acts = [['keep_existing', 'Keep existing', 'discard proposal'], ['keep_new', 'Keep new', 'retire existing'], ['discard', 'Discard', 'reject the proposal'], ['not_a_conflict', 'Not a real conflict', 'detector was wrong; keep both']];
+    var actions = acts.map(function (a) {
+      var on = self.state.action === a[0];
+      return {
+        label: a[1], hint: a[2], on: on,
+        pick: function () { self.setState({ action: a[0] }); },
+        style: 'display: flex; flex-direction: column; gap: 2px; align-items: flex-start; min-height: 56px; padding: 10px 12px; border-radius: 8px; font: inherit; cursor: pointer; text-align: start; border: 1px solid ' + (on ? '#15171C' : '#C9CEC8') + '; background: ' + (on ? '#15171C' : '#FFFFFF') + '; color: ' + (on ? '#FFFFFF' : '#15171C') + ';'
+      };
+    });
+    function tab(on) { return 'min-height: 40px; padding: 0 14px; border-radius: 8px; font: inherit; font-weight: 500; cursor: pointer; border: 1px solid ' + (on ? '#15171C' : '#D3D7D2') + '; background: ' + (on ? '#15171C' : '#FFFFFF') + '; color: ' + (on ? '#FFFFFF' : '#15171C') + ';'; }
+    var rules = [
+      { id: 'R-014', text: '"بكرا" sets the deadline to the next calendar day.', langs: 'ar · mixed', src: 5 },
+      { id: 'R-022', text: 'Asking only for the line number does not count as identity verification.', langs: 'ar · mixed', src: 4 },
+      { id: 'R-017', text: 'A refund promise without a ticket number is still a commitment.', langs: 'mixed', src: 3 },
+      { id: 'R-031', text: '"بحاول" or "I’ll try" is not a commitment.', langs: 'mixed', src: 3 },
+      { id: 'R-033', text: 'Offering an SMS confirmation is a commitment.', langs: 'mixed', src: 3 },
+      { id: 'R-009', text: 'Placing the customer on hold without asking is a procedure violation.', langs: 'en', src: 2 },
+      { id: 'R-025', text: 'Transferring to another team does not count as resolution.', langs: 'en · mixed', src: 2 },
+      { id: 'R-040', text: '"Sorry" alone in a code-switched turn scores empathy 3.', langs: 'mixed', src: 2 }
+    ];
+    var langStats = [{ lang: 'ar', rules: 8 }, { lang: 'en', rules: 9 }, { lang: 'mixed', rules: 18 }].map(function (s) { s.chip = self.chip(s.lang); return s; });
+    return {
+      onConf: this.state.tab === 'conf', onRules: this.state.tab === 'rules',
+      showConf: function () { self.setState({ tab: 'conf' }); },
+      showRules: function () { self.setState({ tab: 'rules' }); },
+      confTab: tab(this.state.tab === 'conf'), rulesTab: tab(this.state.tab === 'rules'),
+      openCount: open.length, ruleCount: 35,
+      conflicts: conflicts, hasSel: !!sel, allDone: open.length === 0,
+      sel: sel || {}, actions: actions, rules: rules, langStats: langStats,
+      resolve: function () {
+        if (!sel) return;
+        var r = Object.assign({}, self.state.resolved); r[sel.id] = self.state.action;
+        self.setState({ resolved: r, action: 'keep_existing', sel: null });
+      },
+      resolveStyle: 'align-self: flex-start; min-height: 44px; padding: 0 20px; border-radius: 10px; border: none; font: inherit; font-weight: 600; cursor: pointer; background: #0E6B66; color: #FFFFFF;'
+    };
+  }
+}
+</script>
+</body>
+</html>

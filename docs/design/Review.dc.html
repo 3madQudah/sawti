@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sawti — Call review</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+Arabic:wght@400;500;600&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F5F6F4}
+a{color:#0E6B66}a:hover{color:#094A47}
+</style>
+</helmet>
+<div style="min-height: 1180px; background: #F5F6F4; color: #15171C; font-family: 'IBM Plex Sans', 'IBM Plex Sans Arabic', system-ui, sans-serif; font-size: 14px; display: flex; flex-direction: column">
+
+  <header style="background: #15171C; color: #F5F6F4; padding: 0 32px; min-height: 60px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+    <div style="display: flex; align-items: center; gap: 28px; flex-wrap: wrap">
+      <div style="display: flex; align-items: baseline; gap: 10px">
+        <span style="font-size: 20px; font-weight: 600; letter-spacing: -0.01em">Sawti</span>
+        <span style="font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 18px; color: #9FD3CF">صوتي</span>
+      </div>
+      <nav style="display: flex; gap: 4px; flex-wrap: wrap">
+        <a href="Main.dc.html" style="color: #FFFFFF; text-decoration: none; padding: 10px 14px; border-radius: 6px; background: #2A2E36; font-weight: 500">Review queue</a>
+        <a href="NewCall.dc.html" style="color: #B9BEC6; text-decoration: none; padding: 10px 14px; border-radius: 6px">New call</a>
+        <a href="Memory.dc.html" style="color: #B9BEC6; text-decoration: none; padding: 10px 14px; border-radius: 6px">Memory</a>
+        <a href="Results.dc.html" style="color: #B9BEC6; text-decoration: none; padding: 10px 14px; border-radius: 6px">Results</a>
+      </nav>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px; color: #B9BEC6">
+      <div role="group" aria-label="Interface language" style="display: flex; background: #2A2E36; border-radius: 8px; padding: 3px; gap: 2px">
+        <button aria-pressed="true" style="min-height: 32px; min-width: 44px; padding: 0 10px; border-radius: 6px; border: none; font: inherit; font-size: 13px; font-weight: 600; background: #F5F6F4; color: #15171C">EN</button>
+        <button aria-pressed="false" style="min-height: 32px; min-width: 44px; padding: 0 10px; border-radius: 6px; border: none; font: inherit; font-size: 13px; font-weight: 600; background: transparent; color: #B9BEC6">عربي</button>
+      </div>
+      <span>Reviewer</span>
+      <span style="font-family: 'IBM Plex Mono', monospace; color: #FFFFFF; background: #2A2E36; padding: 6px 10px; border-radius: 6px">qa-emad</span>
+    </div>
+  </header>
+
+  <main style="width: 100%; max-width: 1320px; margin: 0 auto; padding: 24px 32px 40px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px">
+
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; color: #5B616B">
+      <a href="Main.dc.html" style="text-decoration: none; font-weight: 500">← Queue</a>
+      <span>/</span>
+      <span style="font-family: 'IBM Plex Mono', monospace; color: #15171C">c-7f3a91</span>
+    </div>
+
+    <section aria-label="Call summary" style="background: #FFFFFF; border: 1px solid #E2E5E1; border-radius: 10px; padding: 20px 24px; display: flex; flex-wrap: wrap; gap: 28px; align-items: center">
+      <div style="display: flex; flex-direction: column; gap: 4px; min-width: 140px">
+        <span style="color: #5B616B; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em">Agent</span>
+        <span style="font-weight: 500">Lina H.</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span style="color: #5B616B; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em">Language</span>
+        <span style="display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; font-family: 'IBM Plex Mono', monospace; background: #CDE7E4; color: #094A47">mixed</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px; flex: 1 1 260px; min-width: 240px">
+        <div style="display: flex; justify-content: space-between">
+          <span style="color: #5B616B; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em">Grounding coverage</span>
+          <span style="font-family: 'IBM Plex Mono', monospace"><strong>0.67</strong> <span style="color: #5B616B">/ threshold 0.70</span></span>
+        </div>
+        <div style="height: 8px; background: #E2E5E1; border-radius: 4px; position: relative">
+          <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 67%; background: #B45309; border-radius: 4px"></div>
+          <div style="position: absolute; left: 70%; top: -4px; bottom: -4px; width: 2px; background: #15171C"></div>
+        </div>
+        <span style="color: #5B616B; font-size: 13px">6 of 9 extracted claims survived grounding</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <span style="color: #5B616B; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em">Privacy</span>
+        <span style="font-size: 13px; font-weight: 500; color: #094A47; background: #E6F2F0; padding: 4px 10px; border-radius: 6px">2 PII spans redacted before analysis</span>
+      </div>
+    </section>
+
+    <sc-if value="{{submitted}}" hint-placeholder-val="{{ false }}">
+      <div role="status" style="background: #E6F2F0; border: 1px solid #9FD3CF; color: #094A47; border-radius: 10px; padding: 14px 20px; font-weight: 500">Review submitted. The paused run resumed and finished as human-reviewed; your corrections went to rule memory.</div>
+    </sc-if>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
+
+      <section aria-label="Transcript" style="flex: 999 1 560px; min-width: 0; background: #FFFFFF; border: 1px solid #E2E5E1; border-radius: 10px; overflow: hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #E2E5E1; gap: 12px; flex-wrap: wrap">
+          <h2 style="margin: 0; font-size: 16px; font-weight: 600">Transcript <span style="color: #5B616B; font-weight: 400">(redacted)</span></h2>
+          <div style="display: flex; gap: 14px; color: #5B616B; font-size: 12px; flex-wrap: wrap">
+            <span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #FFD98A"></span>Selected evidence</span>
+            <span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #DCEDEA"></span>Other evidence</span>
+          </div>
+        </div>
+        <ol style="list-style: none; margin: 0; padding: 8px 0">
+          <sc-for list="{{turns}}" as="t" hint-placeholder-count="9">
+            <li style="{{t.rowStyle}}">
+              <div style="display: flex; flex-direction: column; gap: 4px; width: 92px; flex: 0 0 92px">
+                <span style="font-weight: 600; font-size: 13px">{{t.speaker}}</span>
+                <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #5B616B">#{{t.n}} · {{t.lang}}</span>
+              </div>
+              <p dir="{{t.dir}}" style="{{t.textStyle}}"><sc-for list="{{t.segs}}" as="s" hint-placeholder-count="1"><span style="{{s.style}}">{{s.text}}</span></sc-for></p>
+            </li>
+          </sc-for>
+        </ol>
+      </section>
+
+      <aside aria-label="Claims" style="flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+        <div style="display: flex; justify-content: space-between; align-items: baseline">
+          <h2 style="margin: 0; font-size: 16px; font-weight: 600">Grounded claims</h2>
+          <span style="color: #5B616B; font-size: 13px">{{decidedCount}} of {{claimCount}} decided</span>
+        </div>
+
+        <sc-for list="{{claims}}" as="c" hint-placeholder-count="6">
+          <article style="{{c.cardStyle}}">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px">
+              <span style="{{c.tagStyle}}">{{c.kind}}</span>
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #5B616B">turn {{c.turn}} · chars {{c.span}}</span>
+            </div>
+            <div style="font-weight: 600; font-size: 15px">{{c.title}}</div>
+            <button onClick="{{c.pick}}" aria-label="Show this evidence in the transcript" dir="auto" style="text-align: start; font: inherit; font-family: 'IBM Plex Sans Arabic', 'IBM Plex Sans', sans-serif; font-size: 15px; line-height: 1.6; color: #15171C; background: #F5F6F4; border: none; border-inline-start: 0; border-radius: 6px; padding: 10px 12px; cursor: pointer; min-height: 44px">“{{c.quote}}”</button>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap" role="group" aria-label="Verdict">
+              <button onClick="{{c.confirm}}" aria-pressed="{{c.isConfirm}}" style="{{c.confirmStyle}}">Confirm</button>
+              <button onClick="{{c.correct}}" aria-pressed="{{c.isCorrect}}" style="{{c.correctStyle}}">Correct</button>
+              <button onClick="{{c.reject}}" aria-pressed="{{c.isReject}}" style="{{c.rejectStyle}}">Reject</button>
+            </div>
+            <sc-if value="{{c.isCorrect}}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-direction: column; gap: 10px; background: #FBF4E8; border: 1px solid #EBD3AE; border-radius: 8px; padding: 12px">
+                <span style="font-size: 12px; font-weight: 600; color: #7A3A04; letter-spacing: 0.04em">STRUCTURED CORRECTION · becomes a memory rule</span>
+                <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+                  <label style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #3A3F47">Field
+                    <select style="font: inherit; min-height: 40px; border: 1px solid #C9CEC8; border-radius: 6px; padding: 0 8px; background: #FFFFFF; color: #15171C">
+                      <option>deadline</option>
+                      <option>description</option>
+                      <option>kind</option>
+                    </select>
+                  </label>
+                  <label style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #3A3F47">Original
+                    <input value="3 days" readonly style="font: inherit; min-height: 40px; border: 1px solid #E2E5E1; border-radius: 6px; padding: 0 10px; background: #F5F6F4; color: #5B616B">
+                  </label>
+                </div>
+                <label style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #3A3F47">Corrected value
+                  <input value="3 business days" style="font: inherit; min-height: 40px; border: 1px solid #C9CEC8; border-radius: 6px; padding: 0 10px; background: #FFFFFF; color: #15171C">
+                </label>
+                <label style="display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #3A3F47">Corrected evidence (optional, must be verbatim)
+                  <input dir="auto" value="خلال ٣ أيام عمل" style="font: inherit; font-family: 'IBM Plex Sans Arabic', sans-serif; min-height: 40px; border: 1px solid #0E6B66; border-radius: 6px; padding: 0 10px; background: #FFFFFF; color: #15171C">
+                  <span style="color: #094A47; font-size: 12px; font-weight: 500">✓ Found verbatim in turn 7</span>
+                </label>
+              </div>
+            </sc-if>
+          </article>
+        </sc-for>
+
+        <section style="background: #FFFFFF; border: 1px solid #E2E5E1; border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px">
+          <h3 style="margin: 0; font-size: 14px; font-weight: 600">Rejected by grounding <span style="color: #5B616B; font-weight: 400">· 3</span></h3>
+          <p style="margin: 0; color: #5B616B; font-size: 13px">The model claimed these, but the quote does not appear verbatim in the transcript. They were dropped and are never shown as findings.</p>
+          <sc-for list="{{rejected}}" as="r" hint-placeholder-count="3">
+            <div style="display: flex; flex-direction: column; gap: 2px; padding-top: 8px; border-top: 1px solid #EEF0ED">
+              <span style="font-weight: 500">{{r.title}}</span>
+              <span dir="auto" style="color: #8A3B12; text-decoration: line-through; font-family: 'IBM Plex Sans Arabic', 'IBM Plex Sans', sans-serif">“{{r.quote}}”</span>
+            </div>
+          </sc-for>
+        </section>
+
+        <section style="background: #FFFFFF; border: 1px solid #E2E5E1; border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px">
+          <h3 style="margin: 0; font-size: 14px; font-weight: 600">Memory rules used for this call <span style="color: #5B616B; font-weight: 400">· 2</span></h3>
+          <sc-for list="{{rules}}" as="m" hint-placeholder-count="2">
+            <div style="display: flex; gap: 10px; align-items: baseline">
+              <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #0E6B66; flex: 0 0 auto">{{m.id}}</span>
+              <span style="font-size: 13px; line-height: 1.5">{{m.text}}</span>
+            </div>
+          </sc-for>
+        </section>
+
+        <div style="position: sticky; bottom: 0; background: #F5F6F4; padding-top: 6px; display: flex; flex-direction: column; gap: 8px">
+          <button onClick="{{submit}}" style="{{submitStyle}}">Submit review and resume run</button>
+          <span style="color: #5B616B; font-size: 12px; text-align: center">Every claim needs a verdict. Corrections become candidate rules for later calls.</span>
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1180}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { sel: 'k1', decisions: { k4: 'confirm', k5: 'confirm' }, submitted: false };
+  }
+  renderVals() {
+    var self = this;
+    var turns = [
+      { n: 1, speaker: 'Agent', lang: 'ar', text: 'مرحبا، معك [NAME] من خدمة العملاء، كيف بقدر أساعدك؟' },
+      { n: 2, speaker: 'Customer', lang: 'mixed', text: 'أهلين، الفاتورة هالشهر طالعة 45 دينار، وأنا my plan is only 20 JD.' },
+      { n: 3, speaker: 'Agent', lang: 'ar', text: 'بعتذر منك. ممكن رقم الخط لو سمحت؟' },
+      { n: 4, speaker: 'Customer', lang: 'ar', text: '[PHONE]' },
+      { n: 5, speaker: 'Agent', lang: 'mixed', text: 'تمام، شايف إنه في roaming charges من الأسبوع الماضي.' },
+      { n: 6, speaker: 'Customer', lang: 'ar', text: 'بس أنا ما سافرت أبداً! هاد غلط منكم.' },
+      { n: 7, speaker: 'Agent', lang: 'ar', text: 'معك حق، رح أرفع طلب استرجاع وبيوصلك الرصيد خلال ٣ أيام عمل.' },
+      { n: 8, speaker: 'Customer', lang: 'en', text: 'Okay, but I want a confirmation SMS.' },
+      { n: 9, speaker: 'Agent', lang: 'ar', text: 'أكيد، رح توصلك رسالة اليوم.' }
+    ];
+    var claims = [
+      { id: 'k1', kind: 'Commitment', title: 'Refund credited within 3 business days', quote: 'رح أرفع طلب استرجاع وبيوصلك الرصيد خلال ٣ أيام عمل', turn: 7 },
+      { id: 'k2', kind: 'Commitment', title: 'Confirmation SMS sent today', quote: 'رح توصلك رسالة اليوم', turn: 9 },
+      { id: 'k3', kind: 'Compliance', title: 'Identity checked by line number only', quote: 'ممكن رقم الخط لو سمحت؟', turn: 3 },
+      { id: 'k4', kind: 'Rubric · Empathy 4/5', title: 'Apologised before troubleshooting', quote: 'بعتذر منك.', turn: 3 },
+      { id: 'k5', kind: 'Rubric · Diagnosis 5/5', title: 'Found the disputed charge', quote: 'شايف إنه في roaming charges من الأسبوع الماضي', turn: 5 },
+      { id: 'k6', kind: 'Sentiment', title: 'Negative peak: customer disputes the charge', quote: 'بس أنا ما سافرت أبداً! هاد غلط منكم.', turn: 6 }
+    ];
+    var tags = {
+      'Commitment': 'background: #CDE7E4; color: #094A47;',
+      'Compliance': 'background: #FCEFD9; color: #7A3A04;',
+      'Sentiment': 'background: #E3ECF8; color: #1D4E89;'
+    };
+    var sel = this.state.sel;
+    var decisions = this.state.decisions;
+
+    var offsets = {};
+    var cursor = 0;
+    turns.forEach(function (t) { offsets[t.n] = cursor; cursor += t.text.length + 1; });
+
+    var turnVals = turns.map(function (t) {
+      var marks = [];
+      claims.forEach(function (c) {
+        if (c.turn !== t.n) return;
+        var i = t.text.indexOf(c.quote);
+        if (i >= 0) marks.push({ s: i, e: i + c.quote.length, id: c.id });
+      });
+      marks.sort(function (a, b) { return a.s - b.s; });
+      var segs = [];
+      var pos = 0;
+      var hasSel = false;
+      marks.forEach(function (m) {
+        if (m.s > pos) segs.push({ text: t.text.slice(pos, m.s), style: '' });
+        var on = m.id === sel;
+        if (on) hasSel = true;
+        segs.push({
+          text: t.text.slice(m.s, m.e),
+          style: on ? 'background: #FFD98A; border-radius: 3px; box-shadow: 0 0 0 2px #FFD98A;' : 'background: #DCEDEA; border-radius: 3px;'
+        });
+        pos = m.e;
+      });
+      if (pos < t.text.length) segs.push({ text: t.text.slice(pos), style: '' });
+      var rtl = t.lang !== 'en';
+      return {
+        n: t.n, speaker: t.speaker, lang: t.lang, segs: segs,
+        dir: rtl ? 'rtl' : 'ltr',
+        rowStyle: 'display: flex; gap: 16px; align-items: flex-start; padding: 14px 20px; border-inline-start: 3px solid ' + (hasSel ? '#B45309' : 'transparent') + '; background: ' + (t.speaker === 'Customer' ? '#F8F9F7' : '#FFFFFF') + ';',
+        textStyle: 'margin: 0; flex: 1 1 auto; min-width: 0; font-family: ' + (rtl ? "'IBM Plex Sans Arabic', 'IBM Plex Sans'" : "'IBM Plex Sans', 'IBM Plex Sans Arabic'") + ', sans-serif; font-size: 16px; line-height: 1.75; text-align: start;'
+      };
+    });
+
+    function btn(on, kind) {
+      var fills = { confirm: '#0E6B66', correct: '#B45309', reject: '#8A2A1C' };
+      return 'min-height: 40px; padding: 0 14px; border-radius: 8px; font: inherit; font-weight: 500; cursor: pointer; border: 1px solid ' + (on ? fills[kind] : '#C9CEC8') + '; background: ' + (on ? fills[kind] : '#FFFFFF') + '; color: ' + (on ? '#FFFFFF' : '#15171C') + ';';
+    }
+    function decide(id, v) {
+      return function () {
+        var d = Object.assign({}, self.state.decisions);
+        d[id] = v;
+        self.setState({ decisions: d, sel: id });
+      };
+    }
+
+    var claimVals = claims.map(function (c) {
+      var d = decisions[c.id];
+      var start = offsets[c.turn] + turns[c.turn - 1].text.indexOf(c.quote);
+      var tagKey = c.kind.indexOf('Rubric') === 0 ? null : c.kind;
+      return {
+        kind: c.kind, title: c.title, quote: c.quote, turn: c.turn,
+        span: start + '–' + (start + c.quote.length),
+        tagStyle: 'font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; ' + (tagKey ? tags[tagKey] : 'background: #ECEEEB; color: #3A3F47;'),
+        cardStyle: 'background: #FFFFFF; border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; border: ' + (c.id === sel ? '2px solid #B45309' : '1px solid #E2E5E1') + ';',
+        pick: function () { self.setState({ sel: c.id }); },
+        confirm: decide(c.id, 'confirm'), correct: decide(c.id, 'correct'), reject: decide(c.id, 'reject'),
+        isConfirm: d === 'confirm', isCorrect: d === 'correct', isReject: d === 'reject',
+        confirmStyle: btn(d === 'confirm', 'confirm'), correctStyle: btn(d === 'correct', 'correct'), rejectStyle: btn(d === 'reject', 'reject')
+      };
+    });
+
+    var decided = claims.filter(function (c) { return !!decisions[c.id]; }).length;
+    var ready = decided === claims.length;
+    return {
+      turns: turnVals,
+      claims: claimVals,
+      claimCount: claims.length,
+      decidedCount: decided,
+      submitted: this.state.submitted,
+      submit: function () { if (ready) self.setState({ submitted: true }); },
+      submitStyle: 'min-height: 48px; border-radius: 10px; font: inherit; font-size: 15px; font-weight: 600; border: none; cursor: ' + (ready ? 'pointer' : 'not-allowed') + '; background: ' + (ready ? '#15171C' : '#C9CEC8') + '; color: ' + (ready ? '#FFFFFF' : '#3A3F47') + ';',
+      rejected: [
+        { title: 'Agent offered a discount on next bill', quote: 'رح نعطيك خصم عالفاتورة الجاية' },
+        { title: 'Customer threatened to cancel', quote: 'I will cancel my line' },
+        { title: 'Agent explained the roaming policy', quote: 'سياسة التجوال بتنص على' }
+      ],
+      rules: [
+        { id: 'R-014', text: 'In Jordanian dialect, "بيوصلك … خلال" plus a time span is a commitment with a deadline.' },
+        { id: 'R-022', text: 'Asking only for the line number does not count as identity verification.' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

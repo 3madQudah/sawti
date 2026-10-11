@@ -19,6 +19,7 @@ from sqlalchemy.exc import IntegrityError
 from sawti.api.asr_tasks import delete_audio, transcribe_audio_task
 from sawti.api.deps import ApiKey, CurrentReviewer, DbSession
 from sawti.api.ingest import redact_transcript
+from sawti.api.records import escalation_info
 from sawti.api.schemas import (
     CallDetail,
     CallSubmitRequest,
@@ -265,6 +266,7 @@ def get_call(call_id: uuid.UUID, session: DbSession, _: CurrentReviewer) -> Call
     detail.grounding_coverage = record.grounding_coverage
     detail.confidence_threshold = record.confidence_threshold
     detail.escalation_reason = record.escalation_reason
+    detail.escalation = escalation_info(record)
     detail.claims = grounded_claims(analysis, turns)
     detail.rejected_claims = rejected_claims_view(record.rejected_claims)
     # Best match first, as retrieved; a rule deleted since is simply absent.

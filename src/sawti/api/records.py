@@ -9,8 +9,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from sawti.api.schemas import EDITABLE_FIELDS, ClaimKind, ClaimVerdict, ReviewSubmission
+from sawti.api.schemas import EDITABLE_FIELDS, ClaimKind, ClaimVerdict, EscalationInfo, ReviewSubmission
 from sawti.api.views import CLAIM_LISTS
+from sawti.db.models import CallAnalysisRecord
 from sawti.schemas import CallAnalysis, Claim, Language, RubricScore, SentimentTrajectory
 
 #: `CallAnalysis.summary` must be non-empty. When extraction failed there is
@@ -54,6 +55,27 @@ def escalation_reason(values: dict[str, Any], *, threshold: float) -> str | None
     return (
         f"{rejected} of {total} claims had no verbatim evidence "
         f"(grounding coverage {coverage:.0%}, threshold {threshold:.0%})"
+    )
+
+
+def escalation_info(record: CallAnalysisRecord | None) -> EscalationInfo | None:
+    """The structured reason a stored analysis is escalated; None if it was not (or there is none).
+
+    Counts what `escalation_reason` describes in prose, from the stored record.
+    """
+    if record is None or record.escalation_reason is None:
+        return None
+    payload = record.payload
+    claim_lists = [payload.get(name) for name, _ in CLAIM_LISTS]
+    grounded = sum(len(claims) for claims in claim_lists if isinstance(claims, list))
+    rejected = len(record.rejected_claims)
+    failed = payload.get("summary") == NO_ANALYSIS_SUMMARY
+    return EscalationInfo(
+        kind="analysis_error" if failed else "low_grounding",
+        rejected_claims=rejected,
+        total_claims=grounded + rejected,
+        grounding_coverage=record.grounding_coverage,
+        threshold=record.confidence_threshold,
     )
 
 
