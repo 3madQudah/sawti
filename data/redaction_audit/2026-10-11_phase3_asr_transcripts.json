@@ -1,0 +1,213 @@
+{
+  "transcripts": "data/asr_transcripts",
+  "before_rev": "610ddc4",
+  "min_run_digits": 7,
+  "by_language": {
+    "ar": {
+      "calls": 60,
+      "runs_in_raw_text": 19,
+      "before": {
+        "spans": 2,
+        "by_placeholder": {
+          "[NATIONAL_ID]": 1,
+          "[PHONE]": 1
+        },
+        "runs_left": 17,
+        "runs_left_by_shape": {
+          "ddddddddd": 6,
+          "ddddddd": 5,
+          "d-d-d-d-d-d-d-d-d": 1,
+          "d-d-d-d-d-d-d-d": 1,
+          "d d d d d d d d d": 1,
+          "d-d-dd-d-d-d-d-d": 1,
+          "d-d-d-d-d-d-d-d-d-d": 1,
+          "ddd-d-dddd": 1
+        },
+        "calls_with_runs_left": [
+          "call_0023_ar",
+          "call_0028_ar",
+          "call_0032_ar",
+          "call_0048_ar",
+          "call_0058_ar",
+          "call_0060_ar",
+          "call_0066_ar",
+          "call_0089_ar",
+          "call_0092_ar",
+          "call_0107_ar",
+          "call_0108_ar",
+          "call_0115_ar",
+          "call_0118_ar",
+          "call_0122_ar",
+          "call_0137_ar"
+        ]
+      },
+      "after": {
+        "spans": 2,
+        "by_placeholder": {
+          "[NATIONAL_ID]": 1,
+          "[PHONE]": 1
+        },
+        "runs_left": 17,
+        "runs_left_by_shape": {
+          "ddddddddd": 6,
+          "ddddddd": 5,
+          "d-d-d-d-d-d-d-d-d": 1,
+          "d-d-d-d-d-d-d-d": 1,
+          "d d d d d d d d d": 1,
+          "d-d-dd-d-d-d-d-d": 1,
+          "d-d-d-d-d-d-d-d-d-d": 1,
+          "ddd-d-dddd": 1
+        },
+        "calls_with_runs_left": [
+          "call_0023_ar",
+          "call_0028_ar",
+          "call_0032_ar",
+          "call_0048_ar",
+          "call_0058_ar",
+          "call_0060_ar",
+          "call_0066_ar",
+          "call_0089_ar",
+          "call_0092_ar",
+          "call_0107_ar",
+          "call_0108_ar",
+          "call_0115_ar",
+          "call_0118_ar",
+          "call_0122_ar",
+          "call_0137_ar"
+        ]
+      },
+      "calls_changed": []
+    },
+    "en": {
+      "calls": 30,
+      "runs_in_raw_text": 26,
+      "before": {
+        "spans": 1,
+        "by_placeholder": {
+          "[CARD]": 1
+        },
+        "runs_left": 25,
+        "runs_left_by_shape": {
+          "ddd-dddd": 8,
+          "ddd-ddd-dddd": 4,
+          "ddddddddd": 4,
+          "ddddddd": 4,
+          "dddd-dddd": 4,
+          "ddd-dddddd": 1
+        },
+        "calls_with_runs_left": [
+          "call_0006_en",
+          "call_0026_en",
+          "call_0030_en",
+          "call_0034_en",
+          "call_0046_en",
+          "call_0056_en",
+          "call_0065_en",
+          "call_0070_en",
+          "call_0072_en",
+          "call_0080_en",
+          "call_0086_en",
+          "call_0101_en",
+          "call_0102_en",
+          "call_0116_en",
+          "call_0117_en",
+          "call_0121_en",
+          "call_0128_en",
+          "call_0136_en",
+          "call_0142_en",
+          "call_0146_en"
+        ]
+      },
+      "after": {
+        "spans": 13,
+        "by_placeholder": {
+          "[CARD]": 1,
+          "[PHONE]": 12
+        },
+        "runs_left": 13,
+        "runs_left_by_shape": {
+          "ddddddddd": 4,
+          "ddddddd": 4,
+          "dddd-dddd": 4,
+          "ddd-dddddd": 1
+        },
+        "calls_with_runs_left": [
+          "call_0030_en",
+          "call_0056_en",
+          "call_0065_en",
+          "call_0080_en",
+          "call_0101_en",
+          "call_0102_en",
+          "call_0116_en",
+          "call_0128_en",
+          "call_0142_en",
+          "call_0146_en"
+        ]
+      },
+      "calls_changed": [
+        "call_0006_en",
+        "call_0026_en",
+        "call_0034_en",
+        "call_0046_en",
+        "call_0070_en",
+        "call_0072_en",
+        "call_0086_en",
+        "call_0116_en",
+        "call_0117_en",
+        "call_0121_en",
+        "call_0136_en"
+      ]
+    },
+    "mixed": {
+      "calls": 60,
+      "runs_in_raw_text": 16,
+      "before": {
+        "spans": 10,
+        "by_placeholder": {
+          "[NATIONAL_ID]": 1,
+          "[PHONE]": 9
+        },
+        "runs_left": 6,
+        "runs_left_by_shape": {
+          "ddddddd": 2,
+          "ddd-ddd-d-d": 1,
+          "dddddddd": 1,
+          "ddddddddd": 1,
+          "ddd-dddd": 1
+        },
+        "calls_with_runs_left": [
+          "call_0013_mixed",
+          "call_0087_mixed",
+          "call_0093_mixed",
+          "call_0103_mixed",
+          "call_0123_mixed",
+          "call_0148_mixed"
+        ]
+      },
+      "after": {
+        "spans": 11,
+        "by_placeholder": {
+          "[NATIONAL_ID]": 1,
+          "[PHONE]": 10
+        },
+        "runs_left": 5,
+        "runs_left_by_shape": {
+          "ddddddd": 2,
+          "ddd-ddd-d-d": 1,
+          "dddddddd": 1,
+          "ddddddddd": 1
+        },
+        "calls_with_runs_left": [
+          "call_0013_mixed",
+          "call_0087_mixed",
+          "call_0093_mixed",
+          "call_0103_mixed",
+          "call_0123_mixed"
+        ]
+      },
+      "calls_changed": [
+        "call_0148_mixed"
+      ]
+    }
+  }
+}

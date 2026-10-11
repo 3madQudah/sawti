@@ -6,6 +6,8 @@ load-bearing. Scope is the MVP regex redactor — structured identifiers only.
 
 from __future__ import annotations
 
+import re
+
 import pytest
 
 from sawti.privacy.redaction import redact
@@ -71,6 +73,108 @@ def test_redact_preserves_non_pii_text() -> None:
     assert result.redacted_text == text
     assert result.redaction_count == 0
     assert result.original_length == len(text)
+
+
+# --- Phone formats (found in production, 2026-10-11: an uploaded en call kept
+# "555-019-8234" in its redacted transcript and sent it to the model). Every
+# case asserts the whole number is gone, not only that a placeholder appeared.
+
+_PHONE_FORMATS = [
+    # 3-3-4 and 3-4, the formats the old patterns missed.
+    "555-019-8234",
+    "555 019 8234",
+    "555.019.8234",
+    "(555) 019-8234",
+    "019-8234",
+    "512 3456",
+    "+1 555 019 8234",
+    "+1 (555) 019-8234",
+    # Jordanian mobile and landline, national format.
+    "079 123 4567",
+    "079-123-4567",
+    "07 9123 4567",
+    "0791 234 567",
+    "079 1234567",
+    "06 512 3456",
+    "065123456",
+    "0-7-9-1-2-3-4-5-6-7",
+    # Jordanian, international format.
+    "+962 79 123 4567",
+    "+962-79-123-4567",
+    "+962791234567",
+    "+962 7 9123 4567",
+    "00962 79 123 4567",
+    "00962791234567",
+    # Arabic-Indic digits.
+    "٠٧٩ ١٢٣ ٤٥٦٧",
+    "٠٧٩-١٢٣-٤٥٦٧",
+    "٠٧ ٩١٢٣ ٤٥٦٧",
+    "+٩٦٢ ٧٩ ١٢٣ ٤٥٦٧",
+    "٥٥٥-٠١٩-٨٢٣٤",
+]
+
+
+@pytest.mark.parametrize("number", _PHONE_FORMATS)
+def test_redact_removes_every_common_phone_format(number: str) -> None:
+    result = redact(f"Customer: my number is {number}, thanks.")
+
+    assert result.redacted_text == "Customer: my number is [PHONE], thanks."
+    assert result.redaction_count == 1
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        # ar
+        ("Customer: رقمي ٠٧٩ ١٢٣ ٤٥٦٧ تفضل", "Customer: رقمي [PHONE] تفضل"),
+        ("Customer: رقم الخط هو 079-123-4567", "Customer: رقم الخط هو [PHONE]"),
+        # A conjunction written onto the number is a word character; `\b` would miss it.
+        ("Customer: ورقمي و٠٧٩ ١٢٣ ٤٥٦٧", "Customer: ورقمي و[PHONE]"),
+        # en: the line from the production call.
+        (
+            "Customer: with your account? Sure. The phone number is 555-019-8234. Thank you, David.",
+            "Customer: with your account? Sure. The phone number is [PHONE]. Thank you, David.",
+        ),
+        # mixed
+        ("Customer: تمام، my number is 07 9123 4567 و شكرا", "Customer: تمام، my number is [PHONE] و شكرا"),
+        ("Customer: خذ الرقم +962 7 9123 4567 please", "Customer: خذ الرقم [PHONE] please"),
+    ],
+)
+def test_redact_removes_phones_in_ar_en_and_mixed_turns(text: str, expected: str) -> None:
+    assert redact(text).redacted_text == expected
+
+
+def test_an_international_number_is_one_phone_not_a_card_with_a_stray_plus() -> None:
+    """Before the fix the card pattern took the 12 digits after `+` and left `+[CARD]`."""
+    assert redact("call +962791234567 now").redacted_text == "call [PHONE] now"
+
+
+def test_a_bare_ten_digit_run_is_still_read_as_a_national_id() -> None:
+    """Unchanged precedence: the more sensitive reading wins (docs/09-DECISIONS.md)."""
+    assert redact("رقمي 0791234567").redacted_text == "رقمي [NATIONAL_ID]"
+
+
+def test_a_dictated_run_is_not_half_redacted_from_an_inner_zero() -> None:
+    """A dictated 10-digit ID must not lose only its tail to the 0-led phone pattern."""
+    text = "Customer: رقم الهوية 1-0-7-1-2-3-4-5-6-7"
+    result = redact(text).redacted_text
+
+    assert result == text or not re.search(r"\d", result)
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "Agent: your balance of $145 is due on the 12th.",
+        "Customer: I paid 1,500,000 JD last year.",
+        "Agent: the bill dated 12/10/2026 at 10:30.",
+        "Agent: the record from 2026-10-11 shows 3 bills in 2026.",
+        "Customer: call 911 if it sparks.",
+        "Agent: reference 88542, order 2000 1234.",
+    ],
+)
+def test_redact_leaves_amounts_dates_times_and_short_numbers(text: str) -> None:
+    assert redact(text).redacted_text == text
 
 
 @pytest.mark.skip(reason="needs NER — MVP redactor is regex-only, see docs/09-DECISIONS.md")

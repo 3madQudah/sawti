@@ -1677,3 +1677,123 @@ verbatim matches. A transcript that is wrong but self-consistent cannot fail
 that check, so the worst ASR failures are the ones least likely to reach a
 human. The planned fix, an ASR-quality signal in routing, and how it will be
 measured are in `docs/09-DECISIONS.md` (2026-10-11 TODO). Not implemented.
+
+---
+
+## Round: 2026-10-11 — found in production: phone numbers passed redaction, so PII reached Gemini (fix measured on redaction alone)
+
+**What happened.** An English call uploaded through the dashboard's New Call
+page (`data/audio/call_0006_en.wav`, call `89c66124-f942-4e73-961e-5047ced95625`)
+showed a phone number in its *redacted* transcript, written as a 3-3-4 number
+(`ddd-ddd-dddd`; digits masked here). `pii_redacted_count` was 0. The analysis
+sent that text to Gemini (`gemini-flash-lite-latest`) and the call
+auto-completed. The Langfuse trace holds it too: 1 trace for the call, and 1
+observation (the LLM input) contains the number, because the trace mask uses
+the same `redact()`. The audio is synthetic TTS of a Phase 1 transcript, so no
+real person's number left the machine. The redact-before-model rule was still
+broken.
+
+**Why the redactor missed it.** Both phone patterns required a `+`/`00`
+country code or a leading ASCII `0`. Missed formats, checked one by one
+against the pre-fix redactor (`610ddc4`):
+
+- 3-3-4 and 3-4 numbers without a leading zero: `ddd-ddd-dddd`,
+  `ddd ddd dddd`, `ddd.ddd.dddd`, `(ddd) ddd-dddd`, `ddd-dddd`.
+- Arabic-Indic local numbers with separators (`٠٧٩ ١٢٣ ٤٥٦٧`). The pattern
+  had a literal ASCII `0`.
+- Jordanian groupings `07 9123 4567`, `0791 234 567` and `+962 7 9123 4567`.
+- `+962791234567` came out as `+[CARD]`, because the card pattern took the 12
+  digits after the `+`.
+
+**Fix.** New phone patterns (`sawti.privacy.redaction`; the reasoning is in
+`docs/09-DECISIONS.md`, 2026-10-11):
+
+- International `+`/`00` numbers, before the card pattern.
+- A leading `0`/`٠` followed by 8–9 digits with optional single separators.
+- 3-3-4 with separators or a bracketed area code.
+- 3-4 with a separator.
+
+All of them are bounded by "no digit" rather than `\b`, so a conjunction
+written onto an Arabic number (`و٠٧٩…`) no longer blocks the match. Bare
+10-digit runs are still `[NATIONAL_ID]`. There are 42 new test cases in
+`tests/privacy/test_redaction.py`.
+
+**Measurement.** `scripts/measure_redaction.py --before-rev 610ddc4`: redaction
+only, with no ASR and no LLM call. It ran the pre-fix and fixed redactors over
+the same files. A *digit run* is a maximal sequence of digits joined by at most
+one space, dash or dot. Commas and slashes break a run. Results with digits
+masked: `data/redaction_audit/2026-10-11_phase3_asr_transcripts.json` and
+`..._phase1_clean_transcripts.json`.
+
+Phase 3 ASR transcripts (`data/asr_transcripts`, 150 calls):
+
+| Language | Calls | 7+ digit runs in raw text | PII spans caught, before → after | 7+ digit runs left unredacted, before → after |
+|---|---|---|---|---|
+| ar    | 60 | 19 | 2 → 2   | 17 → 17 |
+| en    | 30 | 26 | 1 → **13** | 25 → **13** |
+| mixed | 60 | 16 | 10 → 11 | 6 → 5 |
+
+The clean Phase 1 transcripts (`data/synthetic`, 150 calls) are the text the
+eval scripts and stored analyses were built from:
+
+| Language | Calls | 7+ digit runs in raw text | PII spans caught, before → after | 7+ digit runs left unredacted, before → after |
+|---|---|---|---|---|
+| ar    | 60 | 14 | 9 → 9   | 5 → 5 |
+| en    | 30 | 26 | 1 → **14** | 25 → **12** |
+| mixed | 60 | 17 | 12 → 12 | 5 → 5 |
+
+Every new span is `[PHONE]`. On the ASR text: en 0 → 12, mixed 9 → 10
+(`call_0148_mixed`). Each newly caught span was read in its masked context:
+all are numbers the speaker gave as a phone or account number, and none is an
+amount, date or time.
+
+**ar: the fix changes nothing.** In the Arabic calls, numbers come out of
+ASR as contiguous digits or dictated digit by digit (`d-d-d-…`, `d d d …`),
+never grouped 3-3-4.
+
+**What is still left.** These are the 7+ digit runs remaining after the fix
+in the ASR transcripts, classified by the label spoken just before each one.
+The classification was done by hand from the masked context.
+
+| Spoken as | ar | en | mixed |
+|---|---|---|---|
+| phone / line number | 4 | 1 | 0 |
+| account number | 2 | 10 | 2 |
+| national ID | 4 | 0 | 0 |
+| unlabelled ("the number is", reference number) | 7 | 2 | 3 |
+| **total** | **17** | **13** | **5** |
+
+The shapes are mostly contiguous 7–9 digits. The rest:
+
+- ar has 5 digit-by-digit dictations with no leading zero.
+- en has 4 `dddd-dddd` and 1 `ddd-dddddd`.
+- ar has `ddd-d-dddd` and mixed has `ddd-ddd-d-d`.
+
+The 5 phones still left (ar 4, en 1) are contiguous 7-digit numbers or
+dictated numbers without a leading zero. These shapes are not phone patterns
+on purpose, because account and ID numbers use the same shapes. **Every
+leftover run in both corpora is an identifier of some kind. None is an
+amount.** Whether to redact every 7+ digit run regardless of label is open
+and has not been decided.
+
+**Already stored (dev database, read-only count, nothing changed).** 11 of
+21 stored `en` calls hold 14 spans that the fixed redactor now catches: 10
+rows written by the eval scripts, plus this upload. `ar` and `mixed` have 0.
+That text went to Gemini when each call was analyzed. The 2026-10-07 "0 with
+PII left" check on the dev database used the pre-fix patterns, so it
+undercounted. After the fix, 13 runs of 7+ digits remain in stored calls
+(ar 3, en 6, mixed 4). **Not re-redacted.** That would mean rewriting the
+stored text, re-anchoring quote offsets (as the 0001 conversion did), and
+cleaning the trace and checkpoints, and it needs a decision.
+
+**Caveats.**
+
+1. Only the synthetic corpus and one live upload were checked. Real callers
+   will use formats that aren't here.
+2. The leftover classification is a manual reading of masked context.
+3. One run per corpus, with small counts: en has 26 digit runs in each
+   corpus. In `mixed` one ASR call changed (`call_0148_mixed`), and in `ar`
+   none did.
+
+Also seen on this call (not a redaction issue): the diarization boundaries
+are off in turns #3–#4. See `docs/09-DECISIONS.md`, 2026-10-11.

@@ -43,6 +43,15 @@ class RedactionResult(BaseModel):
 # (U+0660-U+0669) as well as ASCII ones. The synthetic `ar` transcripts use the
 # two interchangeably, so this is load-bearing rather than incidental.
 _DIGIT = r"\d"
+# One optional separator between digit groups, as people say and ASR writes
+# phone numbers: a space, a dash or a dot. Never a comma or slash (amounts, dates).
+_SEP = r"[ .\-]?"
+# Phone patterns are bounded by "no digit", not `\b`: an Arabic conjunction or
+# preposition written onto the number (و٠٧٩…, ل٠٧٩…) is a word character, so
+# `\b` would refuse the match there. The `+` in the lookbehind stops a pattern
+# starting inside an international number.
+_NOT_AFTER_DIGIT = r"(?<![\d+])"
+_NOT_BEFORE_DIGIT = r"(?!\d)"
 
 _PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     # Email: standard-enough shape, checked before anything digit-based so an
@@ -50,18 +59,43 @@ _PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("[EMAIL]", re.compile(r"\b[\w.+-]+@[\w-]+\.[\w.-]+\b")),
     # IBAN: JO + 2 check digits + 4 bank chars + up to 18 alphanumerics.
     ("[IBAN]", re.compile(r"\b[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[A-Z0-9]{10,20}\b")),
+    # Phone, international: `+` or `00`, a 1-3 digit country code, then 2-5
+    # groups of 1-4 digits (+962 7 9123 4567, +962791234567, 00962 79 123 4567,
+    # +1 (555) 019-8234). Before the card pattern, which would otherwise read
+    # the 12 digits after `+` as a card and leave the `+` behind.
+    (
+        "[PHONE]",
+        re.compile(
+            rf"{_NOT_AFTER_DIGIT}(?:\+|00){_DIGIT}{{1,3}}(?:{_SEP}\(?{_DIGIT}{{1,4}}\)?){{2,5}}{_NOT_BEFORE_DIGIT}"
+        ),
+    ),
     # Payment card: 13-19 digits, optionally grouped by spaces or dashes.
     ("[CARD]", re.compile(rf"\b{_DIGIT}{{4}}(?:[ -]?{_DIGIT}{{4}}){{2,4}}\b")),
     # Jordanian national ID: exactly 10 consecutive digits.
     ("[NATIONAL_ID]", re.compile(rf"\b{_DIGIT}{{10}}\b")),
-    # Phone: optional +962 / 00962 country code, then 7-11 digits with optional
-    # separators. Deliberately after national ID so a bare 10-digit run is read
-    # as an ID, which is the more sensitive of the two.
+    # Phone, Jordanian national format: a leading zero (ASCII or Arabic-Indic)
+    # and 8-9 more digits, with an optional separator between any two digits:
+    # 079 123 4567, 07 9123 4567, 0791 234 567, 06 512 3456, 0-7-9-1-2-3-...
+    # Deliberately after national ID, so a bare 10-digit run is read as an ID,
+    # which is the more sensitive of the two.
     (
         "[PHONE]",
-        re.compile(rf"(?:\+|00){_DIGIT}{{1,3}}[\s-]?{_DIGIT}{{2,4}}[\s-]?{_DIGIT}{{3,4}}[\s-]?{_DIGIT}{{0,4}}"),
+        # The extra lookbehind keeps it from starting at a zero in the middle of
+        # a longer dictated run (1-0-7-…), which would redact the tail and leave
+        # the head behind under the wrong label.
+        re.compile(rf"{_NOT_AFTER_DIGIT}(?<!\d[ .\-])[0٠](?:{_SEP}{_DIGIT}){{8,9}}{_NOT_BEFORE_DIGIT}"),
     ),
-    ("[PHONE]", re.compile(rf"\b0{_DIGIT}{{1,2}}[\s-]?{_DIGIT}{{3}}[\s-]?{_DIGIT}{{4}}\b")),
+    # Phone, 3-3-4 with separators or a bracketed area code: 555-019-8234,
+    # 555 019 8234, 555.019.8234, (555) 019-8234. The contiguous form is ten
+    # digits, already caught as a national ID above.
+    (
+        "[PHONE]",
+        re.compile(
+            rf"{_NOT_AFTER_DIGIT}\(?{_DIGIT}{{3}}\)?{_SEP}{_DIGIT}{{3}}[ .\-]{_DIGIT}{{4}}{_NOT_BEFORE_DIGIT}"
+        ),
+    ),
+    # Phone, local 3-4 with a separator: 019-8234, 512 3456.
+    ("[PHONE]", re.compile(rf"{_NOT_AFTER_DIGIT}{_DIGIT}{{3}}[ .\-]{_DIGIT}{{4}}{_NOT_BEFORE_DIGIT}")),
 )
 
 

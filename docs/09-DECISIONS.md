@@ -3848,3 +3848,89 @@ State the n of high-WER calls with each recall: **4 `ar`, 1 `en`, 27 `mixed`**
 today, so `ar` and `en` recall rests on very few calls. Phase 3 transcripts
 were produced without diarization and were clean for `call_0003_mixed`, so also
 run the live path (the ASR worker) on a subset to check the signal there.
+
+---
+
+## 2026-10-11 — Phone redaction widened after a production miss; non-phone digit runs left open
+
+**Status:** accepted for phones. The catch-all question is open.
+
+**Bug.** An uploaded English call (`89c66124…`, `data/audio/call_0006_en.wav`)
+kept a 3-3-4 phone number in its redacted transcript. That text went to Gemini
+and into the Langfuse trace. Both phone patterns needed a `+`/`00` prefix or a
+leading ASCII `0`. The measurement and the full list of missed formats are in
+`eval_results.md` (2026-10-11, found in production).
+
+**What changed** in `sawti.privacy.redaction`:
+
+- International `+`/`00` numbers now take 2–5 groups of 1–4 digits, and run
+  **before** the card pattern. Before the fix, `+962791234567` came out as
+  `+[CARD]`.
+- Jordanian national format: a leading `0` **or `٠`** followed by 8–9 digits,
+  with an optional single space, dash or dot between any two digits. This
+  covers `07 9123 4567`, `0791 234 567` and digit-by-digit dictation that
+  starts with zero. The pattern refuses to start at a zero in the middle of a
+  longer dictated run, which would redact the tail and leave the head.
+- 3-3-4 with separators or `(ddd)`, and 3-4 with a separator.
+- Phone patterns are bounded by "no digit" instead of `\b`, so `و٠٧٩…`
+  matches.
+- Unchanged: a bare 10-digit run is still `[NATIONAL_ID]`, the more
+  sensitive reading. Commas and slashes are never separators, so amounts and
+  dates are left alone (tested).
+
+**What it costs.** The 3-4 pattern redacts any `ddd-dddd` / `ddd dddd`
+pair, whatever it is. In 300 corpus transcripts every such match was a phone or
+account number, but a real call could contain, say, a 3-4 order reference, and
+that would be over-redacted as `[PHONE]`. A redaction is permanent
+(2026-10-06, decision 1), so an over-redacted span can't be recovered.
+
+**Open: digit runs that aren't phone-shaped.** After the fix, 17 / 13 / 5
+runs of 7+ digits are still left in the ar / en / mixed ASR transcripts. All of
+them are identifiers: account numbers, national IDs, line numbers, contiguous
+7-digit phones, and dictated numbers without a leading zero. None is an amount.
+Redacting every 7+ digit run under a neutral placeholder would close this, at
+the cost of losing any long number a claim needs. It hasn't been decided, so
+it isn't done.
+
+**Open: data already stored.** 11 stored `en` calls hold 14 spans the fix now
+catches, including this upload's analysis payload, checkpoint and trace.
+Re-redacting them means rewriting stored text and re-anchoring quote offsets,
+as the 0001 conversion did. That needs a decision and hasn't been done.
+
+---
+
+## 2026-10-11 — Known issue (not fixed): diarization boundaries misaligned on the uploaded `call_0006_en`
+
+**Status:** open, recorded only. Found on the same upload as the redaction
+bug above (`89c66124…`, `data/audio/call_0006_en.wav`, New Call, native ASR
+worker: mlx-whisper `large-v3-turbo` + pyannote `speaker-diarization-3.1`,
+first speaker = agent).
+
+**What is wrong.** Turns #3–#4, as the dashboard numbers them (`turn.index`
+2–3), mix agent and customer speech:
+
+- Turn #3, labelled **Agent**, opens with the customer's "just need a little
+  bit more time." The reference transcript has that as the end of the
+  customer's line. The agent's reply follows it in the same turn.
+- Turn #4, labelled **Customer**, opens with the end of the agent's question
+  ("with your account?"), then has the customer's answer with the phone
+  number, then the start of the agent's next line ("Thank you, … I have your").
+
+Turns #7–#8 show the same pattern: the customer's "Oh, that is such a
+relief" sits inside an Agent turn.
+
+**Likely mechanism (not verified).** Speakers are assigned per Whisper
+segment (`merge_transcript_with_speakers`: each segment takes the speaker it
+overlaps most). A Whisper segment that spans a change of speaker goes wholly
+to one speaker, so the boundary falls mid-sentence. Pyannote's own turn
+boundaries on this file were not inspected.
+
+**Why it matters.** A claim's evidence quote carries the turn's speaker, and
+the rubric is sensitive to who said what: a commitment can move between agent
+and customer. Diarization has never been scored against the manifest's
+speaker timeline, and the Phase 3 propagation numbers used oracle speakers
+(2026-09-22).
+
+**Not fixed, by decision.** No fix is designed here. Before choosing one,
+score diarization against `data/audio/manifest.json`, so the size of the
+problem is known per language rather than from one call.
