@@ -1797,3 +1797,92 @@ cleaning the trace and checkpoints, and it needs a decision.
 
 Also seen on this call (not a redaction issue): the diarization boundaries
 are off in turns #3–#4. See `docs/09-DECISIONS.md`, 2026-10-11.
+
+---
+
+## Round: 2026-10-11 — catch-all for 7+ digit runs: leftovers, and the claims it touches
+
+**What changed.** `sawti.privacy.redaction` gained a last pattern,
+`[NUMBER]`: any run of 7+ digits (ASCII or Arabic-Indic) with at most one
+space or dash between any two digits. It runs after the specific patterns,
+so phones, national IDs and cards keep their labels. Dots are **not**
+separators (decided scope; `docs/09-DECISIONS.md`, 2026-10-11). There are 19
+new test cases in `tests/privacy/test_redaction.py`. Two existing non-PII
+cases were swapped out, because an 8-digit dash-written date and a spaced
+8-digit order number are now redacted, which is a stated cost. One fixture in
+`tests/scripts/test_convert_dev_db_to_0001.py` went from 7 to 6 digits, since
+its "fragment too short to redact" premise no longer held at 7. It was
+measured with `scripts/measure_redaction.py`, with no ASR and no LLM call.
+
+### Leftover 7+ digit runs (before = phone fix `bfadca6`, after = catch-all)
+
+Phase 3 ASR transcripts (`data/asr_transcripts`, 150 calls;
+`data/redaction_audit/2026-10-11_catchall_phase3_asr_transcripts.json`):
+
+| Language | Calls | PII spans, before → after | of which `[NUMBER]` | 7+ digit runs left, before → after |
+|---|---|---|---|---|
+| ar    | 60 | 2 → 19  | 17 | 17 → **0** |
+| en    | 30 | 13 → 26 | 13 | 13 → **0** |
+| mixed | 60 | 11 → 16 | 5  | 5 → **0** |
+
+Clean Phase 1 transcripts (`data/synthetic`, 150 calls;
+`..._catchall_phase1_clean_transcripts.json`):
+
+| Language | Calls | PII spans, before → after | of which `[NUMBER]` | 7+ digit runs left, before → after |
+|---|---|---|---|---|
+| ar    | 60 | 9 → 14  | 5  | 5 → **0** |
+| en    | 30 | 14 → 26 | 12 | 12 → **0** |
+| mixed | 60 | 12 → 16 | 4  | 5 → **1** |
+
+**Still left: one run.** It is in `call_0093_mixed` (clean text) and has the
+shape `ddd.ddd.d.d`. It is a private router address (`192.168.…`) that the
+agent reads out as the setup page to open. It's not PII. It stays because dots
+are not catch-all separators. The scorer's digit-run definition, unchanged
+from the previous round, joins dots, so it counts this one. The ASR version of
+the same call wrote it with dashes (`ddd-ddd-d-d`), and that version is now
+redacted.
+
+Together with the phone fix, the ASR-transcript totals since the pre-fix
+redactor (`610ddc4`) are: spans ar 2 → 19, en 1 → 26, mixed 10 → 16, and runs
+left ar 17 → 0, en 25 → 0, mixed 6 → 0.
+
+### Stored claims whose evidence contains a 7+ digit run
+
+These are all stored `call_analyses` in the dev database, read-only
+(`scripts/measure_redaction.py --stored-analyses`;
+`data/redaction_audit/2026-10-11_catchall_stored_analyses.json`). A claim's
+quote is counted if it contains a 7+ digit run. *Changed* means the current
+redactor (phone fix plus catch-all) would rewrite that quote, so it would no
+longer match the text that redactor produces.
+
+| Language | Analyses | Grounded claims | Claims whose quote has a 7+ digit run | …changed by the current redactor | Sentiment points with a run (changed) |
+|---|---|---|---|---|---|
+| ar    | 28 | 242 | **1** (a `rubric_scores` quote, `ddddddd`) | 1 | 0 of 147 |
+| en    | 21 | 183 | **0** | 0 | 4 of 103 (4) |
+| mixed | 58 | 519 | **0** | 0 | 2 of 287 (2) |
+
+**How to read it.**
+
+- **1 claim in 944 is affected.** It is in `ar`, a 7-digit run inside a
+  rubric-score quote. `en` and `mixed` have 0.
+- **It wouldn't necessarily lose grounding on a new run.** With the catch-all
+  in place before extraction, the model sees `[NUMBER]` and can quote the
+  placeholder, which grounds normally. What fails is re-checking *this stored*
+  quote against a re-redacted transcript, and the stored data is not being
+  rewritten (next paragraph).
+- **Sentiment points don't count toward grounding coverage.** A dropped
+  sentiment point (6 here) doesn't affect routing.
+- The 4 en sentiment quotes are 3 `ddd-dddd` numbers, which the phone fix
+  already catches, plus 1 nine-digit run.
+
+**Stored data stays as it is (decided).** The dev database still holds the
+spans described in the previous round, and so do the upload's checkpoint and
+its Langfuse trace. All of it is synthetic. See `docs/13-SECURITY.md`.
+
+**Caveats.**
+
+1. This is the synthetic corpus and dev database only. Real calls may hold
+   long numbers that a claim needs, such as amounts written without commas or
+   dates with dashes. The catch-all redacts them, and a redaction is permanent.
+2. The stored-analysis count covers grounded claims only. Claims already
+   rejected by grounding (`rejected_claims`) are not counted.

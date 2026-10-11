@@ -3934,3 +3934,37 @@ speaker timeline, and the Phase 3 propagation numbers used oracle speakers
 **Not fixed, by decision.** No fix is designed here. Before choosing one,
 score diarization against `data/audio/manifest.json`, so the size of the
 problem is known per language rather than from one call.
+
+---
+
+## 2026-10-11 — Decided: a `[NUMBER]` catch-all for 7+ digit runs; the leaked stored data is not rewritten
+
+**Status:** accepted (user, 2026-10-11). This settles both open questions in
+the phone-redaction entry above.
+
+**Catch-all.** `[NUMBER]` is the last pattern in `sawti.privacy.redaction`.
+It matches any run of 7+ digits, ASCII or Arabic-Indic, with at most one
+space or dash between any two digits. Because it runs last, phones, national
+IDs and cards keep their specific labels.
+
+- **Why.** After the phone fix, 17 / 13 / 5 runs of 7+ digits were still
+  left in the ar / en / mixed ASR transcripts, and every one was an identifier
+  (account, ID, line number). None was an amount. After the catch-all, 0 / 0 /
+  0 are left (`eval_results.md`, 2026-10-11 catch-all round).
+- **Scope.** Dots are not separators, which was decided as asked. So a
+  dot-joined run stays, and the one in the corpus is a private router address.
+  Commas and slashes still end a run, so amounts written with commas and
+  slashed dates are untouched.
+- **What it costs.** A long number a claim needs is redacted: a 7-digit
+  amount without commas, a dash-written date (`2026-10-15`), a spaced order
+  number. Across the 944 grounded claims stored in the dev database, **1**
+  quote (`ar`, a rubric score) has such a run. `en` and `mixed` have 0. On a
+  new analysis the model sees `[NUMBER]` and can quote it, so grounding still
+  works. The information itself, the number, is gone for good.
+
+**Stored data from the miss: not rewritten.** The leaked number and the 13
+other spans in stored `en` calls are synthetic. Re-redacting would mean
+rewriting stored text, quote offsets, a checkpoint and a trace, and changing
+the record behind published numbers. That was judged not worth it for
+synthetic data. `docs/13-SECURITY.md` states where the number went, and what
+would be done with real data.

@@ -7,7 +7,8 @@ before any text reaches a model" is not optional.
 Scope, stated plainly: this is an **MVP regex redactor**, sized for the
 synthetic Jordanian contact-center dataset in `data/synthetic/`. It catches
 structured identifiers — phone numbers, emails, national IDs, card numbers,
-IBANs — because those have shape, and shape is what a regex can see.
+IBANs, and any other run of 7+ digits — because those have shape, and shape is
+what a regex can see.
 
 It does **not** catch unstructured PII: personal names, addresses, employers,
 anything that is only identifiable in context. That needs NER, and NER is
@@ -96,6 +97,14 @@ _PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ),
     # Phone, local 3-4 with a separator: 019-8234, 512 3456.
     ("[PHONE]", re.compile(rf"{_NOT_AFTER_DIGIT}{_DIGIT}{{3}}[ .\-]{_DIGIT}{{4}}{_NOT_BEFORE_DIGIT}")),
+    # Catch-all, last so the specific labels above win: any run of 7+ digits
+    # (ASCII or Arabic-Indic) with at most one space or dash between any two.
+    # Account numbers, contiguous line numbers and numbers dictated without a
+    # leading zero have no shape of their own, and every such run in the
+    # corpus was an identifier (docs/09-DECISIONS.md, 2026-10-11). Costs: a
+    # long number a claim needs (a dash-written date, a 7-digit amount without
+    # commas) is redacted too. Dots are not separators here (decided scope).
+    ("[NUMBER]", re.compile(rf"{_NOT_AFTER_DIGIT}{_DIGIT}(?:[ \-]?{_DIGIT}){{6,}}{_NOT_BEFORE_DIGIT}")),
 )
 
 

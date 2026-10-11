@@ -17,6 +17,7 @@ the bugs found along the way.
 | `[CARD]` | 13–19 digits, optionally grouped by spaces or dashes |
 | `[NATIONAL_ID]` | exactly 10 consecutive digits (wins over phone) |
 | `[PHONE]` | `+`/`00` international forms, Jordanian `0…`/`٠…` + 8–9 digits (any single separators), 3-3-4 and 3-4 with separators (widened 2026-10-11 after a production miss) |
+| `[NUMBER]` | catch-all, applied last: any other run of 7+ digits, with at most one space or dash between digits. Dots don't join a run. (Added 2026-10-11.) |
 
 Python's `\d` also matches Arabic-Indic digits, so both digit sets are covered.
 
@@ -26,10 +27,11 @@ Python's `\d` also matches Arabic-Indic digits, so both digit sets are covered.
   identifiable from context. Catching these needs NER, and
   `tests/privacy/test_redaction.py::test_redact_removes_names_in_arabic_and_english` stays
   skipped so the gap shows in every test run.
-- Identifiers that aren't phone-shaped: contiguous 7–9 digit account or line
-  numbers, and numbers dictated digit by digit without a leading zero. After
-  the 2026-10-11 fix, 17 / 13 / 5 such runs are left in the ar / en / mixed
-  ASR transcripts ([eval_results.md](../eval_results.md), 2026-10-11).
+- Identifiers shorter than 7 digits (PINs, short reference numbers), and
+  long numbers joined by dots. After the catch-all, 0 / 0 / 0 runs of 7+
+  digits are left in the ar / en / mixed ASR transcripts. The clean `mixed`
+  text has 1 left, a dotted private router address that isn't PII
+  ([eval_results.md](../eval_results.md), 2026-10-11 catch-all round).
 - Numbers written out as words. Every pattern is digit-based.
 - Anything ASR mangles into a shape the regex doesn't see.
 
@@ -53,11 +55,41 @@ and failure reasons never carry transcript text.
 | Bug | Effect | Fix | Source |
 |---|---|---|---|
 | 7 quotes inside `reviewer_actions` payloads held **raw phone numbers**. They came from ground truth written against raw transcripts. | Raw PII would have survived in the JSON after the transcripts were redacted. | Redacted and re-anchored during the 0001 conversion, which then found 0 quotes with PII left in 4,286. | [09-DECISIONS.md](09-DECISIONS.md), 2026-10-07 dev-DB conversion |
-| **Found in production, 2026-10-11.** Phone numbers in 3-3-4 / 3-4 format (and several Jordanian and Arabic-Indic groupings) passed redaction. An uploaded call sent one to Gemini and Langfuse. | The redact-before-model rule was broken. 11 stored `en` calls hold 14 such spans. | Phone patterns widened, with 42 new tests. en spans on the ASR transcripts went from 1 to 13. **Stored data has not been re-redacted** (open). | [eval_results.md](../eval_results.md), [09-DECISIONS.md](09-DECISIONS.md), 2026-10-11 |
+| **Found in production, 2026-10-11.** Phone numbers in 3-3-4 / 3-4 format (and several Jordanian and Arabic-Indic groupings) passed redaction. An uploaded call sent one to Gemini and Langfuse. | The redact-before-model rule was broken. 11 stored `en` calls hold 14 such spans. | Phone patterns widened (42 tests), then a 7+ digit catch-all added (19 tests). On the ASR transcripts, en spans went from 1 to 26 and leftover runs to 0 in every language. **Stored data was deliberately not rewritten** (see below). | [eval_results.md](../eval_results.md), [09-DECISIONS.md](09-DECISIONS.md), 2026-10-11 |
 | Grounding metrics checked the raw text while `ground` checked the redacted text. | A legitimate quote containing `[PHONE]` scored as unsupported. This was a measurement bias, not a leak. | The metrics now redact before checking. `mixed` unsupported rate went from 0.0039 to 0.000 on the 103 stored analyses. | [eval_results.md](../eval_results.md), 2026-10-07 re-score |
 | A test patched the provider only in `extract`, so induction called the **real** Gemini API, about 4 requests carrying synthetic test text. | Test text left the machine. | Every LLM caller is now patched, and service tests set `SAWTI_LLM_PROVIDER=fake`. | [09-DECISIONS.md](09-DECISIONS.md), 2026-10-07 closing 6.2 |
 | The Phase 5 adapter was trained on raw transcripts. 2 of 18 training records contain a PII-shaped span (synthetic). | The training data held raw PII. The pattern would matter with real data. | **Not fixed.** The adapter was not retrained. | [09-DECISIONS.md](09-DECISIONS.md), 2026-10-07 |
 | `data/backups/sawti-pre-0001-*.dump` holds the raw, unredacted transcripts. | The only raw copy left. | Gitignored. It is still on disk. | [09-DECISIONS.md](09-DECISIONS.md), 2026-10-07 |
+
+### The leaked number: where it went, and why it was left there
+
+The phone number missed on 2026-10-11 (an uploaded `call_0006_en`, call
+`89c66124…`) **reached Gemini**, in the analysis request. It is also stored in
+three places in the local stack:
+
+- the call's stored analysis and redacted transcript in Postgres;
+- the LangGraph **checkpoint** for that run;
+- **one Langfuse trace**. One observation in it, the LLM input, contains the
+  number, because the trace mask used the same pre-fix `redact()`.
+
+The same pre-fix patterns also left 13 more spans in 10 other stored `en`
+calls, which came from the eval scripts. That text went to Gemini when those
+calls were analyzed.
+
+**None of it was rewritten, by decision (2026-10-11).** Every one of these
+numbers is synthetic: the calls are TTS renderings of generated transcripts,
+and no real person's data is involved. Rewriting would mean the following:
+
+- re-redacting stored text and re-anchoring every quote offset, as the 0001
+  conversion did;
+- editing checkpoint state and a trace;
+- changing the audit trail behind numbers already recorded in
+  `eval_results.md`.
+
+That is a lot of risk for no privacy gain on synthetic data. **With real data,
+the answer would be the opposite.** Rewrite or delete every stored copy, ask
+the provider to delete the request where its terms allow, and purge the
+trace. The Gemini request itself can't be recalled from this side.
 
 ## Identity and access
 

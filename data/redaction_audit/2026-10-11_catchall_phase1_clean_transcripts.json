@@ -1,0 +1,144 @@
+{
+  "transcripts": "data/synthetic",
+  "before_rev": "bfadca6",
+  "min_run_digits": 7,
+  "by_language": {
+    "ar": {
+      "calls": 60,
+      "runs_in_raw_text": 14,
+      "before": {
+        "spans": 9,
+        "by_placeholder": {
+          "[NATIONAL_ID]": 9
+        },
+        "runs_left": 5,
+        "runs_left_by_shape": {
+          "dddddddd": 2,
+          "ddddddddd": 2,
+          "ddddddd": 1
+        },
+        "calls_with_runs_left": [
+          "call_0028_ar",
+          "call_0058_ar",
+          "call_0066_ar",
+          "call_0092_ar",
+          "call_0118_ar"
+        ]
+      },
+      "after": {
+        "spans": 14,
+        "by_placeholder": {
+          "[NATIONAL_ID]": 9,
+          "[NUMBER]": 5
+        },
+        "runs_left": 0,
+        "runs_left_by_shape": {},
+        "calls_with_runs_left": []
+      },
+      "calls_changed": [
+        "call_0028_ar",
+        "call_0058_ar",
+        "call_0066_ar",
+        "call_0092_ar",
+        "call_0118_ar"
+      ]
+    },
+    "en": {
+      "calls": 30,
+      "runs_in_raw_text": 26,
+      "before": {
+        "spans": 14,
+        "by_placeholder": {
+          "[CARD]": 1,
+          "[PHONE]": 13
+        },
+        "runs_left": 12,
+        "runs_left_by_shape": {
+          "ddddddddd": 5,
+          "dddddddd": 4,
+          "ddddddd": 2,
+          "d-d-d-d-d-d-d": 1
+        },
+        "calls_with_runs_left": [
+          "call_0030_en",
+          "call_0056_en",
+          "call_0065_en",
+          "call_0080_en",
+          "call_0101_en",
+          "call_0102_en",
+          "call_0116_en",
+          "call_0128_en",
+          "call_0142_en",
+          "call_0146_en"
+        ]
+      },
+      "after": {
+        "spans": 26,
+        "by_placeholder": {
+          "[CARD]": 1,
+          "[NUMBER]": 12,
+          "[PHONE]": 13
+        },
+        "runs_left": 0,
+        "runs_left_by_shape": {},
+        "calls_with_runs_left": []
+      },
+      "calls_changed": [
+        "call_0030_en",
+        "call_0056_en",
+        "call_0065_en",
+        "call_0080_en",
+        "call_0101_en",
+        "call_0102_en",
+        "call_0116_en",
+        "call_0128_en",
+        "call_0142_en",
+        "call_0146_en"
+      ]
+    },
+    "mixed": {
+      "calls": 60,
+      "runs_in_raw_text": 17,
+      "before": {
+        "spans": 12,
+        "by_placeholder": {
+          "[NATIONAL_ID]": 12
+        },
+        "runs_left": 5,
+        "runs_left_by_shape": {
+          "ddddddd": 2,
+          "ddd.ddd.d.d": 1,
+          "dddddddd": 1,
+          "ddddddddd": 1
+        },
+        "calls_with_runs_left": [
+          "call_0087_mixed",
+          "call_0093_mixed",
+          "call_0103_mixed",
+          "call_0123_mixed",
+          "call_0148_mixed"
+        ]
+      },
+      "after": {
+        "spans": 16,
+        "by_placeholder": {
+          "[NATIONAL_ID]": 12,
+          "[NUMBER]": 4
+        },
+        "runs_left": 1,
+        "runs_left_by_shape": {
+          "ddd.ddd.d.d": 1
+        },
+        "calls_with_runs_left": [
+          "call_0093_mixed"
+        ]
+      },
+      "calls_changed": [
+        "call_0087_mixed",
+        "call_0103_mixed",
+        "call_0123_mixed",
+        "call_0148_mixed"
+      ]
+    }
+  }
+}

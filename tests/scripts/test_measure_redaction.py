@@ -108,3 +108,45 @@ def test_redactor_at_rev_loads_the_module_from_git(monkeypatch: pytest.MonkeyPat
     measure_redaction.redactor_at_rev("abc123")
 
     assert calls == [["git", "show", "abc123:src/sawti/privacy/redaction.py"]]
+
+
+def _claim(quote: str) -> dict[str, object]:
+    return {"evidence": {"text": quote}}
+
+
+def test_stored_quote_impact_counts_claims_with_long_digit_runs_per_language() -> None:
+    analyses = [
+        (
+            "en",
+            {
+                "commitments": [_claim("My account number is 458921037."), _claim("I will call back.")],
+                "compliance_flags": [_claim("It's 4589-2103.")],
+                "rubric_scores": [_claim("Order 88542 noted.")],
+                "sentiment_trajectory": {"points": [{"quote": {"text": "line 4589210, thanks"}}]},
+            },
+        ),
+        ("ar", {"commitments": [_claim("رقم الحساب ١٢٣٤٥٦٧")]}),
+        # A dotted run counts as a run but the redactor leaves it (dots are not separators).
+        ("mixed", {"commitments": [_claim("open 192.168.1.10 please")]}),
+    ]
+
+    report = measure_redaction.stored_quote_impact(analyses)
+
+    en = report["en"]
+    assert en["analyses"] == 1
+    assert en["claims"]["total"] == 4
+    assert en["claims"]["with_7plus_digit_run"] == 2
+    assert en["claims"]["changed_by_current_redactor"] == 2
+    assert en["claims_with_run_by_kind"] == {"commitments": 1, "compliance_flags": 1}
+    assert en["claims"]["run_shapes"] == {"ddddddddd": 1, "dddd-dddd": 1}
+    assert en["sentiment_points"]["with_7plus_digit_run"] == 1
+    assert report["ar"]["claims"]["changed_by_current_redactor"] == 1
+    assert report["mixed"]["claims"]["with_7plus_digit_run"] == 1
+    assert report["mixed"]["claims"]["changed_by_current_redactor"] == 0
+
+
+def test_stored_quote_impact_reports_every_language_even_when_empty() -> None:
+    report = measure_redaction.stored_quote_impact([])
+
+    assert set(report) == {"ar", "en", "mixed"}
+    assert report["mixed"]["claims"]["total"] == 0

@@ -147,12 +147,13 @@ def test_pii_inside_a_correction_quote_is_redacted_and_re_anchored(old_db: sa.En
 
 def test_a_quote_broken_by_redaction_blocks_the_commit(old_db: sa.Engine) -> None:
     """A quote verbatim in the raw text but not the redacted one, with no PII of its own: roll back."""
-    # A fragment of the number: too short to redact on its own, gone once the number is redacted.
-    _seed(old_db, analysis_quote="I will call you back", correction_quote="1234567 tomorrow")
+    # A fragment of the number: too short to redact on its own (6 digits; the
+    # catch-all starts at 7), gone once the whole number is redacted.
+    _seed(old_db, analysis_quote="I will call you back", correction_quote="234567 tomorrow")
     report = run(old_db, commit=True)
 
     assert not report.committed
-    assert [text for _, text, _ in report.quotes.mismatches] == ["1234567 tomorrow"]
+    assert [text for _, text, _ in report.quotes.mismatches] == ["234567 tomorrow"]
     assert "transcript" in {c["name"] for c in sa.inspect(old_db).get_columns("calls")}
     assert not sa.inspect(old_db).has_table("alembic_version")
 

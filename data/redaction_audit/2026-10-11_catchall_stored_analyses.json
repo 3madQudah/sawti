@@ -1,0 +1,64 @@
+{
+  "source": "call_analyses (dev database)",
+  "min_run_digits": 7,
+  "by_language": {
+    "ar": {
+      "analyses": 28,
+      "claims": {
+        "total": 242,
+        "with_7plus_digit_run": 1,
+        "changed_by_current_redactor": 1,
+        "run_shapes": {
+          "ddddddd": 1
+        }
+      },
+      "claims_with_run_by_kind": {
+        "rubric_scores": 1
+      },
+      "sentiment_points": {
+        "total": 147,
+        "with_7plus_digit_run": 0,
+        "changed_by_current_redactor": 0,
+        "run_shapes": {}
+      }
+    },
+    "en": {
+      "analyses": 21,
+      "claims": {
+        "total": 183,
+        "with_7plus_digit_run": 0,
+        "changed_by_current_redactor": 0,
+        "run_shapes": {}
+      },
+      "claims_with_run_by_kind": {},
+      "sentiment_points": {
+        "total": 103,
+        "with_7plus_digit_run": 4,
+        "changed_by_current_redactor": 4,
+        "run_shapes": {
+          "ddd-dddd": 3,
+          "ddddddddd": 1
+        }
+      }
+    },
+    "mixed": {
+      "analyses": 58,
+      "claims": {
+        "total": 519,
+        "with_7plus_digit_run": 0,
+        "changed_by_current_redactor": 0,
+        "run_shapes": {}
+      },
+      "claims_with_run_by_kind": {},
+      "sentiment_points": {
+        "total": 287,
+        "with_7plus_digit_run": 2,
+        "changed_by_current_redactor": 2,
+        "run_shapes": {
+          "ddddddddd": 1,
+          "ddddddd": 1
+        }
+      }
+    }
+  }
+}

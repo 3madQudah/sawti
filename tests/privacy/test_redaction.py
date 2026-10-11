@@ -168,13 +168,64 @@ def test_a_dictated_run_is_not_half_redacted_from_an_inner_zero() -> None:
         "Agent: your balance of $145 is due on the 12th.",
         "Customer: I paid 1,500,000 JD last year.",
         "Agent: the bill dated 12/10/2026 at 10:30.",
-        "Agent: the record from 2026-10-11 shows 3 bills in 2026.",
+        "Agent: the record shows 3 bills in 2026 and 12 in 2025.",
         "Customer: call 911 if it sparks.",
-        "Agent: reference 88542, order 2000 1234.",
+        "Agent: reference 88542, PIN 123456.",
     ],
 )
 def test_redact_leaves_amounts_dates_times_and_short_numbers(text: str) -> None:
     assert redact(text).redacted_text == text
+
+
+# --- Catch-all: any other run of 7+ digits (decided 2026-10-11, after the
+# specific patterns left account numbers, IDs and dictated numbers behind).
+
+
+@pytest.mark.parametrize(
+    "number",
+    [
+        "4589210",  # 7 contiguous: the shortest run caught
+        "458921037",  # 9-digit account number
+        "4589-2103",  # dddd-dddd account number
+        "458-921037",
+        "458-9-2103",
+        "4 5 8 9 2 1 0 3 7",  # dictated, spaces
+        "1-0-7-1-2-3-4-5-6-7",  # dictated, dashes, no leading zero
+        "١٢٣٤٥٦٧",  # Arabic-Indic
+        "١-٢-٣-٤-٥-٦-٧-٨-٩",
+        "123456789012345678901",  # 21 digits: no specific pattern fits
+    ],
+)
+def test_the_catch_all_redacts_any_other_run_of_seven_or_more_digits(number: str) -> None:
+    result = redact(f"Customer: رقم الحساب {number} تمام")
+
+    assert result.redacted_text == "Customer: رقم الحساب [NUMBER] تمام"
+    assert result.redaction_count == 1
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        # The specific labels still win over the catch-all.
+        ("call 079 123 4567", "call [PHONE]"),
+        ("id 9801234567", "id [NATIONAL_ID]"),
+        ("card 4111 1111 1111 1111", "card [CARD]"),
+        ("phone 555-019-8234", "phone [PHONE]"),
+        # Each run is its own span; a comma, slash or dot ends a run.
+        ("account 458921037 and line 4589210", "account [NUMBER] and line [NUMBER]"),
+        ("1,500,000 or 12/10/2026", "1,500,000 or 12/10/2026"),
+        ("version 458.921.037", "version 458.921.037"),
+        # Six digits is not a run.
+        ("PIN 123 456", "PIN 123 456"),
+    ],
+)
+def test_the_catch_all_runs_last_and_only_on_seven_or_more_digits(text: str, expected: str) -> None:
+    assert redact(text).redacted_text == expected
+
+
+def test_the_catch_all_also_takes_dash_written_dates_a_known_cost() -> None:
+    """Spaces and dashes join a run, so a dash-written date of 8 digits is redacted."""
+    assert redact("due 2026-10-15").redacted_text == "due [NUMBER]"
 
 
 @pytest.mark.skip(reason="needs NER — MVP redactor is regex-only, see docs/09-DECISIONS.md")

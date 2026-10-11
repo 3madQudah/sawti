@@ -15,12 +15,19 @@ returns, so a placeholder ends a run.
 **The output carries no PII**: counts, call ids, and leftover runs as shapes
 with every digit replaced by `d`.
 
-Written for the 2026-10-11 production bug (an uploaded call kept
-"555-019-8234" in its redacted transcript); see eval_results.md.
+Written for the 2026-10-11 production bug (an uploaded call kept a 3-3-4
+phone number in its redacted transcript); see eval_results.md.
+
+`--stored-analyses` instead reads every stored `call_analyses` payload from
+the database (read-only) and counts, per language, the grounded claims whose
+evidence quote contains a 7+ digit run, and how many of those quotes the
+current redactor would change. A changed quote no longer matches the text
+the current redactor produces, so that evidence would not verify verbatim.
 
 Usage:
     uv run python scripts/measure_redaction.py --before-rev 610ddc4 \\
         [--transcripts data/asr_transcripts] [--out data/redaction_audit/<name>.json]
+    uv run python scripts/measure_redaction.py --stored-analyses [--out ...]
 """
 
 from __future__ import annotations
@@ -33,7 +40,7 @@ import subprocess
 import sys
 import tempfile
 from collections import Counter
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from pathlib import Path
 from typing import Any
 
@@ -43,6 +50,8 @@ LANGUAGES = ("ar", "en", "mixed")
 MIN_RUN_DIGITS = 7
 _RUN = re.compile(r"\d(?:[ .\-]?\d)*")
 _PLACEHOLDER = re.compile(r"\[[A-Z_]+\]")
+#: `CallAnalysis` lists whose items are claims with an `evidence` quote.
+CLAIM_LISTS = ("commitments", "compliance_flags", "rubric_scores")
 _FILE = re.compile(r"^call_(\d+)_(ar|en|mixed)\.txt$")
 REDACTION_MODULE = "src/sawti/privacy/redaction.py"
 
@@ -144,14 +153,98 @@ def compare(rows: list[tuple[str, str, str]], before: Redactor, after: Redactor)
     return report
 
 
+def _quote_stats(quotes: list[str]) -> dict[str, Any]:
+    with_run = [q for q in quotes if digit_runs(q)]
+    changed = [q for q in with_run if current_redactor(q)[0] != q]
+    return {
+        "total": len(quotes),
+        "with_7plus_digit_run": len(with_run),
+        "changed_by_current_redactor": len(changed),
+        "run_shapes": dict(Counter(shape(run) for q in with_run for run in digit_runs(q)).most_common()),
+    }
+
+
+def stored_quote_impact(analyses: Iterable[tuple[str, dict[str, Any]]]) -> dict[str, Any]:
+    """Per language: claim (and sentiment) quotes holding a 7+ digit run, and how many the redactor changes.
+
+    Args:
+        analyses: `(language, CallAnalysis payload)` pairs.
+    """
+    claims: dict[str, list[str]] = {language: [] for language in LANGUAGES}
+    by_kind: dict[str, Counter[str]] = {language: Counter() for language in LANGUAGES}
+    sentiment: dict[str, list[str]] = {language: [] for language in LANGUAGES}
+    counts: Counter[str] = Counter()
+    for language, payload in analyses:
+        counts[language] += 1
+        for list_name in CLAIM_LISTS:
+            for claim in payload.get(list_name, []):
+                quote = claim["evidence"]["text"]
+                claims[language].append(quote)
+                if digit_runs(quote):
+                    by_kind[language][list_name] += 1
+        for point in payload.get("sentiment_trajectory", {}).get("points", []):
+            sentiment[language].append(point["quote"]["text"])
+    return {
+        language: {
+            "analyses": counts[language],
+            "claims": _quote_stats(claims[language]),
+            "claims_with_run_by_kind": dict(by_kind[language]),
+            "sentiment_points": _quote_stats(sentiment[language]),
+        }
+        for language in LANGUAGES
+    }
+
+
+def _load_stored_analyses() -> list[tuple[str, dict[str, Any]]]:
+    """Every stored analysis with its call's language. Read-only."""
+    from sawti.db.models import Call, CallAnalysisRecord
+    from sawti.db.session import get_session_factory
+
+    with get_session_factory()() as session:
+        rows = session.query(Call.language, CallAnalysisRecord.payload).join(
+            CallAnalysisRecord, CallAnalysisRecord.call_id == Call.id
+        )
+        return [(str(language), dict(payload)) for language, payload in rows]
+
+
+def _write(report: dict[str, Any], out: Path | None) -> None:
+    if out:
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        print(f"wrote {out}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument("--before-rev", required=True, help="git revision of the redactor to compare against")
+    parser.add_argument("--before-rev", help="git revision of the redactor to compare against")
     parser.add_argument("--transcripts", type=Path, default=Path("data/asr_transcripts"))
+    parser.add_argument(
+        "--stored-analyses", action="store_true", help="count digit runs in stored evidence quotes"
+    )
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args()
+
+    if args.stored_analyses:
+        impact = stored_quote_impact(_load_stored_analyses())
+        _write(
+            {
+                "source": "call_analyses (dev database)",
+                "min_run_digits": MIN_RUN_DIGITS,
+                "by_language": impact,
+            },
+            args.out,
+        )
+        for language, row in impact.items():
+            c = row["claims"]
+            print(
+                f"{language:5} analyses={row['analyses']:3} claims={c['total']:4}"
+                f" with 7+ run={c['with_7plus_digit_run']:3} changed={c['changed_by_current_redactor']:3}"
+            )
+        return 0
+    if not args.before_rev:
+        parser.error("--before-rev is required unless --stored-analyses is given")
 
     rows = load_transcripts(args.transcripts)
     if not rows:
@@ -163,11 +256,7 @@ def main() -> int:
         "min_run_digits": MIN_RUN_DIGITS,
         "by_language": compare(rows, redactor_at_rev(args.before_rev), current_redactor),
     }
-    text = json.dumps(report, indent=2, ensure_ascii=False) + "\n"
-    if args.out:
-        args.out.parent.mkdir(parents=True, exist_ok=True)
-        args.out.write_text(text, encoding="utf-8")
-        print(f"wrote {args.out}")
+    _write(report, args.out)
     for language, row in report["by_language"].items():
         before, after = row["before"], row["after"]
         print(
