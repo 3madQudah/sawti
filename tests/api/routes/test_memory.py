@@ -20,6 +20,7 @@ from fastapi.testclient import TestClient
 from sawti.api import tasks
 from sawti.db.models import MemoryConflict, MemoryRuleRecord, ReviewerAction
 from sawti.db.session import get_engine, get_session
+from sawti.memory import persistence
 from sawti.memory.persistence import _INDUCTION_LOCK_KEY
 from sawti.privacy.redaction import redact
 
@@ -229,6 +230,95 @@ def test_a_conflict_is_resolved_once(
     [stored] = _conflicts()
     assert stored.resolution == "keep_existing"
     assert conflict.candidate_rule_id not in _rules()
+
+
+# --- Consolidation leaves rules held by an open conflict alone (phase 7.1) ---------------
+
+
+def _duplicate_of(rule: MemoryRuleRecord) -> uuid.UUID:
+    """Store a second active rule with the same text: consolidation would merge the two."""
+    twin = uuid.uuid4()
+    with get_session() as session:
+        session.add(
+            MemoryRuleRecord(
+                id=twin,
+                rule_text=rule.rule_text,
+                source_correction_ids=list(rule.source_correction_ids),
+                created_at=rule.created_at,
+            )
+        )
+    return twin
+
+
+def test_a_conflict_recorded_in_a_run_still_names_active_rules_after_that_runs_consolidation(
+    submit: Callable[..., str],
+    review_call: Callable[[str], None],
+    transcripts: dict[str, str],
+    contradicting_judge: None,
+) -> None:
+    """The 2026-10-11 bug: the run that records a conflict then consolidates the whole store.
+
+    Before 7.1 the conflicted rule and its duplicate merged in that same run, so
+    the open conflict named only retired rules and `keep_new` / `discard` were no-ops.
+    """
+    review_call(submit(transcripts["en"], "en"))
+    [existing] = [r for r in _rules().values() if not r.retired]
+    twin = _duplicate_of(existing)
+
+    review_call(submit(transcripts["ar"], "ar"))
+
+    [conflict] = _conflicts()
+    rules = _rules()
+    named = [uuid.UUID(entry["rule_id"]) for entry in conflict.conflicting]
+    assert existing.id in named
+    assert all(not rules[rule_id].retired for rule_id in named), "an open conflict names a retired rule"
+    assert not rules[existing.id].retired and not rules[twin].retired, "held rules must not be merged"
+
+
+def test_held_rules_are_merged_once_their_conflict_is_resolved(
+    client: TestClient,
+    headers: dict[str, str],
+    make_conflicts: Callable[..., list[str]],
+    consolidations: list[None],
+) -> None:
+    make_conflicts("mixed")
+    [existing] = [r for r in _rules().values() if not r.retired]
+    twin = _duplicate_of(existing)
+    [conflict] = _conflicts()
+
+    # Open conflict: consolidation leaves both alone.
+    assert persistence.consolidate_store(embed=tasks._induction_embed) == 0
+    assert not _rules()[existing.id].retired and not _rules()[twin].retired
+
+    resolved = client.post(
+        f"/memory/conflicts/{conflict.id}/resolve", json={"action": "keep_existing"}, headers=headers
+    )
+    assert resolved.status_code == 200
+
+    # Resolved: they are ordinary rules again, and the duplicates merge.
+    assert persistence.consolidate_store(embed=tasks._induction_embed) == 2
+    rules = _rules()
+    assert rules[existing.id].retired and rules[twin].retired
+    [merged] = [r for r in rules.values() if not r.retired]
+    assert set(merged.source_correction_ids) == set(existing.source_correction_ids)
+
+
+def test_rules_held_by_open_conflicts_lists_only_unresolved_conflicts(
+    client: TestClient,
+    headers: dict[str, str],
+    make_conflicts: Callable[..., list[str]],
+    consolidations: list[None],
+) -> None:
+    make_conflicts("en", "ar")
+    first, second = _conflicts()
+    named = {uuid.UUID(entry["rule_id"]) for c in (first, second) for entry in c.conflicting}
+    with get_session() as session:
+        assert persistence.rules_held_by_open_conflicts(session) == named
+
+    for c in (first, second):
+        client.post(f"/memory/conflicts/{c.id}/resolve", json={"action": "keep_existing"}, headers=headers)
+    with get_session() as session:
+        assert persistence.rules_held_by_open_conflicts(session) == set()
 
 
 @pytest.mark.parametrize(

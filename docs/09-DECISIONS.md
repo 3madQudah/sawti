@@ -3783,7 +3783,8 @@ text, the LLM's reasoning and any similarity were discarded. Decided (user,
 
 ## 2026-10-11 — TODO (known bug): consolidation can retire a rule an open conflict points at
 
-**Status:** open, not fixed. Found by the legacy-conflict re-check
+**Status:** ~~open, not fixed.~~ **Fixed 2026-10-11 in Phase 7.1.** See the
+"Phase 7.1" entry below. Found by the legacy-conflict re-check
 (`eval_results.md`, 2026-10-11).
 
 **Bug.** `induce_and_store` records a conflict against an active rule and then
@@ -3968,3 +3969,90 @@ rewriting stored text, quote offsets, a checkpoint and a trace, and changing
 the record behind published numbers. That was judged not worth it for
 synthetic data. `docs/13-SECURITY.md` states where the number went, and what
 would be done with real data.
+
+---
+
+## 2026-10-11 — Phase 7.1: rules named by an open conflict are held out of consolidation
+
+**Status:** done. This fixes the TODO above. The bars were pre-registered in
+`docs/08-ROADMAP.md`, Phase 7.1.
+
+**What changed.**
+- `sawti.memory.persistence._consolidate_and_sync`, used by both
+  `induce_and_store` and `consolidate_store`, now reads
+  `rules_held_by_open_conflicts()` first. That is every `rule_id` in the
+  `conflicting` list of any `memory_conflicts` row whose `resolution` is null.
+- Consolidation runs only on the other active rules. Held rules are neither
+  clustered nor retired.
+- When the conflict is resolved, its rules become ordinary rules again. The
+  next consolidation (after the next review's induction, or after a
+  resolution that activates a candidate) can merge them.
+- The memory write lock already serializes every writer, so no conflict can
+  be recorded or resolved between reading the held set and writing the merge.
+
+**Tests** (`tests/api/routes/test_memory.py`):
+- **In-run regression.** A duplicate of the conflicted rule exists when a
+  contradicting review lands. That run records the conflict and then
+  consolidates. Before the fix, both rules merged away in the same run, so the
+  open conflict named only retired rules. The test fails on the pre-fix code
+  ("an open conflict names a retired rule") and passes after.
+- **Held, then released.** `consolidate_store` merges nothing while the
+  conflict is open, and merges the two duplicates once it is resolved
+  `keep_existing`. This test also fails on the pre-fix code.
+- **Unit.** `rules_held_by_open_conflicts` lists only unresolved conflicts.
+
+**Data check** (the pre-registered metric 2): 0 open conflicts naming a
+retired rule, out of **n = 0** open conflicts. All 3 recorded conflicts had
+already been resolved (1 `keep_new`, 2 `keep_existing`). So the check is
+vacuous, and by the pre-registered bars 7.1 is **inconclusive on data,
+supported by tests**. The 2 conflicts that the bug had affected were resolved
+before the fix. No re-linking was needed.
+
+**A correction to the earlier record.** The TODO above said the dashboard
+"disables `keep_new` and `discard` when a conflict's rule is inactive". It
+never did. `ConflictsView` only shows an "already retired" badge, and every
+action stays selectable. `docs/02` and `docs/11` repeated the claim, and both
+are corrected now. The badge stays, because a rule can still be retired
+legitimately while another conflict names it: resolving conflict A with
+`keep_new` or `discard` retires its rules, which may also be named by an open
+conflict B. In that case B's `keep_new` still activates the candidate, and
+retiring an already-retired rule is a no-op.
+
+---
+
+## 2026-10-11 — Redaction mangled UUIDs and ISO timestamps (regression from the phone fix and the catch-all)
+
+**Status:** fixed the same day, in its own commit, found while running the
+Phase 7.1 suite.
+
+**Symptom.** `tests/api/test_tracing_pipeline.py` failed in about half of its
+runs. The Langfuse mask runs `redact()` on every trace string, and since
+`bfadca6` / `7f8cce9` the digit patterns match inside record ids and
+timestamps:
+- `05469959-c243-…` became `[NUMBER]-c243-…`;
+- `8b768603-7b79-…` became `8b[NUMBER]b79-…`;
+- `2026-10-11T15:48:02Z` became `[NUMBER]T15:48:02Z`.
+
+Whether a UUID breaks depends on how many of its hex groups happen to be all
+digits, hence the flakiness. The full-suite runs recorded for those commits
+(988 and 1,009 passed) were lucky draws, not evidence the test was stable.
+
+**Fix.** `redact()` leaves two kinds of span untouched and redacts only the
+text between them:
+- UUIDs (8-4-4-4-12 hex);
+- ISO-8601 timestamps with a time part.
+
+Neither is PII. A date written without a time (`2026-10-15`) is still
+redacted, as decided for the catch-all. There are 8 new tests, including PII
+right next to a UUID and a timestamp, which is still redacted.
+
+**Effect on recorded numbers.** None. The redaction audit gives identical
+counts before and after this change on both corpora (ASR: 19 / 26 / 16 spans,
+0 runs left; clean text: 14 / 26 / 16, 1 dotted run left), because
+transcripts contain no UUIDs or timestamps.
+
+**Effect on data.** Since the rebuild on 2026-10-11 there is one trace: the
+verification re-upload `8b768603…`. Its trace metadata and all 6
+observations' metadata carry the mangled call id. The trace's `session_id` is
+intact, so it still links to the call. The data is synthetic and was left as
+is.

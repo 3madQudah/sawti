@@ -101,8 +101,9 @@ self-hosted serving comparison, and a React review dashboard in EN and AR.
 - **Memory works only modestly:**
   - Accuracy +0.021 / +0.022 / +0.042 (ar / en / mixed), with `en` within noise.
   - The `ar` result contradicts Phase 4's larger effect.
-  - A known bug lets consolidation retire a rule that an open conflict points
-    at (2 of 3 conflicts).
+  - Consolidation could retire a rule that an open conflict pointed at. This
+    was fixed in Phase 7.1 by holding such rules out, with a regression test.
+    It was found and fixed only after it had affected 2 of 3 conflicts.
   - The live store went from 35 to 23 rules after a re-check, and that set
     hasn't been measured
     ([eval_results.md](../eval_results.md), 2026-10-10, 2026-10-11).
@@ -163,8 +164,8 @@ decision log as planned work.
    Measure high-WER recall and false escalations per language on the 150
    known-WER calls before choosing thresholds
    ([09-DECISIONS.md](09-DECISIONS.md), 2026-10-11).
-2. **Fix the conflict/consolidation bug.** Exclude conflicted rules from
-   consolidation, and add a test where they would otherwise cluster.
+2. ~~**Fix the conflict/consolidation bug.**~~ Done in Phase 7.1: conflicted
+   rules are excluded from consolidation, with regression tests.
 3. **Get human labels for a per-language subset**, and use them to re-anchor
    accuracy, rubric agreement and the escalation threshold. Until then, every
    accuracy number is agreement with Gemini.

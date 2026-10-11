@@ -111,9 +111,10 @@ The current store has 139 rows, of which 23 are active
 | `resolution` | varchar(32), null | CHECK: `keep_existing`, `keep_new`, `discard`, `not_a_conflict` |
 | `resolved_by`, `resolved_at` | null | CHECK: set together with `resolution`. |
 
-**Known bug.** A conflict can point at a rule that consolidation later
-retired. Nothing links the conflict to the merged rule
-([09-DECISIONS.md](09-DECISIONS.md), 2026-10-11 TODO).
+While a conflict is unresolved, every rule in its `conflicting` list is held
+out of consolidation, so it can't be merged away from under the conflict
+(Phase 7.1; [09-DECISIONS.md](09-DECISIONS.md), 2026-10-11). Resolving
+another conflict can still retire one of those rules.
 
 ## Relationships
 

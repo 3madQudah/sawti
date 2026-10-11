@@ -280,7 +280,7 @@ Common rules:
   language. It never counts as success or failure.
 - No Gemini calls unless an item says so.
 
-### 7.1 — Consolidation must not retire a rule an open conflict points at
+### 7.1 — Consolidation must not retire a rule an open conflict points at ✅
 
 - **Changes.** Consolidation (`induce_and_store`, `consolidate_store`) leaves
   out every active rule named by an unresolved `memory_conflicts` row. Such a
@@ -301,6 +301,11 @@ Common rules:
   3 conflicts recorded so far are all resolved, so n = 0 today.)
 - **Failure.** The regression test can't be made to pass, or any open
   conflict names a retired rule after the fix.
+- **Result (2026-10-11): inconclusive on data, supported by tests.**
+  - Both regression tests fail on the pre-fix code and pass after.
+  - The data check found 0 of n = 0 open conflicts naming a retired rule, so
+    it is vacuous.
+  - See `eval_results.md` and `docs/09-DECISIONS.md`, 2026-10-11.
 
 ### 7.2 — Transcript-quality signal in routing
 

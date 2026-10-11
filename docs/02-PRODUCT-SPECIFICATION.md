@@ -73,11 +73,14 @@ similarity to the redacted transcript and add them to the extraction prompt.
 `keep_both` is refused (422), because two contradicting active rules could be
 retrieved into the same prompt.
 
-**Known bug.** Consolidation can retire a rule that an open conflict points
-at. When that happens, *Keep new* and *Discard both* do nothing. The dashboard
-disables both buttons for such conflicts and says why. 2 of the 3 current
-conflicts are in this state ([09-DECISIONS.md](09-DECISIONS.md), 2026-10-11
-TODO).
+**Rules named by an open conflict are held out of consolidation** (fixed in
+Phase 7.1). Before the fix, consolidation could merge such a rule away, and
+then *Keep new* and *Discard both* retired nothing
+([09-DECISIONS.md](09-DECISIONS.md), 2026-10-11).
+
+An existing rule can still show an **"already retired"** badge. That happens
+when resolving another conflict retired it. Every action stays selectable;
+the dashboard never disabled any of them.
 
 ## What the UI does not claim
 

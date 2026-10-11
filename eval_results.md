@@ -1905,3 +1905,48 @@ Langfuse:
 
 n = 1 call, `en` only. It confirms the fix is live on the upload path. It is
 not a rate.
+
+---
+
+## Round: 2026-10-11 — phase 7.1: consolidation vs open memory conflicts (pre-registered in `docs/08-ROADMAP.md`)
+
+**Change.** Rules named by an unresolved `memory_conflicts` row are held out
+of consolidation (`sawti.memory.persistence.rules_held_by_open_conflicts`).
+They become eligible again once the conflict is resolved.
+
+**Metric 1: tests** (`tests/api/routes/test_memory.py`).
+
+| Test | Pre-fix code | Fixed code |
+|---|---|---|
+| A conflict recorded in a run still names active rules after that run's consolidation | **fails** ("an open conflict names a retired rule") | passes |
+| Held rules are not merged while the conflict is open, and merge once it is resolved | **fails** | passes |
+| `rules_held_by_open_conflicts` lists only unresolved conflicts | — (the function is new) | passes |
+
+**Metric 2: data check** on the dev database, read-only. Open conflicts
+naming a retired rule, by the language of the source correction:
+
+| Language | Open conflicts | …naming a retired rule |
+|---|---|---|
+| ar    | 0 | 0 |
+| en    | 0 | 0 |
+| mixed | 0 | 0 |
+
+All 3 recorded conflicts are resolved: 1 `keep_new` and 2 `keep_existing`,
+including the 2 the bug had affected. The live store has 17 active rules out
+of 145 rows.
+
+**Verdict, by the pre-registered bars: inconclusive on data, supported by
+tests.** With n = 0 open conflicts, the data check can't show anything. The
+evidence is that the bug's scenario is reproduced, fails before the fix, and
+passes after.
+
+**Found while running the 7.1 suite.** The redaction patterns from the
+2026-10-11 phone fix and catch-all mangled UUIDs and ISO timestamps inside
+Langfuse traces. The tracing test failed in about half of its runs: 2 of 4
+full runs, and 3 of 6 runs of the file alone. After protecting those spans
+it passes 12 of 12. Redaction counts on both corpora are unchanged
+(`scripts/measure_redaction.py --before-rev 7f8cce9`). The ASR transcripts
+give ar 19 / en 26 / mixed 16 spans with 0 runs left. The clean text gives
+14 / 26 / 16 with 1 dotted run left. One trace written since the rebuild
+(the `8b768603…` re-upload) has a mangled call id in its metadata, and its
+`session_id` is intact. Details: `docs/09-DECISIONS.md`, 2026-10-11.
