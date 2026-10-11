@@ -3799,3 +3799,49 @@ otherwise cluster. The 2 already-affected conflicts need a separate decision
 
 **Until then (stage B):** the dashboard disables `keep_new` and `discard` when a
 conflict's rule is inactive and says why.
+
+---
+
+## 2026-10-11 — TODO: route on ASR quality, not only on grounding coverage
+
+**Status:** open, not implemented. Found with `call_0003_mixed` uploaded through
+New Call (`eval_results.md`, 2026-10-11).
+
+**Problem.** Routing escalates when grounding coverage falls below the
+threshold. Grounding checks that a quote exists verbatim in the transcript. It
+does not check that the transcript is usable, or that the quote supports the
+claim. `call_0003_mixed` came back from ASR with Spanish, Japanese and Cyrillic
+fragments where Arabic was spoken. Every quote still grounded (coverage 1.00),
+and the call auto-completed. One of its claims, "skipped identity
+verification", cites `Let me check why it's pending. Give me a second, Bess.`
+
+**Planned fix.** An ASR-quality signal, computed by the ASR worker and used in
+routing alongside grounding coverage:
+
+- Whisper's own per-segment scores: `avg_logprob`, `compression_ratio` (the
+  repetition-loop signal), `no_speech_prob`. `sawti.asr.transcribe` drops them
+  today (`TranscriptSegment` keeps text and times only), so they must be kept
+  first.
+- Foreign-script ratio: the share of letters outside the scripts the call's
+  category allows (Arabic + Latin for `mixed` and `ar`, Latin for `en`).
+- Stored on the call. Below threshold, the call escalates with a new
+  `EscalationInfo.kind` (a code, e.g. `low_asr_quality`, translated in the UI
+  like the existing ones).
+
+Thresholds are set per language from the measurement below, not guessed.
+Checking that the quote supports the claim is a separate problem, not covered
+by this fix.
+
+**Measurement, before choosing thresholds.** On the 150 Phase 3 calls with
+known WER (`data/asr_transcripts/wer_report.json`), get the signals by
+re-transcribing (Whisper only, no LLM, free). Report per language, never
+blended:
+
+- recall of high-WER calls (WER > 0.4) at the chosen threshold;
+- false-escalation rate: the share of calls with WER ≤ 0.4 that the signal
+  would escalate.
+
+State the n of high-WER calls with each recall: **4 `ar`, 1 `en`, 27 `mixed`**
+today, so `ar` and `en` recall rests on very few calls. Phase 3 transcripts
+were produced without diarization and were clean for `call_0003_mixed`, so also
+run the live path (the ASR worker) on a subset to check the signal there.

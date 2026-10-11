@@ -94,6 +94,11 @@ function Review({ call: detail, submitted, onSubmitted }: { call: CallDetail; su
 
   const awaiting = call.status === "awaiting_review";
   const readOnly = !awaiting || submitted;
+  const lockedReason = !awaiting
+    ? t("review.locked", { status: t(`review.status.${call.status}`) })
+    : submitted
+      ? t("review.lockedSubmitted")
+      : undefined;
   const transcript = call.redacted_transcript;
   const verdicts = buildVerdicts(call.claims, drafts, transcript, call.turns);
   const decided = call.claims.filter((c) => drafts[c.claim_id]?.verdict !== undefined).length;
@@ -187,6 +192,7 @@ function Review({ call: detail, submitted, onSubmitted }: { call: CallDetail; su
               correction={drafts[claim.claim_id]!.correction}
               selected={claim.claim_id === selected}
               readOnly={readOnly}
+              lockedReason={lockedReason}
               onSelect={() => setSelected(claim.claim_id)}
               onVerdict={(verdict) => {
                 update(claim.claim_id, { verdict });
@@ -199,11 +205,12 @@ function Review({ call: detail, submitted, onSubmitted }: { call: CallDetail; su
           ))}
           <RejectedClaims claims={call.rejected_claims} />
           <RulesUsed rules={call.memory_rules} />
-          {awaiting && !submitted && (
+          {!submitted && (
             <div className="sticky bottom-0 flex flex-col gap-2 bg-paper pt-1.5">
               <button
                 type="button"
-                disabled={verdicts === null || submit.isPending}
+                aria-describedby="submit-help"
+                disabled={!awaiting || verdicts === null || submit.isPending}
                 onClick={() => {
                   if (verdicts === null) return;
                   submit.mutate(verdicts, { onSuccess: onSubmitted });
@@ -212,7 +219,9 @@ function Review({ call: detail, submitted, onSubmitted }: { call: CallDetail; su
               >
                 {submit.isPending ? t("review.submitting") : t("review.submit")}
               </button>
-              <span className="text-center text-xs text-muted">{t("review.submitHelp")}</span>
+              <span id="submit-help" data-testid="submit-help" className="text-center text-xs text-muted">
+                {lockedReason ?? t("review.submitHelp")}
+              </span>
             </div>
           )}
         </aside>

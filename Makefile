@@ -1,4 +1,4 @@
-.PHONY: install test lint typecheck up down fmt stack e2e measure audio transcribe asr-eval asr-forcing asr-worker asr-latency openapi
+.PHONY: install test lint typecheck up down fmt stack e2e measure audio transcribe asr-eval asr-forcing asr-worker asr-latency openapi demo
 
 install:
 	uv sync --all-extras --dev
@@ -48,6 +48,21 @@ e2e:
 # Needs `make up` (or the stack) for Postgres + Redis, and HF_TOKEN in .env.
 asr-worker:
 	SAWTI_WORKER_PRELOAD_EMBEDDINGS=false uv run celery -A sawti.api.asr_tasks worker -Q asr --pool=solo --loglevel=INFO
+
+# The demo: the stack (Docker), the native ASR worker and the dashboard dev
+# server, together. Ctrl-C stops the worker and the dashboard; the stack keeps
+# running (`make down` stops it). The dashboard gets the API key from .env, so
+# there is nothing to copy into frontend/.env.local. See docs/DEMO.md.
+DEMO_REVIEWER ?= qa-demo
+demo: stack
+	@test -d frontend/node_modules || (cd frontend && npm ci)
+	@key=$$(sed -n 's/^SAWTI_API_KEY=//p' .env); \
+	test -n "$$key" || { echo "SAWTI_API_KEY is not set in .env"; exit 1; }; \
+	echo "dashboard: http://localhost:5173   API docs: http://localhost:8000/docs   Langfuse: http://localhost:3000"; \
+	trap 'kill 0' INT TERM; \
+	$(MAKE) --no-print-directory asr-worker & \
+	(cd frontend && VITE_SAWTI_API_KEY="$$key" VITE_SAWTI_REVIEWER_ID=$(DEMO_REVIEWER) npm run dev) & \
+	wait
 
 # ASR latency and real-time factor per language, on Phase 3 audio (eval_results.md).
 asr-latency:

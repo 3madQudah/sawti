@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import { CALL_ID } from "../../test/fixtures";
+import { MockApi } from "../../test/mockApi";
 import { renderApp } from "../../test/render";
 
 const path = `/calls/${CALL_ID}`;
@@ -114,4 +115,25 @@ describe("Review", () => {
     await userEvent.type(refund.getByLabelText("Corrected evidence (optional, must be verbatim)"), "not in the call");
     expect(submit).toBeDisabled();
   });
+  for (const [lang, copy] of [
+    ["en", { confirm: "Confirm", correct: "Correct", reject: "Reject", submit: "Submit review and resume run", reason: "Locked: the call is not awaiting review (status: completed)." }],
+    ["ar", { confirm: "تأكيد", correct: "تصحيح", reject: "رفض", submit: "إرسال المراجعة واستئناف التحليل", reason: "مقفلة: المكالمة ليست بانتظار المراجعة (الحالة: مكتملة)." }],
+  ] as const) {
+    it(`locks every verdict and the submit button, with the reason, when the call is not awaiting review (${lang})`, async () => {
+      const api = new MockApi();
+      api.calls.get(CALL_ID)!.status = "completed";
+      renderApp(path, { api, lang });
+      const claim = within(await screen.findByTestId("claim-commitments[0]"));
+      for (const name of [copy.confirm, copy.correct, copy.reject]) expect(claim.getByRole("button", { name })).toBeDisabled();
+      expect(claim.getByTestId("locked-reason")).toHaveTextContent(copy.reason);
+      expect(claim.getByRole("group")).toHaveAccessibleDescription(copy.reason);
+      expect(screen.getAllByTestId("locked-reason")).toHaveLength(6);
+      const submit = screen.getByRole("button", { name: copy.submit });
+      expect(submit).toBeDisabled();
+      expect(submit).toHaveAccessibleDescription(copy.reason);
+      await userEvent.click(claim.getByRole("button", { name: copy.confirm }));
+      expect(claim.getByRole("button", { name: copy.confirm })).toHaveAttribute("aria-pressed", "false");
+      expect(api.submissions).toHaveLength(0);
+    });
+  }
 });

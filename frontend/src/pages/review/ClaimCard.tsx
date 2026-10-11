@@ -21,6 +21,7 @@ export function ClaimCard({
   correction,
   selected,
   readOnly,
+  lockedReason,
   onSelect,
   onVerdict,
   onCorrection,
@@ -32,6 +33,8 @@ export function ClaimCard({
   correction: Correction;
   selected: boolean;
   readOnly: boolean;
+  /** Why the verdicts are locked, shown beside them; set whenever `readOnly` is. */
+  lockedReason?: string;
   onSelect: () => void;
   onVerdict: (verdict: Verdict) => void;
   onCorrection: (next: Correction) => void;
@@ -69,7 +72,12 @@ export function ClaimCard({
       >
         “{claim.quote}”
       </button>
-      <div role="group" aria-label={t("review.verdict")} className="flex flex-wrap gap-1.5">
+      <div
+        role="group"
+        aria-label={t("review.verdict")}
+        aria-describedby={lockedReason ? `locked-${claim.claim_id}` : undefined}
+        className="flex flex-wrap items-center gap-1.5"
+      >
         {(["confirm", "correct", "reject"] as const).map((v) => (
           <button
             key={v}
@@ -77,11 +85,16 @@ export function ClaimCard({
             aria-pressed={verdict === v}
             disabled={readOnly}
             onClick={() => onVerdict(v)}
-            className={`min-h-10 rounded-lg border px-3.5 font-medium disabled:cursor-not-allowed ${verdict === v ? VERDICT_ON[v] : "border-field bg-white text-ink"}`}
+            className={`min-h-10 rounded-lg border px-3.5 font-medium disabled:cursor-not-allowed ${verdict === v ? VERDICT_ON[v] : "border-field bg-white text-ink disabled:bg-paper disabled:text-muted"}`}
           >
             {t(`review.${v}`)}
           </button>
         ))}
+        {lockedReason && (
+          <span id={`locked-${claim.claim_id}`} data-testid="locked-reason" className="ms-1 text-xs text-muted">
+            {lockedReason}
+          </span>
+        )}
       </div>
       {verdict === "correct" && !readOnly && (
         <CorrectionForm claim={claim} correction={correction} onChange={onCorrection} transcript={transcript} turns={turns} />

@@ -1624,3 +1624,56 @@ Conflict detection ran *before* the consolidation in the same run, so **2 of the
 `active: false`. Resolving them still works, but `keep_new` / `discard` then
 retire nothing (the rule is already retired), and the merged rule that absorbed
 it is not linked to the conflict. Not fixed here; noted for review.
+
+## Round: 2026-10-11 — phase 6.4: a garbled ASR transcript passed grounding at 1.00 and auto-completed (`call_0003_mixed`, New Call)
+
+**What ran.** One upload through the dashboard's New Call page:
+`data/audio/call_0003_mixed.wav`, language `mixed` (Arabic decoder forced, the
+Phase 3 rule), the native ASR worker (mlx-whisper `large-v3-turbo` + pyannote
+diarization, first speaker = agent), then the analysis worker on Gemini
+`gemini-flash-lite-latest`. Call `8cb98628-b364-4c6a-bc30-e861afed830e`. n = 1:
+this is a finding, not a rate.
+
+| | Value |
+|---|---|
+| Status | `completed` (auto-passed, no human review) |
+| Grounding coverage | **1.00** (0 claims rejected) |
+| Confidence / threshold | 1.00 / 0.70 |
+| Analysis time | 16.0 s |
+| PII spans redacted | 0 |
+
+**The transcript is not usable.** The first turns are fragments in other
+languages and scripts where Arabic was spoken, e.g. `Agent: Bueno puesmals
+1500 كانت ، damages cachdevえて jealousy` and `Customer: كان حetinенный الف
+targeting Era Feng oraz lasted …` (Spanish, Japanese, Cyrillic, Polish,
+Vietnamese). One agent turn is just `؟`. The agent's greeting is lost. The
+Arabic in the remaining turns is dropped or rendered as English-looking words:
+the reference's `Give me a second بس` came out as `Give me a second, Bess.`
+The English sentences mostly survive.
+
+**The same file was clean in Phase 3**: WER 0.185 (normalized), no repetition
+loop, no characters outside the Arabic and Latin scripts
+(`data/asr_transcripts/call_0003_mixed.txt`). Both runs forced the Arabic
+decoder. Why the New Call run differs (decoding nondeterminism, the diarized
+segment merge, or something else) was **not investigated**. So a low Phase 3
+WER does not guarantee a clean transcript on the live path.
+
+**Why grounding passed.** Grounding checks that each quote occurs verbatim at
+its offsets in the transcript the agent was given. A garbled transcript is
+still text, so quotes taken from it ground perfectly. It does not check
+whether the transcript is usable, or whether the quote supports the claim:
+
+- `procedure_adherence`: "The agent skipped identity verification at the
+  start of the call." Evidence: `Let me check why it's pending. Give me a
+  second, Bess.` The quote exists. It does not show a skipped verification.
+- compliance flag `improper_greeting_and_identification`: "The agent failed to
+  properly introduce themselves …". Evidence: the garbled first line. The
+  greeting was spoken (reference: "Welcome to customer service, how can I help
+  you today?") and lost in ASR, so the flag is an ASR artifact.
+
+**What it means.** Grounding coverage measures quote existence. Phase 3's
+escalations (4 of 30 `en`, 0 `ar`/`mixed`) came from ASR slips breaking
+verbatim matches. A transcript that is wrong but self-consistent cannot fail
+that check, so the worst ASR failures are the ones least likely to reach a
+human. The planned fix, an ASR-quality signal in routing, and how it will be
+measured are in `docs/09-DECISIONS.md` (2026-10-11 TODO). Not implemented.
