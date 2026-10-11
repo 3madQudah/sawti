@@ -236,3 +236,35 @@ def test_redact_removes_names_in_arabic_and_english() -> None:
     them needs NER, which is logged as future work rather than silently
     pretended-to. Leaving this test red-but-skipped keeps the gap visible.
     """
+
+
+# --- Never redacted: record ids and machine timestamps (found 2026-10-11 via the
+# tracing test: the Langfuse mask runs `redact()` on every trace string, and the
+# digit patterns matched inside UUIDs and ISO timestamps).
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "05469959-c243-48f4-8cbe-b8c527e3c59c",  # first group all digits
+        "8b768603-7b79-4fa8-a67e-d231086cb91c",  # digits run across a dash
+        "a1b2c3d4-1234-5678-9abc-def012345678",  # two all-digit groups
+        "12345678-1234-1234-1234-123456789012",  # every group all digits
+        "2026-10-11T15:48:02.407611+00:00",
+        "2026-10-11T15:48:02Z",
+        "2026-10-11T15:48",
+    ],
+)
+def test_uuids_and_iso_timestamps_pass_through_untouched(value: str) -> None:
+    result = redact(f"call_id={value} done")
+
+    assert result.redacted_text == f"call_id={value} done"
+    assert result.redaction_count == 0
+
+
+def test_pii_next_to_a_uuid_or_timestamp_is_still_redacted() -> None:
+    text = "05469959-c243-48f4-8cbe-b8c527e3c59c at 2026-10-11T15:48:02Z: call 079 123 4567, acct 458921037"
+
+    assert redact(text).redacted_text == (
+        "05469959-c243-48f4-8cbe-b8c527e3c59c at 2026-10-11T15:48:02Z: call [PHONE], acct [NUMBER]"
+    )

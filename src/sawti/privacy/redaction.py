@@ -108,6 +108,28 @@ _PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
 )
 
 
+# Spans that are never redacted: record ids and machine timestamps. Neither is
+# PII, and both appear in strings that pass through `redact()` (the Langfuse
+# mask runs it on every trace string). Without this, the digit patterns above
+# match inside them: `05469959-c243-…` became `[NUMBER]-c243-…`, and
+# `2026-10-11T15:48:02Z` became `[NUMBER]T15:48:02Z` (found 2026-10-11, phase 7.1).
+# A date written without a time (`2026-10-15`) is not protected, by design.
+_PROTECTED = re.compile(
+    r"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b"
+    r"|\b[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(?::[0-9]{2}(?:\.[0-9]+)?)?(?:Z|[+-][0-9]{2}:?[0-9]{2})?"
+)
+
+
+def _redact_segment(text: str) -> tuple[str, int]:
+    count = 0
+    for placeholder, pattern in _PATTERNS:
+        # `subn` reports how many replacements happened, which is the stat the
+        # caller needs; a plain `sub` would force a second pass to count.
+        text, replacements = pattern.subn(placeholder, text)
+        count += replacements
+    return text, count
+
+
 def redact(text: str) -> RedactionResult:
     """Redact structured PII from `text` before it is sent to any model.
 
@@ -125,14 +147,19 @@ def redact(text: str) -> RedactionResult:
         A `RedactionResult` with the redacted text and redaction stats. Text
         containing no recognized PII comes back unchanged with a count of 0.
     """
-    redacted = text
+    # Redact only between protected spans (UUIDs, ISO timestamps), which pass through as they are.
+    parts: list[str] = []
     count = 0
-
-    for placeholder, pattern in _PATTERNS:
-        # `subn` reports how many replacements happened, which is the stat the
-        # caller needs; a plain `sub` would force a second pass to count.
-        redacted, replacements = pattern.subn(placeholder, redacted)
-        count += replacements
+    position = 0
+    for match in _PROTECTED.finditer(text):
+        segment, replaced = _redact_segment(text[position : match.start()])
+        parts += [segment, match.group()]
+        count += replaced
+        position = match.end()
+    segment, replaced = _redact_segment(text[position:])
+    parts.append(segment)
+    count += replaced
+    redacted = "".join(parts)
 
     return RedactionResult(
         redacted_text=redacted,
