@@ -46,6 +46,8 @@ class _Throttled(LLMProvider):
 
     _lock = threading.Lock()
     _last = 0.0
+    #: Provider calls made through any instance (phase 6.4: reported per run).
+    calls = 0
 
     def __init__(self, inner: LLMProvider, min_interval: float) -> None:
         self._inner = inner
@@ -57,6 +59,7 @@ class _Throttled(LLMProvider):
             if delay > 0:
                 time.sleep(delay)
             _Throttled._last = time.monotonic()
+            _Throttled.calls += 1
 
     async def complete(self, prompt: str, **kwargs: Any) -> str:
         self._wait()
@@ -154,6 +157,7 @@ def main() -> int:
             try:
                 run = induce_and_store(on_correction=_progress)
                 print(f"done: merged_away={run.merged_away}, active rules={run.active_rules_after}")
+                print(f"llm calls: {_Throttled.calls}, transient-error retries: {retries}")
                 break
             except Exception as exc:
                 if "PerDay" in str(exc):

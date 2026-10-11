@@ -22,6 +22,7 @@ from sawti.asr.diarization import (
     assign_roles_by_first_speaker,
     diarize,
     merge_transcript_with_speakers,
+    render_labelled_transcript,
 )
 from sawti.asr.transcribe import TranscriptSegment
 
@@ -215,3 +216,64 @@ class TestAssignRolesByFirstSpeaker:
     def test_empty_input_returns_empty(self) -> None:
         """No segments, no roles."""
         assert assign_roles_by_first_speaker([]) == []
+
+
+class TestRenderLabelledTranscript:
+    """`render_labelled_transcript`: the line format `POST /calls` and the ASR worker share."""
+
+    @staticmethod
+    def _seg(speaker: str, text: str, start: float) -> SpeakerTranscriptSegment:
+        return SpeakerTranscriptSegment(text=text, start_sec=start, end_sec=start + 1, speaker=speaker)
+
+    def test_merges_consecutive_turns_and_drops_empty_segments(self) -> None:
+        segments = [
+            self._seg("Agent", " Hello", 0),
+            self._seg("Agent", "how can I help?", 1),
+            self._seg("Customer", "  ", 2),
+            self._seg("Customer", "My internet is down.", 3),
+            self._seg("Agent", "Sorry.", 4),
+        ]
+        assert render_labelled_transcript(segments) == (
+            "Agent: Hello how can I help?\nCustomer: My internet is down.\nAgent: Sorry.\n"
+        )
+
+    def test_folds_line_breaks_so_every_line_keeps_a_prefix(self) -> None:
+        rendered = render_labelled_transcript([self._seg("Customer", "first\nsecond", 0)])
+        assert rendered == "Customer: first second\n"
+        assert all(line.startswith(("Agent:", "Customer:")) for line in rendered.splitlines())
+
+    def test_no_text_renders_empty(self) -> None:
+        assert render_labelled_transcript([]) == ""
+        assert render_labelled_transcript([self._seg("Agent", " ", 0)]) == ""
+
+
+def test_diarize_accepts_a_preloaded_pipeline_and_waveform() -> None:
+    """With both given, nothing is loaded and pyannote gets the in-memory waveform at 16 kHz."""
+    import numpy as np
+
+    received: dict[str, object] = {}
+
+    class _Turn:
+        def __init__(self, start: float, end: float) -> None:
+            self.start, self.end = start, end
+
+    class _Annotation:
+        def itertracks(self, yield_label: bool) -> list[tuple[_Turn, None, str]]:
+            return [(_Turn(1.0, 2.0), None, "SPEAKER_01"), (_Turn(0.0, 1.0), None, "SPEAKER_00")]
+
+    def fake_pipeline(audio: object, num_speakers: int | None) -> _Annotation:
+        received["audio"], received["num_speakers"] = audio, num_speakers
+        return _Annotation()
+
+    import tempfile
+
+    with tempfile.NamedTemporaryFile(suffix=".m4a") as handle:
+        segments = diarize(
+            Path(handle.name), pipeline=fake_pipeline, waveform=np.zeros(32_000, dtype=np.float32)
+        )
+    audio = received["audio"]
+    assert isinstance(audio, dict)
+    assert audio["sample_rate"] == 16_000
+    assert tuple(audio["waveform"].shape) == (1, 32_000)
+    assert received["num_speakers"] == 2
+    assert [s.speaker for s in segments] == ["SPEAKER_00", "SPEAKER_01"]

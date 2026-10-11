@@ -9,8 +9,12 @@ corrections (`scripts/induce_rules_from_corrections.py`):
     for each correction not yet induced (oldest first):
         candidate = induce_rule([correction])           # phase 4, unchanged
         insert_rule(store, candidate)                    # conflict check, unchanged
-        persist the rule if inserted; mark the correction induced either way
+        persist the rule if inserted, or record the conflict (phase 6.4);
+        mark the correction induced either way
     consolidate(store) and sync the merge to the table   # phase 4, unchanged
+
+A refused candidate is a `memory_conflicts` row a human resolves through
+`resolve_conflict` (docs/09-DECISIONS.md, 2026-10-10).
 
 Per correction, the rule (if any) and the correction's `induced_at` commit
 together, so an interruption — a transient provider error, the daily quota —
@@ -33,13 +37,15 @@ from collections import Counter
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from typing import Literal
 
 import sqlalchemy as sa
 from sqlalchemy.orm import Session
 
-from sawti.db.models import MemoryRuleRecord, ReviewerAction
+from sawti.db.models import MemoryConflict, MemoryRuleRecord, ReviewerAction
 from sawti.db.session import get_engine, get_session
-from sawti.memory.conflict import insert_rule
+from sawti.memory import lifecycle
+from sawti.memory.conflict import ConflictDetail, insert_rule
 from sawti.memory.consolidate import consolidate
 from sawti.memory.induction import induce_rule
 from sawti.memory.rule_schema import MemoryRule
@@ -67,16 +73,31 @@ class InductionReport:
     active_rules_after: int = 0
 
 
+class MemoryStoreBusyError(RuntimeError):
+    """Another writer holds the memory write lock (a non-blocking `memory_write_lock`)."""
+
+
 @contextlib.contextmanager
-def memory_write_lock() -> Iterator[None]:
+def memory_write_lock(*, blocking: bool = True) -> Iterator[None]:
     """Hold the Postgres advisory lock that serializes every writer of `memory_rules`.
 
-    Induction (`induce_and_store`) and maintenance such as
-    `scripts/reconsolidate_memory_rules.py` both take it, so a review's
-    induction never runs against a store that is being re-clustered.
+    Induction (`induce_and_store`), conflict resolution (`resolve_conflict`)
+    and maintenance such as `scripts/reconsolidate_memory_rules.py` all take
+    it, so a review's induction never runs against a store that is being
+    re-clustered.
+
+    Args:
+        blocking: Wait for the lock (default). False raises
+            `MemoryStoreBusyError` at once instead — for an HTTP request,
+            which must not hang behind a minutes-long induction run.
     """
     with get_engine().connect() as lock_conn:
-        lock_conn.execute(sa.text("SELECT pg_advisory_lock(:k)"), {"k": _INDUCTION_LOCK_KEY})
+        if blocking:
+            lock_conn.execute(sa.text("SELECT pg_advisory_lock(:k)"), {"k": _INDUCTION_LOCK_KEY})
+        elif not lock_conn.execute(
+            sa.text("SELECT pg_try_advisory_lock(:k)"), {"k": _INDUCTION_LOCK_KEY}
+        ).scalar():
+            raise MemoryStoreBusyError("the memory store is being updated; try again shortly")
         try:
             yield
         finally:
@@ -127,6 +148,18 @@ def _mark_induced(session: Session, correction_id: uuid.UUID, outcome: str) -> N
         .where(ReviewerAction.id == correction_id)
         .values(induced_at=datetime.now(UTC), induction_outcome=outcome)
     )
+
+
+def conflict_payload(details: list[ConflictDetail]) -> list[dict[str, object]]:
+    """`memory_conflicts.conflicting` for `details`. The judge's reasoning is redacted: it is model output."""
+    return [
+        {
+            "rule_id": str(detail.rule.id),
+            "similarity": round(detail.similarity, 4),
+            "reasoning": redact(detail.reasoning).redacted_text,
+        }
+        for detail in details
+    ]
 
 
 def _sync_consolidation(session: Session, before: list[MemoryRule], after: list[MemoryRule]) -> int:
@@ -181,13 +214,23 @@ def induce_and_store(
             with get_session() as session:
                 if outcome.inserted:
                     session.add(_to_row(candidate))
+                else:
+                    session.add(
+                        MemoryConflict(
+                            reviewer_action_id=correction.id,
+                            candidate_rule_id=candidate.id,
+                            candidate_text=candidate.rule_text,
+                            conflicting=conflict_payload(outcome.conflict_details),
+                            detected_at=datetime.now(UTC),
+                        )
+                    )
                 status = OUTCOME_INSERTED if outcome.inserted else OUTCOME_CONFLICT
                 _mark_induced(session, correction.id, status)
             report.processed[language] += 1
             (report.inserted if outcome.inserted else report.conflicts)[language] += 1
             if not outcome.inserted:
                 logger.warning(
-                    "induction: rule from correction %s conflicts with %s; not stored (needs a human)",
+                    "induction: rule from correction %s conflicts with %s; recorded for a human",
                     correction.id,
                     [str(rule.id) for rule in outcome.conflicts],
                 )
@@ -195,10 +238,125 @@ def induce_and_store(
                 on_correction(correction, status)
 
         if pending:
-            before = store.all_active_rules()
-            after = consolidate(before, embed=embed)
-            with get_session() as session:
-                report.merged_away = _sync_consolidation(session, before, after)
+            report.merged_away = _consolidate_and_sync(store.all_active_rules(), embed=embed)
         with get_session() as session:
             report.active_rules_after = session.query(MemoryRuleRecord).filter_by(retired=False).count()
     return report
+
+
+def _consolidate_and_sync(before: list[MemoryRule], *, embed: Embedder | None) -> int:
+    after = consolidate(before, embed=embed)
+    with get_session() as session:
+        return _sync_consolidation(session, before, after)
+
+
+def consolidate_store(*, embed: Embedder | None = None) -> int:
+    """Consolidate every active persisted rule, as `induce_and_store` does after a run.
+
+    Queued after a conflict resolution that activates a rule
+    (`sawti.api.tasks.consolidate_rules_task`): that rule has to go through
+    consolidation like any other new rule.
+
+    Returns:
+        How many rules were merged away (retired).
+    """
+    with memory_write_lock():
+        with get_session() as session:
+            active = load_active_rules(session)
+        return _consolidate_and_sync(active, embed=embed) if active else 0
+
+
+# --- Conflict resolution (phase 6.4) -------------------------------------------
+
+ConflictAction = Literal["keep_existing", "keep_new", "discard", "not_a_conflict"]
+
+#: Which actions retire the conflicting existing rules, and which activate the candidate.
+_RETIRES_EXISTING: frozenset[str] = frozenset({"keep_new", "discard"})
+_ACTIVATES_CANDIDATE: frozenset[str] = frozenset({"keep_new", "not_a_conflict"})
+
+
+class ConflictNotFoundError(LookupError):
+    """No memory conflict with that id."""
+
+
+class ConflictAlreadyResolvedError(RuntimeError):
+    """The conflict already has a resolution; a second one would contradict it."""
+
+
+@dataclass(frozen=True)
+class ConflictResolution:
+    """What resolving one conflict changed in the store."""
+
+    conflict_id: uuid.UUID
+    action: ConflictAction
+    resolved_by: str
+    resolved_at: datetime
+    #: The candidate's new rule id, if the action made it an active rule.
+    activated_rule_id: uuid.UUID | None
+    #: Existing rules this resolution retired (those already retired are not repeated).
+    retired_rule_ids: list[uuid.UUID]
+
+    @property
+    def needs_consolidation(self) -> bool:
+        """An activated candidate is a new rule, and every new rule goes through consolidation."""
+        return self.activated_rule_id is not None
+
+
+def _write_rule(row: MemoryRuleRecord, rule: MemoryRule) -> None:
+    """Copy a lifecycle function's result back onto its row."""
+    row.retired = rule.retired
+    row.success_count = rule.success_count
+    row.failure_count = rule.failure_count
+
+
+def resolve_conflict(
+    conflict_id: uuid.UUID, action: ConflictAction, *, reviewer_id: str
+) -> ConflictResolution:
+    """Apply a human's decision on a memory conflict, through the rule lifecycle.
+
+    `keep_existing`: candidate dropped. `keep_new`: conflicting rules retired,
+    candidate activated. `discard`: neither (candidate dropped, conflicting
+    rules retired). `not_a_conflict`: the detector was wrong; candidate
+    activated, existing rules untouched. The resolution, its reviewer and time
+    commit with the rule changes, under the memory write lock (not waited for).
+
+    Raises:
+        ConflictNotFoundError, ConflictAlreadyResolvedError, MemoryStoreBusyError.
+    """
+    now = datetime.now(UTC)
+    with memory_write_lock(blocking=False), get_session() as session:
+        conflict = session.get(MemoryConflict, conflict_id, with_for_update=True)
+        if conflict is None:
+            raise ConflictNotFoundError(str(conflict_id))
+        if conflict.resolution is not None:
+            raise ConflictAlreadyResolvedError(f"{conflict_id} was resolved as {conflict.resolution}")
+
+        retired: list[uuid.UUID] = []
+        if action in _RETIRES_EXISTING:
+            ids = [uuid.UUID(entry["rule_id"]) for entry in conflict.conflicting]
+            for row in session.query(MemoryRuleRecord).filter(MemoryRuleRecord.id.in_(ids)):
+                if not row.retired:
+                    _write_rule(row, lifecycle.retire(to_memory_rule(row)))
+                    retired.append(row.id)
+
+        activated = None
+        if action in _ACTIVATES_CANDIDATE:
+            candidate = MemoryRule(
+                id=conflict.candidate_rule_id,
+                rule_text=conflict.candidate_text,
+                source_correction_ids=[conflict.reviewer_action_id],
+                created_at=now,
+                retired=True,
+            )
+            session.add(_to_row(lifecycle.activate(candidate)))
+            activated = candidate.id
+
+        conflict.resolution, conflict.resolved_by, conflict.resolved_at = action, reviewer_id, now
+    return ConflictResolution(
+        conflict_id=conflict_id,
+        action=action,
+        resolved_by=reviewer_id,
+        resolved_at=now,
+        activated_rule_id=activated,
+        retired_rule_ids=sorted(retired),
+    )

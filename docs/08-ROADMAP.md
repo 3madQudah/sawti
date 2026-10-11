@@ -244,6 +244,12 @@ Tracked in `docs/09-DECISIONS.md`.
   language; vs Phase 4 the hypothesis is confirmed for mixed, inconclusive
   for en, contradicted for ar (`eval_results.md`, 2026-10-10) Proposed follow-up:
   a `disable_any_whitespace` Kaggle run.
+- 🔨 6.4 — QA dashboard, local only (demo video; `docs/09-DECISIONS.md`,
+  2026-10-10). Stage A, backend (built, awaiting review): audio upload with a
+  native ASR worker on the Mac (`make asr-worker`, `asr` queue), recorded and
+  resolvable memory conflicts, `/stats`, `/results`, `frontend/openapi.json`.
+  Stage B, the React dashboard (English + Arabic RTL), starts after the
+  mockups are approved.
 
 **Done when:** a call can be submitted over HTTP, analyzed asynchronously,
 escalated, reviewed by a human through the dashboard, and resumed — with

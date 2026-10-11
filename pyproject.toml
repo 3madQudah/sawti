@@ -44,6 +44,11 @@ dependencies = [
 asr = [
     "openai-whisper>=20231117",
     "pyannote.audio>=3.1,<4.0",
+    # Must match the locked torch (2.4.0, via sentence-transformers). Unpinned,
+    # the lock resolved torchaudio 2.11, whose native library cannot load
+    # against torch 2.4, so pyannote failed at import and diarization could
+    # not run at all (docs/09-DECISIONS.md, 2026-10-10).
+    "torchaudio==2.4.0",
     # Apple-Silicon Whisper backend. Runs large-v3-turbo on the M1 GPU via MLX,
     # ~8x faster than CPU large-v3 on this hardware (see docs/09-DECISIONS.md).
     # Optional at runtime: sawti.asr.transcribe falls back to openai-whisper
@@ -144,14 +149,19 @@ ignore_missing_imports = true
 
 # Celery ships no type information, so its `@task` decorator is untyped.
 [[tool.mypy.overrides]]
-module = ["sawti.api.tasks"]
+module = ["sawti.api.tasks", "sawti.api.asr_tasks"]
 disallow_untyped_decorators = false
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-# `integration` tests need the running container stack (`make e2e`).
-addopts = "-ra -m 'not integration'"
-markers = ["integration: needs the docker compose service stack running (make e2e)"]
+# `integration` tests need the running container stack (`make e2e`);
+# `asr_local` tests run real Whisper + pyannote, on the Mac only
+# (`uv run pytest -m asr_local`).
+addopts = "-ra -m 'not integration and not asr_local'"
+markers = [
+    "integration: needs the docker compose service stack running (make e2e)",
+    "asr_local: real ASR (mlx-whisper on Metal + gated pyannote); Apple Silicon Mac with HF_TOKEN only",
+]
 asyncio_mode = "auto"
 
 [tool.coverage.run]

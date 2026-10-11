@@ -1,0 +1,228 @@
+{
+  "measured_at": "2026-10-11T08:30:21+00:00",
+  "method": "sawti.asr.pipeline.transcribe_call (the ASR worker's function), one file at a time, models loaded once; RTF = processing time / audio duration; first calls by id per language; synthetic TTS audio (Phase 3, ar-JO / en voices); per-row `condition`",
+  "hardware": {
+    "machine": "arm64",
+    "cpu": "Apple M1",
+    "memory_gb": 8.0,
+    "macos": "27.0",
+    "python": "3.12.14",
+    "whisper_backend": "mlx-whisper (Metal GPU)",
+    "whisper_model": "large-v3-turbo",
+    "diarization": "pyannote/speaker-diarization-3.1, CPU (torch default device), num_speakers=2",
+    "versions": {
+      "mlx-whisper": "0.4.3",
+      "mlx": "0.32.2",
+      "pyannote.audio": "3.4.0",
+      "torch": "2.4.0",
+      "torchaudio": "2.4.0"
+    }
+  },
+  "cold_start": {
+    "pyannote_load_s": 9.4,
+    "whisper_load_s": 1.2
+  },
+  "per_language": {
+    "ar": {
+      "n": 3,
+      "audio_s_total": 244.1,
+      "processing_s_mean": 99.4,
+      "processing_s_median": 98.0,
+      "processing_s_max": 105.4,
+      "rtf_pooled": 1.221,
+      "stage_split_n": 0,
+      "rtf_whisper_pooled": null,
+      "rtf_diarization_pooled": null,
+      "rtf_per_call": [
+        1.422,
+        1.127,
+        1.159
+      ],
+      "conditions": [
+        "warm, sustained thermal load, no cooldown (run 1, 2026-10-10; back-to-back after a 244.5s warm-up call)"
+      ]
+    },
+    "en": {
+      "n": 3,
+      "audio_s_total": 421.7,
+      "processing_s_mean": 175.5,
+      "processing_s_median": 141.2,
+      "processing_s_max": 287.2,
+      "rtf_pooled": 1.249,
+      "stage_split_n": 0,
+      "rtf_whisper_pooled": null,
+      "rtf_diarization_pooled": null,
+      "rtf_per_call": [
+        1.12,
+        1.122,
+        1.38
+      ],
+      "conditions": [
+        "warm, sustained thermal load, no cooldown (run 1, 2026-10-10; back-to-back after a 244.5s warm-up call)"
+      ]
+    },
+    "mixed": {
+      "n": 3,
+      "audio_s_total": 299.0,
+      "processing_s_mean": 126.4,
+      "processing_s_median": 120.0,
+      "processing_s_max": 167.2,
+      "rtf_pooled": 1.268,
+      "stage_split_n": 3,
+      "rtf_whisper_pooled": 0.35,
+      "rtf_diarization_pooled": 0.914,
+      "rtf_per_call": [
+        1.198,
+        1.294,
+        1.358
+      ],
+      "conditions": [
+        "after 180s cooldown",
+        "after 180s cooldown; first file after model load"
+      ]
+    }
+  },
+  "calls": [
+    {
+      "call_id": "call_0000_ar",
+      "language": "ar",
+      "audio_s": 68.9,
+      "total_s": 98.0,
+      "rtf": 1.422,
+      "decode_s": null,
+      "transcribe_s": null,
+      "diarize_s": null,
+      "turns": null,
+      "speakers": null,
+      "decoded_language": null,
+      "logged_at": "2026-10-10 17:07:53,867",
+      "condition": "warm, sustained thermal load, no cooldown (run 1, 2026-10-10; back-to-back after a 244.5s warm-up call)"
+    },
+    {
+      "call_id": "call_0001_ar",
+      "language": "ar",
+      "audio_s": 93.5,
+      "total_s": 105.4,
+      "rtf": 1.127,
+      "decode_s": null,
+      "transcribe_s": null,
+      "diarize_s": null,
+      "turns": null,
+      "speakers": null,
+      "decoded_language": null,
+      "logged_at": "2026-10-10 17:09:39,290",
+      "condition": "warm, sustained thermal load, no cooldown (run 1, 2026-10-10; back-to-back after a 244.5s warm-up call)"
+    },
+    {
+      "call_id": "call_0002_ar",
+      "language": "ar",
+      "audio_s": 81.7,
+      "total_s": 94.7,
+      "rtf": 1.159,
+      "decode_s": null,
+      "transcribe_s": null,
+      "diarize_s": null,
+      "turns": null,
+      "speakers": null,
+      "decoded_language": null,
+      "logged_at": "2026-10-10 17:11:13,991",
+      "condition": "warm, sustained thermal load, no cooldown (run 1, 2026-10-10; back-to-back after a 244.5s warm-up call)"
+    },
+    {
+      "call_id": "call_0006_en",
+      "language": "en",
+      "audio_s": 87.6,
+      "total_s": 98.1,
+      "rtf": 1.12,
+      "decode_s": null,
+      "transcribe_s": null,
+      "diarize_s": null,
+      "turns": null,
+      "speakers": null,
+      "decoded_language": null,
+      "logged_at": "2026-10-10 17:12:52,069",
+      "condition": "warm, sustained thermal load, no cooldown (run 1, 2026-10-10; back-to-back after a 244.5s warm-up call)"
+    },
+    {
+      "call_id": "call_0026_en",
+      "language": "en",
+      "audio_s": 125.9,
+      "total_s": 141.2,
+      "rtf": 1.122,
+      "decode_s": null,
+      "transcribe_s": null,
+      "diarize_s": null,
+      "turns": null,
+      "speakers": null,
+      "decoded_language": null,
+      "logged_at": "2026-10-10 17:15:13,326",
+      "condition": "warm, sustained thermal load, no cooldown (run 1, 2026-10-10; back-to-back after a 244.5s warm-up call)"
+    },
+    {
+      "call_id": "call_0030_en",
+      "language": "en",
+      "audio_s": 208.2,
+      "total_s": 287.2,
+      "rtf": 1.38,
+      "decode_s": null,
+      "transcribe_s": null,
+      "diarize_s": null,
+      "turns": null,
+      "speakers": null,
+      "decoded_language": null,
+      "logged_at": "2026-10-10 17:20:00,553",
+      "condition": "warm, sustained thermal load, no cooldown (run 1, 2026-10-10; back-to-back after a 244.5s warm-up call)"
+    },
+    {
+      "call_id": "call_0003_mixed",
+      "language": "mixed",
+      "audio_s": 139.6,
+      "decode_s": 0.52,
+      "transcribe_s": 35.76,
+      "diarize_s": 130.9,
+      "total_s": 167.18,
+      "rtf": 1.198,
+      "turns": 23,
+      "speakers": [
+        "Agent",
+        "Customer"
+      ],
+      "decoded_language": "ar",
+      "condition": "after 180s cooldown; first file after model load"
+    },
+    {
+      "call_id": "call_0004_mixed",
+      "language": "mixed",
+      "audio_s": 70.98,
+      "decode_s": 0.27,
+      "transcribe_s": 26.0,
+      "diarize_s": 65.58,
+      "total_s": 91.86,
+      "rtf": 1.294,
+      "turns": 9,
+      "speakers": [
+        "Agent",
+        "Customer"
+      ],
+      "decoded_language": "ar",
+      "condition": "after 180s cooldown"
+    },
+    {
+      "call_id": "call_0007_mixed",
+      "language": "mixed",
+      "audio_s": 88.38,
+      "decode_s": 0.28,
+      "transcribe_s": 42.96,
+      "diarize_s": 76.79,
+      "total_s": 120.04,
+      "rtf": 1.358,
+      "turns": 13,
+      "speakers": [
+        "Agent",
+        "Customer"
+      ],
+      "decoded_language": "ar",
+      "condition": "after 180s cooldown"
+    }
+  ]
+}

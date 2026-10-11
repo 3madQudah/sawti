@@ -167,3 +167,24 @@ def test_paired_verdict_needs_both_repeats_and_compares_against_phase_4() -> Non
         ]
         == "contradicts"
     )
+
+
+def test_report_out_writes_exactly_what_it_prints(
+    tmp_path: Any, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """`report --out` persists the printed report (phase 6.4: `GET /results` serves that file)."""
+    import json
+    import sys
+
+    monkeypatch.setattr(memory, "load_checkpoint", lambda path: ([], []))
+    monkeypatch.setattr(memory, "load_ground_truth", lambda path: [])
+    monkeypatch.setattr(memory, "report", lambda checkpoint: {"repeat_0": {"memory_off": {}}})
+    monkeypatch.setattr(memory, "paired_verdict", lambda records, truth: {"ar": {"verdict": "confirms"}})
+    out = tmp_path / "report.json"
+    monkeypatch.setattr(sys, "argv", ["run_memory_comparison.py", "report", "--out", str(out)])
+
+    assert memory.main() == 0
+
+    written = json.loads(out.read_text(encoding="utf-8"))
+    assert written == json.loads(capsys.readouterr().out)
+    assert written["verdict"] == {"ar": {"verdict": "confirms"}}

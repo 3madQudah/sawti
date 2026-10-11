@@ -20,7 +20,15 @@ from sqlalchemy.exc import IntegrityError
 
 from sawti.db.models import CHECKPOINT_TABLES, Base, alembic_include_object
 
-APP_TABLES = {"agents", "calls", "call_analyses", "reviewer_actions", "review_submissions", "memory_rules"}
+APP_TABLES = {
+    "agents",
+    "calls",
+    "call_analyses",
+    "reviewer_actions",
+    "review_submissions",
+    "memory_rules",
+    "memory_conflicts",
+}
 
 
 @pytest.fixture
@@ -121,3 +129,114 @@ def test_downgrade_then_upgrade_round_trips(migration_db: sa.Engine, config: Con
 
     command.upgrade(config, "head")
     assert _tables(migration_db) == APP_TABLES
+
+
+def _insert_agent(conn: sa.Connection) -> object:
+    return conn.execute(
+        sa.text(
+            "INSERT INTO agents (id, name, created_at) VALUES (gen_random_uuid(), 'a', :now) RETURNING id"
+        ),
+        {"now": datetime.now(UTC)},
+    ).scalar_one()
+
+
+def _insert_call(conn: sa.Connection, agent_id: object, status: str) -> None:
+    conn.execute(
+        sa.text(
+            "INSERT INTO calls (id, agent_id, language, occurred_at, status) "
+            "VALUES (gen_random_uuid(), :agent, 'ar', :now, :status)"
+        ),
+        {"agent": agent_id, "now": datetime.now(UTC), "status": status},
+    )
+
+
+def test_0005_allows_transcribing_and_keeps_existing_calls(migration_db: sa.Engine, config: Config) -> None:
+    """0004 rejects `transcribing`; after 0005 it is valid, and rows written under 0004 survive."""
+    command.upgrade(config, "0004")
+    with migration_db.begin() as conn:
+        agent_id = _insert_agent(conn)
+        _insert_call(conn, agent_id, "completed")
+    with pytest.raises(IntegrityError), migration_db.begin() as conn:
+        _insert_call(conn, agent_id, "transcribing")
+
+    command.upgrade(config, "0005")
+    with migration_db.begin() as conn:
+        _insert_call(conn, agent_id, "transcribing")
+        statuses = sorted(conn.execute(sa.text("SELECT status FROM calls")).scalars())
+        reasons = set(conn.execute(sa.text("SELECT failure_reason FROM calls")).scalars())
+    assert statuses == ["completed", "transcribing"]
+    assert reasons == {None}
+
+
+def test_0005_downgrade_restores_the_0004_status_check(migration_db: sa.Engine, config: Config) -> None:
+    """Downgrading 0005 drops its table and column and rejects `transcribing` again."""
+    command.upgrade(config, "0005")
+    command.downgrade(config, "0004")
+    assert "memory_conflicts" not in _tables(migration_db)
+    assert "failure_reason" not in {c["name"] for c in sa.inspect(migration_db).get_columns("calls")}
+    with migration_db.begin() as conn:
+        agent_id = _insert_agent(conn)
+    with pytest.raises(IntegrityError), migration_db.begin() as conn:
+        _insert_call(conn, agent_id, "transcribing")
+
+
+def _conflict_row(conn: sa.Connection, *, resolution: str | None, resolved_by: str | None) -> None:
+    agent_id = _insert_agent(conn)
+    now = datetime.now(UTC)
+    call_id = conn.execute(
+        sa.text(
+            "INSERT INTO calls (id, agent_id, language, occurred_at) "
+            "VALUES (gen_random_uuid(), :agent, 'ar', :now) RETURNING id"
+        ),
+        {"agent": agent_id, "now": now},
+    ).scalar_one()
+    analysis_id = conn.execute(
+        sa.text(
+            "INSERT INTO call_analyses (id, call_id, payload, confidence, requires_human_review, created_at) "
+            "VALUES (gen_random_uuid(), :call, '{}', 0.5, true, :now) RETURNING id"
+        ),
+        {"call": call_id, "now": now},
+    ).scalar_one()
+    action_id = conn.execute(
+        sa.text(
+            "INSERT INTO reviewer_actions (id, call_analysis_id, reviewer_id, payload, created_at) "
+            "VALUES (gen_random_uuid(), :analysis, 'r', '{}', :now) RETURNING id"
+        ),
+        {"analysis": analysis_id, "now": now},
+    ).scalar_one()
+    conn.execute(
+        sa.text(
+            "INSERT INTO memory_conflicts (id, reviewer_action_id, candidate_rule_id, candidate_text, "
+            "conflicting, detected_at, resolution, resolved_by, resolved_at) VALUES (gen_random_uuid(), "
+            ":action, gen_random_uuid(), 'rule', '[]', :now, :resolution, :by, :at)"
+        ),
+        {
+            "action": action_id,
+            "now": now,
+            "resolution": resolution,
+            "by": resolved_by,
+            "at": now if resolution else None,
+        },
+    )
+
+
+@pytest.mark.parametrize(
+    ("resolution", "resolved_by", "valid"),
+    [
+        (None, None, True),
+        ("not_a_conflict", "qa-1", True),
+        ("keep_both", "qa-1", False),
+        ("keep_new", None, False),
+    ],
+)
+def test_memory_conflicts_constraints(
+    migration_db: sa.Engine, config: Config, resolution: str | None, resolved_by: str | None, valid: bool
+) -> None:
+    """Only the four resolutions are storable, and a resolution always carries who and when."""
+    command.upgrade(config, "head")
+    if valid:
+        with migration_db.begin() as conn:
+            _conflict_row(conn, resolution=resolution, resolved_by=resolved_by)
+    else:
+        with pytest.raises(IntegrityError), migration_db.begin() as conn:
+            _conflict_row(conn, resolution=resolution, resolved_by=resolved_by)

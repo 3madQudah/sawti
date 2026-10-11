@@ -1501,3 +1501,126 @@ understated memory's effect" — gets per language:
 4. The last 72 calls ran on the paid tier under a different key fingerprint;
    same model on every call. Paid vs free tier is not expected to change the
    model's outputs, but it is a difference in how those calls were served.
+
+---
+
+## Round: 2026-10-11 — phase 6.4 A1: ASR latency and real-time factor, per language category
+
+**What was measured.** `sawti.asr.pipeline.transcribe_call`, the exact
+function the native ASR worker runs for `POST /calls/audio`: ffmpeg decode →
+mlx-whisper `large-v3-turbo` (language forced from the category: en → `en`,
+ar and mixed → `ar`) → pyannote `speaker-diarization-3.1` (2 speakers) →
+first-speaker-is-agent role labelling. One file at a time; models loaded once
+and reused. Redaction and analysis are not included. The first 3 calls by id
+per language from `data/audio/manifest.json` (not chosen by length);
+synthetic Phase 3 TTS audio. RTF = processing time / audio duration (below 1
+= faster than real time). Per-call detail:
+`data/asr_latency/2026-10-11_m1.json`.
+
+**Hardware:** Apple M1, 8 GB, macOS 27.0; Whisper on the GPU via MLX 0.32.2
+(mlx-whisper 0.4.3); pyannote.audio 3.4.0 on the **CPU** (torch 2.4.0, its
+default device). Docker stopped and nothing else running for the mixed calls;
+not controlled for the ar/en calls (below).
+
+**Run conditions differ, stated per row.** The ar and en calls ran on
+2026-10-10, back to back, after a 244.5 s warm-up transcription, i.e. **under
+sustained thermal load, with no cooldown** (the run was then interrupted; the
+6 completed rows are taken from its log, which recorded totals only, with no
+per-stage split). The mixed calls ran on 2026-10-11 **with a 180 s idle
+cooldown before each file**, Docker stopped and nothing in parallel.
+Cold start, measured apart and not counted: pyannote load 9.4 s, Whisper load
+1.2 s (weights already cached).
+
+| Language | n | Audio (s, total) | Processing s, mean / median / max | RTF pooled | RTF per call | Whisper RTF | Diarization RTF | Condition |
+|---|---|---|---|---|---|---|---|---|
+| ar    | 3 | 244.1 | 99.4 / 98.0 / 105.4  | 1.221 | 1.422, 1.127, 1.159 | — (not recorded) | — (not recorded) | sustained load, no cooldown |
+| en    | 3 | 421.7 | 175.5 / 141.2 / 287.2 | 1.249 | 1.120, 1.122, 1.380 | — (not recorded) | — (not recorded) | sustained load, no cooldown |
+| mixed | 3 | 299.0 | 126.4 / 120.0 / 167.2 | 1.268 | 1.198, 1.294, 1.358 | 0.350 | 0.914 | 180 s cooldown before each |
+
+### Findings
+
+1. **ASR runs slower than real time in every language: RTF 1.22–1.27
+   pooled** (1.12–1.42 per call). A 90 s call takes ~2 min to reach
+   `queued`.
+2. **Diarization dominates, not Whisper.** On the 3 calls with the split,
+   pyannote on the CPU is RTF 0.91 (65.6–130.9 s per call); Whisper on Metal
+   is 0.35. The one smoke run on `call_0006_en` (not counted, it included the
+   first download) showed the same: 94 s of diarization for 87.6 s of audio.
+3. **The cooldowns did not make the mixed calls faster** (RTF 1.20–1.36 vs
+   1.12–1.42 under sustained load). Thermal state is not what limits this
+   pipeline at n = 3. Language cannot be separated from conditions either:
+   the mixed calls are the only ones measured with cooldowns.
+
+### Caveats
+
+1. n = 3 per language; synthetic TTS audio, cleaner than real calls.
+2. Conditions differ between ar/en and mixed (above), and ar/en have no
+   per-stage split.
+3. During the ar/en run the wall clock jumped 2 h 20 min within the warm-up
+   call (host suspended); `perf_counter` does not advance across sleep, so the
+   measured durations are unaffected, but the run was not continuous.
+
+**Not tested, so stated as a possible follow-up only:** running pyannote on the
+GPU (`pipeline.to(torch.device("mps"))`) is the obvious lever on diarization's
+RTF 0.91; whether pyannote 3.4 / torch 2.4 work correctly on MPS was not checked.
+
+---
+
+## Round: 2026-10-11 — phase 6.4: the 11 legacy memory conflicts, re-checked
+
+**What ran.** `scripts/recheck_legacy_conflicts.py --apply` (docs/09-DECISIONS.md,
+2026-10-10). It re-opened the 11 corrections the 2026-10-07 backfill had marked
+`conflict` (before `memory_conflicts` existed, so their candidate text, conflicting
+rule and reason were never kept), then ran the normal memory loop over them:
+`induce_and_store` (re-induce, conflict check against the **current** 35 active
+rules, record or insert) and one consolidation pass (complete linkage, 0.7) over
+the whole store. Gemini `gemini-flash-lite-latest`, key fingerprint
+`2844698dbe61` (the billing-enabled project), throttled to one request per 4.5 s;
+local embedding model. Docker stack up and healthy, nothing else running.
+Backup first: `data/backups/sawti-pre-conflict-recheck-20261010-171628.dump`.
+
+| | Count |
+|---|---|
+| Requests to Gemini (induction + conflict judgments + consolidation merges; failed attempts included) | **77** |
+| Transient errors / retries | **0** / 0 |
+| Errors | 0 |
+| Total wall time | **365 s** (6.1 min) |
+
+**Outcome of the 11** (per language of the corrected call):
+
+| Language | Re-checked | Conflict again (now in `memory_conflicts`) | No longer a conflict → inserted as a rule |
+|---|---|---|---|
+| ar    | 1  | 1 | 0 |
+| en    | 2  | 0 | 2 |
+| mixed | 8  | 2 | 6 |
+| **all** | 11 | **3** | **8** |
+
+The 3 recorded conflicts (cosine similarity to the rule they contradict):
+mixed 0.735, ar 0.684, mixed 0.815; one conflicting rule each. All three are
+about commitment scope or third-party-blame flags, i.e. the same themes as the
+original refusals. The new candidates are freshly induced, not the 2026-10-07
+texts.
+
+### The consolidation pass changed the store more than the 11 did
+
+The loop consolidates the whole store after a run, as it does after every review.
+With the 8 new rules, the active set went **35 → 23**: 43 active rules before
+consolidation, 31 merged away and 11 new merged rules created. Rows: 120 → 139
+(8 inserted + 11 merged). Largest active rule: 14 source corrections (8 before).
+Complete linkage still guarantees every pair in a cluster is ≥ 0.7. Active rules
+per language of their sources: ar 16 → 12, en 11 → 9, mixed 25 → 19
+(overlapping counts; 7 rules now draw on all three languages).
+
+This is the designed behavior of the service loop, but it was not the goal of
+the re-check. **The 6.3 memory comparison is unaffected**: it used the 35 rules
+frozen in `data/memory_comparison/rules_snapshot.json`. Whether 23 merged rules
+help as much as 35 has not been measured.
+
+### Known limitation surfaced by this run
+
+Conflict detection ran *before* the consolidation in the same run, so **2 of the
+3 recorded conflicts point at a rule that consolidation retired minutes later**
+(merged into a new rule). `GET /memory/conflicts` shows those as
+`active: false`. Resolving them still works, but `keep_new` / `discard` then
+retire nothing (the rule is already retired), and the merged rule that absorbed
+it is not linked to the conflict. Not fixed here; noted for review.

@@ -19,7 +19,7 @@ service's: the same embedding model and cosine ranking as
 Usage:
     uv run python scripts/run_memory_comparison.py snapshot
     uv run python scripts/run_memory_comparison.py run [--provider fake]
-    uv run python scripts/run_memory_comparison.py report
+    uv run python scripts/run_memory_comparison.py report [--out data/memory_comparison/report.json]
 """
 
 from __future__ import annotations
@@ -243,6 +243,7 @@ def main() -> int:
     parser.add_argument("--repeats", type=int, default=2)
     parser.add_argument("--min-interval", type=float, default=4.5)
     parser.add_argument("--checkpoint", type=Path, default=CHECKPOINT)
+    parser.add_argument("--out", type=Path, default=None, help="report: also write the JSON here")
     # Accuracy does not depend on concurrency, and free-tier Gemini answers in
     # ~1-2 min per call, so a few in flight (still paced by --min-interval)
     # keeps the run to about a day. Latency is not a result of this script.
@@ -267,7 +268,12 @@ def main() -> int:
             "by_repeat": report(args.checkpoint),
             "verdict": paired_verdict(records, load_ground_truth(GROUND_TRUTH_DIR)),
         }
-        print(json.dumps(out, indent=2))
+        text = json.dumps(out, indent=2)
+        print(text)
+        if args.out is not None:
+            # Phase 6.4: persisted once so `GET /results` serves this exact output
+            # instead of recomputing it.
+            args.out.write_text(text + "\n", encoding="utf-8")
         return 0
 
     provider: LLMProvider = FakeProvider() if args.provider == "fake" else get_llm_provider()

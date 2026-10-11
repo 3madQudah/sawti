@@ -77,7 +77,17 @@ services:
     image: sawti-api
     profiles: ["service"]
     env_file: [{ path: .env, required: false }]
-    environment: *sawti-env
+    environment:
+      <<: *sawti-env
+      # Uploaded recordings (phase 6.4). The same host directory is the native
+      # ASR worker's SAWTI_AUDIO_DIR (default data/uploads); calls.audio_path
+      # is relative to it, so the two different mount points do not matter.
+      SAWTI_AUDIO_DIR: /data/uploads
+    volumes:
+      - ./data/uploads:/data/uploads
+      # GET /results serves these as recorded (the image holds src/ only).
+      - ./data/serving_benchmark/comparison.json:/app/data/serving_benchmark/comparison.json:ro
+      - ./data/memory_comparison/report.json:/app/data/memory_comparison/report.json:ro
     ports:
       - "${SAWTI_API_PORT:-8000}:8000"
     depends_on:

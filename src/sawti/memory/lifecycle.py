@@ -62,3 +62,24 @@ def maybe_retire(
     if success_rate < min_success_rate:
         return rule.model_copy(update={"retired": True})
     return rule
+
+
+def retire(rule: MemoryRule) -> MemoryRule:
+    """Retire `rule` because a human decided so (phase 6.4: resolving a memory conflict).
+
+    Unlike `maybe_retire`, unconditional: the decision is the reviewer's, not
+    a success-rate threshold's.
+
+    Returns:
+        A new `MemoryRule` with `retired=True`; `rule` itself is unchanged.
+    """
+    return rule.model_copy(update={"retired": True})
+
+
+def activate(rule: MemoryRule) -> MemoryRule:
+    """Make a rule active — a refused conflict candidate a human chose to keep (phase 6.4).
+
+    Returns:
+        A new `MemoryRule` with `retired=False`; `rule` itself is unchanged.
+    """
+    return rule.model_copy(update={"retired": False})

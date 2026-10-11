@@ -34,7 +34,11 @@ import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
-from sawti.asr.diarization import DiarizedSegment, merge_transcript_with_speakers
+from sawti.asr.diarization import (
+    DiarizedSegment,
+    merge_transcript_with_speakers,
+    render_labelled_transcript,
+)
 from sawti.asr.transcribe import TranscriptSegment, transcribe
 from sawti.data.generate_audio import DEFAULT_MANIFEST_PATH, AudioManifest, AudioManifestEntry
 from sawti.eval.experiments.grounded_graph import GateStats, extract_via_graph
@@ -144,17 +148,7 @@ def _render_labelled_transcript(
         The speaker-labelled transcript text.
     """
     merged = merge_transcript_with_speakers(asr_segments, _oracle_speaker_segments(entry))
-
-    lines: list[str] = []
-    for segment in merged:
-        text = segment.text.strip()
-        if not text:
-            continue
-        if lines and lines[-1].startswith(f"{segment.speaker}:"):
-            lines[-1] = f"{lines[-1]} {text}"
-        else:
-            lines.append(f"{segment.speaker}: {text}")
-    return "\n".join(lines) + "\n"
+    return render_labelled_transcript(merged)
 
 
 _SPEAKER_PREFIX = re.compile(r"^(?:Agent|Customer):\s*")

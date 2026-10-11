@@ -109,6 +109,17 @@ class MemoryStore:
             The most relevant rules, best match first. Fewer than `top_k`
             when fewer than `top_k` non-retired rules are stored.
         """
+        return [rule for _, rule in self.retrieve_scored(query, top_k=top_k)]
+
+    def retrieve_scored(self, query: str, *, top_k: int = 5) -> list[tuple[float, MemoryRule]]:
+        """`retrieve()`, with each rule's cosine similarity to `query`.
+
+        Added in phase 6.4 so a recorded memory conflict can show how similar
+        the two rules were (`sawti.memory.conflict.detect_conflict_details`).
+
+        Returns:
+            `(similarity, rule)` pairs, most similar first.
+        """
         candidates = [rule for rule in self._rules.values() if not rule.retired]
         if not candidates:
             return []
@@ -118,7 +129,7 @@ class MemoryStore:
             (_cosine_similarity(query_embedding, self._embeddings[rule.id]), rule) for rule in candidates
         ]
         scored.sort(key=lambda pair: pair[0], reverse=True)
-        return [rule for _, rule in scored[:top_k]]
+        return scored[:top_k]
 
     def all_active_rules(self) -> list[MemoryRule]:
         """Every non-retired rule currently stored, in no particular order.

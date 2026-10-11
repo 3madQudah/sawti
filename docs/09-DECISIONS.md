@@ -3653,3 +3653,149 @@ delta.
   themselves stay as recorded.
 - Two repeats were the minimum to separate effect from noise; en (n=30) needs
   more calls before any per-language claim about it is made.
+
+---
+
+## 2026-10-10 — Phase 6.4 stage A: scope of the QA dashboard backend
+
+**Status:** accepted (user, 2026-10-10). Stage A is backend only; the React
+dashboard (stage B) starts after the user approves mockups.
+
+### Scope
+
+- **Local only, no deployment.** The deliverable is a demo video. Auth stays
+  `get_current_reviewer()` with the shared `SAWTI_API_KEY` from a local
+  `.env`. Stated plainly: **the key will end up in the browser bundle**, where
+  anyone with the page can read it. That is acceptable only because this never
+  leaves localhost. It is not authentication (2026-10-06, decision 3), and
+  nothing here changes that.
+- **UI in English by default, with an Arabic toggle (full RTL).** The backend
+  stays language-neutral: no translated strings in any response, and
+  enums/ids instead of prose wherever the UI renders a label. The frontend
+  does all translation.
+- **Audio upload is in scope; ASR stays outside Docker.** `mlx-whisper` needs
+  Metal, which a Linux container cannot reach. A native Celery worker on the
+  Mac consumes only a new `asr` queue (`make asr-worker`); the Docker workers
+  consume only the default queue.
+
+### Audio ingestion
+
+- `POST /calls/audio` (multipart, API key only, like `POST /calls`).
+  `language_hint` is **required for now** (user, 2026-10-10). The other
+  options were to auto-detect, or to force Arabic and then classify by
+  script, and Phase 3 measured why both hurt: a wrong forced language
+  destroyed `call_0070_en` (WER 1.000), and auto-detection transliterates
+  code-switched Arabic. The hint picks the forced Whisper language via
+  `Settings.whisper_language_for` and becomes the call's language category.
+- New call status `transcribing` (migration 0005). `calls.audio_path`
+  already existed (0001, unused until now), so 0005 adds only the status and
+  `calls.failure_reason`. The task asked for "migration 0003", but the chain
+  was already at 0004.
+- `audio_path` stores the file name **relative to `SAWTI_AUDIO_DIR`**, not
+  an absolute path. The API writes the file inside its container
+  (bind-mounted `./data/uploads`) and the native worker reads it from the
+  host, and the two see different absolute paths.
+- **The raw transcript is PII.** The ASR output goes through the same
+  function as `POST /calls` (`sawti.api.ingest.redact_transcript`) inside the
+  worker, and only the redacted text is written. The raw text is never stored,
+  never put in a trace (the ASR task opens no Langfuse trace) and never
+  logged; failure reasons never carry transcript text.
+- **Raw audio is PII.** The file is deleted and `audio_path` cleared once
+  transcription succeeds, unless `SAWTI_KEEP_AUDIO=true` (default false). On
+  failure the call is `failed` with `failure_reason`, and the audio is kept
+  for a retry only if `SAWTI_KEEP_AUDIO=true`.
+- **Diarization needed a dependency fix.** pyannote had never run in this
+  project (Phase 3 used oracle speakers), and it could not even be imported:
+  the lock resolved `torchaudio` 2.11 against the locked `torch` 2.4. The
+  `asr` extra now pins `torchaudio==2.4.*` (user, 2026-10-10). Speaker roles
+  use the existing first-speaker-is-agent convention
+  (`assign_roles_by_first_speaker`), a convention, not detection, and it is
+  wrong for any call the customer opens.
+
+### Memory conflicts: now recorded, and resolvable
+
+Until now a conflict was not persisted: `induce_and_store` marked the
+correction `induction_outcome='conflict'` and logged the ids. The candidate's
+text, the LLM's reasoning and any similarity were discarded. Decided (user,
+2026-10-10):
+
+- A `memory_conflicts` table (migration 0005), written by `induce_and_store`
+  in the same commit as the correction's `induced_at`. It holds one row per
+  rejected candidate: the candidate's (redacted) text and the id it would
+  get, the source correction, and per conflicting rule its id, cosine
+  similarity and the judge's (redacted) reasoning. `detect_conflict` now
+  keeps those details instead of dropping them.
+- **The 11 legacy conflicts are re-checked**, not reconstructed:
+  `scripts/recheck_legacy_conflicts.py` re-opens those 11 corrections
+  (`induced_at = NULL`) and runs the normal `induce_and_store` against the
+  current store. Induction is an LLM call, so the new candidates are not
+  word-for-word the originally rejected ones. Any that no longer conflict
+  are inserted like any other rule.
+- **Resolution actions** (`POST /memory/conflicts/{id}/resolve`, reviewer
+  identity required, resolver and time recorded):
+  - `keep_existing`: the candidate is dropped; existing rules untouched.
+  - `keep_new`: every conflicting existing rule is retired and the candidate
+    becomes an active rule.
+  - `discard`: **neither**. The candidate is dropped *and* the conflicting
+    existing rules are retired. (Defined here because otherwise it would equal
+    `keep_existing`. Reversible: retired rows stay in the table.)
+  - `not_a_conflict`: a detector false positive. The candidate becomes an
+    ordinary active rule, the existing rules are untouched, and both go
+    through consolidation. `/stats` reports `not_a_conflict / resolved` as
+    the detector's false-positive rate, per language, with n.
+  - `keep_both` is **rejected (422)**. With no rule scoping in the memory
+    model, two rules that contradict each other and are both active can be
+    retrieved into one prompt, or LLM-merged by consolidation. That is
+    exactly what `insert_rule` exists to prevent.
+- Resolution goes through `sawti.memory.persistence.resolve_conflict`, which
+  holds the memory write lock and uses `sawti.memory.lifecycle` (new pure
+  `retire()`, `activate()`), never ad-hoc SQL in a route. The lock is
+  *tried*, not waited for: during an induction run the route answers 503
+  instead of hanging. An action that activates the candidate queues
+  consolidation on the Docker worker (`sawti.consolidate_rules`); the API
+  image has no embedding model.
+
+### Endpoints for the dashboard, and what they cannot say
+
+- `GET /memory/rules` adds the languages of each rule's source corrections
+  and `analyses_used`, the number of `call_analyses` whose
+  `retrieved_rule_ids` contains the rule. **Only service analyses record
+  retrieval.** Eval-script runs (Phase 4, the 6.3 memory comparison) never
+  persisted it, so in the dev database every count is 0 today. That is the
+  truth about the data, not a missing feature.
+- `GET /stats`: per language, the pending review count, the reviewer
+  agreement rate (confirm / all verdicts, `None` with n = 0; the dev database
+  has 0 review submissions), active rules, and the conflict detector's
+  false-positive rate.
+- `GET /results` serves the 6.3 numbers as recorded, with method, n and
+  hardware for each. It recomputes nothing. The serving numbers come from
+  `data/serving_benchmark/comparison.json`. The memory verdict existed only
+  as `run_memory_comparison.py report` stdout, so that report was written once
+  to `data/memory_comparison/report.json` (zero LLM calls, the pre-registered
+  code), and a test ties every served number to `eval_results.md`.
+- `frontend/openapi.json` is generated from the app (`make openapi`), and a
+  test fails if it is stale.
+
+---
+
+## 2026-10-11 — TODO (known bug): consolidation can retire a rule an open conflict points at
+
+**Status:** open, not fixed. Found by the legacy-conflict re-check
+(`eval_results.md`, 2026-10-11).
+
+**Bug.** `induce_and_store` records a conflict against an active rule and then
+consolidates the whole store in the same run. Consolidation can merge that rule
+away (retire it into a new merged rule). The open conflict still names the
+retired rule, so `keep_new` and `discard` retire nothing (no-ops), and the merged
+rule that absorbed it is not linked to the conflict. **2 of the 3 current open
+conflicts are in this state** (`GET /memory/conflicts` shows `active: false`).
+
+**Planned fix.** Exclude rules named by an open (unresolved) conflict from
+consolidation: `consolidate_store` / `induce_and_store` pass only active rules
+that no pending `memory_conflicts` row references; they become eligible again
+once the conflict is resolved. Needs a test where a conflicting rule would
+otherwise cluster. The 2 already-affected conflicts need a separate decision
+(re-check them against the merged rules, or resolve as is).
+
+**Until then (stage B):** the dashboard disables `keep_new` and `discard` when a
+conflict's rule is inactive and says why.

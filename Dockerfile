@@ -54,4 +54,6 @@ USER root
 RUN uv pip install --no-deps . && rm -rf src
 USER sawti
 ENV HF_HUB_OFFLINE=1
-CMD ["celery", "-A", "sawti.api.tasks", "worker", "--loglevel=INFO", "--concurrency=1"]
+# Only the default queue: the `asr` queue belongs to the native ASR worker on
+# the Mac (`make asr-worker`), since mlx-whisper needs Metal (phase 6.4).
+CMD ["celery", "-A", "sawti.api.tasks", "worker", "-Q", "celery", "--loglevel=INFO", "--concurrency=1"]

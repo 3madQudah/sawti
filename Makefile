@@ -1,4 +1,4 @@
-.PHONY: install test lint typecheck up down fmt stack e2e measure audio transcribe asr-eval asr-forcing
+.PHONY: install test lint typecheck up down fmt stack e2e measure audio transcribe asr-eval asr-forcing asr-worker asr-latency openapi
 
 install:
 	uv sync --all-extras --dev
@@ -40,6 +40,22 @@ e2e:
 	uv run pytest -m integration tests/e2e -v; status=$$?; \
 		docker compose --profile service up -d --force-recreate --wait $(SERVICE_CONTAINERS); \
 		exit $$status
+
+# --- Phase 6.4: audio ingestion and the dashboard contract --------------------
+# The ASR worker runs natively, not in Docker: mlx-whisper needs Metal. It
+# consumes only the `asr` queue (the Docker workers only the default one),
+# one file at a time in-process (`--pool=solo`: no fork after Metal init).
+# Needs `make up` (or the stack) for Postgres + Redis, and HF_TOKEN in .env.
+asr-worker:
+	SAWTI_WORKER_PRELOAD_EMBEDDINGS=false uv run celery -A sawti.api.asr_tasks worker -Q asr --pool=solo --loglevel=INFO
+
+# ASR latency and real-time factor per language, on Phase 3 audio (eval_results.md).
+asr-latency:
+	uv run python scripts/measure_asr_latency.py
+
+# The OpenAPI schema stage B generates its types from.
+openapi:
+	uv run python scripts/export_openapi.py
 
 # Latency / throughput numbers into eval_results.md (see the script's docstring).
 measure:

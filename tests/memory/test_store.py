@@ -120,3 +120,17 @@ def test_replace_all_replaces_the_stores_entire_contents(store: MemoryStore) -> 
     store.replace_all([replacement])
 
     assert store.all_active_rules() == [replacement]
+
+
+def test_retrieve_scored_returns_cosine_similarities_best_first(store: MemoryStore) -> None:
+    """Phase 6.4: the scores behind `retrieve()`'s order, which a recorded conflict shows."""
+    store.add(_rule("refund"))
+    store.add(_rule("deadline flag"))
+    store.add(_rule("retired refund", retired=True))
+
+    scored = store.retrieve_scored("refund", top_k=5)
+
+    assert [rule.rule_text for _, rule in scored] == [r.rule_text for r in store.retrieve("refund", top_k=5)]
+    assert scored[0][0] == pytest.approx(1.0)
+    assert all(-1.0 <= score <= 1.0 for score, _ in scored)
+    assert [score for score, _ in scored] == sorted((score for score, _ in scored), reverse=True)

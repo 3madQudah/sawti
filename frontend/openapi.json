@@ -1,0 +1,2495 @@
+{
+  "components": {
+    "schemas": {
+      "Body_submit_audio_calls_audio_post": {
+        "properties": {
+          "agent_external_id": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent External Id"
+          },
+          "file": {
+            "description": "The call recording: wav, mp3 or m4a, at most 50 MB.",
+            "format": "binary",
+            "title": "File",
+            "type": "string"
+          },
+          "language_hint": {
+            "$ref": "#/components/schemas/Language",
+            "description": "The call's language category. Picks Whisper's forced language. Required for now."
+          }
+        },
+        "required": [
+          "file",
+          "language_hint"
+        ],
+        "title": "Body_submit_audio_calls_audio_post",
+        "type": "object"
+      },
+      "CallDetail": {
+        "description": "`GET /calls/{call_id}`: everything the call review screen renders.\n\nAnalysis fields are None/empty until the analysis task has finished. An\nuploaded recording is `transcribing` until the ASR worker is done, with an\nempty transcript and no turns; the upload screen polls this.",
+        "properties": {
+          "agent_name": {
+            "title": "Agent Name",
+            "type": "string"
+          },
+          "attempts": {
+            "title": "Attempts",
+            "type": "integer"
+          },
+          "call_id": {
+            "format": "uuid",
+            "title": "Call Id",
+            "type": "string"
+          },
+          "claims": {
+            "items": {
+              "$ref": "#/components/schemas/GroundedClaim"
+            },
+            "title": "Claims",
+            "type": "array"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "confidence_threshold": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence Threshold"
+          },
+          "escalation_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Escalation Reason"
+          },
+          "failure_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Failure Reason"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "grounding_coverage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grounding Coverage"
+          },
+          "language": {
+            "$ref": "#/components/schemas/Language"
+          },
+          "memory_rules": {
+            "items": {
+              "$ref": "#/components/schemas/MemoryRuleUsed"
+            },
+            "title": "Memory Rules",
+            "type": "array"
+          },
+          "pii_redacted_count": {
+            "title": "Pii Redacted Count",
+            "type": "integer"
+          },
+          "queued_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Queued At"
+          },
+          "redacted_transcript": {
+            "title": "Redacted Transcript",
+            "type": "string"
+          },
+          "rejected_claims": {
+            "items": {
+              "$ref": "#/components/schemas/RejectedClaim"
+            },
+            "title": "Rejected Claims",
+            "type": "array"
+          },
+          "review": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReviewSubmission"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CallStatus"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "turns": {
+            "items": {
+              "$ref": "#/components/schemas/TranscriptTurn"
+            },
+            "title": "Turns",
+            "type": "array"
+          }
+        },
+        "required": [
+          "call_id",
+          "status",
+          "language",
+          "agent_name",
+          "queued_at",
+          "started_at",
+          "finished_at",
+          "pii_redacted_count",
+          "attempts",
+          "redacted_transcript",
+          "turns"
+        ],
+        "title": "CallDetail",
+        "type": "object"
+      },
+      "CallStatus": {
+        "description": "Where a call sits in the *service* lifecycle — the `calls.status` column.\n\nDeliberately separate from `sawti.agent.state.ReviewStatus`, which is graph\nbookkeeping inside one run. This one also covers what happens around the\ngraph (waiting in the queue, infrastructure failure). The mapping:\n\n    transcribing    — uploaded audio waiting for, or in, the native ASR\n                      worker (phase 6.4); no transcript yet.\n    queued          — no graph run yet; no checkpoint thread exists.\n    processing      — the graph is running (ReviewStatus \"pending\").\n    awaiting_review — the graph is suspended in `escalate`\n                      (ReviewStatus \"awaiting_human\").\n    reviewed        — a reviewer resumed it (ReviewStatus \"human_reviewed\").\n    completed       — auto-passed, no human needed (ReviewStatus \"auto_passed\").\n    failed          — the task gave up after retries. No graph equivalent:\n                      a graph-level `error` routes to `escalate`, i.e. to\n                      `awaiting_review`, never here.",
+        "enum": [
+          "transcribing",
+          "queued",
+          "processing",
+          "awaiting_review",
+          "reviewed",
+          "completed",
+          "failed"
+        ],
+        "title": "CallStatus",
+        "type": "string"
+      },
+      "CallSubmitRequest": {
+        "description": "`POST /calls`: one call's transcript. Redacted on arrival; the raw text is not kept.",
+        "properties": {
+          "agent_external_id": {
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "Agent External Id",
+            "type": "string"
+          },
+          "language": {
+            "$ref": "#/components/schemas/Language"
+          },
+          "transcript": {
+            "description": "One turn per line, each prefixed `Agent:` or `Customer:`.",
+            "maxLength": 200000,
+            "minLength": 1,
+            "title": "Transcript",
+            "type": "string"
+          }
+        },
+        "required": [
+          "transcript",
+          "language",
+          "agent_external_id"
+        ],
+        "title": "CallSubmitRequest",
+        "type": "object"
+      },
+      "CallSubmitResponse": {
+        "description": "`202` body for `POST /calls`.",
+        "properties": {
+          "call_id": {
+            "format": "uuid",
+            "title": "Call Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "call_id"
+        ],
+        "title": "CallSubmitResponse",
+        "type": "object"
+      },
+      "ClaimChanges": {
+        "description": "The structured fields a `correct` verdict changes — only the ones the reviewer set.\n\n\"Set\" is literal: a field absent from the request is unchanged. For\n`deadline`, an explicit `null` removes the deadline; every other field\nmust be given a value if present. Which fields apply depends on the\nclaim's kind (`EDITABLE_FIELDS`); the route rejects the rest. The\nevidence quote is not editable: it is what the transcript says.",
+        "properties": {
+          "deadline": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "justification": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Justification"
+          },
+          "promised_by": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Promised By"
+          },
+          "rule_id": {
+            "anyOf": [
+              {
+                "maxLength": 255,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rule Id"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "severity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Severity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "ClaimChanges",
+        "type": "object"
+      },
+      "ClaimVerdict": {
+        "description": "A reviewer's verdict on one grounded claim.",
+        "properties": {
+          "changes": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClaimChanges"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "claim_id": {
+            "minLength": 1,
+            "title": "Claim Id",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 10000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "verdict": {
+            "enum": [
+              "confirm",
+              "correct",
+              "reject"
+            ],
+            "title": "Verdict",
+            "type": "string"
+          }
+        },
+        "required": [
+          "claim_id",
+          "verdict"
+        ],
+        "title": "ClaimVerdict",
+        "type": "object"
+      },
+      "ConflictResolveRequest": {
+        "description": "`POST /memory/conflicts/{id}/resolve`.\n\n* `keep_existing`: the candidate is dropped; existing rules untouched.\n* `keep_new`: the conflicting rules are retired; the candidate becomes active.\n* `discard`: neither. The candidate is dropped and the conflicting rules retired.\n* `not_a_conflict`: the detector was wrong. The candidate becomes active,\n  existing rules untouched; counted in `/stats` as a false positive.",
+        "properties": {
+          "action": {
+            "enum": [
+              "keep_existing",
+              "keep_new",
+              "discard",
+              "not_a_conflict"
+            ],
+            "title": "Action",
+            "type": "string"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "title": "ConflictResolveRequest",
+        "type": "object"
+      },
+      "ConflictResolveResponse": {
+        "description": "What the resolution changed.",
+        "properties": {
+          "action": {
+            "enum": [
+              "keep_existing",
+              "keep_new",
+              "discard",
+              "not_a_conflict"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "activated_rule_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activated Rule Id"
+          },
+          "conflict_id": {
+            "format": "uuid",
+            "title": "Conflict Id",
+            "type": "string"
+          },
+          "consolidation_queued": {
+            "title": "Consolidation Queued",
+            "type": "boolean"
+          },
+          "resolved_at": {
+            "format": "date-time",
+            "title": "Resolved At",
+            "type": "string"
+          },
+          "resolved_by": {
+            "title": "Resolved By",
+            "type": "string"
+          },
+          "retired_rule_ids": {
+            "items": {
+              "format": "uuid",
+              "type": "string"
+            },
+            "title": "Retired Rule Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "conflict_id",
+          "action",
+          "resolved_by",
+          "resolved_at",
+          "activated_rule_id",
+          "retired_rule_ids",
+          "consolidation_queued"
+        ],
+        "title": "ConflictResolveResponse",
+        "type": "object"
+      },
+      "ConflictSourceView": {
+        "description": "Where the candidate came from: the correction it was induced from.",
+        "properties": {
+          "call_id": {
+            "format": "uuid",
+            "title": "Call Id",
+            "type": "string"
+          },
+          "corrected_at": {
+            "format": "date-time",
+            "title": "Corrected At",
+            "type": "string"
+          },
+          "correction_id": {
+            "format": "uuid",
+            "title": "Correction Id",
+            "type": "string"
+          },
+          "language": {
+            "$ref": "#/components/schemas/Language"
+          },
+          "reviewer_id": {
+            "title": "Reviewer Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "correction_id",
+          "call_id",
+          "language",
+          "reviewer_id",
+          "corrected_at"
+        ],
+        "title": "ConflictSourceView",
+        "type": "object"
+      },
+      "ConflictingRuleView": {
+        "description": "An existing rule the candidate was judged to contradict.",
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "reasoning": {
+            "title": "Reasoning",
+            "type": "string"
+          },
+          "rule_id": {
+            "format": "uuid",
+            "title": "Rule Id",
+            "type": "string"
+          },
+          "similarity": {
+            "title": "Similarity",
+            "type": "number"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          }
+        },
+        "required": [
+          "rule_id",
+          "text",
+          "active",
+          "similarity",
+          "reasoning"
+        ],
+        "title": "ConflictingRuleView",
+        "type": "object"
+      },
+      "GroundedClaim": {
+        "description": "A claim that survived grounding, located in the redacted transcript.",
+        "properties": {
+          "claim_id": {
+            "title": "Claim Id",
+            "type": "string"
+          },
+          "criterion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Criterion"
+          },
+          "deadline": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Deadline"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "end_char": {
+            "exclusiveMinimum": 0.0,
+            "title": "End Char",
+            "type": "integer"
+          },
+          "kind": {
+            "enum": [
+              "commitment",
+              "compliance_flag",
+              "rubric_score"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "promised_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Promised By"
+          },
+          "quote": {
+            "title": "Quote",
+            "type": "string"
+          },
+          "rule_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rule Id"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "severity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Severity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "speaker": {
+            "title": "Speaker",
+            "type": "string"
+          },
+          "start_char": {
+            "minimum": 0.0,
+            "title": "Start Char",
+            "type": "integer"
+          },
+          "turn_index": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Turn Index"
+          }
+        },
+        "required": [
+          "claim_id",
+          "kind",
+          "quote",
+          "speaker",
+          "start_char",
+          "end_char",
+          "turn_index",
+          "description"
+        ],
+        "title": "GroundedClaim",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HealthResponse": {
+        "description": "`GET /health`: overall status plus each dependency's.",
+        "properties": {
+          "database": {
+            "enum": [
+              "ok",
+              "error"
+            ],
+            "title": "Database",
+            "type": "string"
+          },
+          "redis": {
+            "enum": [
+              "ok",
+              "error"
+            ],
+            "title": "Redis",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "degraded"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "database",
+          "redis"
+        ],
+        "title": "HealthResponse",
+        "type": "object"
+      },
+      "Language": {
+        "description": "Language category for a transcript, utterance, or evaluation slice.\n\nEvaluation is always reported per member of this enum — `ar`, `en`,\n`mixed` — never as a single blended number. See `sawti.eval.metrics`.",
+        "enum": [
+          "ar",
+          "en",
+          "mixed"
+        ],
+        "title": "Language",
+        "type": "string"
+      },
+      "LanguageStats": {
+        "description": "One language category's numbers.",
+        "properties": {
+          "active_rules": {
+            "minimum": 0.0,
+            "title": "Active Rules",
+            "type": "integer"
+          },
+          "conflict_false_positive_rate": {
+            "$ref": "#/components/schemas/Rate"
+          },
+          "pending_conflicts": {
+            "minimum": 0.0,
+            "title": "Pending Conflicts",
+            "type": "integer"
+          },
+          "pending_reviews": {
+            "minimum": 0.0,
+            "title": "Pending Reviews",
+            "type": "integer"
+          },
+          "reviewer_agreement": {
+            "$ref": "#/components/schemas/Rate"
+          }
+        },
+        "required": [
+          "pending_reviews",
+          "reviewer_agreement",
+          "active_rules",
+          "pending_conflicts",
+          "conflict_false_positive_rate"
+        ],
+        "title": "LanguageStats",
+        "type": "object"
+      },
+      "MemoryConflictListResponse": {
+        "description": "`GET /memory/conflicts`: pending conflicts, oldest first, plus per-language pending counts.",
+        "properties": {
+          "conflicts": {
+            "items": {
+              "$ref": "#/components/schemas/MemoryConflictView"
+            },
+            "title": "Conflicts",
+            "type": "array"
+          },
+          "pending": {
+            "$ref": "#/components/schemas/PendingCounts"
+          }
+        },
+        "required": [
+          "conflicts",
+          "pending"
+        ],
+        "title": "MemoryConflictListResponse",
+        "type": "object"
+      },
+      "MemoryConflictView": {
+        "description": "One pending conflict: the refused candidate next to the rules it contradicts.",
+        "properties": {
+          "candidate_rule_id": {
+            "format": "uuid",
+            "title": "Candidate Rule Id",
+            "type": "string"
+          },
+          "candidate_text": {
+            "title": "Candidate Text",
+            "type": "string"
+          },
+          "conflicting": {
+            "items": {
+              "$ref": "#/components/schemas/ConflictingRuleView"
+            },
+            "title": "Conflicting",
+            "type": "array"
+          },
+          "detected_at": {
+            "format": "date-time",
+            "title": "Detected At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/ConflictSourceView"
+          }
+        },
+        "required": [
+          "id",
+          "detected_at",
+          "candidate_rule_id",
+          "candidate_text",
+          "conflicting",
+          "source"
+        ],
+        "title": "MemoryConflictView",
+        "type": "object"
+      },
+      "MemoryLanguageResult": {
+        "description": "Memory off vs on for one language, with the pre-registered verdict against Phase 4.",
+        "properties": {
+          "accuracy_off_per_repeat": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Accuracy Off Per Repeat",
+            "type": "array"
+          },
+          "accuracy_on_per_repeat": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Accuracy On Per Repeat",
+            "type": "array"
+          },
+          "delta": {
+            "title": "Delta",
+            "type": "number"
+          },
+          "delta_per_repeat": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Delta Per Repeat",
+            "type": "array"
+          },
+          "n_paired_per_repeat": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "N Paired Per Repeat",
+            "type": "array"
+          },
+          "noise": {
+            "title": "Noise",
+            "type": "number"
+          },
+          "phase4_delta": {
+            "title": "Phase4 Delta",
+            "type": "number"
+          },
+          "verdict": {
+            "enum": [
+              "confirms",
+              "contradicts",
+              "inconclusive",
+              "incomplete"
+            ],
+            "title": "Verdict",
+            "type": "string"
+          }
+        },
+        "required": [
+          "n_paired_per_repeat",
+          "accuracy_off_per_repeat",
+          "accuracy_on_per_repeat",
+          "delta_per_repeat",
+          "delta",
+          "noise",
+          "phase4_delta",
+          "verdict"
+        ],
+        "title": "MemoryLanguageResult",
+        "type": "object"
+      },
+      "MemoryResults": {
+        "description": "The corrected memory comparison (eval_results.md, 2026-10-10, FINAL 600/600).",
+        "properties": {
+          "ar": {
+            "$ref": "#/components/schemas/MemoryLanguageResult"
+          },
+          "calls": {
+            "title": "Calls",
+            "type": "integer"
+          },
+          "en": {
+            "$ref": "#/components/schemas/MemoryLanguageResult"
+          },
+          "hardware": {
+            "title": "Hardware",
+            "type": "string"
+          },
+          "method": {
+            "title": "Method",
+            "type": "string"
+          },
+          "mixed": {
+            "$ref": "#/components/schemas/MemoryLanguageResult"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "method",
+          "provider",
+          "hardware",
+          "calls",
+          "ar",
+          "en",
+          "mixed"
+        ],
+        "title": "MemoryResults",
+        "type": "object"
+      },
+      "MemoryRuleListResponse": {
+        "description": "`GET /memory/rules`: active rules, newest first.",
+        "properties": {
+          "rules": {
+            "items": {
+              "$ref": "#/components/schemas/MemoryRuleView"
+            },
+            "title": "Rules",
+            "type": "array"
+          }
+        },
+        "required": [
+          "rules"
+        ],
+        "title": "MemoryRuleListResponse",
+        "type": "object"
+      },
+      "MemoryRuleUsed": {
+        "description": "A memory rule retrieved into `extract`'s prompt for this call.",
+        "properties": {
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "text"
+        ],
+        "title": "MemoryRuleUsed",
+        "type": "object"
+      },
+      "MemoryRuleView": {
+        "description": "One active memory rule.",
+        "properties": {
+          "analyses_used": {
+            "minimum": 0.0,
+            "title": "Analyses Used",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "languages": {
+            "items": {
+              "$ref": "#/components/schemas/Language"
+            },
+            "title": "Languages",
+            "type": "array"
+          },
+          "source_corrections": {
+            "title": "Source Corrections",
+            "type": "integer"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "text",
+          "source_corrections",
+          "languages",
+          "analyses_used",
+          "created_at"
+        ],
+        "title": "MemoryRuleView",
+        "type": "object"
+      },
+      "PendingCounts": {
+        "description": "Calls awaiting review, per language category. Never a single blended number.",
+        "properties": {
+          "ar": {
+            "minimum": 0.0,
+            "title": "Ar",
+            "type": "integer"
+          },
+          "en": {
+            "minimum": 0.0,
+            "title": "En",
+            "type": "integer"
+          },
+          "mixed": {
+            "minimum": 0.0,
+            "title": "Mixed",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ar",
+          "en",
+          "mixed"
+        ],
+        "title": "PendingCounts",
+        "type": "object"
+      },
+      "Rate": {
+        "description": "`numerator / n`, with n stated. `value` is None when n = 0: no data, not zero.",
+        "properties": {
+          "n": {
+            "minimum": 0.0,
+            "title": "N",
+            "type": "integer"
+          },
+          "numerator": {
+            "minimum": 0.0,
+            "title": "Numerator",
+            "type": "integer"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "value",
+          "numerator",
+          "n"
+        ],
+        "title": "Rate",
+        "type": "object"
+      },
+      "RejectedClaim": {
+        "description": "A claim `ground` dropped: its quote is not verbatim in the transcript.",
+        "properties": {
+          "attempted_quote": {
+            "title": "Attempted Quote",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "commitment",
+              "compliance_flag",
+              "rubric_score"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "speaker": {
+            "title": "Speaker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "attempted_quote",
+          "speaker",
+          "description"
+        ],
+        "title": "RejectedClaim",
+        "type": "object"
+      },
+      "ResultsResponse": {
+        "description": "`GET /results`: the 6.3 numbers for the results page. Nothing is recomputed.",
+        "properties": {
+          "memory": {
+            "$ref": "#/components/schemas/MemoryResults"
+          },
+          "serving": {
+            "$ref": "#/components/schemas/ServingResults"
+          }
+        },
+        "required": [
+          "serving",
+          "memory"
+        ],
+        "title": "ResultsResponse",
+        "type": "object"
+      },
+      "ReviewAccepted": {
+        "description": "`202` body for `POST /reviews/{call_id}/corrections`.",
+        "properties": {
+          "call_id": {
+            "format": "uuid",
+            "title": "Call Id",
+            "type": "string"
+          },
+          "corrections_recorded": {
+            "title": "Corrections Recorded",
+            "type": "integer"
+          },
+          "submission_id": {
+            "format": "uuid",
+            "title": "Submission Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "call_id",
+          "submission_id",
+          "corrections_recorded"
+        ],
+        "title": "ReviewAccepted",
+        "type": "object"
+      },
+      "ReviewQueueItem": {
+        "description": "One row of the review queue table.",
+        "properties": {
+          "agent_name": {
+            "title": "Agent Name",
+            "type": "string"
+          },
+          "call_id": {
+            "format": "uuid",
+            "title": "Call Id",
+            "type": "string"
+          },
+          "escalation_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Escalation Reason"
+          },
+          "grounding_coverage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grounding Coverage"
+          },
+          "language": {
+            "$ref": "#/components/schemas/Language"
+          },
+          "waiting_since": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Waiting Since"
+          }
+        },
+        "required": [
+          "call_id",
+          "agent_name",
+          "language",
+          "grounding_coverage",
+          "escalation_reason",
+          "waiting_since"
+        ],
+        "title": "ReviewQueueItem",
+        "type": "object"
+      },
+      "ReviewQueueResponse": {
+        "description": "`GET /reviews`: the filtered rows, oldest first, plus per-language pending counts.\n\n`pending` always covers all three categories and ignores the `language`\nfilter, so the screen's counters do not change when the table is filtered.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ReviewQueueItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "pending": {
+            "$ref": "#/components/schemas/PendingCounts"
+          }
+        },
+        "required": [
+          "items",
+          "pending"
+        ],
+        "title": "ReviewQueueResponse",
+        "type": "object"
+      },
+      "ReviewSubmission": {
+        "description": "`POST /reviews/{call_id}/corrections`: one verdict per grounded claim.\n\nThe route rejects the submission (422) unless the claim ids are exactly the\ncall's grounded claims — none missing, none unknown — and every `correct`\nactually changes its claim. Mapping onto `sawti.schemas.Correction`: each\n`reject` / `correct` verdict becomes one `Correction` whose `corrected`\ndiffers from `original` in structured fields (`reject`: the claim is\nremoved; `correct`: the changes are applied), at an `error_location`\n`sawti.memory.induction` can render (`sawti.api.records.plan_corrections`).\n`confirm` verdicts produce no `Correction`; the whole submission is stored\nas a `ReviewSubmission` row. See docs/09-DECISIONS.md, 2026-10-07.",
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 10000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "verdicts": {
+            "items": {
+              "$ref": "#/components/schemas/ClaimVerdict"
+            },
+            "title": "Verdicts",
+            "type": "array"
+          }
+        },
+        "required": [
+          "verdicts"
+        ],
+        "title": "ReviewSubmission",
+        "type": "object"
+      },
+      "ServingArmResult": {
+        "description": "One serving arm.",
+        "properties": {
+          "ar": {
+            "$ref": "#/components/schemas/ServingLanguageResult"
+          },
+          "deployment": {
+            "enum": [
+              "cloud",
+              "self_hosted"
+            ],
+            "title": "Deployment",
+            "type": "string"
+          },
+          "en": {
+            "$ref": "#/components/schemas/ServingLanguageResult"
+          },
+          "hardware": {
+            "title": "Hardware",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "mixed": {
+            "$ref": "#/components/schemas/ServingLanguageResult"
+          },
+          "models": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Models",
+            "type": "array"
+          },
+          "throughput": {
+            "$ref": "#/components/schemas/ServingThroughput"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "hardware",
+          "models",
+          "deployment",
+          "throughput",
+          "ar",
+          "en",
+          "mixed"
+        ],
+        "title": "ServingArmResult",
+        "type": "object"
+      },
+      "ServingLanguageResult": {
+        "description": "One arm × one language of the cloud vs self-hosted table, exactly as in `comparison.json`.",
+        "properties": {
+          "accuracy": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accuracy"
+          },
+          "cost_per_1000_usd": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Per 1000 Usd"
+          },
+          "cost_per_1000_usd_sensitivity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Per 1000 Usd Sensitivity"
+          },
+          "failures": {
+            "title": "Failures",
+            "type": "integer"
+          },
+          "grounding_precision": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grounding Precision"
+          },
+          "latency_n": {
+            "title": "Latency N",
+            "type": "integer"
+          },
+          "latency_p50_s": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latency P50 S"
+          },
+          "latency_p95_s": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latency P95 S"
+          },
+          "n": {
+            "title": "N",
+            "type": "integer"
+          },
+          "rubric_agreement": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rubric Agreement"
+          },
+          "schema_valid": {
+            "title": "Schema Valid",
+            "type": "integer"
+          },
+          "schema_valid_rate": {
+            "title": "Schema Valid Rate",
+            "type": "number"
+          },
+          "third_party_transcript_bytes_per_call": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Third Party Transcript Bytes Per Call"
+          },
+          "unsupported_claim_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unsupported Claim Rate"
+          }
+        },
+        "required": [
+          "n",
+          "schema_valid",
+          "schema_valid_rate",
+          "accuracy",
+          "rubric_agreement",
+          "grounding_precision",
+          "unsupported_claim_rate",
+          "latency_p50_s",
+          "latency_p95_s",
+          "latency_n",
+          "cost_per_1000_usd",
+          "third_party_transcript_bytes_per_call",
+          "failures"
+        ],
+        "title": "ServingLanguageResult",
+        "type": "object"
+      },
+      "ServingResults": {
+        "description": "The cloud vs self-hosted comparison (eval_results.md, 2026-10-10).",
+        "properties": {
+          "accuracy_comparable_across_providers": {
+            "const": false,
+            "default": false,
+            "title": "Accuracy Comparable Across Providers",
+            "type": "boolean"
+          },
+          "actual_spend_usd": {
+            "title": "Actual Spend Usd",
+            "type": "number"
+          },
+          "arms": {
+            "items": {
+              "$ref": "#/components/schemas/ServingArmResult"
+            },
+            "title": "Arms",
+            "type": "array"
+          },
+          "methods": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Methods",
+            "type": "object"
+          },
+          "pricing": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Pricing",
+            "type": "object"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "methods",
+          "pricing",
+          "actual_spend_usd",
+          "arms"
+        ],
+        "title": "ServingResults",
+        "type": "object"
+      },
+      "ServingThroughput": {
+        "description": "An arm's throughput, measured on its whole mixed-language run.",
+        "properties": {
+          "calls": {
+            "title": "Calls",
+            "type": "integer"
+          },
+          "calls_per_min": {
+            "title": "Calls Per Min",
+            "type": "number"
+          },
+          "concurrency": {
+            "title": "Concurrency",
+            "type": "integer"
+          },
+          "excluded_as_host_sleep": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Excluded As Host Sleep",
+            "type": "array"
+          },
+          "method": {
+            "title": "Method",
+            "type": "string"
+          },
+          "output_tokens_per_s": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output Tokens Per S"
+          }
+        },
+        "required": [
+          "calls",
+          "concurrency",
+          "calls_per_min",
+          "output_tokens_per_s",
+          "method",
+          "excluded_as_host_sleep"
+        ],
+        "title": "ServingThroughput",
+        "type": "object"
+      },
+      "Severity": {
+        "description": "Severity of a compliance violation.",
+        "enum": [
+          "low",
+          "medium",
+          "high",
+          "critical"
+        ],
+        "title": "Severity",
+        "type": "string"
+      },
+      "StatsResponse": {
+        "description": "`GET /stats`: one block per language category, never a blended number.",
+        "properties": {
+          "active_rules_distinct": {
+            "minimum": 0.0,
+            "title": "Active Rules Distinct",
+            "type": "integer"
+          },
+          "ar": {
+            "$ref": "#/components/schemas/LanguageStats"
+          },
+          "en": {
+            "$ref": "#/components/schemas/LanguageStats"
+          },
+          "mixed": {
+            "$ref": "#/components/schemas/LanguageStats"
+          }
+        },
+        "required": [
+          "ar",
+          "en",
+          "mixed",
+          "active_rules_distinct"
+        ],
+        "title": "StatsResponse",
+        "type": "object"
+      },
+      "TranscriptTurn": {
+        "description": "One speaker turn of the redacted transcript.",
+        "properties": {
+          "end_char": {
+            "exclusiveMinimum": 0.0,
+            "title": "End Char",
+            "type": "integer"
+          },
+          "index": {
+            "minimum": 0.0,
+            "title": "Index",
+            "type": "integer"
+          },
+          "language": {
+            "$ref": "#/components/schemas/Language"
+          },
+          "speaker": {
+            "enum": [
+              "Agent",
+              "Customer"
+            ],
+            "title": "Speaker",
+            "type": "string"
+          },
+          "start_char": {
+            "minimum": 0.0,
+            "title": "Start Char",
+            "type": "integer"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "index",
+          "speaker",
+          "language",
+          "text",
+          "start_char",
+          "end_char"
+        ],
+        "title": "TranscriptTurn",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "Sawti",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/calls": {
+      "post": {
+        "description": "Redact the transcript, store the redacted text only, and queue the call for analysis.\n\nThe raw transcript exists only inside this function; it is neither stored\nnor put into graph state (docs/09-DECISIONS.md, 2026-10-06, decision 1).\n\nReturns 422 if a line has no `Agent:`/`Customer:` prefix (the review\nscreen needs speaker turns, and the parser does not guess), and 503 if\nthe task could not be queued — the call is then marked `failed`.",
+        "operationId": "submit_call_calls_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CallSubmitRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CallSubmitResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Submit Call",
+        "tags": [
+          "calls"
+        ]
+      }
+    },
+    "/calls/audio": {
+      "post": {
+        "description": "Store an uploaded recording and queue it for the native ASR worker.\n\nThe call is `transcribing` until the worker has transcribed, diarized and\nredacted it (the same redaction as `POST /calls`); it is then `queued` for\nanalysis like any submitted transcript. Poll `GET /calls/{id}`.\n\nRaw audio is PII: it stays only in `SAWTI_AUDIO_DIR` until transcription\nends, and is then deleted unless `SAWTI_KEEP_AUDIO=true`.\n\nReturns 413 over the size limit, 415 for anything but wav/mp3/m4a (by\nextension *and* content), 422 for an empty file or missing form fields,\nand 503 if the ASR task could not be queued (the call is then `failed`).\n\nThe size limit is enforced while copying into `SAWTI_AUDIO_DIR`, after\nStarlette has spooled the multipart body to a temporary file. A huge\nupload is therefore received before it is refused. That is acceptable for\na localhost-only service (docs/09-DECISIONS.md, 2026-10-10); a deployed\none would cap the body size in front of the app.",
+        "operationId": "submit_audio_calls_audio_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_submit_audio_calls_audio_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CallSubmitResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Submit Audio",
+        "tags": [
+          "calls"
+        ]
+      }
+    },
+    "/calls/{call_id}": {
+      "get": {
+        "description": "Everything the call review screen renders. Analysis fields are empty until analysis finishes.",
+        "operationId": "get_call_calls__call_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "call_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Call Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-reviewer-id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Reviewer-Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CallDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Call",
+        "tags": [
+          "calls"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "description": "200 when both dependencies answer, 503 (with which one failed) otherwise.",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Health",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/memory/conflicts": {
+      "get": {
+        "description": "Unresolved conflicts, oldest first: each candidate beside the rules it contradicts.",
+        "operationId": "list_conflicts_memory_conflicts_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-reviewer-id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Reviewer-Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemoryConflictListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Conflicts",
+        "tags": [
+          "memory"
+        ]
+      }
+    },
+    "/memory/conflicts/{conflict_id}/resolve": {
+      "post": {
+        "description": "Apply a reviewer's decision. 404 unknown, 409 already resolved, 503 while the store is being written.\n\nAn action that activates the candidate queues consolidation on the worker\n(the API has no embedding model). The resolution itself is already\ncommitted if that enqueue fails; `consolidation_queued` then says so, and\nthe next induction run consolidates the whole store anyway.",
+        "operationId": "resolve_memory_conflicts__conflict_id__resolve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "conflict_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Conflict Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-reviewer-id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Reviewer-Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConflictResolveRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConflictResolveResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Resolve",
+        "tags": [
+          "memory"
+        ]
+      }
+    },
+    "/memory/rules": {
+      "get": {
+        "description": "Active (non-retired) rules, newest first, with their source languages and usage.",
+        "operationId": "list_rules_memory_rules_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-reviewer-id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Reviewer-Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MemoryRuleListResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Rules",
+        "tags": [
+          "memory"
+        ]
+      }
+    },
+    "/results": {
+      "get": {
+        "description": "The cloud vs self-hosted table and the memory comparison. 503 if a results file is missing.",
+        "operationId": "results_results_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-reviewer-id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Reviewer-Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Results",
+        "tags": [
+          "results"
+        ]
+      }
+    },
+    "/reviews": {
+      "get": {
+        "description": "Calls in `status` (default `awaiting_review`), oldest first, plus per-language pending counts.",
+        "operationId": "review_queue_reviews_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/CallStatus",
+              "default": "awaiting_review"
+            }
+          },
+          {
+            "in": "query",
+            "name": "language",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/Language"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Language"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-reviewer-id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Reviewer-Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewQueueResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Review Queue",
+        "tags": [
+          "reviews"
+        ]
+      }
+    },
+    "/reviews/{call_id}/corrections": {
+      "post": {
+        "description": "Record a reviewer's verdicts, capture the corrections, and queue the graph's resume.\n\n409 if the call is not `awaiting_review` or already has a submission;\n422 unless there is exactly one verdict for every grounded claim. The\nsubmission, its `Correction`s and the `ReviewerAction` rows commit as one\nunit before the resume is queued. If the review produced corrections, rule\ninduction over them is queued too (`induce_rules_task`).",
+        "operationId": "submit_review_reviews__call_id__corrections_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "call_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Call Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-reviewer-id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Reviewer-Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewSubmission"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewAccepted"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Submit Review",
+        "tags": [
+          "reviews"
+        ]
+      }
+    },
+    "/stats": {
+      "get": {
+        "description": "Pending reviews, reviewer agreement, active rules and conflict false positives, per language.",
+        "operationId": "stats_stats_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-reviewer-id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Reviewer-Id"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Stats",
+        "tags": [
+          "stats"
+        ]
+      }
+    }
+  }
+}

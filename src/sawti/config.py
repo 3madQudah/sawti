@@ -6,6 +6,7 @@ Phase 0: foundational configuration used by every other module.
 from __future__ import annotations
 
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 
 from pydantic import Field, SecretStr
@@ -95,6 +96,15 @@ class Settings(BaseSettings):
     # Load the embedding model when a worker process starts, so the first task
     # does not pay for it and cold start is measurable on its own.
     worker_preload_embeddings: bool = Field(default=True, alias="SAWTI_WORKER_PRELOAD_EMBEDDINGS")
+    # --- Audio ingestion (phase 6.4) ---
+    # Where `POST /calls/audio` stores uploads and the native ASR worker reads
+    # them. `calls.audio_path` is relative to this, because the API (in Docker,
+    # bind-mounted) and the ASR worker (on the host) see different absolute paths.
+    audio_dir: Path = Field(default=Path("data/uploads"), alias="SAWTI_AUDIO_DIR")
+    max_audio_bytes: int = Field(default=50 * 1024 * 1024, gt=0, alias="SAWTI_MAX_AUDIO_BYTES")
+    # Raw audio is PII: deleted after a successful transcription (and after a
+    # failed one) unless this is true. See docs/09-DECISIONS.md, 2026-10-10.
+    keep_audio: bool = Field(default=False, alias="SAWTI_KEEP_AUDIO")
     # `fake` provider knobs: simulated model latency, and how many unsupported
     # claims it proposes (1 -> coverage 2/3 -> escalates at the 0.7 default).
     fake_llm_latency_seconds: float = Field(default=0.0, ge=0.0, alias="SAWTI_FAKE_LLM_LATENCY_SECONDS")

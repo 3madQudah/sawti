@@ -87,3 +87,22 @@ def test_maybe_retire_never_un_retires_an_already_retired_rule() -> None:
     updated = maybe_retire(rule, min_applications=10, min_success_rate=0.5)
 
     assert updated.retired is True
+
+
+def test_retire_retires_unconditionally_without_mutating() -> None:
+    """A human's decision (phase 6.4 conflict resolution), not a success-rate threshold."""
+    from sawti.memory.lifecycle import retire
+
+    rule = _rule(success_count=50)
+    retired = retire(rule)
+    assert retired.retired is True and rule.retired is False
+    assert retired.model_dump(exclude={"retired"}) == rule.model_dump(exclude={"retired"})
+
+
+def test_activate_makes_a_rule_active_without_mutating() -> None:
+    from sawti.memory.lifecycle import activate
+
+    rule = _rule(retired=True)
+    active = activate(rule)
+    assert active.retired is False and rule.retired is True
+    assert active.id == rule.id

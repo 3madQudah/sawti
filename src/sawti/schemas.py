@@ -42,6 +42,8 @@ class CallStatus(str, Enum):
     bookkeeping inside one run. This one also covers what happens around the
     graph (waiting in the queue, infrastructure failure). The mapping:
 
+        transcribing    — uploaded audio waiting for, or in, the native ASR
+                          worker (phase 6.4); no transcript yet.
         queued          — no graph run yet; no checkpoint thread exists.
         processing      — the graph is running (ReviewStatus "pending").
         awaiting_review — the graph is suspended in `escalate`
@@ -53,6 +55,7 @@ class CallStatus(str, Enum):
                           `awaiting_review`, never here.
     """
 
+    TRANSCRIBING = "transcribing"
     QUEUED = "queued"
     PROCESSING = "processing"
     AWAITING_REVIEW = "awaiting_review"

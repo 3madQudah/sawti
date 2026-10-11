@@ -17,7 +17,17 @@ import uuid
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint, text
+from sqlalchemy import (
+    CheckConstraint,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+    text,
+)
 from sqlalchemy import Enum as SAEnum
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
@@ -116,6 +126,9 @@ class Call(Base):
     # retry, or the reaper). The reaper keys on it, not `queued_at`, so a
     # healthy backlog is not re-enqueued over and over.
     enqueued_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # Why the call is `failed`, when the reason is known (phase 6.4: an ASR
+    # failure). Never transcript text: this column is shown to reviewers.
+    failure_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     agent: Mapped[Agent] = relationship()
 
@@ -239,3 +252,48 @@ class MemoryRuleRecord(Base):
     success_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
     failure_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0, server_default="0")
     retired: Mapped[bool] = mapped_column(nullable=False, default=False, server_default=text("false"))
+
+
+#: How a human resolved a memory conflict (docs/09-DECISIONS.md, 2026-10-10).
+#: `keep_both` is deliberately absent: two active rules that contradict each
+#: other can be retrieved into one prompt.
+CONFLICT_RESOLUTIONS = ("keep_existing", "keep_new", "discard", "not_a_conflict")
+
+
+class MemoryConflict(Base):
+    """A candidate rule `insert_rule` refused because it contradicts active rules (phase 6.4).
+
+    One row per refused candidate, written in the same commit as its
+    correction's `induced_at`. The candidate is not a `memory_rules` row
+    unless a human activates it (`keep_new`, `not_a_conflict`); it then gets
+    `candidate_rule_id` as its id. Pending = `resolution` is null.
+    """
+
+    __tablename__ = "memory_conflicts"
+    __table_args__ = (
+        CheckConstraint(
+            "resolution IS NULL OR resolution IN ('keep_existing', 'keep_new', 'discard', 'not_a_conflict')",
+            name="ck_memory_conflicts_resolution",
+        ),
+        CheckConstraint(
+            "(resolution IS NULL) = (resolved_by IS NULL) AND (resolution IS NULL) = (resolved_at IS NULL)",
+            name="ck_memory_conflicts_resolved_together",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    reviewer_action_id: Mapped[uuid.UUID] = mapped_column(
+        PGUUID(as_uuid=True), ForeignKey("reviewer_actions.id"), nullable=False, unique=True
+    )
+    candidate_rule_id: Mapped[uuid.UUID] = mapped_column(PGUUID(as_uuid=True), nullable=False)
+    # Redacted, like every rule: it goes into prompts if activated.
+    candidate_text: Mapped[str] = mapped_column(Text, nullable=False)
+    # [{"rule_id": str, "similarity": float, "reasoning": str}], most similar first.
+    # `reasoning` is the judge's one sentence, redacted.
+    conflicting: Mapped[list[Any]] = mapped_column(JSONB, nullable=False)
+    detected_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    resolution: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    resolved_by: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    resolved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    reviewer_action: Mapped[ReviewerAction] = relationship()

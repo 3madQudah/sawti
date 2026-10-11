@@ -159,7 +159,9 @@ class MemoryRuleUsed(BaseModel):
 class CallDetail(BaseModel):
     """`GET /calls/{call_id}`: everything the call review screen renders.
 
-    Analysis fields are None/empty until the analysis task has finished.
+    Analysis fields are None/empty until the analysis task has finished. An
+    uploaded recording is `transcribing` until the ASR worker is done, with an
+    empty transcript and no turns; the upload screen polls this.
     """
 
     call_id: UUID
@@ -172,6 +174,8 @@ class CallDetail(BaseModel):
     pii_redacted_count: int
     #: Times the analysis task claimed the call; >1 means transient-error retries.
     attempts: int
+    #: Why the call is `failed`, when known (e.g. an ASR failure). Never transcript text.
+    failure_reason: str | None = None
 
     redacted_transcript: str
     turns: list[TranscriptTurn]
@@ -298,6 +302,14 @@ class MemoryRuleView(BaseModel):
     text: str
     #: How many corrections it was induced (or merged) from.
     source_corrections: int
+    #: The language categories of those corrections' calls. A merged rule can
+    #: span several; a rule whose corrections are gone has none.
+    languages: list[Language]
+    #: Service analyses whose prompt this rule was retrieved into
+    #: (`call_analyses.retrieved_rule_ids`). Only service runs record
+    #: retrieval; eval-script runs (Phase 4, the 6.3 memory comparison) never
+    #: persisted it and are not counted.
+    analyses_used: int = Field(..., ge=0)
     created_at: datetime
 
 
@@ -305,6 +317,221 @@ class MemoryRuleListResponse(BaseModel):
     """`GET /memory/rules`: active rules, newest first."""
 
     rules: list[MemoryRuleView]
+
+
+# --- Memory conflicts (phase 6.4) ---------------------------------------------------
+
+#: How a reviewer resolves a conflict (docs/09-DECISIONS.md, 2026-10-10).
+#: `keep_both` is not an action: two active, contradicting rules can be
+#: retrieved into one prompt.
+ConflictAction = Literal["keep_existing", "keep_new", "discard", "not_a_conflict"]
+
+
+class ConflictingRuleView(BaseModel):
+    """An existing rule the candidate was judged to contradict."""
+
+    rule_id: UUID
+    #: None only if the rule row no longer exists.
+    text: str | None
+    #: Whether it is still active now. Consolidation may have merged it away
+    #: since the conflict was detected.
+    active: bool
+    #: Cosine similarity of the two rule texts, from the conflict check's narrowing stage.
+    similarity: float
+    #: The judge model's one-sentence reason (redacted).
+    reasoning: str
+
+
+class ConflictSourceView(BaseModel):
+    """Where the candidate came from: the correction it was induced from."""
+
+    correction_id: UUID
+    call_id: UUID
+    language: Language
+    reviewer_id: str
+    corrected_at: datetime
+
+
+class MemoryConflictView(BaseModel):
+    """One pending conflict: the refused candidate next to the rules it contradicts."""
+
+    id: UUID
+    detected_at: datetime
+    #: The id the candidate gets if a resolution activates it.
+    candidate_rule_id: UUID
+    candidate_text: str
+    conflicting: list[ConflictingRuleView]
+    source: ConflictSourceView
+
+
+class MemoryConflictListResponse(BaseModel):
+    """`GET /memory/conflicts`: pending conflicts, oldest first, plus per-language pending counts."""
+
+    conflicts: list[MemoryConflictView]
+    pending: PendingCounts
+
+
+class ConflictResolveRequest(BaseModel):
+    """`POST /memory/conflicts/{id}/resolve`.
+
+    * `keep_existing`: the candidate is dropped; existing rules untouched.
+    * `keep_new`: the conflicting rules are retired; the candidate becomes active.
+    * `discard`: neither. The candidate is dropped and the conflicting rules retired.
+    * `not_a_conflict`: the detector was wrong. The candidate becomes active,
+      existing rules untouched; counted in `/stats` as a false positive.
+    """
+
+    action: ConflictAction
+
+
+class ConflictResolveResponse(BaseModel):
+    """What the resolution changed."""
+
+    conflict_id: UUID
+    action: ConflictAction
+    resolved_by: str
+    resolved_at: datetime
+    activated_rule_id: UUID | None
+    retired_rule_ids: list[UUID]
+    #: True when the action activated a rule and consolidation was queued for it.
+    consolidation_queued: bool
+
+
+# --- Stats (phase 6.4) ------------------------------------------------------------------
+
+
+class Rate(BaseModel):
+    """`numerator / n`, with n stated. `value` is None when n = 0: no data, not zero."""
+
+    value: float | None = Field(..., ge=0.0, le=1.0)
+    numerator: int = Field(..., ge=0)
+    n: int = Field(..., ge=0)
+
+
+class LanguageStats(BaseModel):
+    """One language category's numbers."""
+
+    #: Calls `awaiting_review`.
+    pending_reviews: int = Field(..., ge=0)
+    #: Confirm verdicts / all verdicts over submitted reviews (claim level,
+    #: escalated calls only: `sawti.eval.metrics.reviewer_agreement_by_category`).
+    reviewer_agreement: Rate
+    #: Active rules with at least one source correction from this category.
+    #: A rule spanning categories counts in each, so these do not sum to `active_rules_distinct`.
+    active_rules: int = Field(..., ge=0)
+    #: Unresolved memory conflicts whose source correction is from this category.
+    pending_conflicts: int = Field(..., ge=0)
+    #: `not_a_conflict` resolutions / all resolutions: the conflict detector's false-positive rate.
+    conflict_false_positive_rate: Rate
+
+
+class StatsResponse(BaseModel):
+    """`GET /stats`: one block per language category, never a blended number."""
+
+    ar: LanguageStats
+    en: LanguageStats
+    mixed: LanguageStats
+    #: Active rules counted once each (the per-language counts overlap).
+    active_rules_distinct: int = Field(..., ge=0)
+
+
+# --- Results (phase 6.4: the 6.3 numbers, served as recorded) -----------------------
+
+
+class ServingLanguageResult(BaseModel):
+    """One arm × one language of the cloud vs self-hosted table, exactly as in `comparison.json`."""
+
+    n: int
+    schema_valid: int
+    schema_valid_rate: float
+    accuracy: float | None
+    rubric_agreement: float | None
+    grounding_precision: float | None
+    unsupported_claim_rate: float | None
+    latency_p50_s: float | None
+    latency_p95_s: float | None
+    #: Calls behind the latency figures: `latency_n` in `comparison.json` where
+    #: recorded (Gemini: a host-sleep call excluded), otherwise all n.
+    latency_n: int
+    cost_per_1000_usd: float | None
+    #: Self-hosted only: the same cost at the higher listed 2xT4 price ($1.11/h).
+    cost_per_1000_usd_sensitivity: float | None = None
+    third_party_transcript_bytes_per_call: float | None
+    failures: int
+
+
+class ServingThroughput(BaseModel):
+    """An arm's throughput, measured on its whole mixed-language run."""
+
+    calls: int
+    concurrency: int
+    calls_per_min: float
+    output_tokens_per_s: float | None
+    #: How it was measured, verbatim from `comparison.json`.
+    method: str
+    excluded_as_host_sleep: list[str]
+
+
+class ServingArmResult(BaseModel):
+    """One serving arm."""
+
+    id: str
+    label: str
+    hardware: str
+    models: list[str]
+    deployment: Literal["cloud", "self_hosted"]
+    throughput: ServingThroughput
+    ar: ServingLanguageResult
+    en: ServingLanguageResult
+    mixed: ServingLanguageResult
+
+
+class ServingResults(BaseModel):
+    """The cloud vs self-hosted comparison (eval_results.md, 2026-10-10)."""
+
+    source: str
+    #: The reference labels are Gemini's: accuracy and rubric agreement are not
+    #: a fair cross-provider comparison. Grounding and schema-valid are.
+    accuracy_comparable_across_providers: Literal[False] = False
+    #: Per-column method, as stated in eval_results.md.
+    methods: dict[str, str]
+    pricing: dict[str, str]
+    actual_spend_usd: float
+    arms: list[ServingArmResult]
+
+
+class MemoryLanguageResult(BaseModel):
+    """Memory off vs on for one language, with the pre-registered verdict against Phase 4."""
+
+    n_paired_per_repeat: list[int]
+    accuracy_off_per_repeat: list[float]
+    accuracy_on_per_repeat: list[float]
+    delta_per_repeat: list[float]
+    #: Mean Δ (on − off) over the repeats.
+    delta: float
+    noise: float
+    phase4_delta: float
+    verdict: Literal["confirms", "contradicts", "inconclusive", "incomplete"]
+
+
+class MemoryResults(BaseModel):
+    """The corrected memory comparison (eval_results.md, 2026-10-10, FINAL 600/600)."""
+
+    source: str
+    method: str
+    provider: str
+    hardware: str
+    calls: int
+    ar: MemoryLanguageResult
+    en: MemoryLanguageResult
+    mixed: MemoryLanguageResult
+
+
+class ResultsResponse(BaseModel):
+    """`GET /results`: the 6.3 numbers for the results page. Nothing is recomputed."""
+
+    serving: ServingResults
+    memory: MemoryResults
 
 
 # --- Health ---------------------------------------------------------------------

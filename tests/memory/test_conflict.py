@@ -115,3 +115,34 @@ def test_insert_rule_inserts_when_no_conflict(monkeypatch: pytest.MonkeyPatch) -
     assert outcome.inserted is True
     assert outcome.conflicts == []
     assert candidate in store.all_active_rules()
+
+
+def test_detect_conflict_details_keeps_similarity_and_reasoning(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Phase 6.4: what a human resolving the conflict sees, instead of discarding it."""
+    from sawti.memory.conflict import detect_conflict_details
+
+    provider = _ScriptedConflictProvider([True, False])
+    _patch_provider(monkeypatch, provider)
+    contradictory = _rule("deadline flag required")
+    compatible = _rule("deadline refund")
+    candidate = _rule("deadline flag never")
+
+    details = detect_conflict_details(candidate, [contradictory, compatible], embed=_fake_embed)
+
+    assert [d.rule for d in details] == [contradictory]
+    assert details[0].reasoning == "scripted"
+    assert details[0].similarity == pytest.approx(1.0)
+    assert len(provider.prompts) == 2, "same provider calls as detect_conflict"
+
+
+def test_insert_rule_reports_conflict_details(monkeypatch: pytest.MonkeyPatch) -> None:
+    _patch_provider(monkeypatch, _ScriptedConflictProvider([True]))
+    store = MemoryStore(embed=_fake_embed)
+    existing = _rule("deadline flag required")
+    store.add(existing)
+
+    outcome = insert_rule(store, _rule("deadline flag never"), embed=_fake_embed)
+
+    assert not outcome.inserted
+    assert outcome.conflicts == [existing]
+    assert [d.rule for d in outcome.conflict_details] == [existing]

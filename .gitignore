@@ -11,6 +11,8 @@ __pycache__/
 data/audio/*
 data/synthetic/*
 data/asr_transcripts/*
+# Uploaded call recordings (phase 6.4): raw audio is PII, never committed.
+data/uploads/
 !data/audio/.gitkeep
 !data/synthetic/.gitkeep
 

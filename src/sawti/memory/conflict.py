@@ -64,6 +64,52 @@ def _judges_contradiction(candidate: MemoryRule, existing_rule: MemoryRule) -> _
     )
 
 
+@dataclass(frozen=True)
+class ConflictDetail:
+    """One existing rule judged to contradict a candidate, and the evidence for it.
+
+    Phase 6.4: kept so a human resolving the conflict sees why it was flagged.
+    Before, only the rule survived and the rest was discarded.
+    """
+
+    rule: MemoryRule
+    #: Cosine similarity of the two rule texts (the narrowing stage's score).
+    similarity: float
+    #: The judge's one-sentence reason.
+    reasoning: str
+
+
+def detect_conflict_details(
+    candidate: MemoryRule,
+    existing: list[MemoryRule],
+    *,
+    similarity_top_k: int = DEFAULT_SIMILARITY_TOP_K,
+    embed: Embedder | None = None,
+) -> list[ConflictDetail]:
+    """`detect_conflict()`, keeping each conflict's similarity and the judge's reasoning.
+
+    Same two stages and the same provider calls as `detect_conflict()`.
+
+    Returns:
+        One `ConflictDetail` per existing rule judged to contradict
+        `candidate`, most similar first.
+    """
+    if not existing:
+        return []
+
+    narrowing_store = MemoryStore(embed=embed)
+    for rule in existing:
+        narrowing_store.add(rule)
+    similar = narrowing_store.retrieve_scored(candidate.rule_text, top_k=similarity_top_k)
+
+    details = []
+    for similarity, rule in similar:
+        judgment = _judges_contradiction(candidate, rule)
+        if judgment.contradicts:
+            details.append(ConflictDetail(rule=rule, similarity=similarity, reasoning=judgment.reasoning))
+    return details
+
+
 def detect_conflict(
     candidate: MemoryRule,
     existing: list[MemoryRule],
@@ -81,7 +127,8 @@ def detect_conflict(
     from `existing`, reusing Stage 4's embedding/similarity machinery rather
     than duplicating it), then each of those gets an actual LLM judgment of
     contradiction — not just topical similarity, which two compatible or
-    even redundant rules can share.
+    even redundant rules can share. `detect_conflict_details()` does the
+    same and keeps the evidence.
 
     Args:
         candidate: The newly induced rule, not yet stored.
@@ -96,15 +143,8 @@ def detect_conflict(
         The subset of `existing` that an LLM judged as contradicting
         `candidate`, not merely topically related to it.
     """
-    if not existing:
-        return []
-
-    narrowing_store = MemoryStore(embed=embed)
-    for rule in existing:
-        narrowing_store.add(rule)
-    similar = narrowing_store.retrieve(candidate.rule_text, top_k=similarity_top_k)
-
-    return [rule for rule in similar if _judges_contradiction(candidate, rule).contradicts]
+    details = detect_conflict_details(candidate, existing, similarity_top_k=similarity_top_k, embed=embed)
+    return [detail.rule for detail in details]
 
 
 @dataclass
@@ -114,6 +154,8 @@ class InsertOutcome:
     inserted: bool
     candidate: MemoryRule
     conflicts: list[MemoryRule] = field(default_factory=list)
+    #: The same conflicts with their similarity and the judge's reasoning (phase 6.4).
+    conflict_details: list[ConflictDetail] = field(default_factory=list)
 
 
 def insert_rule(
@@ -157,11 +199,16 @@ def insert_rule(
         An `InsertOutcome` recording whether the insert happened and, if
         not, which existing rules it conflicted with.
     """
-    conflicts = detect_conflict(
+    details = detect_conflict_details(
         candidate, store.all_active_rules(), similarity_top_k=similarity_top_k, embed=embed
     )
-    if conflicts:
-        return InsertOutcome(inserted=False, candidate=candidate, conflicts=conflicts)
+    if details:
+        return InsertOutcome(
+            inserted=False,
+            candidate=candidate,
+            conflicts=[detail.rule for detail in details],
+            conflict_details=details,
+        )
 
     store.add(candidate)
     return InsertOutcome(inserted=True, candidate=candidate)

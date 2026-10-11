@@ -9,6 +9,7 @@ pull in `sawti.agent`.
 
 Lifecycle (`sawti.schemas.CallStatus`):
 
+    transcribing --transcribe_audio_task (native ASR worker, `sawti.api.asr_tasks`)--> queued | failed
     queued --analyze_call_task--> processing --> awaiting_review --resume_call_task--> reviewed
                                              \\-> completed
                                              \\-> failed  (non-retryable crash, or retries exhausted)
@@ -49,6 +50,13 @@ logger = logging.getLogger(__name__)
 
 _settings = get_settings()
 
+#: Queue the Docker workers consume: analysis, resume, induction, consolidation, the reaper.
+DEFAULT_QUEUE = "celery"
+#: Queue only the native ASR worker on the Mac consumes (`make asr-worker`): mlx-whisper
+#: needs Metal, which a container cannot reach. See docs/09-DECISIONS.md, 2026-10-10.
+ASR_QUEUE = "asr"
+TRANSCRIBE_TASK = "sawti.transcribe_audio"
+
 celery_app = Celery(
     "sawti",
     broker=_settings.celery_broker_url,
@@ -64,6 +72,10 @@ celery_app.conf.update(
     task_acks_late=True,
     task_reject_on_worker_lost=True,
     worker_prefetch_multiplier=1,
+    task_default_queue=DEFAULT_QUEUE,
+    # Every task not listed here goes to DEFAULT_QUEUE. The ASR task is defined
+    # in `sawti.api.asr_tasks`, which the Docker workers never import.
+    task_routes={TRANSCRIBE_TASK: {"queue": ASR_QUEUE}},
     # Run by the `beat` service (docker-compose.yml); see `reap_stuck_calls`.
     beat_schedule={
         "reap-stuck-calls": {"task": "sawti.reap_stuck_calls", "schedule": _settings.reaper_interval_seconds}
@@ -365,6 +377,32 @@ def induce_rules_task(self: Task, submission_id: str) -> dict[str, int]:
         "conflicts": sum(report.conflicts.values()),
         "merged_away": report.merged_away,
     }
+
+
+@celery_app.task(bind=True, name="sawti.consolidate_rules", max_retries=None)
+def consolidate_rules_task(self: Task) -> int:
+    """Consolidate the active rules after a conflict resolution activated one (phase 6.4).
+
+    Queued by `POST /memory/conflicts/{id}/resolve`; it runs here and not in
+    the API because consolidation needs the embedding model. Transient
+    provider errors retry with the analysis backoff.
+
+    Returns:
+        How many rules were merged away.
+    """
+    from sawti.memory.persistence import consolidate_store
+
+    settings = get_settings()
+    try:
+        return consolidate_store(embed=_induction_embed)
+    except Exception as exc:
+        retries = self.request.retries
+        if is_transient_provider_error(exc) and retries < settings.task_max_retries:
+            countdown = min(
+                settings.task_retry_backoff_seconds * 2**retries, settings.task_retry_backoff_max_seconds
+            )
+            raise self.retry(exc=exc, countdown=countdown) from exc
+        raise
 
 
 # --- Reaper ---------------------------------------------------------------------

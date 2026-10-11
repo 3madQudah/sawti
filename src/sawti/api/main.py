@@ -10,7 +10,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from sawti.api.routes import calls, health, memory, reviews
+from sawti.api.routes import calls, health, memory, results, reviews, stats
 from sawti.config import get_settings
 
 
@@ -31,7 +31,7 @@ def create_app() -> FastAPI:
         allow_methods=["GET", "POST"],
         allow_headers=["Content-Type", "X-API-Key", "X-Reviewer-Id"],
     )
-    for router in (calls.router, reviews.router, memory.router, health.router):
+    for router in (calls.router, reviews.router, memory.router, stats.router, results.router, health.router):
         app.include_router(router)
     return app
 

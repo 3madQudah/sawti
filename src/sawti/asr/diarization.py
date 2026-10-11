@@ -35,6 +35,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 from pydantic import BaseModel
 
 from sawti.asr.transcribe import TranscriptSegment
@@ -44,6 +45,9 @@ logger = logging.getLogger(__name__)
 
 #: The gated pretrained pipeline this module targets.
 DEFAULT_PIPELINE = "pyannote/speaker-diarization-3.1"
+
+#: Sample rate of a `waveform` passed to `diarize()` — Whisper's, so one decode serves both.
+SAMPLE_RATE = 16_000
 
 _TOKEN_HELP = (
     "pyannote's pretrained pipelines are gated. Set HF_TOKEN in .env to a "
@@ -111,11 +115,22 @@ def _load_pipeline(pipeline_name: str, token: str | None) -> Any:
     return pipeline
 
 
+def load_pipeline(pipeline_name: str = DEFAULT_PIPELINE) -> Any:
+    """Load the gated pipeline once, for a caller that diarizes many files (the ASR worker).
+
+    Raises:
+        DiarizationUnavailableError: As `diarize()`.
+    """
+    return _load_pipeline(pipeline_name, get_settings().hf_token)
+
+
 def diarize(
     audio_path: Path,
     *,
     pipeline_name: str = DEFAULT_PIPELINE,
     num_speakers: int | None = 2,
+    pipeline: Any | None = None,
+    waveform: np.ndarray[Any, np.dtype[np.float32]] | None = None,
 ) -> list[DiarizedSegment]:
     """Run speaker diarization over `audio_path`.
 
@@ -126,6 +141,13 @@ def diarize(
             constraint. Defaults to 2 — a contact-centre call is an agent and
             a customer — which is a much easier problem than free clustering.
             Pass `None` to let the pipeline decide.
+        pipeline: An already-loaded pipeline (`load_pipeline()`); None loads
+            one for this call.
+        waveform: The audio already decoded to 16 kHz mono float32 (as
+            Whisper's ffmpeg loader returns it). pyannote then skips its own
+            decoding, which goes through torchaudio's ffmpeg bindings and does
+            not support every ffmpeg version or container (m4a). None = let
+            pyannote read `audio_path`.
 
     Returns:
         Diarized segments, ordered by start time.
@@ -138,8 +160,15 @@ def diarize(
     if not audio_path.is_file():
         raise FileNotFoundError(f"Audio file not found: {audio_path}")
 
-    pipeline = _load_pipeline(pipeline_name, get_settings().hf_token)
-    annotation = pipeline(str(audio_path), num_speakers=num_speakers)
+    if pipeline is None:
+        pipeline = _load_pipeline(pipeline_name, get_settings().hf_token)
+    if waveform is None:
+        audio: Any = str(audio_path)
+    else:
+        import torch
+
+        audio = {"waveform": torch.from_numpy(waveform).unsqueeze(0), "sample_rate": SAMPLE_RATE}
+    annotation = pipeline(audio, num_speakers=num_speakers)
 
     segments = [
         DiarizedSegment(speaker=str(speaker), start_sec=float(turn.start), end_sec=float(turn.end))
@@ -244,3 +273,32 @@ def assign_roles_by_first_speaker(
         )
         for segment in segments
     ]
+
+
+def render_labelled_transcript(segments: list[SpeakerTranscriptSegment]) -> str:
+    """Render speaker-labelled segments as `Agent: ...` / `Customer: ...` lines.
+
+    The Phase 1 corpus's line format, which `POST /calls` and the transcript
+    parser require. Consecutive segments from one speaker are merged into one
+    turn; empty segments are dropped; a newline inside a segment's text is
+    folded to a space, so every line keeps its speaker prefix.
+
+    Args:
+        segments: Segments whose `speaker` is already a role (`Agent` /
+            `Customer`), e.g. from `assign_roles_by_first_speaker`.
+
+    Returns:
+        The labelled transcript, one turn per line, newline-terminated; empty
+        if no segment has text.
+    """
+    lines: list[str] = []
+    for segment in segments:
+        # Line breaks only: other whitespace is kept as Whisper wrote it (Phase 3 renders the same).
+        text = " ".join(line.strip() for line in segment.text.strip().splitlines() if line.strip())
+        if not text:
+            continue
+        if lines and lines[-1].startswith(f"{segment.speaker}:"):
+            lines[-1] = f"{lines[-1]} {text}"
+        else:
+            lines.append(f"{segment.speaker}: {text}")
+    return "\n".join(lines) + "\n" if lines else ""
