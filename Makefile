@@ -1,4 +1,4 @@
-.PHONY: install test lint typecheck up down fmt stack e2e measure audio transcribe asr-eval asr-forcing asr-worker asr-latency openapi demo
+.PHONY: install test lint typecheck up down fmt stack e2e measure audio transcribe asr-eval asr-forcing asr-worker asr-latency openapi api-doc demo
 
 install:
 	uv sync --all-extras --dev
@@ -71,6 +71,10 @@ asr-latency:
 # The OpenAPI schema stage B generates its types from.
 openapi:
 	uv run python scripts/export_openapi.py
+
+# The generated endpoint/schema lists in docs/06-API-SPECIFICATION.md, from openapi.json.
+api-doc:
+	uv run python scripts/render_api_doc.py
 
 # Latency / throughput numbers into eval_results.md (see the script's docstring).
 measure:
