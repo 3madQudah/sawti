@@ -263,6 +263,155 @@ latency, and data egress.
 
 ---
 
+## Phase 7 — Improvements 🔨
+
+Four fixes for weaknesses recorded in Phases 3–6, done one at a time on the
+`improvements-7` branch. **Pre-registered on 2026-10-11, before any
+implementation or measurement.** Each item's metric, its per-language
+breakdown, and the bars for success, inconclusive and failure are fixed here.
+A later change to any of them must be logged as a dated amendment below the
+item, with the reason, *before* the measurement it affects.
+
+Common rules:
+
+- Results go per language (`ar`, `en`, `mixed`) with n, in
+  `eval_results.md`.
+- A language whose n is below the stated minimum is **inconclusive** for that
+  language. It never counts as success or failure.
+- No Gemini calls unless an item says so.
+
+### 7.1 — Consolidation must not retire a rule an open conflict points at
+
+- **Changes.** Consolidation (`induce_and_store`, `consolidate_store`) leaves
+  out every active rule named by an unresolved `memory_conflicts` row. Such a
+  rule becomes eligible again once its conflict is resolved. This fixes the
+  2026-10-11 TODO in `docs/09-DECISIONS.md`.
+- **Metric.**
+  1. A regression test where a conflicted rule would otherwise cluster. It
+     must fail on the pre-fix code and pass after.
+  2. A data check on the dev database: open conflicts that name a retired
+     rule, out of n open conflicts.
+- **Per language.** Open conflicts are counted by the language of their
+  source correction.
+- **Success.** The regression test fails before and passes after, the full
+  suite, ruff and mypy are green, and the data check finds 0 open conflicts
+  naming a retired rule.
+- **Inconclusive.** The data check has n = 0 open conflicts, so it says
+  nothing. The tests alone carry the result. (Known at registration time: the
+  3 conflicts recorded so far are all resolved, so n = 0 today.)
+- **Failure.** The regression test can't be made to pass, or any open
+  conflict names a retired rule after the fix.
+
+### 7.2 — Transcript-quality signal in routing
+
+- **Changes.** A quality score computed from the stored redacted transcript
+  only, with no ASR re-run. A call below the threshold escalates to human
+  review with a new escalation kind (`low_transcript_quality`), even when
+  grounding coverage passes. Signals:
+  - *Foreign-script ratio.* Letters outside the scripts the call's language
+    allows (Arabic + Latin for `ar` and `mixed`, Latin for `en`) ÷ all
+    letters.
+  - *Repetition.* The zlib compression ratio of the transcript text, which is
+    the repetition-loop signal.
+  - *Language mismatch* vs `language_hint`. For an `en` call, the share of
+    Arabic letters. For an `ar` call, the share of Latin letters. Not defined
+    for `mixed`.
+- **Data.** The 150 Phase 3 ASR transcripts with known WER
+  (`data/asr_transcripts/wer_report.json`). WER bands at registration
+  (high = WER > 0.4, low = WER < 0.2):
+
+  | | high | mid | low |
+  |---|---|---|---|
+  | ar | 4 | 4 | 52 |
+  | en | 1 | 4 | 25 |
+  | mixed | 27 | 30 | 3 |
+
+- **Split.** The calls are split in half, stratified by language × WER band,
+  with seed `20261011`. The split file is committed **before any signal is
+  computed**. Thresholds are chosen on the selection half only:
+  - a call is flagged if any signal crosses its threshold;
+  - maximize `mixed` high-WER recall, subject to a false-escalation rate
+    ≤ 0.10 on low-WER `ar` calls and on low-WER `en` calls;
+  - break ties by the fewest flagged calls.
+
+  Every result is reported on the held-out half.
+- **Metric**, per language on the held-out half:
+  - recall of high-WER calls;
+  - false-escalation rate on low-WER calls;
+  - the escalation rate on mid-band calls, reported descriptively.
+- **Minimum n.** Recall needs ≥ 5 held-out high-WER calls, so only `mixed`
+  qualifies; `ar` (about 2) and `en` (0–1) are reported descriptively. The
+  false-escalation rate needs ≥ 10 held-out low-WER calls, so `ar` and `en`
+  qualify and `mixed` (1–2) is descriptive.
+- **Success.** Held-out `mixed` recall ≥ 0.60, **and** false escalation
+  ≤ 0.10 in both `ar` and `en`.
+- **Failure.** `mixed` recall < 0.30, **or** false escalation > 0.20 in `ar`
+  or `en`.
+- **Inconclusive.** Anything in between.
+- **Also reported, not part of the verdict.** Whether the live garbled
+  `call_0003_mixed` transcript from the dashboard (2026-10-11) is flagged.
+
+### 7.3 — Name redaction with a local NER model
+
+- **Changes.** A local, free, CPU-only multilingual NER model (ar + en) adds
+  a `[NAME]` placeholder for person names, after the regex patterns. The first
+  candidate is `Davlan/xlm-roberta-base-ner-hrl`. Its licence and CPU latency
+  are checked before adoption, and a model change is logged as an amendment
+  before measurement.
+- **Gold.** A list of every personal-name occurrence in the 150 clean
+  transcripts (`data/synthetic`). It is built from candidate lines (pattern
+  search, then a read of each candidate line) and committed, with its hash,
+  **before the model is first run on the corpus**. No structured name data
+  exists in the generator, so this list *is* the ground truth. It can be
+  checked by a reviewer.
+- **Metric**, per language:
+  - *recall* = gold name occurrences replaced by `[NAME]` ÷ gold occurrences;
+  - *false redactions* = `[NAME]` spans that are not gold names, as a count
+    and as a share of all `[NAME]` spans;
+  - stored claims whose evidence quote the new redactor would change, out of
+    all stored claims;
+  - CPU time per call.
+
+  ASR transcripts are reported descriptively (`[NAME]` spans per call). They
+  have no gold, because ASR spells names inconsistently.
+- **Minimum n.** ≥ 20 gold name occurrences per language.
+- **Success.** Recall ≥ 0.90 **and** false-redaction share ≤ 0.20, in every
+  language that meets the minimum n.
+- **Failure.** Recall < 0.70, **or** false-redaction share > 0.40, in any
+  language.
+- **Inconclusive.** Anything in between.
+
+### 7.4 — Claim-support check with a local NLI model
+
+- **Changes.** A local, free multilingual NLI model scores whether each
+  grounded claim is supported by its evidence. The first candidate is
+  `MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7`. The premise is
+  the full transcript turn(s) holding the evidence quote. The hypothesis is the
+  claim's text: the commitment description, the flag description, or the
+  rubric justification. **No Gemini.** This item only measures. Whether a low
+  score should route to a human is decided after the result.
+- **Labels.** 60 claims, 20 per language, drawn at random with seed
+  `20261011` from all stored analyses. There are no hand-picked additions,
+  and `call_0003_mixed`'s claims enter only if drawn. The labeling file has
+  claim, quote, context turns and an empty label column (`supported` /
+  `not_supported` / `unclear`). It is prepared by Claude and **labeled by the
+  user**. The model's scores aren't shown to the labeler, and they are
+  computed only after the labels are frozen.
+- **Metric**, per language: precision and recall for detecting
+  `not_supported`, at a decision rule fixed now. A claim is predicted
+  `not_supported` when the model's entailment probability is < 0.5. A
+  precision-recall curve is reported alongside it. `unclear` labels are left
+  out and counted.
+- **Minimum n.** ≥ 5 `not_supported` labels in a language. Below that, the
+  language is inconclusive, and its prevalence is reported.
+- **Success.** Recall ≥ 0.70 **and** precision ≥ 0.50 in every language that
+  meets the minimum n.
+- **Failure.** Recall < 0.40, **or** precision < 0.25, in any language that
+  meets it.
+- **Inconclusive.** Anything in between, or no language meeting the minimum n.
+
+---
+
 ## Standing rules
 
 These do not change between phases:
