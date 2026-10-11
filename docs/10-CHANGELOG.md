@@ -5,6 +5,31 @@ are in [`eval_results.md`](../eval_results.md) and its reasoning in
 [09-DECISIONS.md](09-DECISIONS.md). Some commit subjects undersell what they
 contain. Those commits have a note.
 
+## Redaction fix, found in production (2026-10-11)
+
+- *(this commit)* Docs updated with the fix and the live verification: 10,
+  11, 13, 15 and PROJECT-AUDIT.
+- `7f8cce9` 2026-10-11. `[NUMBER]` catch-all, applied last: any run of 7+
+  digits (ASCII or Arabic-Indic, single spaces or dashes inside).
+  `measure_redaction.py --stored-analyses`.
+  - Leftover 7+ digit runs on the Phase 3 ASR transcripts: 17 / 13 / 5 → 0 / 0 / 0
+    (ar / en / mixed).
+  - Stored claims whose evidence changes: ar 1 of 242, en 0, mixed 0.
+  - The leaked stored data was not rewritten, by decision (synthetic).
+- `bfadca6` 2026-10-11. The bug: an uploaded `call_0006_en` kept a 3-3-4 phone
+  number in its redacted transcript, and it reached Gemini, the checkpoint and
+  a Langfuse trace.
+  - Phone patterns widened: 3-3-4, 3-4, Jordanian groupings, Arabic-Indic, and
+    `+962…` no longer read as a card.
+  - Added `scripts/measure_redaction.py`.
+  - PII spans on the ASR transcripts: en 1 → 13, mixed 10 → 11, ar 2 → 2.
+  - Also recorded a known issue, not fixed: diarization misaligned on that
+    call (turns #3–#4).
+- **Verified live** after restarting the ASR worker. The re-upload of
+  `call_0006_en` shows `[PHONE]` where the number was. Its Langfuse trace has
+  0 of 6 observations containing the number.
+- Tests: 934 → 1,009.
+
 ## Phase 6.4 — QA dashboard, local only (2026-10-10 → 10-11)
 
 - `e0c9c5f` 2026-10-11. Review actions are locked when the call isn't
@@ -94,4 +119,9 @@ contain. Those commits have a note.
 
 ## Docs
 
+- `610ddc4` 2026-10-11. PROJECT-AUDIT, plus see-also links from 08, 09, 12
+  and DEMO.
+- `406e8ed` 2026-10-11. Filled docs 11, 13, 14, 15 and 16.
+- `1cf741f` 2026-10-11. Filled docs 05, 06, 07 and 10. The API list is now
+  generated from `openapi.json` (`scripts/render_api_doc.py`, `make api-doc`).
 - `09a529f` 2026-10-11. Filled docs 01–04.

@@ -23,8 +23,10 @@ Python's `\d` also matches Arabic-Indic digits, so both digit sets are covered.
 
 **What it misses:**
 
-- Personal names, addresses, employers, and anything that is only
-  identifiable from context. Catching these needs NER, and
+- **Personal names are not redacted.** The redactor is regex-based and has no
+  NER, so names (for example a caller giving their own name in Arabic or
+  English), addresses, employers, and anything that is only identifiable from
+  context reach the model and the database. Catching these needs NER, and
   `tests/privacy/test_redaction.py::test_redact_removes_names_in_arabic_and_english` stays
   skipped so the gap shows in every test run.
 - Identifiers shorter than 7 digits (PINs, short reference numbers), and
@@ -90,6 +92,28 @@ That is a lot of risk for no privacy gain on synthetic data. **With real data,
 the answer would be the opposite.** Rewrite or delete every stored copy, ask
 the provider to delete the request where its terms allow, and purge the
 trace. The Gemini request itself can't be recalled from this side.
+
+**Verified fixed, live (2026-10-11).** After the fix, the stack was rebuilt
+and the native ASR worker restarted. Then `call_0006_en` was uploaded again
+(call `8b768603…`):
+
+- Its stored transcript shows `[PHONE]` where the number was, and
+  `pii_redacted_count` is 1.
+- No 3-3-4 number is left in it.
+- Its one Langfuse trace has 6 observations, and 0 of them contain the number.
+  The LLM input shows `[PHONE]`.
+
+`make stack` alone was not enough. The native ASR worker, which redacts
+uploaded audio, kept the old patterns until it was restarted.
+
+## Known limits (not fixed)
+
+| Limit | Why it matters here | Source |
+|---|---|---|
+| **Personal names are not redacted.** Regex only, no NER. Addresses and employers are missed too. | Names in a transcript go to Gemini, into the database, and into traces. Not fit for real calls. | [09-DECISIONS.md](09-DECISIONS.md), 2026-09-22; the skipped `test_redact_removes_names_in_arabic_and_english` |
+| Numbers under 7 digits that don't match a specific pattern (PINs, short references), dotted runs, numbers spoken as words. | They pass redaction. | [eval_results.md](../eval_results.md), 2026-10-11 catch-all round |
+| **Diarization misalignment.** On the uploaded `call_0006_en`, turns #3–#4 (and #7–#8) mix agent and customer speech, because each Whisper segment goes wholly to one speaker. | Redaction still runs on every turn, so nothing is missed because of it. But the transcript attributes speech, including PII the customer spoke, to the wrong party, and an evidence quote can carry the wrong speaker. Accuracy has never been measured. | [09-DECISIONS.md](09-DECISIONS.md), 2026-10-11 known issue |
+| Data already leaked (above) stays in the database, checkpoint and one trace. | It's synthetic. With real data, this would have to be purged. | this file |
 
 ## Identity and access
 

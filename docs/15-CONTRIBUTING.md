@@ -34,12 +34,12 @@ don't measure it.
 
 ## Checks before a commit
 
-| Check | Command | State at `1cf741f` (2026-10-11) |
+| Check | Command | State at `7f8cce9` (2026-10-11, after the redaction fix) |
 |---|---|---|
-| Python tests | `make test` | 934 passed, 10 skipped (9 placeholder skips tagged "phase 1", plus the NER test), 2 deselected |
+| Python tests | `make test` | 1,009 passed, 10 skipped (9 placeholder skips tagged "phase 1", plus the NER test), 2 deselected. The redaction fix added 75: 61 redaction cases and 14 for `measure_redaction.py`. |
 | Lint | `make lint` (`ruff check .`) | clean |
 | Types | `make typecheck` (`mypy src`, strict) | clean, 86 files |
-| Frontend unit | `cd frontend && npm test` | 40 passed |
+| Frontend unit | `cd frontend && npm test` | 40 passed (frontend unchanged since `f164b95`) |
 | Frontend types | `cd frontend && npm run typecheck` | also fails if `src/api/schema.d.ts` is stale |
 | Frontend e2e | `cd frontend && npm run e2e` | Playwright against a mocked API. Not re-run for this table. |
 | Container e2e | `make e2e` | Needs Docker. Not re-run for this table. |
@@ -48,6 +48,22 @@ don't measure it.
 After changing an API route, run `make openapi api-doc` (and `npm run gen:api`
 in `frontend/`). Tests fail if `frontend/openapi.json` or
 [06-API-SPECIFICATION.md](06-API-SPECIFICATION.md) is stale.
+
+**Changing redaction** (`sawti.privacy.redaction`). Lessons from the
+2026-10-11 production leak:
+
+- Add test cases in every language (`ar`, `en`, `mixed`), with and without
+  separators, and with Arabic-Indic digits. Assert that the whole number is
+  gone, not only that a placeholder appeared.
+- Measure before you commit:
+  `uv run python scripts/measure_redaction.py --before-rev <last commit>`
+  on `data/asr_transcripts` and `data/synthetic`, plus `--stored-analyses`
+  for claims whose evidence would change. Record the per-language
+  before/after in `eval_results.md`.
+- `make stack` rebuilds the containers but **not the native ASR worker**,
+  which redacts uploaded audio. Restart it (`make asr-worker`, or `make demo`
+  again). Then re-upload a call and check its transcript and its Langfuse
+  trace.
 
 **Formatting.** The repo is not `ruff format`-clean: 28 files would be
 reformatted. Don't run `ruff format .`, because it rewrites unrelated files.

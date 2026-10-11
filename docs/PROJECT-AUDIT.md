@@ -41,6 +41,17 @@ self-hosted serving comparison, and a React review dashboard in EN and AR.
   boundary. The raw transcript is never stored or put in graph state (which
   the checkpointer persists). Raw audio is deleted after ASR. Langfuse
   payloads are re-redacted, and a test pushes known PII through the pipeline.
+- **A production leak was handled the way the rest of the project works:**
+  found, measured, fixed, verified and written down the same day
+  ([eval_results.md](../eval_results.md), 2026-10-11).
+  - Root cause: both phone patterns needed a `+`/`00` prefix or a leading `0`.
+  - Measured per language on redaction alone, with no ASR or LLM, against the
+    pre-fix code loaded from git.
+  - Fixed with 61 new test cases.
+  - Re-measured. Leftover 7+ digit runs on the ASR transcripts went from
+    17 / 25 / 6 to 0 / 0 / 0 (ar / en / mixed).
+  - Verified live: the re-uploaded call shows `[PHONE]`, and its trace doesn't
+    contain the number.
 - **Service engineering.**
   - An idempotent `queued → processing` claim.
   - Transient provider errors are retried. Other failures go to a human.
@@ -49,7 +60,7 @@ self-hosted serving comparison, and a React review dashboard in EN and AR.
   - The container e2e runs on a scratch database.
   - The API image carries no torch.
   - The API types are generated, with staleness tests.
-  - 934 Python tests, strict mypy, 40 frontend unit tests
+  - 1,009 Python tests, strict mypy, 40 frontend unit tests
     ([15-CONTRIBUTING.md](15-CONTRIBUTING.md)).
 - **The bilingual UI is done properly.** Full RTL, per-turn text direction
   independent of the UI language, logical CSS only, and an EN/AR string parity
@@ -107,7 +118,14 @@ self-hosted serving comparison, and a React review dashboard in EN and AR.
 - **Security is demo-grade.**
   - The shared API key ships in the browser bundle, and the reviewer id is
     self-asserted.
-  - Redaction is regex-only, with no names or addresses.
+  - Redaction is regex-only, with no personal names or addresses (no NER).
+  - **The redactor leaked in production.** An uploaded call's phone number
+    (`ddd-ddd-dddd`) passed redaction and reached Gemini, the stored analysis,
+    the checkpoint and one Langfuse trace. The 0001 conversion's earlier "0 PII
+    left" check used the same blind patterns, so it was wrong too. The data is
+    synthetic, so the stored copies were deliberately left in place
+    ([13-SECURITY.md](13-SECURITY.md)). The fix was a regex patch tuned to one
+    synthetic corpus, and real callers will use formats that aren't in it.
   - Compose binds on all interfaces with default database credentials
     ([13-SECURITY.md](13-SECURITY.md)).
 - **Hygiene.**
@@ -132,6 +150,7 @@ self-hosted serving comparison, and a React review dashboard in EN and AR.
 | "Self-hosting is cost-competitive." | **On cost, at concurrency 16.** | Base Qwen3-8B on vLLM costs $3.76–4.34 per 1,000 calls, against $4.39–4.62 for Gemini, priced as if paid. Actual spend was $0. The rental price comes from an aggregator. T4 p50 latency is 200–350 s, so it is not interactive. Accuracy isn't comparable across providers. |
 | "Fine-tuning helped." | **No.** | It was within noise on `ar`, n=10, and in 6.3 it was slower and less schema-valid than the base model. |
 | "Human-in-the-loop works." | **The mechanism, yes. The practice, no.** | Interrupt, persist, resume and correct are tested end to end. Zero real reviews have happened, and the threshold is untuned. |
+| "PII never reaches the model." | **Not until 2026-10-11, and only for structured identifiers.** | The pre-fix redactor let 3-3-4 / 3-4 phones and every non-phone-shaped 7+ digit run through: 17 / 25 / 6 such runs on the ASR transcripts. After the fix there are 0 / 0 / 0, verified on one live re-upload. Names are still sent: there is no NER. |
 | "It handles real calls." | **Not shown.** | No recorded telephony audio was ever used. |
 
 ## What I would do next

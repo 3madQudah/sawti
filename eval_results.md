@@ -1886,3 +1886,22 @@ its Langfuse trace. All of it is synthetic. See `docs/13-SECURITY.md`.
    dates with dashes. The catch-all redacts them, and a redaction is permanent.
 2. The stored-analysis count covers grounded claims only. Claims already
    rejected by grounding (`rejected_claims`) are not counted.
+
+### Live verification (after the rebuild and an ASR worker restart)
+
+`make stack` rebuilt the `api` and `worker` containers, and both redact the
+test string's phone to `[PHONE]` and its 9-digit account to `[NUMBER]`. The
+native ASR worker, which redacts uploads, had to be restarted separately.
+Then the user re-uploaded `data/audio/call_0006_en.wav` through New Call
+(call `8b768603-7b79-4fa8-a67e-d231086cb91c`). Read from the dev database and
+Langfuse:
+
+| | Before the fix (`89c66124…`) | After (`8b768603…`) |
+|---|---|---|
+| `pii_redacted_count` | 0 | 1 |
+| 3-3-4 number in the stored transcript | yes | no (`[PHONE]` in its place) |
+| Langfuse observations containing the number | 1 | 0 of 6 |
+| Status / grounding coverage | completed / 1.00 | completed / 1.00 |
+
+n = 1 call, `en` only. It confirms the fix is live on the upload path. It is
+not a rate.
