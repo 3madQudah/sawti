@@ -1,14 +1,15 @@
 # 11 — Checkpoint
 
-**As of 2026-10-11, branch `phase-6.4`.** Phases 0–6.3 are done, and 6.4 (the
-local QA dashboard) is built. The phase history is in
+**As of 2026-10-11, branch `improvements-7`.** Phases 0–6.4 are done (6.4 is
+the local QA dashboard, merged to `main`). Phase 7 is pre-registered in
+[08-ROADMAP.md](08-ROADMAP.md), and 7.1 is done. The phase history is in
 [07-IMPLEMENTATION-PLAN.md](07-IMPLEMENTATION-PLAN.md).
 
 ## Checks (run 2026-10-11 on this branch)
 
 | Check | Result |
 |---|---|
-| `make test` | 1,009 passed, 10 skipped, 2 deselected (`integration`, `asr_local`); after today's redaction fix, `7f8cce9` |
+| `make test` | 1,020 passed, 10 skipped, 2 deselected (`integration`, `asr_local`), after 7.1 and the UUID/timestamp redaction fix. Two solo runs; running two suites at once on the shared test database gives false failures. |
 | `make lint` | clean |
 | `make typecheck` | clean (86 files, strict) |
 | Frontend `vitest run` | 40 passed |
@@ -22,7 +23,7 @@ local QA dashboard) is built. The phase history is in
 | Audio in (wav/mp3/m4a) → native ASR + diarization → redacted transcript → analysis | `call_0003_mixed` uploaded through New call ([eval_results.md](../eval_results.md), 2026-10-11); `tests/api/`, `tests/asr/` |
 | A low-confidence call pauses, survives a restart, and resumes after review | `tests/db/test_checkpointer.py`, `make e2e` |
 | Corrections → induced rules → retrieved into later calls | `tests/api/test_memory_loop.py`; the 600-call memory comparison |
-| Memory conflicts recorded and resolvable (4 actions) | Migration 0005; legacy re-check: 3 conflicts, 8 inserted |
+| Memory conflicts recorded and resolvable (4 actions); their rules held out of consolidation while open (7.1) | Migration 0005; legacy re-check: 3 conflicts, 8 inserted; regression tests in `tests/api/routes/test_memory.py` |
 | Retries on transient provider errors, reaper for stuck calls | `tests/api/test_tasks.py` |
 | Self-hosted Langfuse tracing with PII masking | `tests/observability/test_tracing.py` |
 | Redaction of phone formats (3-3-4, 3-4, Jordanian, Arabic-Indic) and any 7+ digit run | 69 cases in `tests/privacy/test_redaction.py`. Verified live: `call_0006_en` re-uploaded with `[PHONE]` in place of the number, and the number is in neither the transcript nor its Langfuse trace ([eval_results.md](../eval_results.md), 2026-10-11) |
@@ -46,7 +47,8 @@ local QA dashboard) is built. The phase history is in
 |---|---|---|---|
 | **Routing ignores ASR quality.** `call_0003_mixed` came back with Spanish, Japanese and Cyrillic fragments, grounded at 1.00, and auto-completed. | The worst transcripts are the least likely to reach a human. | Planned fix (Whisper scores + foreign-script ratio, thresholds measured per language). Not built. | [eval_results.md](../eval_results.md), [09-DECISIONS.md](09-DECISIONS.md), 2026-10-11 |
 | **Grounding proves a quote exists, not that it supports the claim.** | "Skipped identity verification" was backed by `Give me a second, Bess.` | No fix designed. | same |
-| **Consolidation can retire a rule an open conflict points at.** | `keep_new` and `discard` become no-ops. 2 of 3 open conflicts are affected. The UI disables those actions. | Known bug. Planned fix: exclude conflicted rules from consolidation. | [09-DECISIONS.md](09-DECISIONS.md), 2026-10-11 TODO |
+| ~~Consolidation can retire a rule an open conflict points at.~~ | It made `keep_new` and `discard` no-ops for 2 of the 3 conflicts recorded. (The UI never disabled those actions; an earlier version of this file said it did.) | **Fixed in 7.1.** Held rules are excluded from consolidation, and regression tests fail on the old code. The data check is vacuous: 0 open conflicts today. | [09-DECISIONS.md](09-DECISIONS.md), 2026-10-11 |
+| **Redaction mangled UUIDs and ISO timestamps** (regression from the phone fix and catch-all). | Call ids in Langfuse metadata were corrupted (1 trace and its 6 observations), and the tracing test was flaky. | **Fixed** (UUIDs and timestamps are protected). Corpus redaction counts are unchanged. | [09-DECISIONS.md](09-DECISIONS.md), 2026-10-11 |
 | **Diarization is unmeasured and misaligned.** Each Whisper segment goes wholly to one speaker, roles are first-speaker-is-agent, and accuracy has never been scored against the manifest timeline. On the uploaded `call_0006_en`, turns #3–#4 (and #7–#8) mix agent and customer speech. | A misattributed turn can move a commitment between agent and customer. The Phase 3 deltas used oracle speakers, so they are a lower bound. | Known issue, not fixed. Not measured. | [09-DECISIONS.md](09-DECISIONS.md), 2026-10-11; [eval_results.md](../eval_results.md), 2026-09-25 caveat 1 |
 | **`mixed` WER 0.433**, and 4 of 150 calls hit Whisper repetition loops. | Code-switched calls are the weakest link at every stage. | No mitigation tried. | [eval_results.md](../eval_results.md), 2026-09-25 |
 | **The live ASR path differs from Phase 3.** `call_0003_mixed` was clean in Phase 3 (WER 0.185) and garbled through New call. | Phase 3 WER doesn't guarantee live quality. | Cause not investigated. | [eval_results.md](../eval_results.md), 2026-10-11 |
@@ -64,8 +66,10 @@ local QA dashboard) is built. The phase history is in
    (high-WER recall and false-escalation rate), then add a
    `low_asr_quality` escalation ([09-DECISIONS.md](09-DECISIONS.md),
    2026-10-11).
-2. Exclude conflicted rules from consolidation, and decide what to do with
-   the 2 affected conflicts (same, 2026-10-11).
+2. ~~Exclude conflicted rules from consolidation.~~ Done (7.1). The 2
+   affected conflicts had already been resolved. Next are Phase 7.2–7.4, as
+   pre-registered in [08-ROADMAP.md](08-ROADMAP.md): transcript-quality routing,
+   NER name redaction, and the NLI claim-support check.
 3. Run the first real human reviews through the dashboard, so reviewer
    agreement has an n.
 4. Score diarization against `data/audio/manifest.json`.

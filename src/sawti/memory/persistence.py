@@ -11,10 +11,13 @@ corrections (`scripts/induce_rules_from_corrections.py`):
         insert_rule(store, candidate)                    # conflict check, unchanged
         persist the rule if inserted, or record the conflict (phase 6.4);
         mark the correction induced either way
-    consolidate(store) and sync the merge to the table   # phase 4, unchanged
+    consolidate(store) and sync the merge to the table   # phase 4, minus held rules
 
 A refused candidate is a `memory_conflicts` row a human resolves through
-`resolve_conflict` (docs/09-DECISIONS.md, 2026-10-10).
+`resolve_conflict` (docs/09-DECISIONS.md, 2026-10-10). While it is open, the
+rules it names are held out of consolidation (phase 7.1): merging one away
+would leave the conflict pointing at a retired rule, so `keep_new` and
+`discard` would retire nothing and the merged rule would not be linked to it.
 
 Per correction, the rule (if any) and the correction's `induced_at` commit
 together, so an interruption — a transient provider error, the daily quota —
@@ -244,10 +247,28 @@ def induce_and_store(
     return report
 
 
+def rules_held_by_open_conflicts(session: Session) -> set[uuid.UUID]:
+    """Ids of the existing rules named by every unresolved conflict."""
+    rows = session.query(MemoryConflict.conflicting).filter(MemoryConflict.resolution.is_(None))
+    return {uuid.UUID(entry["rule_id"]) for (conflicting,) in rows for entry in conflicting}
+
+
 def _consolidate_and_sync(before: list[MemoryRule], *, embed: Embedder | None) -> int:
-    after = consolidate(before, embed=embed)
+    """Consolidate `before`, minus the rules an open conflict names, and persist the result.
+
+    Held rules are neither clustered nor retired; they become eligible again
+    once their conflict is resolved. Callers hold the memory write lock, so no
+    conflict can be recorded or resolved between reading the held set and
+    writing the merge.
+    """
     with get_session() as session:
-        return _sync_consolidation(session, before, after)
+        held = rules_held_by_open_conflicts(session)
+    eligible = [rule for rule in before if rule.id not in held]
+    if len(eligible) < len(before):
+        logger.info("consolidation: %d rule(s) held out by open conflicts", len(before) - len(eligible))
+    after = consolidate(eligible, embed=embed)
+    with get_session() as session:
+        return _sync_consolidation(session, eligible, after)
 
 
 def consolidate_store(*, embed: Embedder | None = None) -> int:

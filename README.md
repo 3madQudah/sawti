@@ -135,8 +135,6 @@ The short version:
   it leaked once in production (fixed; see above).
 - **It's local only.** There is one shared API key, visible in the browser,
   and a self-asserted reviewer id. That isn't authentication.
-- **Memory has a known bug.** Consolidation can retire a rule an open
-  conflict points at.
 
 Open issues and next steps: [docs/11-CHECKPOINT.md](docs/11-CHECKPOINT.md).
 Security details: [docs/13-SECURITY.md](docs/13-SECURITY.md).
