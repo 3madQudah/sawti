@@ -1,0 +1,1099 @@
+{
+  "stage": "after",
+  "call_id": "81a89eb3-0026-4dd7-ad58-b07272df1999",
+  "audio_name": "call_0034_en.wav",
+  "captured_at": "2026-10-11T16:51:20.565638+00:00",
+  "responses": {
+    "/results": {
+      "serving": {
+        "source": "data/serving_benchmark/comparison.json",
+        "accuracy_comparable_across_providers": false,
+        "methods": {
+          "n": "calls in the cell: 15 per language; the vLLM concurrency-1 arm the first 5 per language; HF 1 per language",
+          "accuracy": "against Gemini-generated reference labels (data/ground_truth), schema-valid predictions only; not a fair cross-provider comparison",
+          "rubric_agreement": "against Gemini-generated reference labels, schema-valid predictions only",
+          "grounding_precision": "claims whose quote is verbatim in the redacted transcript; provider-neutral",
+          "unsupported_claim_rate": "claims not supported by the redacted transcript; provider-neutral",
+          "schema_valid_rate": "predictions that validated against CallAnalysis; failures count here, not in accuracy",
+          "latency": "end to end per call; concurrency-16 arms are under load (16 calls sharing the GPUs)",
+          "throughput": "per arm, on its whole mixed-language run; method per arm",
+          "cost_per_1000_usd": "priced as if paid (actual spend $0): Gemini at gemini-3.5-flash-lite's paid price x mean tokens; self-hosted at $0.845/h for 2xT4 x GPU time per 1000 calls, allocated by output tokens",
+          "third_party_transcript_bytes_per_call": "UTF-8 bytes of transcript text per call; the Kaggle arms uploaded the transcripts to Kaggle (Google) once, so this run did send them to a third party"
+        },
+        "pricing": {
+          "gemini": "ai.google.dev/gemini-api/docs/pricing (last updated 2026-10-07), standard paid tier",
+          "t4x2": "getdeploying.com/gpus/nvidia-t4 (updated 2026-10-07): Google Cloud T4 $0.42/GPU-h all-in -> $0.845/h for two; cheapest listed 2xT4 rental $1.11/h (sensitivity)"
+        },
+        "actual_spend_usd": 0.0,
+        "arms": [
+          {
+            "id": "gemini",
+            "label": "Cloud — Gemini (gemini-flash-lite-latest)",
+            "hardware": "Google-hosted (Gemini API, free tier, 1 in flight)",
+            "models": [
+              "gemini-3.5-flash-lite"
+            ],
+            "deployment": "cloud",
+            "throughput": {
+              "calls": 44,
+              "concurrency": 1,
+              "calls_per_min": 2.946,
+              "output_tokens_per_s": 81.3,
+              "method": "sum of per-call latency, 1 in flight, 44 calls (14.9 min); excluding call_0116_en (> 1 h, host sleep); the segment's wall time (61.4 h) includes host sleep and is not used",
+              "excluded_as_host_sleep": [
+                "call_0116_en"
+              ]
+            },
+            "ar": {
+              "n": 15,
+              "schema_valid": 15,
+              "schema_valid_rate": 1.0,
+              "accuracy": 0.8582,
+              "rubric_agreement": 0.9546,
+              "grounding_precision": 1.0,
+              "unsupported_claim_rate": 0.0,
+              "latency_p50_s": 6.253,
+              "latency_p95_s": 81.26369999999994,
+              "latency_n": 15,
+              "cost_per_1000_usd": 4.6164,
+              "cost_per_1000_usd_sensitivity": null,
+              "third_party_transcript_bytes_per_call": 2586.4,
+              "failures": 0
+            },
+            "en": {
+              "n": 15,
+              "schema_valid": 15,
+              "schema_valid_rate": 1.0,
+              "accuracy": 0.926,
+              "rubric_agreement": 0.9581,
+              "grounding_precision": 1.0,
+              "unsupported_claim_rate": 0.0,
+              "latency_p50_s": 8.102,
+              "latency_p95_s": 69.37829999999997,
+              "latency_n": 14,
+              "cost_per_1000_usd": 4.3931,
+              "cost_per_1000_usd_sensitivity": null,
+              "third_party_transcript_bytes_per_call": 2748.5,
+              "failures": 0
+            },
+            "mixed": {
+              "n": 15,
+              "schema_valid": 15,
+              "schema_valid_rate": 1.0,
+              "accuracy": 0.8572,
+              "rubric_agreement": 0.9546,
+              "grounding_precision": 1.0,
+              "unsupported_claim_rate": 0.0,
+              "latency_p50_s": 13.051,
+              "latency_p95_s": 56.36739999999998,
+              "latency_n": 15,
+              "cost_per_1000_usd": 4.4247,
+              "cost_per_1000_usd_sensitivity": null,
+              "third_party_transcript_bytes_per_call": 1766.5,
+              "failures": 0
+            }
+          },
+          {
+            "id": "vllm_adapter_c1",
+            "label": "Self-hosted — vLLM, QLoRA adapter, concurrency 1",
+            "hardware": "free Kaggle T4x2 (2x NVIDIA T4 16 GB, sm_75, fp16, TP=2)",
+            "models": [
+              "sawti-qlora"
+            ],
+            "deployment": "self_hosted",
+            "throughput": {
+              "calls": 15,
+              "concurrency": 1,
+              "calls_per_min": 0.173,
+              "output_tokens_per_s": 5.9,
+              "method": "segment wall time, 1 in flight (86.8 min)",
+              "excluded_as_host_sleep": []
+            },
+            "ar": {
+              "n": 5,
+              "schema_valid": 5,
+              "schema_valid_rate": 1.0,
+              "accuracy": 0.5518,
+              "rubric_agreement": 0.85,
+              "grounding_precision": 1.0,
+              "unsupported_claim_rate": 0.0,
+              "latency_p50_s": 290.686,
+              "latency_p95_s": 308.4078,
+              "latency_n": 5,
+              "cost_per_1000_usd": 66.9798,
+              "cost_per_1000_usd_sensitivity": 87.9852,
+              "third_party_transcript_bytes_per_call": 2163.8,
+              "failures": 0
+            },
+            "en": {
+              "n": 5,
+              "schema_valid": 4,
+              "schema_valid_rate": 0.8,
+              "accuracy": 0.5351,
+              "rubric_agreement": 0.7786,
+              "grounding_precision": 1.0,
+              "unsupported_claim_rate": 0.0,
+              "latency_p50_s": 339.546,
+              "latency_p95_s": 675.6788,
+              "latency_n": 5,
+              "cost_per_1000_usd": 100.1703,
+              "cost_per_1000_usd_sensitivity": 131.5846,
+              "third_party_transcript_bytes_per_call": 3113.6,
+              "failures": 1
+            },
+            "mixed": {
+              "n": 5,
+              "schema_valid": 5,
+              "schema_valid_rate": 1.0,
+              "accuracy": 0.5234,
+              "rubric_agreement": 0.8109,
+              "grounding_precision": 1.0,
+              "unsupported_claim_rate": 0.0,
+              "latency_p50_s": 348.459,
+              "latency_p95_s": 396.1418,
+              "latency_n": 5,
+              "cost_per_1000_usd": 77.4446,
+              "cost_per_1000_usd_sensitivity": 101.7319,
+              "third_party_transcript_bytes_per_call": 2109.4,
+              "failures": 0
+            }
+          },
+          {
+            "id": "vllm_adapter_c16",
+            "label": "Self-hosted — vLLM, QLoRA adapter, concurrency 16",
+            "hardware": "free Kaggle T4x2 (2x NVIDIA T4 16 GB, sm_75, fp16, TP=2)",
+            "models": [
+              "sawti-qlora"
+            ],
+            "deployment": "self_hosted",
+            "throughput": {
+              "calls": 45,
+              "concurrency": 16,
+              "calls_per_min": 2.16,
+              "output_tokens_per_s": 70.3,
+              "method": "segment wall time, 16 in flight (20.8 min)",
+              "excluded_as_host_sleep": []
+            },
+            "ar": {
+              "n": 15,
+              "schema_valid": 14,
+              "schema_valid_rate": 0.9333,
+              "accuracy": 0.5725,
+              "rubric_agreement": 0.8582,
+              "grounding_precision": 1.0,
+              "unsupported_claim_rate": 0.0,
+              "latency_p50_s": 322.138,
+              "latency_p95_s": 726.903,
+              "latency_n": 15,
+              "cost_per_1000_usd": 6.9815,
+              "cost_per_1000_usd_sensitivity": 9.1709,
+              "third_party_transcript_bytes_per_call": 2586.4,
+              "failures": 1
+            },
+            "en": {
+              "n": 15,
+              "schema_valid": 13,
+              "schema_valid_rate": 0.8667,
+              "accuracy": 0.6028,
+              "rubric_agreement": 0.8279,
+              "grounding_precision": 1.0,
+              "unsupported_claim_rate": 0.0,
+              "latency_p50_s": 319.22,
+              "latency_p95_s": 756.9603999999999,
+              "latency_n": 15,
+              "cost_per_1000_usd": 6.6244,
+              "cost_per_1000_usd_sensitivity": 8.7019,
+              "third_party_transcript_bytes_per_call": 2748.5,
+              "failures": 2
+            },
+            "mixed": {
+              "n": 15,
+              "schema_valid": 15,
+              "schema_valid_rate": 1.0,
+              "accuracy": 0.633,
+              "rubric_agreement": 0.8352,
+              "grounding_precision": 1.0,
+              "unsupported_claim_rate": 0.0,
+              "latency_p50_s": 329.286,
+              "latency_p95_s": 413.0656999999999,
+              "latency_n": 15,
+              "cost_per_1000_usd": 5.9528,
+              "cost_per_1000_usd_sensitivity": 7.8197,
+              "third_party_transcript_bytes_per_call": 1766.5,
+              "failures": 0
+            }
+          },
+          {
+            "id": "vllm_base_c16",
+            "label": "Self-hosted — vLLM, base Qwen3-8B, concurrency 16",
+            "hardware": "free Kaggle T4x2 (2x NVIDIA T4 16 GB, sm_75, fp16, TP=2)",
+            "models": [
+              "Qwen/Qwen3-8B"
+            ],
+            "deployment": "self_hosted",
+            "throughput": {
+              "calls": 45,
+              "concurrency": 16,
+              "calls_per_min": 3.549,
+              "output_tokens_per_s": 116.6,
+              "method": "segment wall time, 16 in flight (12.7 min)",
+              "excluded_as_host_sleep": []
+            },
+            "ar": {
+              "n": 15,
+              "schema_valid": 15,
+              "schema_valid_rate": 1.0,
+              "accuracy": 0.5796,
+              "rubric_agreement": 0.821,
+              "grounding_precision": 1.0,
+              "unsupported_claim_rate": 0.0,
+              "latency_p50_s": 239.662,
+              "latency_p95_s": 325.2641,
+              "latency_n": 15,
+              "cost_per_1000_usd": 4.3433,
+              "cost_per_1000_usd_sensitivity": 5.7055,
+              "third_party_transcript_bytes_per_call": 2586.4,
+              "failures": 0
+            },
+            "en": {
+              "n": 15,
+              "schema_valid": 15,
+              "schema_valid_rate": 1.0,
+              "accuracy": 0.589,
+              "rubric_agreement": 0.8481,
+              "grounding_precision": 1.0,
+              "unsupported_claim_rate": 0.0,
+              "latency_p50_s": 203.098,
+              "latency_p95_s": 294.6471999999999,
+              "latency_n": 15,
+              "cost_per_1000_usd": 3.7988,
+              "cost_per_1000_usd_sensitivity": 4.9902,
+              "third_party_transcript_bytes_per_call": 2748.5,
+              "failures": 0
+            },
+            "mixed": {
+              "n": 15,
+              "schema_valid": 15,
+              "schema_valid_rate": 1.0,
+              "accuracy": 0.5885,
+              "rubric_agreement": 0.8613,
+              "grounding_precision": 1.0,
+              "unsupported_claim_rate": 0.0,
+              "latency_p50_s": 224.307,
+              "latency_p95_s": 262.10459999999995,
+              "latency_n": 15,
+              "cost_per_1000_usd": 3.7614,
+              "cost_per_1000_usd_sensitivity": 4.941,
+              "third_party_transcript_bytes_per_call": 1766.5,
+              "failures": 0
+            }
+          },
+          {
+            "id": "hf_adapter_c1",
+            "label": "Self-hosted — HF transformers fp16, adapter, concurrency 1",
+            "hardware": "free Kaggle T4x2 (2x NVIDIA T4 16 GB, sm_75, fp16, TP=2)",
+            "models": [
+              "Qwen/Qwen3-8B"
+            ],
+            "deployment": "self_hosted",
+            "throughput": {
+              "calls": 3,
+              "concurrency": 1,
+              "calls_per_min": 0.123,
+              "output_tokens_per_s": 7.1,
+              "method": "segment wall time, 1 in flight (24.4 min)",
+              "excluded_as_host_sleep": []
+            },
+            "ar": {
+              "n": 1,
+              "schema_valid": 1,
+              "schema_valid_rate": 1.0,
+              "accuracy": 0.75,
+              "rubric_agreement": 1.0,
+              "grounding_precision": 1.0,
+              "unsupported_claim_rate": 0.0,
+              "latency_p50_s": 531.39,
+              "latency_p95_s": 531.39,
+              "latency_n": 1,
+              "cost_per_1000_usd": 121.6061,
+              "cost_per_1000_usd_sensitivity": 159.7429,
+              "third_party_transcript_bytes_per_call": 3161.0,
+              "failures": 0
+            },
+            "en": {
+              "n": 1,
+              "schema_valid": 1,
+              "schema_valid_rate": 1.0,
+              "accuracy": 0.5781,
+              "rubric_agreement": 0.84,
+              "grounding_precision": 1.0,
+              "unsupported_claim_rate": 0.0,
+              "latency_p50_s": 472.429,
+              "latency_p95_s": 472.429,
+              "latency_n": 1,
+              "cost_per_1000_usd": 111.5549,
+              "cost_per_1000_usd_sensitivity": 146.5396,
+              "third_party_transcript_bytes_per_call": 3617.0,
+              "failures": 0
+            },
+            "mixed": {
+              "n": 1,
+              "schema_valid": 1,
+              "schema_valid_rate": 1.0,
+              "accuracy": 0.75,
+              "rubric_agreement": 0.82,
+              "grounding_precision": 1.0,
+              "unsupported_claim_rate": 0.0,
+              "latency_p50_s": 459.124,
+              "latency_p95_s": 459.124,
+              "latency_n": 1,
+              "cost_per_1000_usd": 110.3315,
+              "cost_per_1000_usd_sensitivity": 144.9326,
+              "third_party_transcript_bytes_per_call": 2228.0,
+              "failures": 0
+            }
+          }
+        ]
+      },
+      "memory": {
+        "source": "data/memory_comparison/report.json",
+        "method": "memory off vs on (top-5 of 35 frozen complete-linkage rules, leave-one-out), all 150 calls, two repeats; accuracy paired over calls valid in both arms; effect = mean delta; noise = the larger of the off arm's change between repeats and the delta's change between repeats; verdict vs Phase 4's mean per-batch delta (rule pre-registered 2026-10-10)",
+        "provider": "Gemini API, gemini-flash-lite-latest (resolved to gemini-3.5-flash-lite on all 600 calls)",
+        "hardware": "Google-hosted (Gemini API; 528 calls free tier, 72 paid tier)",
+        "calls": 600,
+        "ar": {
+          "n_paired_per_repeat": [
+            60,
+            60
+          ],
+          "accuracy_off_per_repeat": [
+            0.8743,
+            0.8888
+          ],
+          "accuracy_on_per_repeat": [
+            0.8987,
+            0.9067
+          ],
+          "delta_per_repeat": [
+            0.0245,
+            0.0179
+          ],
+          "delta": 0.0212,
+          "noise": 0.0146,
+          "phase4_delta": 0.0562,
+          "verdict": "contradicts"
+        },
+        "en": {
+          "n_paired_per_repeat": [
+            30,
+            30
+          ],
+          "accuracy_off_per_repeat": [
+            0.9158,
+            0.8888
+          ],
+          "accuracy_on_per_repeat": [
+            0.9202,
+            0.928
+          ],
+          "delta_per_repeat": [
+            0.0044,
+            0.0392
+          ],
+          "delta": 0.0218,
+          "noise": 0.0348,
+          "phase4_delta": 0.0048,
+          "verdict": "inconclusive"
+        },
+        "mixed": {
+          "n_paired_per_repeat": [
+            60,
+            60
+          ],
+          "accuracy_off_per_repeat": [
+            0.833,
+            0.8384
+          ],
+          "accuracy_on_per_repeat": [
+            0.8789,
+            0.8757
+          ],
+          "delta_per_repeat": [
+            0.046,
+            0.0373
+          ],
+          "delta": 0.0417,
+          "noise": 0.0086,
+          "phase4_delta": 0.0,
+          "verdict": "confirms"
+        }
+      }
+    },
+    "/stats": {
+      "ar": {
+        "pending_reviews": 0,
+        "reviewer_agreement": {
+          "value": null,
+          "numerator": 0,
+          "n": 0
+        },
+        "active_rules": 8,
+        "pending_conflicts": 0,
+        "conflict_false_positive_rate": {
+          "value": 0.0,
+          "numerator": 0,
+          "n": 1
+        }
+      },
+      "en": {
+        "pending_reviews": 0,
+        "reviewer_agreement": {
+          "value": 1.0,
+          "numerator": 8,
+          "n": 8
+        },
+        "active_rules": 6,
+        "pending_conflicts": 0,
+        "conflict_false_positive_rate": {
+          "value": null,
+          "numerator": 0,
+          "n": 0
+        }
+      },
+      "mixed": {
+        "pending_reviews": 0,
+        "reviewer_agreement": {
+          "value": null,
+          "numerator": 0,
+          "n": 0
+        },
+        "active_rules": 13,
+        "pending_conflicts": 0,
+        "conflict_false_positive_rate": {
+          "value": 0.0,
+          "numerator": 0,
+          "n": 2
+        }
+      },
+      "active_rules_distinct": 17
+    },
+    "/reviews": {
+      "items": [],
+      "pending": {
+        "ar": 0,
+        "en": 0,
+        "mixed": 0
+      }
+    },
+    "/memory/rules": {
+      "rules": [
+        {
+          "id": "14ac928f-0a0a-4458-b80d-3c2445c9e622",
+          "text": "Classify statements as commitments only when they represent explicit, verifiable, and mutually agreed-upon action items or binding promises made by the agent, excluding casual mentions, conversational filler, empathy, conditional statements, tentative intentions, implied statements, and multiple references to the same single action.",
+          "source_corrections": 17,
+          "languages": [
+            "ar",
+            "en",
+            "mixed"
+          ],
+          "analyses_used": 2,
+          "created_at": "2026-10-11T10:31:42.339502Z"
+        },
+        {
+          "id": "c0661ded-a987-4115-8325-9c30b8046f42",
+          "text": "Apply the compliance flag if the agent fails to properly introduce themselves and the company or neglects the mandatory customer identity verification process before discussing account details.",
+          "source_corrections": 9,
+          "languages": [
+            "ar",
+            "mixed"
+          ],
+          "analyses_used": 4,
+          "created_at": "2026-10-11T10:31:41.139496Z"
+        },
+        {
+          "id": "3421fd23-3dc2-4e49-82d7-f90c07685b66",
+          "text": "Accurately evaluate compliance and identity verification flags based strictly on direct, verified transcript evidence of mandatory steps to ensure proper assessment without triggering false positives or penalties.",
+          "source_corrections": 13,
+          "languages": [
+            "ar",
+            "en",
+            "mixed"
+          ],
+          "analyses_used": 0,
+          "created_at": "2026-10-11T10:31:40.213946Z"
+        },
+        {
+          "id": "9286cc5a-dc2c-4994-9329-c3311d4e925c",
+          "text": "Verify each commitment independently against the transcript to ensure only explicitly agreed-upon, distinct, and substantiated action items are counted, strictly excluding conditional suggestions, implied actions, or duplicates to prevent overcounting or undercounting.",
+          "source_corrections": 13,
+          "languages": [
+            "ar",
+            "en",
+            "mixed"
+          ],
+          "analyses_used": 0,
+          "created_at": "2026-10-11T10:31:39.253826Z"
+        },
+        {
+          "id": "705c7ac7-3124-478e-84ec-74ab6c737d50",
+          "text": "Carefully audit the entire dialogue to ensure every explicit or implied promise, agreement, follow-up action, or next step made by either party is comprehensively identified and captured as a distinct commitment without omission or undercounting.",
+          "source_corrections": 31,
+          "languages": [
+            "ar",
+            "en",
+            "mixed"
+          ],
+          "analyses_used": 0,
+          "created_at": "2026-10-11T10:31:38.273530Z"
+        },
+        {
+          "id": "fcd85017-b79d-41d5-9223-75a6f0e5214b",
+          "text": "Use the exact standardized nomenclature and precise terminology defined in the system guidelines for compliance flags rather than alternate, generic, or paraphrased labels.",
+          "source_corrections": 2,
+          "languages": [
+            "mixed"
+          ],
+          "analyses_used": 0,
+          "created_at": "2026-10-07T09:08:35.053514Z"
+        },
+        {
+          "id": "758168d8-8cb0-4157-88cf-7deac4e8777c",
+          "text": "Accurately identify and flag any instances where mandatory customer verification steps were omitted during the interaction.",
+          "source_corrections": 2,
+          "languages": [
+            "mixed"
+          ],
+          "analyses_used": 0,
+          "created_at": "2026-10-07T09:08:30.343644Z"
+        },
+        {
+          "id": "1ce8fe26-d15f-4e01-9b46-ffed54215b0c",
+          "text": "Utilize the specific compliance flag 'refusing_manager_escalation' instead of a generalized refusal flag whenever a request to speak with a manager is denied.",
+          "source_corrections": 3,
+          "languages": [
+            "en"
+          ],
+          "analyses_used": 5,
+          "created_at": "2026-10-07T09:07:40.881031Z"
+        },
+        {
+          "id": "f09f021d-e6eb-47f6-8eb2-1a9d636db40d",
+          "text": "Verify that agent name disclosure and procedure adherence are strictly evaluated against the actual audio transcript and established guidelines before assigning non-compliance flags.",
+          "source_corrections": 2,
+          "languages": [
+            "ar",
+            "mixed"
+          ],
+          "analyses_used": 0,
+          "created_at": "2026-10-07T09:07:23.192251Z"
+        },
+        {
+          "id": "b0b65d92-6a8f-41ec-a9d4-9c3bc4290f94",
+          "text": "Verify the precise timing of identity verification against the strict call-flow criteria, and do not flag it as late if it was completed within the acceptable timeframe.",
+          "source_corrections": 2,
+          "languages": [
+            "mixed"
+          ],
+          "analyses_used": 4,
+          "created_at": "2026-10-07T09:07:09.397768Z"
+        },
+        {
+          "id": "3bebec81-859d-4054-84e8-a639e178fa8d",
+          "text": "Exclude automatically generated system messages or placeholders from being classified as valid commitments.",
+          "source_corrections": 1,
+          "languages": [
+            "mixed"
+          ],
+          "analyses_used": 1,
+          "created_at": "2026-10-07T08:48:10.216064Z"
+        },
+        {
+          "id": "845e4e7f-e6e2-4e27-b7af-d4e56db20e4a",
+          "text": "Accurately identify and flag any instances of inappropriate language used during the interaction.",
+          "source_corrections": 1,
+          "languages": [
+            "mixed"
+          ],
+          "analyses_used": 0,
+          "created_at": "2026-10-07T08:47:16.515895Z"
+        },
+        {
+          "id": "15b2903e-f59e-4e33-a0dd-772181481d07",
+          "text": "Flag interactions as containing third-party blame whenever representatives deflect responsibility or attribute faults to external entities, systems, or other departments.",
+          "source_corrections": 1,
+          "languages": [
+            "mixed"
+          ],
+          "analyses_used": 0,
+          "created_at": "2026-10-07T08:17:14.477396Z"
+        },
+        {
+          "id": "b526a685-f283-43af-af3a-17e9194edd2b",
+          "text": "Ensure that tentative or conversational agreements without explicit follow-up actions by either party are not classified as formal commitments.",
+          "source_corrections": 1,
+          "languages": [
+            "ar"
+          ],
+          "analyses_used": 0,
+          "created_at": "2026-10-07T07:54:38.359418Z"
+        },
+        {
+          "id": "dc6f6f57-687a-4a4c-8488-29a25f711345",
+          "text": "Do not identify general statements of policy or conversational closing remarks as actionable customer commitments.",
+          "source_corrections": 1,
+          "languages": [
+            "ar"
+          ],
+          "analyses_used": 4,
+          "created_at": "2026-10-07T07:50:35.128342Z"
+        },
+        {
+          "id": "a2cafb62-2995-4f63-90d1-b0d8090791bb",
+          "text": "Do not trigger politeness failure compliance flags when agents maintain appropriate professional etiquette throughout the interaction.",
+          "source_corrections": 1,
+          "languages": [
+            "en"
+          ],
+          "analyses_used": 6,
+          "created_at": "2026-10-07T07:49:40.852241Z"
+        },
+        {
+          "id": "26037da6-2f92-4fa5-a9b4-c78d53b3be8b",
+          "text": "Assign the 'none' compliance flag when no resolution confirmation issues are present in the interaction.",
+          "source_corrections": 1,
+          "languages": [
+            "mixed"
+          ],
+          "analyses_used": 0,
+          "created_at": "2026-10-07T07:45:37.369473Z"
+        }
+      ]
+    },
+    "/memory/conflicts": {
+      "conflicts": [],
+      "pending": {
+        "ar": 0,
+        "en": 0,
+        "mixed": 0
+      }
+    },
+    "/calls/81a89eb3-0026-4dd7-ad58-b07272df1999": {
+      "call_id": "81a89eb3-0026-4dd7-ad58-b07272df1999",
+      "status": "reviewed",
+      "language": "en",
+      "agent_name": "unattributed",
+      "queued_at": "2026-10-11T16:36:29.162945Z",
+      "started_at": "2026-10-11T16:36:29.489341Z",
+      "finished_at": "2026-10-11T16:36:37.807688Z",
+      "pii_redacted_count": 1,
+      "attempts": 1,
+      "failure_reason": null,
+      "redacted_transcript": "Agent: Thank you for calling Metro Telecom Customer Service. My name is Marcus. How can I help you\nCustomer: today? Hi, yes, I'm calling because I got my latest bill and it's much higher than it usually is and I'm really confused about why that's happening. I can certainly look into that bill for you and\nAgent: see why the charges have increased. May I please have your account number or the phone number\nCustomer: associated with the account? Sure, the phone number is [PHONE]. Wait, did you need me to\nAgent: spell my last name too? No need to spell your last name right now. The phone number is plenty to pull up the account. Let me just verify your billing address for security purposes. Oh, okay. It's 422\nCustomer: Maple Street, Apartment B in Springfield. Perfect. Thank you for verifying that. I have your account open here. You mentioned your bill is higher this month? Yes, exactly. Usually I pay around $60, but this month it's showing $95 and I honestly have no idea what changed. I understand. Let me check\nAgent: the billing details for this month. It looks like your promotional rate expired and your account transitioned to our standard two-year contract renewal pricing. Wait, what? Can you say that again?\nCustomer: I'm sorry, I'm not really good with these technical terms. Not a problem at all. What I mean is that the\nAgent: discount you had for the first year has ended, so the price went up to our regular monthly rate.\nCustomer: Oh, the discount ended. But nobody told me my discount was ending. When did that happen?\nAgent: We actually sent a notification letter in the mail about 30 days before the discount period expired, explaining that the contract would renew at the standard rate. A letter? I get so much junk mail,\nCustomer: I probably threw it away without reading it. But wait, did I agree to a contract renewal?\nAgent: I don't remember signing anything. When you originally signed up for the service 12 months ago, the agreement included an auto-renewal clause at the standard monthly rate unless you called to cancel or change plans before the anniversary date. I'm sorry, you'll have to repeat that slowly. Are you saying I'm locked into a new contract now? Yes, exactly. The account automatically renewed for another 12 months starting on the first of this month at the standard rate of $95 per month.\nCustomer: Another 12 months? But I didn't want a new contract. Can we just cancel this and go back\nAgent: to what I was paying before? I can certainly look into our current promotional offers to see if we can lower your rate. But because the renewal has already processed, there might be an early termination fee if we cancel the entire contract outright. An early termination fee? Now I have to\nCustomer: pay a fee just because I'm confused about my bill? This is getting ridiculous.\nAgent: I completely understand your frustration and I want to help you find the best solution possible without adding extra charges. Let me check if I can apply a loyalty discount to your current plan\nCustomer: to bring that $95 bill down. Could you repeat what kind of discount that is? My hearing isn't the\nAgent: best today. Of course. I can apply a loyalty credit of $15 per month to your account, which would make your new monthly bill $80 instead of $95.\nCustomer: $80 is still more than the $60 I was paying before, right?\nAgent: That is correct. Yes, because your original introductory rate was a special one-time offer for new customers only, which we can unfortunately only offer once per household.\nCustomer: Well, $80 is better than $95, but I really wish someone had called me on the phone to explain all of this instead of just sending a letter I missed. I completely agree that a phone call\nAgent: or a direct email would have been much clearer, and I apologize for the inconvenience this has\nCustomer: caused you today. Okay, so if I take this $80 rate, am I still locked into that new 12-month\nAgent: contract you mentioned earlier? Yes. Applying the loyalty credit will keep you on the current plan for the remainder of the 12-month term, but you will save $180 over the course of the year compared\nCustomer: to the standard rate. All right, I suppose I don't have much of a choice then. Let's go ahead\nAgent: with that $80 option, please. I can certainly do that for you. I'll apply the loyalty credit right now, and it will reflect on your next billing cycle. Is there anything else I can clarify for you today?\nCustomer: No, I think that's everything. Just $80 a month from now on, right?\nAgent: Exactly. $80 a month plus applicable taxes. Thank you for your patience today, and have a wonderful rest of your day.\n",
+      "turns": [
+        {
+          "index": 0,
+          "speaker": "Agent",
+          "language": "en",
+          "text": "Thank you for calling Metro Telecom Customer Service. My name is Marcus. How can I help you",
+          "start_char": 7,
+          "end_char": 98
+        },
+        {
+          "index": 1,
+          "speaker": "Customer",
+          "language": "en",
+          "text": "today? Hi, yes, I'm calling because I got my latest bill and it's much higher than it usually is and I'm really confused about why that's happening. I can certainly look into that bill for you and",
+          "start_char": 109,
+          "end_char": 305
+        },
+        {
+          "index": 2,
+          "speaker": "Agent",
+          "language": "en",
+          "text": "see why the charges have increased. May I please have your account number or the phone number",
+          "start_char": 313,
+          "end_char": 406
+        },
+        {
+          "index": 3,
+          "speaker": "Customer",
+          "language": "en",
+          "text": "associated with the account? Sure, the phone number is [PHONE]. Wait, did you need me to",
+          "start_char": 417,
+          "end_char": 505
+        },
+        {
+          "index": 4,
+          "speaker": "Agent",
+          "language": "en",
+          "text": "spell my last name too? No need to spell your last name right now. The phone number is plenty to pull up the account. Let me just verify your billing address for security purposes. Oh, okay. It's 422",
+          "start_char": 513,
+          "end_char": 712
+        },
+        {
+          "index": 5,
+          "speaker": "Customer",
+          "language": "en",
+          "text": "Maple Street, Apartment B in Springfield. Perfect. Thank you for verifying that. I have your account open here. You mentioned your bill is higher this month? Yes, exactly. Usually I pay around $60, but this month it's showing $95 and I honestly have no idea what changed. I understand. Let me check",
+          "start_char": 723,
+          "end_char": 1021
+        },
+        {
+          "index": 6,
+          "speaker": "Agent",
+          "language": "en",
+          "text": "the billing details for this month. It looks like your promotional rate expired and your account transitioned to our standard two-year contract renewal pricing. Wait, what? Can you say that again?",
+          "start_char": 1029,
+          "end_char": 1225
+        },
+        {
+          "index": 7,
+          "speaker": "Customer",
+          "language": "en",
+          "text": "I'm sorry, I'm not really good with these technical terms. Not a problem at all. What I mean is that the",
+          "start_char": 1236,
+          "end_char": 1340
+        },
+        {
+          "index": 8,
+          "speaker": "Agent",
+          "language": "en",
+          "text": "discount you had for the first year has ended, so the price went up to our regular monthly rate.",
+          "start_char": 1348,
+          "end_char": 1444
+        },
+        {
+          "index": 9,
+          "speaker": "Customer",
+          "language": "en",
+          "text": "Oh, the discount ended. But nobody told me my discount was ending. When did that happen?",
+          "start_char": 1455,
+          "end_char": 1543
+        },
+        {
+          "index": 10,
+          "speaker": "Agent",
+          "language": "en",
+          "text": "We actually sent a notification letter in the mail about 30 days before the discount period expired, explaining that the contract would renew at the standard rate. A letter? I get so much junk mail,",
+          "start_char": 1551,
+          "end_char": 1749
+        },
+        {
+          "index": 11,
+          "speaker": "Customer",
+          "language": "en",
+          "text": "I probably threw it away without reading it. But wait, did I agree to a contract renewal?",
+          "start_char": 1760,
+          "end_char": 1849
+        },
+        {
+          "index": 12,
+          "speaker": "Agent",
+          "language": "en",
+          "text": "I don't remember signing anything. When you originally signed up for the service 12 months ago, the agreement included an auto-renewal clause at the standard monthly rate unless you called to cancel or change plans before the anniversary date. I'm sorry, you'll have to repeat that slowly. Are you saying I'm locked into a new contract now? Yes, exactly. The account automatically renewed for another 12 months starting on the first of this month at the standard rate of $95 per month.",
+          "start_char": 1857,
+          "end_char": 2342
+        },
+        {
+          "index": 13,
+          "speaker": "Customer",
+          "language": "en",
+          "text": "Another 12 months? But I didn't want a new contract. Can we just cancel this and go back",
+          "start_char": 2353,
+          "end_char": 2441
+        },
+        {
+          "index": 14,
+          "speaker": "Agent",
+          "language": "en",
+          "text": "to what I was paying before? I can certainly look into our current promotional offers to see if we can lower your rate. But because the renewal has already processed, there might be an early termination fee if we cancel the entire contract outright. An early termination fee? Now I have to",
+          "start_char": 2449,
+          "end_char": 2738
+        },
+        {
+          "index": 15,
+          "speaker": "Customer",
+          "language": "en",
+          "text": "pay a fee just because I'm confused about my bill? This is getting ridiculous.",
+          "start_char": 2749,
+          "end_char": 2827
+        },
+        {
+          "index": 16,
+          "speaker": "Agent",
+          "language": "en",
+          "text": "I completely understand your frustration and I want to help you find the best solution possible without adding extra charges. Let me check if I can apply a loyalty discount to your current plan",
+          "start_char": 2835,
+          "end_char": 3028
+        },
+        {
+          "index": 17,
+          "speaker": "Customer",
+          "language": "en",
+          "text": "to bring that $95 bill down. Could you repeat what kind of discount that is? My hearing isn't the",
+          "start_char": 3039,
+          "end_char": 3136
+        },
+        {
+          "index": 18,
+          "speaker": "Agent",
+          "language": "en",
+          "text": "best today. Of course. I can apply a loyalty credit of $15 per month to your account, which would make your new monthly bill $80 instead of $95.",
+          "start_char": 3144,
+          "end_char": 3288
+        },
+        {
+          "index": 19,
+          "speaker": "Customer",
+          "language": "en",
+          "text": "$80 is still more than the $60 I was paying before, right?",
+          "start_char": 3299,
+          "end_char": 3357
+        },
+        {
+          "index": 20,
+          "speaker": "Agent",
+          "language": "en",
+          "text": "That is correct. Yes, because your original introductory rate was a special one-time offer for new customers only, which we can unfortunately only offer once per household.",
+          "start_char": 3365,
+          "end_char": 3537
+        },
+        {
+          "index": 21,
+          "speaker": "Customer",
+          "language": "en",
+          "text": "Well, $80 is better than $95, but I really wish someone had called me on the phone to explain all of this instead of just sending a letter I missed. I completely agree that a phone call",
+          "start_char": 3548,
+          "end_char": 3733
+        },
+        {
+          "index": 22,
+          "speaker": "Agent",
+          "language": "en",
+          "text": "or a direct email would have been much clearer, and I apologize for the inconvenience this has",
+          "start_char": 3741,
+          "end_char": 3835
+        },
+        {
+          "index": 23,
+          "speaker": "Customer",
+          "language": "en",
+          "text": "caused you today. Okay, so if I take this $80 rate, am I still locked into that new 12-month",
+          "start_char": 3846,
+          "end_char": 3938
+        },
+        {
+          "index": 24,
+          "speaker": "Agent",
+          "language": "en",
+          "text": "contract you mentioned earlier? Yes. Applying the loyalty credit will keep you on the current plan for the remainder of the 12-month term, but you will save $180 over the course of the year compared",
+          "start_char": 3946,
+          "end_char": 4144
+        },
+        {
+          "index": 25,
+          "speaker": "Customer",
+          "language": "en",
+          "text": "to the standard rate. All right, I suppose I don't have much of a choice then. Let's go ahead",
+          "start_char": 4155,
+          "end_char": 4248
+        },
+        {
+          "index": 26,
+          "speaker": "Agent",
+          "language": "en",
+          "text": "with that $80 option, please. I can certainly do that for you. I'll apply the loyalty credit right now, and it will reflect on your next billing cycle. Is there anything else I can clarify for you today?",
+          "start_char": 4256,
+          "end_char": 4459
+        },
+        {
+          "index": 27,
+          "speaker": "Customer",
+          "language": "en",
+          "text": "No, I think that's everything. Just $80 a month from now on, right?",
+          "start_char": 4470,
+          "end_char": 4537
+        },
+        {
+          "index": 28,
+          "speaker": "Agent",
+          "language": "en",
+          "text": "Exactly. $80 a month plus applicable taxes. Thank you for your patience today, and have a wonderful rest of your day.",
+          "start_char": 4545,
+          "end_char": 4662
+        }
+      ],
+      "summary": "The customer called because their monthly bill increased from $60 to $95 and they were confused. The agent explained that the introductory promotional rate had expired and the account auto-renewed onto a standard 12-month contract. After the customer expressed frustration about the renewal and early termination fees, the agent offered a $15 per month loyalty credit to reduce the bill to $80 while keeping the contract active. The customer reluctantly accepted the $80 option, and the agent applied the credit.",
+      "confidence": 0.625,
+      "grounding_coverage": 0.625,
+      "confidence_threshold": 0.7,
+      "escalation_reason": "3 of 8 claims had no verbatim evidence (grounding coverage 62%, threshold 70%)",
+      "escalation": {
+        "kind": "low_grounding",
+        "rejected_claims": 3,
+        "total_claims": 8,
+        "grounding_coverage": 0.625,
+        "threshold": 0.7
+      },
+      "claims": [
+        {
+          "claim_id": "commitments[0]",
+          "kind": "commitment",
+          "quote": "I'll apply the loyalty credit right now, and it will reflect on your next billing cycle.",
+          "speaker": "Agent",
+          "start_char": 4319,
+          "end_char": 4407,
+          "turn_index": 26,
+          "description": "Apply the $15 monthly loyalty credit to the customer's account effective on the next billing cycle.",
+          "promised_by": "Agent",
+          "deadline": null,
+          "rule_id": null,
+          "severity": null,
+          "criterion": null,
+          "score": null
+        },
+        {
+          "claim_id": "rubric_scores[0]",
+          "kind": "rubric_score",
+          "quote": "I completely understand your frustration and I want to help you find the best solution possible without adding extra charges.",
+          "speaker": "Agent",
+          "start_char": 2835,
+          "end_char": 2960,
+          "turn_index": 16,
+          "description": "The agent acknowledged the customer's frustration and validated their feelings regarding the unexpected price increase.",
+          "promised_by": null,
+          "deadline": null,
+          "rule_id": null,
+          "severity": null,
+          "criterion": "empathy",
+          "score": 0.8
+        },
+        {
+          "claim_id": "rubric_scores[1]",
+          "kind": "rubric_score",
+          "quote": "Thank you for your patience today, and have a wonderful rest of your day.",
+          "speaker": "Agent",
+          "start_char": 4589,
+          "end_char": 4662,
+          "turn_index": 28,
+          "description": "The agent confirmed resolution, checked for additional questions, and provided a polite professional closing.",
+          "promised_by": null,
+          "deadline": null,
+          "rule_id": null,
+          "severity": null,
+          "criterion": "call_closure",
+          "score": 0.9
+        },
+        {
+          "claim_id": "rubric_scores[2]",
+          "kind": "rubric_score",
+          "quote": "The account automatically renewed for another 12 months starting on the first of this month at the standard rate of $95 per month.",
+          "speaker": "Agent",
+          "start_char": 2212,
+          "end_char": 2342,
+          "turn_index": 12,
+          "description": "The agent provided accurate information regarding billing policies, promotional expiration, and available credit options.",
+          "promised_by": null,
+          "deadline": null,
+          "rule_id": null,
+          "severity": null,
+          "criterion": "accuracy_of_information",
+          "score": 1.0
+        },
+        {
+          "claim_id": "rubric_scores[3]",
+          "kind": "rubric_score",
+          "quote": "Let me just verify your billing address for security purposes.",
+          "speaker": "Agent",
+          "start_char": 631,
+          "end_char": 693,
+          "turn_index": 4,
+          "description": "The agent adhered to all required verification procedures before discussing account details.",
+          "promised_by": null,
+          "deadline": null,
+          "rule_id": null,
+          "severity": null,
+          "criterion": "procedure_adherence",
+          "score": 1.0
+        }
+      ],
+      "rejected_claims": [
+        {
+          "kind": "rubric_score",
+          "attempted_quote": "I can certainly look into that bill for you and see why the charges have increased.",
+          "speaker": "Agent",
+          "description": "The agent maintained a polite, respectful, and professional tone throughout the call without losing composure."
+        },
+        {
+          "kind": "rubric_score",
+          "attempted_quote": "All right, I suppose I don't have much of a choice then. Let's go ahead with that $80 option, please.",
+          "speaker": "Customer",
+          "description": "The agent successfully resolved the customer's issue by offering a loyalty credit that lowered the increased bill to a manageable compromise."
+        },
+        {
+          "kind": "rubric_score",
+          "attempted_quote": "What I mean is that the discount you had for the first year has ended, so the price went up to our regular monthly rate.",
+          "speaker": "Agent",
+          "description": "The agent explained complex contract and billing terms clearly, adjusting terminology when the customer expressed confusion."
+        }
+      ],
+      "memory_rules": [
+        {
+          "id": "c0661ded-a987-4115-8325-9c30b8046f42",
+          "text": "Apply the compliance flag if the agent fails to properly introduce themselves and the company or neglects the mandatory customer identity verification process before discussing account details."
+        },
+        {
+          "id": "1ce8fe26-d15f-4e01-9b46-ffed54215b0c",
+          "text": "Utilize the specific compliance flag 'refusing_manager_escalation' instead of a generalized refusal flag whenever a request to speak with a manager is denied."
+        },
+        {
+          "id": "a2cafb62-2995-4f63-90d1-b0d8090791bb",
+          "text": "Do not trigger politeness failure compliance flags when agents maintain appropriate professional etiquette throughout the interaction."
+        },
+        {
+          "id": "b0b65d92-6a8f-41ec-a9d4-9c3bc4290f94",
+          "text": "Verify the precise timing of identity verification against the strict call-flow criteria, and do not flag it as late if it was completed within the acceptable timeframe."
+        },
+        {
+          "id": "dc6f6f57-687a-4a4c-8488-29a25f711345",
+          "text": "Do not identify general statements of policy or conversational closing remarks as actionable customer commitments."
+        }
+      ],
+      "review": {
+        "verdicts": [
+          {
+            "claim_id": "commitments[0]",
+            "verdict": "confirm",
+            "changes": null,
+            "note": null
+          },
+          {
+            "claim_id": "rubric_scores[0]",
+            "verdict": "confirm",
+            "changes": null,
+            "note": null
+          },
+          {
+            "claim_id": "rubric_scores[1]",
+            "verdict": "confirm",
+            "changes": null,
+            "note": null
+          },
+          {
+            "claim_id": "rubric_scores[2]",
+            "verdict": "confirm",
+            "changes": null,
+            "note": null
+          },
+          {
+            "claim_id": "rubric_scores[3]",
+            "verdict": "confirm",
+            "changes": null,
+            "note": null
+          }
+        ],
+        "note": null
+      }
+    }
+  }
+}
