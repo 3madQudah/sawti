@@ -5,3 +5,6 @@ test-results/
 playwright-report/
 .schema.check.d.ts
 e2e/screenshots/
+
+# demo video frames and MP4 (frontend/demo_video/README.md)
+demo_video/out/

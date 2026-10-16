@@ -7,7 +7,7 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
-    include: ["src/**/*.test.{ts,tsx}"],
+    include: ["src/**/*.test.{ts,tsx}", "demo_video/**/*.test.ts"],
     env: { VITE_SAWTI_API_KEY: "test-key", VITE_SAWTI_REVIEWER_ID: "qa-test" },
   },
 });
